@@ -129,7 +129,7 @@ class GoodNews {
                 'isGoodNewsAdmin'    => $this->isGoodNewsAdmin,
                 'siteStatus'         => $this->siteStatus,
                 'cronTriggerStatus'  => $this->cronTriggerStatus,
-                'helpUrl'            => 'http://rtfm.modx.com/display/ADDON/GoodNews',
+                'helpUrl'            => 'http://www.bitego.com/extras/goodnews/',
                 'componentName'      => 'GoodNews',
                 'componentVersion'   => self::VERSION,
                 'componentRelease'   => self::RELEASE,
