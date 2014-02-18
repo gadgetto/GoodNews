@@ -1,0 +1,44 @@
+/**
+ * custom GoodNews Resource (gonr-) Type styles for Revo < 2.3.0
+ */
+
+/* MODx tree-node icon override */
+.icon-goodnewsresourcecontainer .x-tree-node-icon {
+    background-image: url(../img/goodnews.png) !important;
+}
+
+.gonr-tree-groupscategories {
+}
+
+/* Edit subscribers tree-node icons */
+.gonr-icn-group {
+    background: url(../img/gongroup.png) no-repeat center left !important;
+}
+.gonr-icn-category {
+    background: url(../img/goncategory.png) no-repeat center left !important;
+}
+
+/* Special styles */
+.gonr-modx-group-assigned {
+    color: #5858ea !important; /* grey-blue */
+}
+
+/* Style adjustments for high resolution devices */
+@media print,
+       (-o-min-device-pixel-ratio: 5/4),
+       (-webkit-min-device-pixel-ratio: 1.25),
+       (min-resolution: 120dpi) {
+
+    .icon-goodnewsresourcecontainer .x-tree-node-icon {
+        background-image: url(../img/goodnews@2x.png) !important;
+        background-size: 16px auto !important;
+    }
+    .gonr-icn-group {
+        background: url(../img/gongroup@2x.png) no-repeat center left !important;
+        background-size: 16px auto !important;
+    }
+    .gonr-icn-category {
+        background: url(../img/goncategory@2x.png) no-repeat center left !important;
+        background-size: 16px auto !important;
+    }
+}

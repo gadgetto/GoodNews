@@ -1,0 +1,20 @@
+Changelog for GoodNews
+
+GoodNews 1.0.0-beta2
+====================================
+
+Enhancements
+
+- added necessary code to provide support for Revo version >= 2.3
+- added Revo version detection for backwards compatibillity
+- added subscribers ip tracking
+
+Fixes
+
+- fixed a bug in multiprocessed sending (catch some rare race conditions)
+
+
+GoodNews 1.0.0-beta1
+====================================
+
+- first public beta release
