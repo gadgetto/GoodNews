@@ -33,6 +33,16 @@ abstract class GoodNewsManagerController extends modExtraManagerController {
     
     public function initialize() {
         $this->goodnews = new GoodNews($this->modx);
+        $containerObj = $this->modx->getObject('modResource', $this->goodnews->currentContainer);
+        
+        // Security ceck: is user entitled to manage the requested GoodNews container?
+        if (!$this->goodnews->isEditor($containerObj)) {
+            header("Content-Type: text/html; charset=UTF-8");
+            header('HTTP/1.1 401 Not Authorized');
+            echo '<html><title>Error 401: Not Authorized</title><body><h1>Error!</h1><p>Access denied.</p></body></html>';
+            @session_write_close();
+            die();
+        }
         
         // Add custom css file to manager-page header based on Revo version
         $version = $this->modx->getVersionData();

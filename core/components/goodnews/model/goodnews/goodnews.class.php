@@ -243,7 +243,7 @@ class GoodNews {
         
         $containerIDs = '';
         foreach ($containers as $container) {
-            if ($this->_isEditor($container)) {
+            if ($this->isEditor($container)) {
                 if ($containerIDs != '') {
                     $containerIDs .= ',';
                 }
@@ -261,11 +261,11 @@ class GoodNews {
     /**
      * Check if current user is entitled to access a specific mailing container
      *
-     * @access private
-     * @param $gonrc
+     * @access public
+     * @param $gonrc A GoodNews container object
      * @return boolean false || true
      */
-    private function _isEditor($gonrc) {
+    public function isEditor($gonrc) {
         $goneditor = false;
         
         // read GoodNews editor groups from container properties
@@ -285,6 +285,16 @@ class GoodNews {
         return $goneditor;
     }
 
+    /**
+     * hasAccess function.
+     * 
+     * @access public
+     * @return void
+     */
+    public function hasAccess() {
+        
+    }
+    
     /**
      * Read current container id from user settings (uncached!).
      *

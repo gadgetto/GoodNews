@@ -9,6 +9,7 @@ Enhancements
 - added Revo version detection for backwards compatibillity
 - added subscribers ip tracking
 - added subscription box chunk to place subscription form somewhere on site
+- added missing security check if user is entitled to manage GoodNews container
 
 Fixes
 
