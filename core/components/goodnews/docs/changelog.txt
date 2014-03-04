@@ -8,6 +8,7 @@ Enhancements
 - added necessary code to provide support for Revo version >= 2.3
 - added Revo version detection for backwards compatibillity
 - added subscribers ip tracking
+- added subscription box chunk to place subscription form somewhere on site
 
 Fixes
 
