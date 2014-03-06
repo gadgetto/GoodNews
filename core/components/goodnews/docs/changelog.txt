@@ -1,5 +1,19 @@
 Changelog for GoodNews
 
+
+GoodNews 1.0.0-beta3
+====================================
+
+Enhancements
+
+- added subscribers ip tracking
+- added subscription box chunk to place subscription form somewhere on site
+
+Fixes
+
+- fixed missing security check if user is entitled to manage GoodNews container
+
+
 GoodNews 1.0.0-beta2
 ====================================
 
@@ -7,9 +21,6 @@ Enhancements
 
 - added necessary code to provide support for Revo version >= 2.3
 - added Revo version detection for backwards compatibillity
-- added subscribers ip tracking
-- added subscription box chunk to place subscription form somewhere on site
-- added missing security check if user is entitled to manage GoodNews container
 
 Fixes
 

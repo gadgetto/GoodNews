@@ -1,7 +1,7 @@
 --------------------
 Extra: GoodNews
 --------------------
-Version: 1.0.0-beta2
+Version: 1.0.0-beta3
 Author: bitego <office@bitego.com>
 --------------------
  

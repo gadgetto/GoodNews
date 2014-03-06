@@ -27,7 +27,7 @@
 class GoodNews {
 
     const VERSION = '1.0.0';
-    const RELEASE = 'beta2';
+    const RELEASE = 'beta3';
 
     /** @var modX A reference to the modX object */
     public $modx = null;
