@@ -1,5 +1,10 @@
 Changelog for GoodNews
 
+GoodNews 1.0.0-pl
+====================================
+
+- first stable release
+
 
 GoodNews 1.0.0-beta3
 ====================================

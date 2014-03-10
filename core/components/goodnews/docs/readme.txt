@@ -1,7 +1,7 @@
 --------------------
 Extra: GoodNews
 --------------------
-Version: 1.0.0-beta3
+Version: 1.0.0-pl
 Author: bitego <office@bitego.com>
 --------------------
  
@@ -20,6 +20,7 @@ fast due to its underlying multithreaded sending system.
 Reqirements:
 
 - MODx 2.2 and above
+- Cron
 
 Feel free to suggest ideas/improvements/bugs on our website:
 
