@@ -344,6 +344,13 @@ Ext.extend(GoodNewsResource.panel.Container,MODx.panel.Resource,{
             ,name: 'setting_mailFromName'
             ,value: config.record.setting_mailFromName || ''
             ,anchor: '100%'
+        },{
+            xtype: 'textfield'
+            ,fieldLabel: _('goodnews.container_mail_bounces_address')
+            ,description: '<b>[[+mailBouncesAddress]]</b><br />'+_('goodnews.container_mail_bounces_address_desc')
+            ,name: 'setting_mailBouncesAddress'
+            ,value: config.record.setting_mailBouncesAddress || ''
+            ,anchor: '100%'
         }];
     }
 });

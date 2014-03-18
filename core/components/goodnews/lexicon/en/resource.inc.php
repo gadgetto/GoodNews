@@ -48,6 +48,8 @@ $_lang['goodnews.container_mail_from']                     = 'Sender E-Mail Addr
 $_lang['goodnews.container_mail_from_desc']                = 'The E-Mail Address used for sending mails from this container.';
 $_lang['goodnews.container_mail_from_name']                = 'Sender Name';
 $_lang['goodnews.container_mail_from_name_desc']           = 'The Sender Name used for sending mails from this container.';
+$_lang['goodnews.container_mail_bounces_address']          = 'E-Mail Address for Bounce Messages';
+$_lang['goodnews.container_mail_bounces_address_desc']     = 'The E-Mail Address used for receiving bounce messages (Non Delivery Notifications).';
 
 $_lang['goodnews.container_manage']                        = 'Manage GoodNews Container';
 $_lang['goodnews.mailing_create_new']                      = 'Create New Mailing';
