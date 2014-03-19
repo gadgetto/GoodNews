@@ -37,7 +37,7 @@
  * @property string $activationEmailTplType The type of tpl provided for the activation email. (default: modChunk)
  * @property string $activationResourceId The Resource ID where the GoodNewsConfirmSubscription snippet is located. (default: '')
  * @property string $submittedResourceId If set, will redirect to the specified resource after the user submits the subscription form. (default: '')
- * @property boolean $sendSubscriptionEmail Wether or not to send user an email after successfull subscription.
+ * @property boolean $sendSubscriptionEmail Wether or not to send user an email after successful subscription.
  * @property string $subscriptionEmailSubject The subject of the subscription email. (default: a lexicon string)
  * @property string $subscriptionEmailTpl The template for the subscription email. (default: sample.GoodNewsSubscriptionEmailTpl)
  * @property string $subscriptionEmailTplAlt If set, will use this template instead of $subscriptionEmailTpl (e.g. for plaintext mails). (default: '')
