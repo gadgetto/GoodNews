@@ -50,6 +50,11 @@ if ($object->xpdo) {
                 'template'  => 'sample.GoodNewsProfileTemplate',
             );
             $resourcesAttributes[++$i] = array(
+                'pagetitle' => 'Subscription Success',
+                'parent'    => '',
+                'template'  => 'sample.GoodNewsProfileTemplate',
+            );
+            $resourcesAttributes[++$i] = array(
                 'pagetitle' => 'Subscription Update',
                 'parent'    => '',
                 'template'  => 'sample.GoodNewsProfileTemplate',

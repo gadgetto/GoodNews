@@ -12,6 +12,10 @@
     Samples of other available configuration parameters:
     (Please read the documentation for a full list of parameters)
     
+    &activation=`0`
+    &sendSubscriptionEmail=`1`
+    &submittedResourceId=`[[!GoodNewsGetResourceID? &pagetitle=`Subscription Success`]]`
+    
     &groupsOnly=`1`
     &includeGroups=`4,6`
     &defaultCategories=`3,36,40,48`

@@ -50,6 +50,7 @@ $_lang['goodnews.spam_blocked']                   = 'Ihre Registrierung wurde vo
 $_lang['goodnews.spam_marked']                    = ' - als Spam markiert.';
 
 $_lang['goodnews.activation_email_subject']       = 'Vielen Dank für Ihr Interesse an unsererm Newsletterservice. Bitte bestätigen Sie die Aktivierung!';
+$_lang['goodnews.subscription_email_subject']     = 'Vielen Dank für Ihr Interesse an unsererm Newsletterservice. Ihr Abonnement war erfolgreich!';
 
 $_lang['goodnews.email']                          = 'E-Mail';
 $_lang['goodnews.fullname']                       = 'Vor- und Nachname';

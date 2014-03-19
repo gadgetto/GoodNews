@@ -37,6 +37,11 @@
  * @property string $activationEmailTplType The type of tpl provided for the activation email. (default: modChunk)
  * @property string $activationResourceId The Resource ID where the GoodNewsConfirmSubscription snippet is located. (default: '')
  * @property string $submittedResourceId If set, will redirect to the specified resource after the user submits the subscription form. (default: '')
+ * @property boolean $sendSubscriptionEmail Wether or not to send user an email after successfull subscription.
+ * @property string $subscriptionEmailSubject The subject of the subscription email. (default: a lexicon string)
+ * @property string $subscriptionEmailTpl The template for the subscription email. (default: sample.GoodNewsSubscriptionEmailTpl)
+ * @property string $subscriptionEmailTplAlt If set, will use this template instead of $subscriptionEmailTpl (e.g. for plaintext mails). (default: '')
+ * @property string $subscriptionEmailTplType The type of tpl provided for the subscription email. (default: modChunk)
  * @property string $errTpl Chunk for error output. (default: <span class="error">[[+error]]</span>)
  * @property boolean $useExtended Whether or not to set any extra fields in the form to the users extended field. (default: 0 = false)
  * @property string $excludeExtended A comma-separated list of fields to exclude from setting as extended fields. (default: '')
