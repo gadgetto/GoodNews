@@ -50,6 +50,7 @@ $_lang['goodnews.spam_blocked']                   = 'Your submission was blocked
 $_lang['goodnews.spam_marked']                    = ' - marked as spam.';
 
 $_lang['goodnews.activation_email_subject']       = 'Thanks for your interest in our newsletter service. Please activate your subscription!';
+$_lang['goodnews.subscription_email_subject']     = 'Thanks for your interest in our newsletter service. Your subscription was successful!';
 
 $_lang['goodnews.email']                          = 'Email Address';
 $_lang['goodnews.fullname']                       = 'Full Name';

@@ -1,8 +1,8 @@
 --------------------
 Extra: GoodNews
 --------------------
-Version: 1.0.0-pl
-Author: bitego <office@bitego.com>
+Version: 1.0.1-pl
+Author: bitego <office@bitego.com> (Martin Gartner, Franz Gallei)
 --------------------
  
 An integrated group and newsletter mailing system.
@@ -24,5 +24,5 @@ Reqirements:
 
 Feel free to suggest ideas/improvements/bugs on our website:
 
-http://www.bitego.com
+http://www.bitego.com/extras/goodnews/goodnews-support.html
 

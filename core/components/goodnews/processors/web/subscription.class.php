@@ -99,6 +99,12 @@ class GoodNewsSubscriptionSubscriptionProcessor extends GoodNewsSubscriptionProc
             $this->user->set('active', true);
             $this->user->save();
         }
+        
+        // Send subscription success email (if property set)
+        $sendSubscriptionEmail = $this->controller->getProperty('sendSubscriptionEmail', false, 'isset');
+        if ($sendSubscriptionEmail && !empty($email)) {
+            $this->sendSubscriptionEmail();
+        }
 
         $this->runPostHooks();
         $this->checkForRedirect();
@@ -318,7 +324,8 @@ class GoodNewsSubscriptionSubscriptionProcessor extends GoodNewsSubscriptionProc
     }
 
     /**
-     * Get all the properties for the activation email
+     * Get the properties for the activation email
+     *
      * @return array
      */
     public function gatherActivationEmailProperties() {
@@ -353,6 +360,41 @@ class GoodNewsSubscriptionSubscriptionProcessor extends GoodNewsSubscriptionProc
         $emailProperties['tplType'] = $emailTplType;
 
         $this->setCachePassword($pword);
+        return $emailProperties;
+    }
+
+    /**
+     * Send a subscription success email to the user.
+     *
+     * @return boolean
+     */
+    public function sendSubscriptionEmail() {
+        $emailProperties = $this->gatherSubscriptionEmailProperties();
+
+        // Send to user's email address
+        $email = $this->user->get('email');
+        $subject = $this->controller->getProperty('subscriptionEmailSubject', $this->modx->lexicon('goodnews.subscription_email_subject'));
+
+        return $this->goodnewssubscription->sendEmail($email, $subject, $emailProperties);
+    }
+
+    /**
+     * Get the properties for the subscription email
+     *
+     * @return array
+     */
+    public function gatherSubscriptionEmailProperties() {
+
+        // Set subscription email properties
+        $emailTpl = $this->controller->getProperty('subscriptionEmailTpl', 'sample.GoodNewsSubscriptionEmailTpl');
+        $emailTplAlt = $this->controller->getProperty('subscriptionEmailTplAlt', '');
+        $emailTplType = $this->controller->getProperty('subscriptionEmailTplType', 'modChunk');
+        
+        $emailProperties = $this->user->toArray();
+        $emailProperties['tpl'] = $emailTpl;
+        $emailProperties['tplAlt'] = $emailTplAlt;
+        $emailProperties['tplType'] = $emailTplType;
+
         return $emailProperties;
     }
 

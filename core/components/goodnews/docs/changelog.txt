@@ -1,5 +1,14 @@
 Changelog for GoodNews
 
+GoodNews 1.0.1-pl
+====================================
+
+Enhancements
+
+- added feature/properties to optionally send user an email after successful subscription
+- added preinstalled Resource for successful subscriptions when activation isn't required
+
+
 GoodNews 1.0.0-pl
 ====================================
 
