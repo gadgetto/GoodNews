@@ -59,7 +59,10 @@ $debug = $modx->getOption('goodnews.debug', null, false) ? true : false;
 $corePath = $modx->getOption('goodnews.core_path', null, $modx->getOption('core_path').'components/goodnews/');
 require_once $corePath.'model/goodnews/goodnewsmailing.class.php';
 $modx->goodnewsmailing = new GoodNewsMailing($modx);
-if (!($modx->goodnewsmailing instanceof GoodNewsMailing)) { exit(); }
+if (!($modx->goodnewsmailing instanceof GoodNewsMailing)) {
+    $modx->log(modX::LOG_LEVEL_ERROR,'[GoodNews] cron.worker.php - Could not load GoodNewsMailing class.');
+    exit();
+}
 
 $mailingsToSend = $modx->goodnewsmailing->getMailingsToSend();
 foreach ($mailingsToSend as $mailingid){

@@ -281,7 +281,7 @@ $vehicle = $builder->createVehicle($category, $categoryAttributes);
 $builder->putVehicle($vehicle);
 unset($category, $attributes, $categoryAttributes);
 
-/* Add file and PHP resolvers (keep of oder of resolvers!) */
+/* Add file and PHP resolvers (keep oder of resolvers!) */
 $modx->log(modX::LOG_LEVEL_INFO, 'Adding file and PHP resolvers to category vehicle...');
 $vehicle->resolve('file', array(
     'source' => $sources['source_core'],
@@ -296,6 +296,9 @@ $vehicle->resolve('php', array(
 ));
 $vehicle->resolve('php', array(
     'source' => $sources['resolvers'].'resolve.tables.php',
+));
+$vehicle->resolve('php',array(
+    'source' => $sources['resolvers'].'resolve.dbchanges.php',
 ));
 $vehicle->resolve('php', array(
     'source' => $sources['resolvers'].'resolve.tablescontent.php',

@@ -45,7 +45,7 @@ $modx->initialize('mgr');
 // If set - connector script may only be continued if the correct security key is provided by cron (@param sid)
 $securityKey = $modx->getOption('goodnews.cron_security_key', null, '');
 if (isset($securityKey) && $_GET['sid'] !== $securityKey) {
-    exit('[GoodNews] cron.php: Missing or wrong authentification! Sorry Dude!');
+    exit('[GoodNews] cron.php - Missing or wrong authentification! Sorry Dude!');
 }
 
 $debug = $modx->getOption('goodnews.debug', null, false) ? true : false;
@@ -55,33 +55,51 @@ if (!$workerProcessActive) { exit(); }
 
 $corePath  = $modx->getOption('goodnews.core_path', null, $modx->getOption('core_path').'components/goodnews/');
 $assetsUrl = $modx->getOption('goodnews.assets_url', null, $modx->getOption('assets_url').'components/goodnews/');
+
 require_once $corePath.'model/goodnews/goodnews.class.php';
 $modx->goodnews = new GoodNews($modx);
-if (!($modx->goodnews instanceof GoodNews)) { exit(); }
+if (!($modx->goodnews instanceof GoodNews)) {
+    $modx->log(modX::LOG_LEVEL_ERROR,'[GoodNews] cron.php - Could not load GoodNews class.');
+    exit();
+}
 
+require_once $corePath.'model/goodnews/goodnewsbmh.class.php';
+$modx->bmh = new GoodNewsBounceMailHandler($modx);
+if (!($modx->bmh instanceof GoodNewsBounceMailHandler)) {
+    $modx->log(modX::LOG_LEVEL_ERROR,'[GoodNews] cron.php - Could not load GoodNewsBounceMailHandler class.');
+    exit();
+}
 
 // If multi processing isn't available we directly send mails without a worker process
 if (!$modx->goodnews->isMultiProcessing) {
 
     require_once $corePath.'model/goodnews/goodnewsmailing.class.php';
     $modx->goodnewsmailing = new GoodNewsMailing($modx);
-    if (!($modx->goodnewsmailing instanceof GoodNewsMailing)) { exit(); }
+    if (!($modx->goodnewsmailing instanceof GoodNewsMailing)) {
+        $modx->log(modX::LOG_LEVEL_ERROR,'[GoodNews] cron.php - Could not load GoodNewsMailing class.');
+        exit();
+    }
     
     $mailingsToSend = $modx->goodnewsmailing->getMailingsToSend();
     foreach ($mailingsToSend as $mailingid){
         $modx->goodnewsmailing->processMailing($mailingid);
     }
+    // after a bulk of mails is sent -> start bounce handling
+    bounceHandling($modx, $debug);
 
 // Otherwise start multiple worker processes
 } else {
 
     require_once $corePath.'model/goodnews/goodnewsprocesshandler.class.php';
     $modx->goodnewsprocesshandler = new GoodNewsProcessHandler($modx);
-    if (!($modx->goodnewsprocesshandler instanceof GoodNewsProcessHandler)) { exit(); }
+    if (!($modx->goodnewsprocesshandler instanceof GoodNewsProcessHandler)) {
+        $modx->log(modX::LOG_LEVEL_ERROR,'[GoodNews] cron.php - Could not load GoodNewsProcessHandler class.');
+        exit();
+    }
 
     // Cleanup old processes and get count of actual running processes
     $actualProcessCount = $modx->goodnewsprocesshandler->cleanupProcessStatuses();
-    if ($debug) { $modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] cron.php: Actual process count: '.$actualProcessCount); }
+    if ($debug) { $modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] cron.php - Actual process count: '.$actualProcessCount); }
         
     $workerProcessLimit = $modx->getOption('goodnews.worker_process_limit', null, 1);
     
@@ -90,16 +108,52 @@ if (!$modx->goodnews->isMultiProcessing) {
         $actualProcessCount++;
         $modx->goodnewsprocesshandler->setCommand('php '.rtrim(MODX_BASE_PATH, '/').$assetsUrl.'cron.worker.php sid='.$_GET['sid']);
         if (!$modx->goodnewsprocesshandler->start()) {
-            if ($debug) { $modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] cron.php: No worker started.'); }
+            if ($debug) { $modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] cron.php - No worker started.'); }
             break;
         } else {
-            if ($debug) { $modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] cron.php: New worker started with pid: '.$modx->goodnewsprocesshandler->getPid().' | Start-time: '.$modx->goodnewsprocesshandler->getProcessStartTime()); }
+            if ($debug) { $modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] cron.php - New worker started with pid: '.$modx->goodnewsprocesshandler->getPid().' | Start-time: '.$modx->goodnewsprocesshandler->getProcessStartTime()); }
         }
         // Wait a little before letting start another process
-        // If after this time a process is still running -> it seems there is more work to do
         sleep(2);
         if (!$modx->goodnewsprocesshandler->status()) {
+            // If after this time no process is running, there are no more mailings to send 
+            // -> so start bounce handling
+            bounceHandling($modx, $debug);
             break;
         }
     }
+}
+
+
+/**
+ * bounceHandling function.
+ * 
+ * @access public
+ * @param mixed &$modx The modx object
+ * @param bool $debug_bmh (default: false)
+ * @return void
+ */
+function bounceHandling(&$modx, $debug_bmh = false) {
+ 
+    $containerIDs = $modx->bmh->getGoodNewsBmhContainers();
+    //$modx->log(modX::LOG_LEVEL_INFO,'[GoodNews] cron.php - mailing containers: '.print_r($containerIDs, true));
+
+    foreach ($containerIDs as $containerID) {
+        $modx->bmh->getBmhContainerProperties($containerID);
+        
+        if ($debug_bmh) {
+            $modx->bmh->debug_rules          = true;
+            $modx->bmh->max_mails_batchsize  = 20;
+        }
+
+        if ($modx->bmh->openMailbox()) {
+            $modx->bmh->processMailbox();
+        } else {
+            $modx->log(modX::LOG_LEVEL_ERROR,'[GoodNews] cron.php - Connection to mailhost failed: '.$modx->bmh->mailMailHost);
+            if (!empty($modx->bmh->error_msg)) {
+                $modx->log(modX::LOG_LEVEL_ERROR,'[GoodNews] cron.php - PhpIMAP error message: '.$modx->bmh->error_msg);
+            }
+        }
+    }
+    $modx->bmh->closeMailbox();
 }

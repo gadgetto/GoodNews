@@ -102,6 +102,7 @@ class GoodNewsMailing {
         }
         $properties['mailFrom']     = $this->mailing->getProperty('mailFrom', 'goodnews', $this->modx->getOption('emailsender'));   
         $properties['mailFromName'] = $this->mailing->getProperty('mailFromName', 'goodnews', $this->modx->getOption('site_name'));
+        $properties['mailReplyTo']  = $this->mailing->getProperty('mailReplyTo', 'goodnews', $this->modx->getOption('emailsender'));   
 
         return $properties;
     }
@@ -547,13 +548,15 @@ class GoodNewsMailing {
     public function sendEmail(array $mail, array $subscriber) {
 
         $this->modx->getService('mail', 'mail.modPHPMailer');
+        $this->modx->mail->header('X-goodnews-user-id: '.$subscriber['id']);
+        $this->modx->mail->header('X-goodnews-mailing-id: '.$this->mailingid);
         $this->modx->mail->set(modMail::MAIL_BODY,      $mail['body']);
         $this->modx->mail->set(modMail::MAIL_BODY_TEXT, $mail['altbody']);
         $this->modx->mail->set(modMail::MAIL_FROM,      $mail['mailFrom']);
         $this->modx->mail->set(modMail::MAIL_FROM_NAME, $mail['mailFromName']);
         $this->modx->mail->set(modMail::MAIL_SENDER,    $mail['mailFrom']);
         $this->modx->mail->set(modMail::MAIL_SUBJECT,   $mail['subject']);
-        $this->modx->mail->address('reply-to',          $mail['mailFrom']);
+        $this->modx->mail->address('reply-to',          $mail['mailReplyTo']);
         $this->modx->mail->address('to', $subscriber['email'], $subscriber['fullname']);
         $this->modx->mail->setHTML($mail['ishtml']);
                 

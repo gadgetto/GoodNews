@@ -1,5 +1,15 @@
 Changelog for GoodNews
 
+GoodNews 1.1.0-pl
+====================================
+
+Enhancements
+
+- added automatic bounce handling (parsing bounced emails and automatically handle subscriber status)
+- moved all protected container settings into GoodNews system settings
+- added system check for PHP Imap extension
+
+
 GoodNews 1.0.1-pl
 ====================================
 

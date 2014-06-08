@@ -90,6 +90,8 @@ class NewsletterGetListProcessor extends modObjectGetListProcessor {
             'finishedon',
             'ipc_status',
             'scheduled',
+            'soft_bounces',
+            'hard_bounces',
         );
         $c->select($this->modx->getSelectColumns('GoodNewsMailingMeta', 'MailingMeta', '', $metaColumns));
 

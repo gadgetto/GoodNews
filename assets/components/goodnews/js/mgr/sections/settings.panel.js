@@ -44,7 +44,9 @@ GoodNews.SettingsPanel = function(config) {
                 xtype: 'goodnews-panel-settings-general'
             },{
                 xtype: 'goodnews-panel-settings-container'
-            },{
+            }/*,{
+                xtype: 'goodnews-panel-settings-bounceparsingrules'
+            }*/,{
                 xtype: 'goodnews-panel-settings-system'
             },{
                 xtype: 'goodnews-panel-settings-about'

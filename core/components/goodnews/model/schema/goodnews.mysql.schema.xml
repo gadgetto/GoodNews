@@ -22,6 +22,8 @@
         <field key="finishedon" dbtype="int" precision="20" phptype="timestamp" null="false" default="0" />
         <field key="ipc_status" dbtype="int" precision="1" attributes="unsigned" phptype="integer" null="false" default="0" />
         <field key="scheduled" dbtype="int" precision="1" attributes="unsigned" phptype="boolean" null="false" default="0" />
+        <field key="soft_bounces" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="false" default="0" />
+        <field key="hard_bounces" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="false" default="0" />
 
         <index alias="mailing_id" name="mailing_id" primary="false" unique="true" type="BTREE">
             <column key="mailing_id" length="" collation="A" null="false" />
@@ -37,6 +39,8 @@
         <field key="createdon" dbtype="datetime" phptype="datetime" null="true" />
         <field key="testdummy" dbtype="int" precision="1" attributes="unsigned" phptype="boolean" null="false" default="0" />
         <field key="ip" dbtype="varchar" precision="50" phptype="string" null="false" default="0" />
+        <field key="soft_bounces" dbtype="text" phptype="string" null="true" default="" />
+        <field key="hard_bounces" dbtype="text" phptype="string" null="true" default="" />
         
         <index alias="subscriber_id" name="subscriber_id" primary="false" unique="true" type="BTREE">
             <column key="subscriber_id" length="" collation="A" null="false" />

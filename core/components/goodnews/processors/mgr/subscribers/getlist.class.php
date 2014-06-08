@@ -81,7 +81,7 @@ class SubscribersGetListProcessor extends modObjectGetListProcessor {
     public function prepareQueryAfterCount(xPDOQuery $c) {
         $c->select($this->modx->getSelectColumns('modUser', 'modUser'));
         $c->select($this->modx->getSelectColumns('modUserProfile', 'Profile', '', array('fullname', 'email', 'blocked')));
-        $c->select($this->modx->getSelectColumns('GoodNewsSubscriberMeta', 'SubscriberMeta', '', array('testdummy', 'createdon', 'ip')));
+        $c->select($this->modx->getSelectColumns('GoodNewsSubscriberMeta', 'SubscriberMeta', '', array('testdummy', 'createdon', 'ip', 'soft_bounces', 'hard_bounces')));
         return $c;
     }
 

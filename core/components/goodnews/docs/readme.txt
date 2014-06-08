@@ -1,7 +1,7 @@
 --------------------
 Extra: GoodNews
 --------------------
-Version: 1.0.1-pl
+Version: 1.1.0-pl
 Author: bitego <office@bitego.com> (Martin Gartner, Franz Gallei)
 --------------------
  
@@ -21,6 +21,7 @@ Reqirements:
 
 - MODx 2.2 and above
 - Cron
+- PHP Imap Extension (for automatic bounce handling)
 
 Feel free to suggest ideas/improvements/bugs on our website:
 

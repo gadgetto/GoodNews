@@ -26,7 +26,7 @@
 
 class GoodNews {
 
-    const VERSION = '1.0.1';
+    const VERSION = '1.1.0';
     const RELEASE = 'pl';
 
     /** @var modX A reference to the modX object */
@@ -37,6 +37,9 @@ class GoodNews {
     
     /** @var boolean $multiProcessing Is multi processing enabled? (depends on server settings/features) */
     public $isMultiProcessing = false;
+    
+    /** @var boolean $imapExtension Is the php IMAP extension available? (required for automatic bounce handling) */
+    public $imapExtension = false;
     
     /** @var boolean $isGoodNewsAdmin Is the current user a GoodNews admin? */
     public $isGoodNewsAdmin = false;
@@ -66,7 +69,7 @@ class GoodNews {
      * @param array $config An array of configuration options
      */
     function __construct(modX &$modx, array $config = array()) {
-        $this->modx =&$modx;
+        $this->modx = &$modx;
  
         $corePath = $this->modx->getOption('goodnews.core_path', $config, $this->modx->getOption('core_path').'components/goodnews/');
         $assetsUrl = $this->modx->getOption('goodnews.assets_url', $config, $this->modx->getOption('assets_url').'components/goodnews/');
@@ -89,8 +92,10 @@ class GoodNews {
 
             $this->debug              = $this->modx->getOption('goodnews.debug', null, false) ? true : false;
             $this->isMultiProcessing  = $this->_isMultiProcessing();
+            $this->imapExtension      = $this->_imapExtension();
             $this->isGoodNewsAdmin    = $this->_isGoodNewsAdmin();
             $this->assignedContainers = $this->_assignedContainers();
+            
             if (!$this->assignedContainers) {
                 $this->setupError = true;
             }
@@ -99,6 +104,7 @@ class GoodNews {
             if (!empty($reqid) && is_numeric($reqid)) {
                 $this->setUserCurrentContainer($reqid);
             }
+            
             $this->currentContainer = $this->_getUserCurrentContainer();
             // Check if current container is set
             if (empty($this->currentContainer) || !$this->isGoodNewsContainer($this->currentContainer)) {
@@ -107,6 +113,7 @@ class GoodNews {
                 $this->currentContainer = reset($containers);
                 $this->setUserCurrentContainer($this->currentContainer);
             }
+            
             $this->siteStatus        = $this->modx->getOption('site_status', null, false) ? true : false;
             $this->cronTriggerStatus = $this->modx->getOption('goodnews.worker_process_active', null, false) ? true : false;
             $contextKey = false;
@@ -126,6 +133,7 @@ class GoodNews {
                 'contextKey'         => $contextKey,
                 'mailingTemplate'    => $mailingTemplate,
                 'isMultiProcessing'  => $this->isMultiProcessing,
+                'imapExtension'      => $this->imapExtension,
                 'isGoodNewsAdmin'    => $this->isGoodNewsAdmin,
                 'siteStatus'         => $this->siteStatus,
                 'cronTriggerStatus'  => $this->cronTriggerStatus,
@@ -188,7 +196,17 @@ class GoodNews {
                 $enabled = false;
             }
         }
-       return $enabled;
+        return $enabled;
+    }
+
+    /**
+     * Cecks if php IMAP extension is enabled in server configuration.
+     *
+     * @access private
+     * @return boolean
+     */    
+    private function _imapExtension() {
+        return function_exists('imap_open');
     }
 
     /**

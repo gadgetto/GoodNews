@@ -44,12 +44,6 @@ $_lang['goodnews.container_unsubscribe_resource']          = 'Resource ID für 1
 $_lang['goodnews.container_unsubscribe_resource_desc']     = 'Ziehen Sie die Resource für die 1-Klick Abmeldung aus dem MODx Baum in dieses Feld.';
 $_lang['goodnews.container_profile_resource']              = 'Resource ID für Bearbeitung des Mailing Profils';
 $_lang['goodnews.container_profile_resource_desc']         = 'Ziehen Sie die Resource für die Bearbeitung des Mailing Profils aus dem MODx Baum in dieses Feld.';
-$_lang['goodnews.container_mail_from']                     = 'Absender E-Mail Adresse';
-$_lang['goodnews.container_mail_from_desc']                = 'Die E-Mail Adresse, die für den Mailversand aus diesem Container verwendet wird.';
-$_lang['goodnews.container_mail_from_name']                = 'Absender Name';
-$_lang['goodnews.container_mail_from_name_desc']           = 'Der Absender Name, der für den Mailversand aus diesem Container verwendet wird.';
-$_lang['goodnews.container_mail_bounces_address']          = 'E-Mail Adresse für Bounce Nachrichten';
-$_lang['goodnews.container_mail_bounces_address_desc']     = 'Die E-Mail Adresse, die für den Empfang von Bounce Nachrichten (Non Delivery Notifications) verwendet wird.';
 
 $_lang['goodnews.container_manage']                        = 'GoodNews-Container bearbeiten';
 $_lang['goodnews.mailing_create_new']                      = 'Neues Mailing erstellen';
