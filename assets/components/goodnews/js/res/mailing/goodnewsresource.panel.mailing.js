@@ -220,20 +220,22 @@ Ext.extend(GoodNewsResource.panel.Mailing,MODx.panel.Resource,{
                 ,collapsed: false
                 ,cls: 'gonr-tree-groupscategories'
                 ,listeners: {
+                    'afterrender': function(){
+                        var tree = Ext.getCmp('goodnewsresource-tree-groupscategories');
+                        tree.expandAll();
+                    },
                     'checkchange': function(node,checked){
                         // make dirty
                         this.fireEvent('fieldChange');
-                        // check parent node (group) if child (category) is checked
+                        node.expand();
+                        // check all leafes (categories) if node (group) is checked
                         if(checked){
-                            pn = node.parentNode;
-                            pn.getUI().toggleCheck(checked);
-                            node.expand();
-                        // uncheck all child (category) nodes if parent (group) is unchecked
-                        }else{
-                            node.collapse();
                             node.eachChild(function(n) {
                                 n.getUI().toggleCheck(checked);
                             });
+                        }else{
+                            pn = node.parentNode;
+                            pn.getUI().toggleCheck(checked);
                         }
                     }
                     ,scope:this
