@@ -1,5 +1,13 @@
 Changelog for GoodNews
 
+GoodNews 1.0.2-pl
+====================================
+
+Fixes
+
+Issue #7: Mailing: selection of subscribers in a category will erroneously also select the full group
+
+
 GoodNews 1.0.1-pl
 ====================================
 
