@@ -54,6 +54,8 @@ GoodNews.grid.Containers = function(config) {
             ,'mail_max_softbounces_action'
             ,'mail_max_hardbounces'
             ,'mail_max_hardbounces_action'
+            ,'mail_notclassified_message_action'
+            ,'mail_notclassified_mailbox'
             ,'context_key'
             ,'menu'
         ]
@@ -551,6 +553,45 @@ GoodNews.window.UpdateContainerSettings = function(config) {
                             ,cls: 'gon-desc-under'
                         }]
                     }]
+                }]
+            },{
+                title: _('goodnews.settings_container_tab_notclassified_rules')
+                ,layout: 'form'
+                ,items: [{
+                    xtype: 'modx-combo'
+                    ,fieldLabel: _('goodnews.settings_container_notclassified_msg_action')
+                    ,description: MODx.expandHelp ? '' : _('goodnews.settings_container_notclassified_msg_action_desc')
+                    ,id: 'mail_notclassified_message_action'
+                    ,name: 'mail_notclassified_message_action'
+                    ,hiddenName: 'mail_notclassified_message_action'
+                    ,store: [
+                        ['move',_('goodnews.settings_container_notclassified_msg_move')]
+                        ,['delete',_('goodnews.settings_container_notclassified_msg_delete')]
+                    ]
+                    ,triggerAction: 'all'
+                    ,editable: false
+                    ,selectOnFocus: false
+                    ,preventRender: true
+                    ,forceSelection: true
+                    ,enableKeyEvents: true
+                    ,anchor: '100%'
+                },{
+                    xtype: MODx.expandHelp ? 'label' : 'hidden'
+                    ,forId: 'mail_notclassified_message_action'
+                    ,html: _('goodnews.settings_container_notclassified_msg_action_desc')
+                    ,cls: 'gon-desc-under'
+                },{
+                    xtype: 'textfield'
+                    ,fieldLabel: _('goodnews.settings_container_notclassified_mailbox')
+                    ,description: MODx.expandHelp ? '' : _('goodnews.settings_container_notclassified_mailbox_desc')
+                    ,id: 'mail_notclassified_mailbox'
+                    ,name: 'mail_notclassified_mailbox'
+                    ,anchor: '100%'
+                },{
+                    xtype: MODx.expandHelp ? 'label' : 'hidden'
+                    ,forId: 'mail_notclassified_mailbox'
+                    ,html: _('goodnews.settings_container_notclassified_mailbox_desc')
+                    ,cls: 'gon-desc-under'
                 }]
             }]
             ,listeners: {

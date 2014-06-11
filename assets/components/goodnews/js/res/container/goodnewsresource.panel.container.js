@@ -151,6 +151,36 @@ Ext.extend(GoodNewsResource.panel.Container,MODx.panel.Resource,{
             xtype: 'hidden'
             ,name: 'setting_mailServiceOption'
         },{
+            xtype: 'hidden'
+            ,name: 'setting_mailSoftBouncedMessageAction'
+        },{
+            xtype: 'hidden'
+            ,name: 'setting_mailSoftMailbox'
+        },{
+            xtype: 'hidden'
+            ,name: 'setting_mailMaxSoftBounces'
+        },{
+            xtype: 'hidden'
+            ,name: 'setting_mailMaxSoftBouncesAction'
+        },{
+            xtype: 'hidden'
+            ,name: 'setting_mailHardBouncedMessageAction'
+        },{
+            xtype: 'hidden'
+            ,name: 'setting_mailHardMailbox'
+        },{
+            xtype: 'hidden'
+            ,name: 'setting_mailMaxHardBounces'
+        },{
+            xtype: 'hidden'
+            ,name: 'setting_mailMaxHardBouncesAction'
+        },{
+            xtype: 'hidden'
+            ,name: 'setting_mailNotClassifiedMessageAction'
+        },{
+            xtype: 'hidden'
+            ,name: 'setting_mailNotClassifiedMailbox'
+        },{
             xtype: 'modx-field-parent-change'
             ,fieldLabel: _('resource_parent')
             ,description: '<b>[[*parent]]</b><br />'+_('resource_parent_help')

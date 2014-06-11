@@ -166,7 +166,17 @@ class ContainerSettingsGetListProcessor extends modObjectGetListProcessor {
                 $resourceArray['mail_max_hardbounces_action'] = 'delete';
             }
 
-
+            // not classified handling
+            if (array_key_exists('mailNotClassifiedMessageAction', $properties['goodnews'])) {
+                $resourceArray['mail_notclassified_message_action'] = $properties['goodnews']['mailNotClassifiedMessageAction'];
+            } else {
+                $resourceArray['mail_notclassified_message_action'] = 'move';
+            }
+            if (array_key_exists('mailNotClassifiedMailbox', $properties['goodnews'])) {
+                $resourceArray['mail_notclassified_mailbox'] = $properties['goodnews']['mailNotClassifiedMailbox'];
+            } else {
+                $resourceArray['mail_notclassified_mailbox'] = 'INBOX.NotClassified';
+            }
         }
         return $resourceArray;
     }

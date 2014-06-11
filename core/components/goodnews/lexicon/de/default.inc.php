@@ -267,6 +267,10 @@ $_lang['goodnews.settings_container_max_hardbounces']               = 'Max. Anza
 $_lang['goodnews.settings_container_max_hardbounces_desc']          = 'Maximale Anzahl von Hard Bounce Nachrichten pro Abonnenten';
 $_lang['goodnews.settings_container_max_hardbounces_action']        = 'Aktion bei max. Anzahl von Hard Bounces';
 $_lang['goodnews.settings_container_max_hardbounces_action_desc']   = 'Aktion für Abonnenten bei Erreichen der maximalen Anzahl von Hard Bounces?';
+$_lang['goodnews.settings_container_notclassified_msg_action']      = 'Aktion für unklassifizierte Nachrichten';
+$_lang['goodnews.settings_container_notclassified_msg_action_desc'] = 'Was soll mit unklassifizierten Nachrichten geschehen?';
+$_lang['goodnews.settings_container_notclassified_mailbox']         = 'Mailordner für unklassifizierte Nachrichten';
+$_lang['goodnews.settings_container_notclassified_mailbox_desc']    = 'Name des Mailordners für das Verschieben von unklassifizierten Nachrichten.';
 
 $_lang['goodnews.settings_container_mail_pop3']                     = 'POP3';
 $_lang['goodnews.settings_container_mail_imap']                     = 'IMAP';
@@ -282,11 +286,14 @@ $_lang['goodnews.settings_container_soft_subscriber_disable']       = 'Abonnent 
 $_lang['goodnews.settings_container_soft_subscriber_delete']        = 'Abonnent löschen';
 $_lang['goodnews.settings_container_hard_subscriber_disable']       = 'Abonnent deaktivieren';
 $_lang['goodnews.settings_container_hard_subscriber_delete']        = 'Abonnent löschen';
+$_lang['goodnews.settings_container_notclassified_msg_move']        = 'Verschieben';
+$_lang['goodnews.settings_container_notclassified_msg_delete']      = 'Löschen';
 
 $_lang['goodnews.settings_container_update']                        = 'Container Einstellungen bearbeiten';
 $_lang['goodnews.settings_container_tab_general']                   = 'Allgemein';
 $_lang['goodnews.settings_container_tab_bouncemailbox']             = 'Bounce Mailbox';
 $_lang['goodnews.settings_container_tab_bouncerules']               = 'Bounce Regeln';
+$_lang['goodnews.settings_container_tab_notclassified_rules']       = 'Unklassifiziert Regeln';
 $_lang['goodnews.settings_container_err_ns_editor_groups']          = 'Bitte geben Sie mindestens eine Container Editor Gruppe an.';
 $_lang['goodnews.settings_container_err_ns_mail_from']              = 'Bitte geben Sie die Absender E-Mail Adresse an (für Bounce Messages).';
 $_lang['goodnews.settings_container_err_ns_mail_from_name']         = 'Bitte geben Sie den Absender Namen an.';

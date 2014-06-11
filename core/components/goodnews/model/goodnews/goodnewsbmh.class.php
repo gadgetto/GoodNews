@@ -98,6 +98,12 @@ class GoodNewsBounceMailHandler {
     /** @var boolean $mailMaxHardBouncesAction What to do with subscribers after max hard bounces are reached (disable | delete) */
     public $mailMaxHardBouncesAction = 'delete';
     
+    /** @var boolean $mailNotClassifiedMessageAction What to do with unclassified messages (move | delete) */
+    public $mailNotClassifiedMessageAction = 'move';
+    
+    /** @var string $mailNotClassifiedMailbox Mailbox folder to move unclassified messages to */
+    public $mailNotClassifiedMailbox = 'INBOX.NotClassified';
+    
     /** @var int $mailMaxSoftBounceLag Maximum lag between first an last soft bounce in hours */
     public $mailMaxSoftBounceLag = 72;
        
@@ -266,6 +272,51 @@ class GoodNewsBounceMailHandler {
 	}
 
     /**
+     * Function to check if a mailbox exists
+     * - if not found, it will create it
+     *
+	 * @access public
+     * @param string  $mailbox The mailbox name (must be in 'INBOX.checkmailbox' format)
+     * @param boolean $create Whether or not to create the checkmailbox if not found (defaults to true)
+     * @return boolean
+     */
+    public function mailboxExists($mailbox, $create = true) {
+        if (trim($mailbox) == '' || !strstr($mailbox, 'INBOX.')) {
+            // this is a critical error with either the mailbox name blank or an invalid mailbox name
+            // need to stop processing and exit at this point
+            exit();
+        }
+        $portstring = $this->mailPort.'/'.$this->mailService.'/'.$this->mailServiceOption;
+
+        $mbox = imap_open('{'.$this->mailMailHost.':'.$portstring.'}', $this->mailMailboxUsername, $this->mailMailboxPassword, OP_HALFOPEN);
+        $list = imap_getmailboxes($mbox,'{'.$this->mailMailHost.':'.$portstring.'}', "*");
+
+        $mailboxFound = false;
+
+        if (is_array($list)) {
+            foreach ($list as $key => $val) {
+                // Get the mailbox name only
+                $nameArr = explode('}', imap_utf7_decode($val->name));
+                $nameRaw = $nameArr[count($nameArr) - 1];
+                if ($mailbox == $nameRaw) {
+                    $mailboxFound = true;
+                }
+            }
+            if ((!$mailboxFound) && $create) {
+                @imap_createmailbox($mbox, imap_utf7_encode('{'.$this->mailMailHost.':'.$portstring.'}'.$mailbox));
+                imap_close($mbox);
+                return true;
+            } else {
+                imap_close($mbox);
+                return false;
+            }
+        } else {
+            imap_close($mbox);
+            return false;
+        }
+    }
+
+    /**
      * Process mails in a mailbox.
      * (determine message type)
      *
@@ -290,7 +341,7 @@ class GoodNewsBounceMailHandler {
         // Maximum number of messages to process
         if ($this->_cFetch > $this->max_mails_batchsize) { $this->_cFetch = $this->max_mails_batchsize; }
         
-        // Fetch one mail per iteration
+        // Fetch one message per iteration
         for ($msgnr = 1; $msgnr <= $this->_cFetch; $msgnr++) {
 
             // Fetches all the structured information for a given message and returns the structure in an object
@@ -303,57 +354,90 @@ class GoodNewsBounceMailHandler {
                 $structure->ifparameters && 
                 $this->_isParameter($structure->parameters, 'REPORT-TYPE', 'delivery-status'))
             {
-                $classified = $this->_classifyBounceMessage($msgnr, 'DSN');
+                $result = $this->_classifyBounceMessage($msgnr, 'DSN');
             
             // None standard DSN msg
             } else {
-                $classified = $this->_classifyBounceMessage($msgnr, 'BODY');
+                $result = $this->_classifyBounceMessage($msgnr, 'BODY');
             }
 
+
             // If the message is classified -> process it!
-            if ($classified) {
+            // We should now have the following array (a sample):
+            /*
+            array(
+                 'rule_type'   => 'DSN'
+                ,'email'       => 'name@domain.com'
+                ,'user_id'     => '3425'
+                ,'mailing_id'  => '21'
+                ,'status_code' => '5.0.0'
+                ,'diag_code'   => 'smtp; 554 mailbox not found'
+                ,'rule_no'     => '0000'
+                ,'bounce_type' => 'hard'
+            )
+            */
+            if (is_array($result) && $result['bounce_type']) {
             
                 /*
                 if ((!$this->testmode) && (!$this->disable_delete)) {
                 
-                    @imap_delete($this->_mailbox_object, $x);
+                    @imap_delete($this->_mailbox_object, $msgnr);
                     $this->_cDeleted++;
                     
                 } elseif ($this->moveHard) {
                 
                     // Check if the move directory exists, if not create it
                     $this->mailboxExists($this->mailHardMailbox);
-                    @imap_mail_move($this->_mailbox_object, $x, $this->mailHardMailbox);
+                    @imap_mail_move($this->_mailbox_object, $msgnr, $this->mailHardMailbox);
                     $this->_cMoved++;
                     
                 } elseif ($this->moveSoft) {
                 
                     // Check if the move directory exists, if not create it
                     $this->mailboxExists($this->mailSoftMailbox);
-                    @imap_mail_move($this->_mailbox_object, $x, $this->mailSoftMailbox);
+                    @imap_mail_move($this->_mailbox_object, $msgnr, $this->mailSoftMailbox);
                     $this->_cMoved++;
                 }
                 
                 
                 $this->_cProcessed++;
                 */
-                
-            } else {
             
-                /*
-                if (!$this->testmode && !$this->disable_delete && $this->purge_unprocessed) {
-                    @imap_delete($this->_mailbox_object, $x);
-                    $this->_cDeleted++;
+            // Delete or move messages which couldn't be classified/processed:
+            //  - messages which have no usable information about the bounce reason
+            //  - completely empty messages
+            //  - messages which are not bounce messages in general (e.g. someone manually sent a mail to the bounce mailbox)
+            } else {
+                if ($this->mailNotClassifiedMessageAction == 'move') {
+                    // Check if the mail folder exists, if not create it
+                    $this->mailboxExists($this->mailNotClassifiedMailbox);
+                    @imap_mail_move($this->_mailbox_object, $msgnr, $this->mailNotClassifiedMailbox);
+                    $this->_cMoved++;
+
+                } else {
+                    $this->_deleteMessage($msgnr);
                 }
-                
-                $this->_cUnprocessed++;
-                */
             }
         
         } // end: for
         
         $this->closeMailbox();
         return true;
+    }
+    
+    /**
+     * Delete a message.
+     * 
+     * @access private
+     * @param mixed $msgnr
+     * @return void
+     */
+    private function _deleteMessage($msgnr) {
+        if (!$this->testmode && !$this->disable_delete) {
+            @imap_delete($this->_mailbox_object, $msgnr);
+            $this->_cDeleted++;
+        }
+        $this->_cUnprocessed++;
     }
 
     /**
@@ -371,13 +455,10 @@ class GoodNewsBounceMailHandler {
      * @return mixed array $result | false
      */
     private function _classifyBounceMessage($msgnr, $type) {
-        $body   = '';
-        $result = array();
-        
         if ($type == 'DSN') {
 
             // First part of DSN (Delivery Status Notification), human-readable explanation
-            $dsnMsg           = imap_fetchbody($this->_mailbox_object, $msgnr, '1');
+            $dsnMsg          = imap_fetchbody($this->_mailbox_object, $msgnr, '1');
             $dsnMsgStructure = imap_bodystruct($this->_mailbox_object, $msgnr, '1');
             
             switch ($dsnMsgStructure->encoding) {
@@ -433,14 +514,19 @@ class GoodNewsBounceMailHandler {
             $result = bmhBodyRules($body);
         }
 
-        // Get custom xheaders:
+        // Get custom X-headers:
         // Scan message source for X-goodnews-user-id and X-goodnews-mailing-id
         $source = imap_body($this->_mailbox_object, $msgnr);
+        if (preg_match('/X-goodnews-mailing-id[: \t\n]+([0-9]+)/i', $source, $match)) {
+            $result['mailing_id'] = $match[1];
+        }
         if (preg_match('/X-goodnews-user-id[: \t\n]+([0-9]+)/i', $source, $match)) {
             $result['user_id'] = $match[1];
         }
-        if (preg_match('/X-goodnews-mailing-id[: \t\n]+([0-9]+)/i', $source, $match)) {
-            $result['mailing_id'] = $match[1];
+        
+        // If we couldn't find the X-header with the user_id, try to find it by the fetched email address
+        if (empty($result['user_id']) && $result['email']) {
+            $result['user_id'] = $this->getSubscriberID($result['email']);
         }
         
         // Debug output
@@ -479,63 +565,21 @@ class GoodNewsBounceMailHandler {
         }
         return false;
     }
-
-    /**
-     * Function to check if a mailbox exists
-     * - if not found, it will create it
-     *
-	 * @access public
-     * @param string  $mailbox The mailbox name (must be in 'INBOX.checkmailbox' format)
-     * @param boolean $create Whether or not to create the checkmailbox if not found (defaults to true)
-     * @return boolean
-     */
-    public function mailboxExists($mailbox, $create = true) {
-        if (trim($mailbox) == '' || !strstr($mailbox, 'INBOX.')) {
-            // this is a critical error with either the mailbox name blank or an invalid mailbox name
-            // need to stop processing and exit at this point
-            exit();
-        }
-        $portstring = $this->mailPort.'/'.$this->mailService.'/'.$this->mailServiceOption;
-
-        $mbox = imap_open('{'.$this->mailMailHost.':'.$portstring.'}', $this->mailMailboxUsername, $this->mailMailboxPassword, OP_HALFOPEN);
-        $list = imap_getmailboxes($mbox,'{'.$this->mailMailHost.':'.$portstring.'}', "*");
-
-        $mailboxFound = false;
-
-        if (is_array($list)) {
-            foreach ($list as $key => $val) {
-                // Get the mailbox name only
-                $nameArr = explode('}', imap_utf7_decode($val->name));
-                $nameRaw = $nameArr[count($nameArr) - 1];
-                if ($mailbox == $nameRaw) {
-                    $mailboxFound = true;
-                }
-            }
-            if ((!$mailboxFound) && $create) {
-                @imap_createmailbox($mbox, imap_utf7_encode('{'.$this->mailMailHost.':'.$portstring.'}'.$mailbox));
-                imap_close($mbox);
-                return true;
-            } else {
-                imap_close($mbox);
-                return false;
-            }
-        } else {
-            imap_close($mbox);
-            return false;
-        }
-    }
     
     /**
-     * Method to determine the id of a subscriber by given email address.
+     * Determine the id of a subscriber (= MODX userID) by given email address.
      * 
      * @access public
      * @param string $email The email address
-     * @return void
+     * @return mixed subscriberID | false
      */
     public function getSubscriberID($email) {
-        //$meta = $this->modx->getObject('GoodNewsSubscriberMeta', array('subscriber_id' => $subscriberID));
-
-
+        $profile = $this->modx->getObject('modUserProfile', array('email' => $email));
+        if (!is_object($profile)) {
+            $this->modx->log(modX::LOG_LEVEL_INFO, 'Could not determine subscriber ID. Subscriber with email address: '.$email.' not found.');
+		    return false;
+        }
+        return $profile->get('internalKey');
     }
 
     /**
@@ -769,22 +813,23 @@ class GoodNewsBounceMailHandler {
         $goodnewscontainer = $this->modx->getObject('GoodNewsResourceContainer', $id);
         if (!is_object($goodnewscontainer)) { return false; }
                   
-        $this->mailService                  = $goodnewscontainer->getProperty('mailService',                  'goodnews', 'imap');
-        $this->mailMailHost                 = $goodnewscontainer->getProperty('mailMailHost',                 'goodnews', 'localhost');
-        $this->mailMailboxUsername          = $goodnewscontainer->getProperty('mailMailboxUsername',          'goodnews');
-        $this->mailMailboxPassword          = $goodnewscontainer->getProperty('mailMailboxPassword',          'goodnews');
-        $this->mailBoxname                  = $goodnewscontainer->getProperty('mailBoxname',                  'goodnews', 'INBOX');
-        $this->mailPort                     = $goodnewscontainer->getProperty('mailPort',                     'goodnews', 143);
-        $this->mailServiceOption            = $goodnewscontainer->getProperty('mailServiceOption',            'goodnews', 'notls');
-        $this->mailSoftBouncedMessageAction = $goodnewscontainer->getProperty('mailSoftBouncedMessageAction', 'goodnews', 'delete');
-        $this->mailSoftMailbox              = $goodnewscontainer->getProperty('mailSoftMailbox',              'goodnews', 'INBOX.Softbounces');
-        $this->mailMaxSoftBounces           = $goodnewscontainer->getProperty('mailMaxSoftBounces',           'goodnews', 3);
-        $this->mailMaxSoftBouncesAction     = $goodnewscontainer->getProperty('mailMaxSoftBouncesAction',     'goodnews', 'disable');
-        $this->mailHardBouncedMessageAction = $goodnewscontainer->getProperty('mailHardBouncedMessageAction', 'goodnews', 'delete');
-        $this->mailHardMailbox              = $goodnewscontainer->getProperty('mailHardMailbox',              'goodnews', 'INBOX.Hardbounces');
-        $this->mailMaxHardBounces           = $goodnewscontainer->getProperty('mailMaxHardBounces',           'goodnews', 1);
-        $this->mailMaxHardBouncesAction     = $goodnewscontainer->getProperty('mailMaxHardBouncesAction',     'goodnews', 'delete');
-        
+        $this->mailService                    = $goodnewscontainer->getProperty('mailService',                   'goodnews', 'imap');
+        $this->mailMailHost                   = $goodnewscontainer->getProperty('mailMailHost',                  'goodnews', 'localhost');
+        $this->mailMailboxUsername            = $goodnewscontainer->getProperty('mailMailboxUsername',           'goodnews');
+        $this->mailMailboxPassword            = $goodnewscontainer->getProperty('mailMailboxPassword',           'goodnews');
+        $this->mailBoxname                    = $goodnewscontainer->getProperty('mailBoxname',                   'goodnews', 'INBOX');
+        $this->mailPort                       = $goodnewscontainer->getProperty('mailPort',                      'goodnews', 143);
+        $this->mailServiceOption              = $goodnewscontainer->getProperty('mailServiceOption',             'goodnews', 'notls');
+        $this->mailSoftBouncedMessageAction   = $goodnewscontainer->getProperty('mailSoftBouncedMessageAction',  'goodnews', 'delete');
+        $this->mailSoftMailbox                = $goodnewscontainer->getProperty('mailSoftMailbox',               'goodnews', 'INBOX.Softbounces');
+        $this->mailMaxSoftBounces             = $goodnewscontainer->getProperty('mailMaxSoftBounces',            'goodnews', 3);
+        $this->mailMaxSoftBouncesAction       = $goodnewscontainer->getProperty('mailMaxSoftBouncesAction',      'goodnews', 'disable');
+        $this->mailHardBouncedMessageAction   = $goodnewscontainer->getProperty('mailHardBouncedMessageAction',  'goodnews', 'delete');
+        $this->mailHardMailbox                = $goodnewscontainer->getProperty('mailHardMailbox',               'goodnews', 'INBOX.Hardbounces');
+        $this->mailMaxHardBounces             = $goodnewscontainer->getProperty('mailMaxHardBounces',            'goodnews', 1);
+        $this->mailMaxHardBouncesAction       = $goodnewscontainer->getProperty('mailMaxHardBouncesAction',      'goodnews', 'delete');
+        $this->mailNotClassifiedMessageAction = $goodnewscontainer->getProperty('mailNotClassifiedMessageAction','goodnews', 'move');
+        $this->mailNotClassifiedMailbox       = $goodnewscontainer->getProperty('mailNotClassifiedMailbox',      'goodnews', 'INBOX.NotClassified');   
     }
 
 }

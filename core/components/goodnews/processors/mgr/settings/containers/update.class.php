@@ -128,6 +128,14 @@ class ContainerSettingsUpdateProcessor extends modObjectUpdateProcessor {
         $mailMaxHardBouncesAction = $this->getProperty('mail_max_hardbounces_action');
         $this->object->setProperty('mailMaxHardBouncesAction', $mailMaxHardBouncesAction, 'goodnews');
 
+        // notclassified_message_action (move | delete)
+        $mailNotClassifiedMessageAction = $this->getProperty('mail_notclassified_message_action');
+        $this->object->setProperty('mailNotClassifiedMessageAction', $mailNotClassifiedMessageAction, 'goodnews');
+
+        // notclassified_mailbox
+        $mailNotClassifiedMailbox = $this->getProperty('mail_notclassified_mailbox');
+        $this->object->setProperty('mailNotClassifiedMailbox', $mailNotClassifiedMailbox, 'goodnews');
+
         $this->object->set('editedby', $this->modx->user->get('id'));
         $this->object->set('editedon', time(), 'integer');
 

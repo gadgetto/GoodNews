@@ -128,8 +128,8 @@ class GoodNewsResourceMailingCreateManagerController extends ResourceCreateManag
             $properties = $container->getProperties('goodnews');
             $this->resourceArray['template'] = (int)$this->modx->getOption('mailingTemplate', $properties, 0);
             $this->resourceArray['templatesCategory'] = (int)$this->modx->getOption('templatesCategory', $properties, 0);
-            $this->resourceArray['mailFrom'] = $this->modx->getOption('mailFrom', $properties, '');
-            $this->resourceArray['mailFromName'] = $this->modx->getOption('mailFromName', $properties, '');
+            //$this->resourceArray['mailFrom'] = $this->modx->getOption('mailFrom', $properties, '');
+            //$this->resourceArray['mailFromName'] = $this->modx->getOption('mailFromName', $properties, '');
         }
     }
 }
