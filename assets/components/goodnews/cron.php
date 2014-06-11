@@ -44,7 +44,7 @@ $modx->initialize('mgr');
 
 // If set - connector script may only be continued if the correct security key is provided by cron (@param sid)
 $securityKey = $modx->getOption('goodnews.cron_security_key', null, '');
-if (isset($securityKey) && $_GET['sid'] !== $securityKey) {
+if (!empty($securityKey) && $_GET['sid'] !== $securityKey) {
     exit('[GoodNews] cron.php: Missing or wrong authentification! Sorry Dude!');
 }
 
@@ -68,8 +68,10 @@ if (!$modx->goodnews->isMultiProcessing) {
     if (!($modx->goodnewsmailing instanceof GoodNewsMailing)) { exit(); }
     
     $mailingsToSend = $modx->goodnewsmailing->getMailingsToSend();
-    foreach ($mailingsToSend as $mailingid){
-        $modx->goodnewsmailing->processMailing($mailingid);
+    if (is_array($mailingsToSend)) {
+        foreach ($mailingsToSend as $mailingid) {
+            $modx->goodnewsmailing->processMailing($mailingid);
+        }
     }
 
 // Otherwise start multiple worker processes

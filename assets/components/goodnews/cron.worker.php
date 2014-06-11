@@ -49,12 +49,11 @@ $modx->initialize('mgr');
 
 // If set - worker script may only be continued if the correct security key is provided by cron (@param sid)
 $securityKey = $modx->getOption('goodnews.cron_security_key', null, '');
-if (isset($securityKey) && $_GET['sid'] !== $securityKey) {
+if (!empty($securityKey) && $_GET['sid'] !== $securityKey) {
     exit('[GoodNews] cron.worker.php - Missing or wrong authentification! Sorry Dude!');
 }
 
 $debug = $modx->getOption('goodnews.debug', null, false) ? true : false;
-
 
 $corePath = $modx->getOption('goodnews.core_path', null, $modx->getOption('core_path').'components/goodnews/');
 require_once $corePath.'model/goodnews/goodnewsmailing.class.php';
@@ -62,10 +61,11 @@ $modx->goodnewsmailing = new GoodNewsMailing($modx);
 if (!($modx->goodnewsmailing instanceof GoodNewsMailing)) { exit(); }
 
 $mailingsToSend = $modx->goodnewsmailing->getMailingsToSend();
-foreach ($mailingsToSend as $mailingid){
-    $modx->goodnewsmailing->processMailing($mailingid);
+if (is_array($mailingsToSend)) {
+    foreach ($mailingsToSend as $mailingid) {
+        $modx->goodnewsmailing->processMailing($mailingid);
+    }
 }
-
 
 $mtime = microtime();
 $mtime = explode(' ', $mtime);

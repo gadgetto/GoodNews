@@ -1,5 +1,14 @@
 Changelog for GoodNews
 
+GoodNews 1.0.3-pl
+====================================
+
+Fixes
+
+Issue #10: cron.php cannot be called without the sid parameter when security key setting is disabled
+Issue #9: cron.worker.php throws a warning to the MODX error log (Invalid argument supplied for foreach())
+
+
 GoodNews 1.0.2-pl
 ====================================
 
