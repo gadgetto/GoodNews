@@ -38,20 +38,17 @@ class GoodNewsBounceMailHandler {
     /** @var boolean $testmode Test mode, if true will not delete messages */
     public $testmode = false;
     
-    /** @var boolean $debug_rules Enabele/disable rules debug output */
-    public $debug_rules = false;    
+    /** @var boolean $debug Enabele/disable debug output */
+    public $debug = false;    
 
-    /** @var int $max_mails_batchsize Maximum count of messages processed in one batch */
-    public $max_mails_batchsize = 50;
+    /** @var int $maxMailsBatchsize Maximum count of messages processed in one batch */
+    public $maxMailsBatchsize = 50;
     
-    /** @var boolean $disable_delete Enable/disable the message delete function */
-    public $disable_delete = false;
+    /** @var boolean $disableDelete Enable/disable the message delete function */
+    public $disableDelete = false;
 
-    /** @var boolean $purge_unprocessed Purge the unknown messages (or not) */
-    public $purge_unprocessed = false;
-
-    /** @var string $error_msg A string containing the last error msg */
-    public $error_msg = null;
+    /** @var string $errorMsg A string containing the last error msg */
+    public $errorMsg = null;
     
     /** @var string $mailService The service ('imap' or 'pop3') */
     public $mailService = 'imap';
@@ -110,13 +107,13 @@ class GoodNewsBounceMailHandler {
     /** @var int $mailMaxHardBounceLag Maximum lag between first an last hard bounce in hours */
     public $mailMaxHardBounceLag = 72;
        
-    /** @var object $_mailbox_object The resource object for the opened mailbox (POP3/IMAP/NNTP/etc.) */
-    private $_mailbox_object = false;
+    /** @var object $_imapStream The resource object for the opened mailbox (POP3/IMAP/NNTP/etc.) */
+    private $_imapStream = false;
 
     /** @var int $_cTotal Count of messages found in mailbox */
     private $_cTotal = 0;
 
-    /** @var int $_cFetch Count of messages to fetch from mailbox (limited by $max_mails_batchsize) */
+    /** @var int $_cFetch Count of messages to fetch from mailbox (limited by $maxMailsBatchsize) */
     private $_cFetch = 0;
     
     /** @var int $_cProcessed Count of messages which were processed */
@@ -221,37 +218,43 @@ class GoodNewsBounceMailHandler {
     }
 
     /**
-     * Open a mail box.
-     * (This is also the init method of the class)
+     * Open a mail box (POP3 or IMAP).
+     * Using POP3 results in limited features:
+     *  - no move
+     *  - no mailbox folders
      *
 	 * @access public
      * @return null|resource
      */
-    public function openMailbox() {
-        if (stristr($this->mailMailHost, 'gmail')) {
+    public function openImapStream() {
+        if (stristr($this->mailMailHost, 'gmail') || $this->mailService == 'pop3') {
             $this->moveSoft = false;
             $this->moveHard = false;
         }
         if ($this->testmode) {
-            $this->disable_delete = true;
+            $this->disableDelete = true;
         }
 
+        if ($this->debug) {
+            $this->modx->log(modX::LOG_LEVEL_INFO, 'mailMailHost: '.$this->mailMailHost.' mailService: '.$this->mailService.' mailServiceOption: '.$this->mailServiceOption.' mailPort: '.$this->mailPort.' mailBoxname: '.$this->mailBoxname);
+
+        }
         $portstring = $this->mailPort.'/'.$this->mailService.'/'.$this->mailServiceOption;
 
-        // First have a look if a mailbox is already open (and if so close it)
-		if ($this->_mailbox_object && (!is_resource($this->_mailbox_object) || !imap_ping($this->_mailbox_object))) {
-			$this->closeMailbox();
+        // First have a look if a mailbox is already open (and if so, close it)
+		if ($this->_imapStream && (!is_resource($this->_imapStream) || !imap_ping($this->_imapStream))) {
+			$this->closeImapStream();
 		}
 
         if (!$this->testmode) {
-            $this->_mailbox_object = @imap_open('{'.$this->mailMailHost.':'.$portstring.'}'.$this->mailBoxname, $this->mailMailboxUsername, $this->mailMailboxPassword, CL_EXPUNGE);
+            $this->_imapStream = @imap_open('{'.$this->mailMailHost.':'.$portstring.'}'.$this->mailBoxname, $this->mailMailboxUsername, $this->mailMailboxPassword, CL_EXPUNGE);
         } else {
-            $this->_mailbox_object = @imap_open('{'.$this->mailMailHost.':'.$portstring.'}'.$this->mailBoxname, $this->mailMailboxUsername, $this->mailMailboxPassword);
+            $this->_imapStream = @imap_open('{'.$this->mailMailHost.':'.$portstring.'}'.$this->mailBoxname, $this->mailMailboxUsername, $this->mailMailboxPassword);
         }
-		if (!$this->_mailbox_object) {
-			$this->error_msg = imap_last_error();
+		if (!$this->_imapStream) {
+			$this->errorMsg = imap_last_error();
 		}
-        return $this->_mailbox_object;
+        return $this->_imapStream;
     }
 
 	/**
@@ -260,60 +263,63 @@ class GoodNewsBounceMailHandler {
 	 * @access public
 	 * @return void
 	 */
-	public function closeMailbox() {
-		if ($this->_mailbox_object && is_resource($this->_mailbox_object)) {
+	public function closeImapStream() {
+		if ($this->_imapStream && is_resource($this->_imapStream)) {
             if (!$this->testmode) {
-			    imap_close($this->_mailbox_object, CL_EXPUNGE);
+			    imap_close($this->_imapStream, CL_EXPUNGE);
 			 } else {
-			    imap_close($this->_mailbox_object);
+			    imap_close($this->_imapStream);
 			 }
 		}
-        $this->_mailbox_object = null;
+        $this->_imapStream = null;
 	}
 
     /**
-     * Function to check if a mailbox exists
+     * Check if a mailbox folder exists (only IMAP!).
      * - if not found, it will create it
      *
 	 * @access public
-     * @param string  $mailbox The mailbox name (must be in 'INBOX.checkmailbox' format)
-     * @param boolean $create Whether or not to create the checkmailbox if not found (defaults to true)
+     * @param string  $mailboxFolder The mailbox folder name (must be in 'INBOX.checkmailbox' format)
+     * @param boolean $autocreate Whether or not to create the checkmailbox if not found (defaults to true)
      * @return boolean
      */
-    public function mailboxExists($mailbox, $create = true) {
-        if (trim($mailbox) == '' || !strstr($mailbox, 'INBOX.')) {
-            // this is a critical error with either the mailbox name blank or an invalid mailbox name
-            // need to stop processing and exit at this point
-            exit();
-        }
-        $portstring = $this->mailPort.'/'.$this->mailService.'/'.$this->mailServiceOption;
-
-        $mbox = imap_open('{'.$this->mailMailHost.':'.$portstring.'}', $this->mailMailboxUsername, $this->mailMailboxPassword, OP_HALFOPEN);
-        $list = imap_getmailboxes($mbox,'{'.$this->mailMailHost.':'.$portstring.'}', "*");
-
-        $mailboxFound = false;
-
-        if (is_array($list)) {
-            foreach ($list as $key => $val) {
-                // Get the mailbox name only
-                $nameArr = explode('}', imap_utf7_decode($val->name));
-                $nameRaw = $nameArr[count($nameArr) - 1];
-                if ($mailbox == $nameRaw) {
-                    $mailboxFound = true;
-                }
-            }
-            if ((!$mailboxFound) && $create) {
-                @imap_createmailbox($mbox, imap_utf7_encode('{'.$this->mailMailHost.':'.$portstring.'}'.$mailbox));
-                imap_close($mbox);
-                return true;
-            } else {
-                imap_close($mbox);
-                return false;
-            }
-        } else {
-            imap_close($mbox);
+    public function mailboxFolderExists($mailboxFolder, $autocreate = true) {
+        if (trim($mailboxFolder) == '' || !strstr($mailboxFolder, 'INBOX.') || $this->mailService == 'pop3') {
             return false;
         }
+        $portstring = $this->mailPort.'/'.$this->mailService.'/'.$this->mailServiceOption;
+        
+        $imapStream = @imap_open('{'.$this->mailMailHost.':'.$portstring.'}'.$this->mailBoxname, $this->mailMailboxUsername, $this->mailMailboxPassword, OP_HALFOPEN);
+        if (!$imapStream) {
+			$this->errorMsg = imap_last_error();
+			return false;
+		}
+
+        $folderList = imap_getmailboxes($imapStream,'{'.$this->mailMailHost.':'.$portstring.'}', "*");
+        
+        $mailboxFolderFound = false;
+
+        if (is_array($folderList)) {
+            foreach ($folderList as $key => $val) {
+                // Get the mailbox name only
+                $nameArr = explode('}', imap_utf7_decode($val->name));
+                echo print_r($nameArr, true).'<br>';
+                $nameRaw = $nameArr[count($nameArr) - 1];
+                if ($mailboxFolder == $nameRaw) {
+                    $mailboxFolderFound = true;
+                }
+            }
+        }
+
+        if ((!$mailboxFolderFound) && $autocreate) {
+            if (@imap_createmailbox($imapStream, imap_utf7_encode('{'.$this->mailMailHost.':'.$portstring.'}'.$mailboxFolder))) {
+                imap_close($imapStream);
+                return true;
+            }
+        }
+        
+        imap_close($imapStream);
+        return false;
     }
 
     /**
@@ -325,13 +331,13 @@ class GoodNewsBounceMailHandler {
      */
     public function processMailbox() {
         // Error: No mailbox object available (not initialized!)
-		if (!$this->_mailbox_object || !is_resource($this->_mailbox_object)) {
+		if (!$this->_imapStream || !is_resource($this->_imapStream)) {
             $this->modx->log(modX::LOG_LEVEL_ERROR, 'GoodNewsBounceMailHandler::processMailbox() - init error: No mailbox open.');
 		    return false;
 		}
 
         // Initialize counters
-        $this->_cTotal       = imap_num_msg($this->_mailbox_object);
+        $this->_cTotal       = imap_num_msg($this->_imapStream);
         $this->_cFetch       = $this->_cTotal;
         $this->_cProcessed   = 0;
         $this->_cUnprocessed = 0;
@@ -339,13 +345,13 @@ class GoodNewsBounceMailHandler {
         $this->_cMoved       = 0;
         
         // Maximum number of messages to process
-        if ($this->_cFetch > $this->max_mails_batchsize) { $this->_cFetch = $this->max_mails_batchsize; }
+        if ($this->_cFetch > $this->maxMailsBatchsize) { $this->_cFetch = $this->maxMailsBatchsize; }
         
         // Fetch one message per iteration
         for ($msgnr = 1; $msgnr <= $this->_cFetch; $msgnr++) {
 
             // Fetches all the structured information for a given message and returns the structure in an object
-            $structure = imap_fetchstructure($this->_mailbox_object, $msgnr);
+            $structure = imap_fetchstructure($this->_imapStream, $msgnr);
             
             // Is it a standard DSN msg?
             if ($structure->type == 1 && 
@@ -379,23 +385,23 @@ class GoodNewsBounceMailHandler {
             if (is_array($result) && $result['bounce_type']) {
             
                 /*
-                if ((!$this->testmode) && (!$this->disable_delete)) {
+                if ((!$this->testmode) && (!$this->disableDelete)) {
                 
-                    @imap_delete($this->_mailbox_object, $msgnr);
+                    @imap_delete($this->_imapStream, $msgnr);
                     $this->_cDeleted++;
                     
                 } elseif ($this->moveHard) {
                 
                     // Check if the move directory exists, if not create it
-                    $this->mailboxExists($this->mailHardMailbox);
-                    @imap_mail_move($this->_mailbox_object, $msgnr, $this->mailHardMailbox);
+                    $this->mailboxFolderExists($this->mailHardMailbox);
+                    @imap_mail_move($this->_imapStream, $msgnr, $this->mailHardMailbox);
                     $this->_cMoved++;
                     
                 } elseif ($this->moveSoft) {
                 
                     // Check if the move directory exists, if not create it
-                    $this->mailboxExists($this->mailSoftMailbox);
-                    @imap_mail_move($this->_mailbox_object, $msgnr, $this->mailSoftMailbox);
+                    $this->mailboxFolderExists($this->mailSoftMailbox);
+                    @imap_mail_move($this->_imapStream, $msgnr, $this->mailSoftMailbox);
                     $this->_cMoved++;
                 }
                 
@@ -409,11 +415,7 @@ class GoodNewsBounceMailHandler {
             //  - messages which are not bounce messages in general (e.g. someone manually sent a mail to the bounce mailbox)
             } else {
                 if ($this->mailNotClassifiedMessageAction == 'move') {
-                    // Check if the mail folder exists, if not create it
-                    $this->mailboxExists($this->mailNotClassifiedMailbox);
-                    @imap_mail_move($this->_mailbox_object, $msgnr, $this->mailNotClassifiedMailbox);
-                    $this->_cMoved++;
-
+                    $this->_moveMessage($msgnr, $this->mailNotClassifiedMailbox);
                 } else {
                     $this->_deleteMessage($msgnr);
                 }
@@ -421,20 +423,35 @@ class GoodNewsBounceMailHandler {
         
         } // end: for
         
-        $this->closeMailbox();
+        $this->closeImapStream();
         return true;
+    }
+    
+    /**
+     * Move a message.
+     * 
+     * @access private
+     * @param mixed $msgnr The number of the message.
+     * @param mixed $mailboxFolder The name of the mailbox folder.
+     * @return void
+     */
+    private function _moveMessage($msgnr, $mailboxFolder) {
+        // Check if the mail folder exists, if not create it
+        $this->mailboxFolderExists($mailboxFolder);
+        @imap_mail_move($this->_imapStream, $msgnr, $mailboxFolder);
+        $this->_cMoved++;
     }
     
     /**
      * Delete a message.
      * 
      * @access private
-     * @param mixed $msgnr
+     * @param mixed $msgnr The number of the message.
      * @return void
      */
     private function _deleteMessage($msgnr) {
-        if (!$this->testmode && !$this->disable_delete) {
-            @imap_delete($this->_mailbox_object, $msgnr);
+        if (!$this->testmode && !$this->disableDelete) {
+            @imap_delete($this->_imapStream, $msgnr);
             $this->_cDeleted++;
         }
         $this->_cUnprocessed++;
@@ -458,8 +475,8 @@ class GoodNewsBounceMailHandler {
         if ($type == 'DSN') {
 
             // First part of DSN (Delivery Status Notification), human-readable explanation
-            $dsnMsg          = imap_fetchbody($this->_mailbox_object, $msgnr, '1');
-            $dsnMsgStructure = imap_bodystruct($this->_mailbox_object, $msgnr, '1');
+            $dsnMsg          = imap_fetchbody($this->_imapStream, $msgnr, '1');
+            $dsnMsgStructure = imap_bodystruct($this->_imapStream, $msgnr, '1');
             
             switch ($dsnMsgStructure->encoding) {
                 case 3: // Encoding = BASE64
@@ -471,22 +488,22 @@ class GoodNewsBounceMailHandler {
                 }
             
             // Second part of DSN (Delivery Status Notification), delivery-status
-            $dsnReport = imap_fetchbody($this->_mailbox_object, $msgnr, '2');
+            $dsnReport = imap_fetchbody($this->_imapStream, $msgnr, '2');
             
             // Determine bounce type
             $result = bmhDSNRules($dsnMsg, $dsnReport);
             
         } else {
 
-            $structure = imap_fetchstructure($this->_mailbox_object, $msgnr);
+            $structure = imap_fetchstructure($this->_imapStream, $msgnr);
             
             switch ($structure->type) {
                 case 0: // Content-type = text
-                    $body = imap_fetchbody($this->_mailbox_object, $msgnr, '1');
+                    $body = imap_fetchbody($this->_imapStream, $msgnr, '1');
                     break;
                     
                 case 1: // Content-type = multipart
-                    $body = imap_fetchbody($this->_mailbox_object, $msgnr, '1');
+                    $body = imap_fetchbody($this->_imapStream, $msgnr, '1');
 
                     // Detect encoding and decode - only base64
                     if ($structure->parts[0]->encoding == 4) {
@@ -497,7 +514,7 @@ class GoodNewsBounceMailHandler {
                     break;
                     
                 case 2: // Content-type = message
-                    $body = imap_body($this->_mailbox_object, $msgnr);
+                    $body = imap_body($this->_imapStream, $msgnr);
 
                     if ($structure->encoding == 4) {
                         $body = quoted_printable_decode($body);
@@ -516,7 +533,7 @@ class GoodNewsBounceMailHandler {
 
         // Get custom X-headers:
         // Scan message source for X-goodnews-user-id and X-goodnews-mailing-id
-        $source = imap_body($this->_mailbox_object, $msgnr);
+        $source = imap_body($this->_imapStream, $msgnr);
         if (preg_match('/X-goodnews-mailing-id[: \t\n]+([0-9]+)/i', $source, $match)) {
             $result['mailing_id'] = $match[1];
         }
@@ -530,10 +547,10 @@ class GoodNewsBounceMailHandler {
         }
         
         // Debug output
-        if ($this->debug_rules) {
+        if ($this->debug) {
             $this->modx->log(modX::LOG_LEVEL_INFO, print_r($result, true));
             if ($result['bounce_type'] == false) {
-                $mailSource = imap_fetchheader($this->_mailbox_object, $msgnr).PHP_EOL.imap_body($this->_mailbox_object, $msgnr);
+                $mailSource = imap_fetchheader($this->_imapStream, $msgnr).PHP_EOL.imap_body($this->_imapStream, $msgnr);
                 $this->modx->log(modX::LOG_LEVEL_INFO, quoted_printable_decode($mailSource));
             }
         }
@@ -576,7 +593,9 @@ class GoodNewsBounceMailHandler {
     public function getSubscriberID($email) {
         $profile = $this->modx->getObject('modUserProfile', array('email' => $email));
         if (!is_object($profile)) {
-            $this->modx->log(modX::LOG_LEVEL_INFO, 'Could not determine subscriber ID. Subscriber with email address: '.$email.' not found.');
+            if ($this->debug) {
+                $this->modx->log(modX::LOG_LEVEL_INFO, 'Could not determine subscriber ID. Subscriber with email address: '.$email.' not found.');
+            }
 		    return false;
         }
         return $profile->get('internalKey');

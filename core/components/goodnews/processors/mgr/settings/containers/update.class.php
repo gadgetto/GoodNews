@@ -178,7 +178,6 @@ class ContainerSettingsUpdateProcessor extends modObjectUpdateProcessor {
         }
 
         $bmh->testmode              = true;
-        $bmh->disable_delete        = true;
         
         $bmh->mailService           = $this->object->getProperty('mailService', 'goodnews');
         $bmh->mailMailHost          = $this->object->getProperty('mailMailHost', 'goodnews');
@@ -188,8 +187,8 @@ class ContainerSettingsUpdateProcessor extends modObjectUpdateProcessor {
         $bmh->mailPort              = $this->object->getProperty('mailPort', 'goodnews');
         $bmh->mailServiceOption     = $this->object->getProperty('mailServiceOption', 'goodnews');
         
-        if ($bmh->openMailbox()) {
-            $bmh->closeMailbox();
+        if ($bmh->openImapStream()) {
+            $bmh->closeImapStream();
             return true;
         } else {
             return false;

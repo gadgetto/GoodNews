@@ -257,6 +257,22 @@ GoodNews.window.UpdateContainerSettings = function(config) {
                     ,forceSelection: true
                     ,enableKeyEvents: true
                     ,anchor: '100%'
+                    /*
+                    ,listeners: {
+                        'select': {
+                            scope:this
+                            ,fn:function(combo,record,index) {
+                                var sb_message_action = Ext.getCmp('mail_softbounced_message_action');
+                                // disable/enable fields related to imap service
+                                if (index=='pop3') {
+                                    tplsel.show();
+                                } else {
+                                    tplsel.hide();
+                                }
+                            }
+                        }
+                    }
+                    */
                 },{
                     xtype: MODx.expandHelp ? 'label' : 'hidden'
                     ,forId: 'mail_service'

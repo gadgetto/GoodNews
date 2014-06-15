@@ -56,19 +56,24 @@ require_once $sources['source_core'].'/model/goodnews/goodnewsbmh.class.php';
 // testing examples
 $bmh = new GoodNewsBounceMailHandler($modx);
 
-//$bmh->testmode            = true; // false is default, no need to specify
-$bmh->debug_rules          = true;
-$bmh->max_mails_batchsize  = 200;
-//$bmh->disable_delete      = false; // false is default, no need to specify
-$bmh->purge_unprocessed   = true; // false is default, no need to specify
+$bmh->testmode             = true; // false is default, no need to specify
+$bmh->debug                = true;
+$bmh->maxMailsBatchsize    = 200;
+//$bmh->disableDelete        = false; // false is default, no need to specify
 
-$bmh->mailService          = 'pop3'; // the service to use (imap or pop3), default is 'imap'
+//$bmh->mailService          = 'pop3'; // the service to use (imap or pop3), default is 'imap'
+//$bmh->mailPort             = 110; // the port to access your mailbox, default is 143
+//$bmh->mailServiceOption    = 'tls'; // the service options (none, tls, notls, ssl, etc.), default is 'notls'
+
+$bmh->mailService          = 'imap'; // the service to use (imap or pop3), default is 'imap'
+$bmh->mailPort             = 993; // the port to access your mailbox, default is 143
+$bmh->mailServiceOption    = 'ssl'; // the service options (none, tls, notls, ssl, etc.), default is 'notls'
+
+$bmh->mailBoxname          = 'INBOX'; // the mailbox to access, default is 'INBOX'
+
 $bmh->mailMailHost         = 'mxv1.is1130.com'; // your mail server
 $bmh->mailMailboxUsername  = 'noreply@bitego.com'; // your mailbox username
 $bmh->mailMailboxPassword  = 'n0r3ply'; // your mailbox password
-//$bmh->mailBoxname         = 'INBOX'; // the mailbox to access, default is 'INBOX'
-$bmh->mailPort             = 110; // the port to access your mailbox, default is 143
-$bmh->mailServiceOption    = 'tls'; // the service options (none, tls, notls, ssl, etc.), default is 'notls'
 
 //$bmh->mailSoftBouncedMessageAction = 'delete';
 //$bmh->mailSoftMailbox              = 'INBOX.Softbounces';
@@ -79,12 +84,16 @@ $bmh->mailServiceOption    = 'tls'; // the service options (none, tls, notls, ss
 //$bmh->mailMaxHardBounces           = 1;
 //$bmh->mailMaxHardBouncesAction     = 'delete';
 
-if ($bmh->openMailbox()) {
+
+$bmh->mailboxFolderExists('INBOX.Test');
+echo $bmh->errorMsg;
+
+if ($bmh->openImapStream()) {
     echo 'Connected to mailbox.<br><br>';
 
-    echo $bmh->error_msg;
-    
-    $bmh->processMailbox();
+    echo $bmh->errorMsg;
+        
+    //$bmh->processMailbox();
     
     //$time = time();
     //$bmh->addSubscriberBounce('2', $time, 'hard');
@@ -112,10 +121,10 @@ if ($bmh->openMailbox()) {
 
 
 } else {
-    echo 'Connection to mailbox failed.<br><br>';
+    echo 'Connection to mailbox failed. :-(<br><br>';
 }
 
-$bmh->closeMailbox();
+$bmh->closeImapStream();
 
 /***** End test-code *****/
 

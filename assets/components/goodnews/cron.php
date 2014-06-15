@@ -84,8 +84,6 @@ if (!$modx->goodnews->isMultiProcessing) {
     foreach ($mailingsToSend as $mailingid){
         $modx->goodnewsmailing->processMailing($mailingid);
     }
-    // after a bulk of mails is sent -> start bounce handling
-    bounceHandling($modx, $debug);
 
 // Otherwise start multiple worker processes
 } else {
@@ -117,12 +115,13 @@ if (!$modx->goodnews->isMultiProcessing) {
         sleep(2);
         if (!$modx->goodnewsprocesshandler->status()) {
             // If after this time no process is running, there are no more mailings to send 
-            // -> so start bounce handling
-            bounceHandling($modx, $debug);
             break;
         }
     }
 }
+
+// -> bounce handling
+bounceHandling($modx, $debug);
 
 
 /**
@@ -142,18 +141,18 @@ function bounceHandling(&$modx, $debug_bmh = false) {
         $modx->bmh->getBmhContainerProperties($containerID);
         
         if ($debug_bmh) {
-            $modx->bmh->debug_rules          = true;
-            $modx->bmh->max_mails_batchsize  = 20;
+            $modx->bmh->debug             = true;
+            $modx->bmh->maxMailsBatchsize = 20;
         }
 
-        if ($modx->bmh->openMailbox()) {
+        if ($modx->bmh->openImapStream()) {
             $modx->bmh->processMailbox();
         } else {
             $modx->log(modX::LOG_LEVEL_ERROR,'[GoodNews] cron.php - Connection to mailhost failed: '.$modx->bmh->mailMailHost);
-            if (!empty($modx->bmh->error_msg)) {
-                $modx->log(modX::LOG_LEVEL_ERROR,'[GoodNews] cron.php - PhpIMAP error message: '.$modx->bmh->error_msg);
+            if (!empty($modx->bmh->errorMsg)) {
+                $modx->log(modX::LOG_LEVEL_ERROR,'[GoodNews] cron.php - PhpIMAP error message: '.$modx->bmh->errorMsg);
             }
         }
     }
-    $modx->bmh->closeMailbox();
+    $modx->bmh->closeImapStream();
 }
