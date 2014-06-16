@@ -369,12 +369,6 @@ Ext.extend(GoodNewsResource.panel.Mailing,MODx.panel.Resource,{
                 ,name: 'created_by'
                 ,hiddenName: 'createdby'
                 ,id: 'modx-resource-createdby'
-                ,allowBlank: true
-                ,baseParams: {
-                    action: version_compare(MODx.config.version, '2.3.0-dev', '>=') ? 'security/user/getlist' : 'getlist'
-                    ,combo: '1'
-                    ,limit: 0
-                }
                 ,width: 300
                 ,value: config.record.createdby || MODx.user.id
             }]

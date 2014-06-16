@@ -5,21 +5,25 @@
 /* FileUploadField component styles */
 .x-form-file-wrap {
     position: relative;
-    height: 32px;
+    height: 32px !important;
 }
 .x-form-file-wrap .x-form-file {
 	position: absolute;
 	right: 0;
 	-moz-opacity: 0;
-	filter:alpha(opacity: 0);
+	filter: alpha(opacity: 0);
 	opacity: 0;
 	z-index: 2;
-    height: 32px;
+	height: 30px !important;
 }
 .x-form-file-wrap .x-form-file-btn {
 	position: absolute;
 	right: 0;
 	z-index: 1;
+	padding: 0 !important;
+	height: 30px !important;
+	line-height: 30px !important;
+	padding: 0 15px !important;
 }
 .x-form-file-wrap .x-form-file-text {
     position: absolute;
@@ -124,14 +128,6 @@
     .gon-testdummy-yes {
         color: #6060ff; /* blue */
     }
-
-/* Edit subscribers tree-node icons */
-.gon-icn-group {
-    background: url(../img/gongroup.png) no-repeat center left !important;
-}
-.gon-icn-category {
-    background: url(../img/goncategory.png) no-repeat center left !important;
-}
 
 .gon-desc-under {
     color: #aaaaaa;

@@ -256,10 +256,6 @@ GoodNews.window.Group = function(config) {
             ,anchor: '100%'
             ,lazyRender: true
             ,itemId: 'usergroup'
-            ,baseParams: {
-                action: version_compare(MODx.config.version, '2.3.0-dev', '>=') ? 'security/group/getlist' : 'getlist'
-                ,addNone: true
-            }
         }]
     });
     GoodNews.window.Group.superclass.constructor.call(this,config);

@@ -55,12 +55,12 @@ Ext.extend(GoodNewsResource.page.CreateGoodNewsResourceMailing,MODx.page.CreateR
                 if (e == 'yes') {
                     MODx.releaseLock(MODx.request.id);
                     MODx.sleep(400);
-                    MODx.loadPage(MODx.action['goodnews:index']);
+                    MODx.loadPage(''+MODx.action['goodnews:index'])
                 }
             },this);
         } else {
             MODx.releaseLock(MODx.request.id);
-            MODx.loadPage(MODx.action['goodnews:index']);
+            MODx.loadPage(''+MODx.action['goodnews:index'])
         }
     }
 });

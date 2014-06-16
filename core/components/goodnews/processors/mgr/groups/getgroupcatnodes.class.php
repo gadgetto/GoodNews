@@ -190,14 +190,25 @@ class GroupCategoryGetNodesProcessor extends modProcessor {
         } else {
             $cssClass = '';
         }
+        
+        $version = $this->modx->getVersionData();
+        $fullVersion = $version['full_version'];
+        if (version_compare($fullVersion, '2.3.0-dev', '>=')) {
+            // We are on Revo >= 2.3.0
+            $iconCls = 'icon icon-cube';
+        } else {
+            // We are on Revo < 2.3.0
+            $iconCls = 'gonr-icn-group';
+        }
+
         return array(
-            'text' => '<span class="'.$cssClass.'">'.$group->get('name').'</span>',
-            'id'   => 'n_gongrp_'.$group->get('id'),
-            'leaf' => false,
-            'type' => 'gongroup',
-            'qtip' => $group->get('description'),
+            'text'    => '<span class="'.$cssClass.'">'.$group->get('name').'</span>',
+            'id'      => 'n_gongrp_'.$group->get('id'),
+            'leaf'    => false,
+            'type'    => 'gongroup',
+            'qtip'    => $group->get('description'),
             'checked' => $checked,
-            'iconCls'  => 'gonr-icn-group',
+            'iconCls' => $iconCls,
         );
     }
 
@@ -218,14 +229,25 @@ class GroupCategoryGetNodesProcessor extends modProcessor {
         } else {
             $checked = false;
         }
+        
+        $version = $this->modx->getVersionData();
+        $fullVersion = $version['full_version'];
+        if (version_compare($fullVersion, '2.3.0-dev', '>=')) {
+            // We are on Revo >= 2.3.0
+            $iconCls = 'icon icon-tag';
+        } else {
+            // We are on Revo < 2.3.0
+            $iconCls = 'gonr-icn-category';
+        }
+
         return array(
-            'text' => $category->get('name'),
-            'id'   => 'n_goncat_'.$category->get('id').'_'.$this->gonGroup->get('id'),
-            'leaf' => true,
-            'type' => 'goncategory',
-            'qtip' => $category->get('description'),
+            'text'    => $category->get('name'),
+            'id'      => 'n_goncat_'.$category->get('id').'_'.$this->gonGroup->get('id'),
+            'leaf'    => true,
+            'type'    => 'goncategory',
+            'qtip'    => $category->get('description'),
             'checked' => $checked,
-            'iconCls'  => 'gonr-icn-category',
+            'iconCls' => $iconCls,
         );
     }
 
@@ -248,15 +270,25 @@ class GroupCategoryGetNodesProcessor extends modProcessor {
         } else {
             $cssClasss = '';
         }
+
+        $version = $this->modx->getVersionData();
+        $fullVersion = $version['full_version'];
+        if (version_compare($fullVersion, '2.3.0-dev', '>=')) {
+            // We are on Revo >= 2.3.0
+            $iconCls = 'icon icon-cube';
+        } else {
+            // We are on Revo < 2.3.0
+            $iconCls = 'gonr-icn-group';
+        }
         
         return array(
-            'text' => '<span class="'.$cssClass.'">'.$group->get('name').'</span>',
-            'id'   => 'n_gongrp_'.$group->get('id'),
-            'leaf' => false,
-            'type' => 'gongroup',
-            'qtip' => $group->get('description'),
+            'text'    => '<span class="'.$cssClass.'">'.$group->get('name').'</span>',
+            'id'      => 'n_gongrp_'.$group->get('id'),
+            'leaf'    => false,
+            'type'    => 'gongroup',
+            'qtip'    => $group->get('description'),
             'checked' => $checked,
-            'iconCls'  => 'gonr-icn-group',
+            'iconCls' => $iconCls,
         );
     }
 
@@ -274,14 +306,24 @@ class GroupCategoryGetNodesProcessor extends modProcessor {
             $checked = false;
         }
         
+        $version = $this->modx->getVersionData();
+        $fullVersion = $version['full_version'];
+        if (version_compare($fullVersion, '2.3.0-dev', '>=')) {
+            // We are on Revo >= 2.3.0
+            $iconCls = 'icon icon-tag';
+        } else {
+            // We are on Revo < 2.3.0
+            $iconCls = 'gonr-icn-category';
+        }
+        
         return array(
-            'text' => $category->get('name'),
-            'id'   => 'n_goncat_'.$category->get('id').'_'.$this->gonGroup->get('id'),
-            'leaf' => true,
-            'type' => 'goncategory',
-            'qtip' => $category->get('description'),
+            'text'    => $category->get('name'),
+            'id'      => 'n_goncat_'.$category->get('id').'_'.$this->gonGroup->get('id'),
+            'leaf'    => true,
+            'type'    => 'goncategory',
+            'qtip'    => $category->get('description'),
             'checked' => $checked,
-            'iconCls'  => 'gonr-icn-category',
+            'iconCls' => $iconCls,
         );
     }
 

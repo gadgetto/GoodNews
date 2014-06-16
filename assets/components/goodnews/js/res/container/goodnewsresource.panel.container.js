@@ -308,11 +308,6 @@ Ext.extend(GoodNewsResource.panel.Container,MODx.panel.Resource,{
             ,value: config.record.setting_mailingTemplate || 0
             ,anchor: '100%'
             ,editable: false
-            ,baseParams: {
-                action: version_compare(MODx.config.version, '2.3.0-dev', '>=') ? 'element/template/getlist' : 'getlist'
-                ,combo: '1'
-                ,limit: 0
-            }
         },{
             xtype: 'textfield'
             ,fieldLabel: _('goodnews.container_unsubscribe_resource')

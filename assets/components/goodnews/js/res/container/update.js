@@ -32,7 +32,7 @@ Ext.extend(GoodNewsResource.page.UpdateGoodNewsResourceContainer,MODx.page.Updat
         btns.push('-');
         if (cfg.canSave == 1) {
             btns.push({
-                process: 'update'
+                process: version_compare(MODx.config.version, '2.3.0-dev', '>=') ? 'resource/update' : 'update'
                 ,text: _('save')
                 ,method: 'remote'
                 ,checkDirty: MODx.request.reload ? false : true
@@ -86,7 +86,7 @@ Ext.extend(GoodNewsResource.page.UpdateGoodNewsResourceContainer,MODx.page.Updat
         return btns;
     }
     ,loadGoodNewsManagement: function(btn,e) {
-        MODx.loadPage(MODx.action['goodnews:index'],'id='+MODx.request.id);
+        MODx.loadPage(''+MODx.action['goodnews:index'],'id='+MODx.request.id)
     }
 });
 Ext.reg('goodnewsresource-page-container-update',GoodNewsResource.page.UpdateGoodNewsResourceContainer);
