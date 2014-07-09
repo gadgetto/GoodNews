@@ -32,6 +32,8 @@ class SettingsUpdateProcessor extends modProcessor {
         $settings = array(
             'test_subject_prefix',
             'admin_groups',
+            'auto_cleanup_subscriptions',
+            'auto_cleanup_subscriptions_ttl',
             'mailing_bulk_size',
             'worker_process_limit',
             'worker_process_active',

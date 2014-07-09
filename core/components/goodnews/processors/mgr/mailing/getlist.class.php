@@ -288,7 +288,6 @@ class NewsletterGetListProcessor extends modObjectGetListProcessor {
         $c->leftJoin('GoodNewsSubscriberMeta', 'SubscriberMeta', 'SubscriberMeta.subscriber_id = modUser.id');  
         $c->where(array(
             'modUser.active' => true,
-            'Profile.blocked' => false,
             'SubscriberMeta.testdummy' => 1,
         ));
         $count = $this->modx->getCount('modUser', $c);

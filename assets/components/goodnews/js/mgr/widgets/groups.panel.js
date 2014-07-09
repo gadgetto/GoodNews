@@ -8,7 +8,6 @@
  */
 GoodNews.panel.Groups = function(config) {
     config = config || {};
-
     Ext.applyIf(config,{
         id: 'goodnews-panel-groups'
         ,title: _('goodnews.groups')

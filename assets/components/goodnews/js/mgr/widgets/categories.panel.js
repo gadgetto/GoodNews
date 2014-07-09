@@ -22,7 +22,7 @@ GoodNews.panel.Categories = function(config) {
             xtype: 'goodnews-grid-categories'
             ,cls: 'main-wrapper'
             ,preventRender: true
-        }]    
+        }]
         ,listeners: {
             'activate': {fn: function() {
                 Ext.getCmp('goodnews-grid-categories').refresh();

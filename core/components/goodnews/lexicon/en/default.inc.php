@@ -222,6 +222,10 @@ $_lang['goodnews.settings_cron_security_key']                       = 'Cron Secu
 $_lang['goodnews.settings_cron_security_key_desc']                  = 'Please enter a random (password-like) string which will be used for Cron CLI authentification. You need to configure your Cron-job with the additional CLI parameter <strong>sid=[your cron security key]</strong>. It is strongly recommended to add a key for security reasons. Leave this field empty, if you have no possibility to configure your Cron-job with an additional parameter.';
 $_lang['goodnews.settings_admin_groups']                            = 'GoodNews Administrator Groups';
 $_lang['goodnews.settings_admin_groups_desc']                       = 'Comma seperated list of MODx user-groups which have access to the GoodNews settings.';
+$_lang['goodnews.settings_auto_cleanup_subscriptions']              = 'Auto Cleanup Subscriptions';
+$_lang['goodnews.settings_auto_cleanup_subscriptions_desc']         = 'Wether or not never activated Subscriptions, including their corresponding MODX User-Accounts, will be removed automatically. This only concerns MODX User-Accounts which have GoodNews meta-data assigned! MODX User-Accounts which belongs to MODX User-Groups will stay untouched!.';
+$_lang['goodnews.settings_auto_cleanup_subscriptions_ttl']          = 'Time To Live Until Remove';
+$_lang['goodnews.settings_auto_cleanup_subscriptions_ttl_desc']     = 'Number of minutes until never activated Subscriptions will be removed automatically. (Default: 360 minutes).';
 
 $_lang['goodnews.settings_containers_none']                         = 'No GoodNews resource containers found';
 $_lang['goodnews.settings_container_id']                            = 'ID';
@@ -352,6 +356,10 @@ $_lang['setting_goodnews.worker_process_active']                    = 'Sending P
 $_lang['setting_goodnews.worker_process_active_desc']               = 'May the Cron-Job start the GoodNews sending process? This setting can be used to temporary disable the Cron trigger.';
 $_lang['setting_goodnews.admin_groups']                             = 'GoodNews Administrator Groups';
 $_lang['setting_goodnews.admin_groups_desc']                        = 'Comma seperated list of MODx user-groups which have access to the GoodNews settings.';
+$_lang['setting_goodnews.auto_cleanup_subscriptions']               = 'Auto Cleanup Subscriptions';
+$_lang['setting_goodnews.auto_cleanup_subscriptions_desc']          = 'Wether or not inactive or never activated Subscriptions, including their corresponding MODX User-Accounts, will be removed automatically. This only concerns MODX User-Accounts which have GoodNews meta-data assigned! MODX User-Accounts which belongs to MODX User-Groups stay untouched!.';
+$_lang['setting_goodnews.auto_cleanup_subscriptions_ttl']           = 'Time To Live Until Remove';
+$_lang['setting_goodnews.auto_cleanup_subscriptions_ttl_desc']      = 'Number of minutes until never activated Subscriptions will be removed automatically. (Default: 360 minutes).';
 $_lang['setting_goodnews.cron_security_key']                        = 'Cron Security Key';
 $_lang['setting_goodnews.cron_security_key_desc']                   = 'Please enter a random (password-like) string which will be used for Cron CLI authentification. You need to configure your Cron-job with the additional CLI parameter <strong>sid=[your cron security key]</strong>. It is strongly recommended to add a key for security reasons. Leave this field empty, if you have no possibility to configure your Cron-job with an additional parameter.';
 $_lang['setting_goodnews.default_container_template']               = 'Default GoodNews Container Template';

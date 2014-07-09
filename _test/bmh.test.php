@@ -85,7 +85,7 @@ $bmh->mailMailboxPassword  = 'n0r3ply'; // your mailbox password
 //$bmh->mailMaxHardBouncesAction     = 'delete';
 
 
-$bmh->mailboxFolderExists('INBOX.Test');
+//$bmh->mailboxFolderExists('INBOX.Test');
 echo $bmh->errorMsg;
 
 if ($bmh->openImapStream()) {
@@ -113,8 +113,8 @@ if ($bmh->openImapStream()) {
     echo '<br>';
     echo '<br>Found mails: '.$bmh->get_cTotal();
     echo '<br>Fetched mails: '.$bmh->get_cFetch();
-    echo '<br>Processed mails: '.$bmh->get_cProcessed();
-    echo '<br>Unprocessed mails: '.$bmh->get_cUnprocessed();
+    echo '<br>Classified mails: '.$bmh->get_cClassified();
+    echo '<br>Unclassified mails: '.$bmh->get_cUnclassified();
     echo '<br>Deleted mails: '.$bmh->get_cDeleted();
     echo '<br>Moved mails: '.$bmh->get_cMoved();
     echo '<br><br>';

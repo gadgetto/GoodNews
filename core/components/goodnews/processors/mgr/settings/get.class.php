@@ -31,15 +31,18 @@ class GetSettingsProcessor extends modProcessor {
 
         // get cached versions of system settings
         $settings = array(
-            'test_subject_prefix'    => $this->modx->getOption('goodnews.test_subject_prefix'),
-            'admin_groups'           => $this->modx->getOption('goodnews.admin_groups'),
-            // integer typecasting required to work with ExtJS.SliderField
-            'mailing_bulk_size'      => (int)$this->modx->getOption('goodnews.mailing_bulk_size'),
-            // integer typecasting required to work with ExtJS.SliderField
-            'worker_process_limit'   => (int)$this->modx->getOption('goodnews.worker_process_limit'),
+            'test_subject_prefix'            => $this->modx->getOption('goodnews.test_subject_prefix'),
+            'admin_groups'                   => $this->modx->getOption('goodnews.admin_groups'),
             // integer typecasting required to work with MODExt.xcheckbox field
-            'worker_process_active'  => (int)$this->modx->getOption('goodnews.worker_process_active'),
-            'cron_security_key'      => $this->modx->getOption('goodnews.cron_security_key'),
+            'auto_cleanup_subscriptions'     => (int)$this->modx->getOption('goodnews.auto_cleanup_subscriptions'),
+            'auto_cleanup_subscriptions_ttl' => (int)$this->modx->getOption('goodnews.auto_cleanup_subscriptions_ttl'),
+            // integer typecasting required to work with ExtJS.SliderField
+            'mailing_bulk_size'              => (int)$this->modx->getOption('goodnews.mailing_bulk_size'),
+            // integer typecasting required to work with ExtJS.SliderField
+            'worker_process_limit'           => (int)$this->modx->getOption('goodnews.worker_process_limit'),
+            // integer typecasting required to work with MODExt.xcheckbox field
+            'worker_process_active'          => (int)$this->modx->getOption('goodnews.worker_process_active'),
+            'cron_security_key'              => $this->modx->getOption('goodnews.cron_security_key'),
         );        
         $response['success'] = true;
         $response['data'] = $settings;

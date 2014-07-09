@@ -43,9 +43,6 @@ class SubscribersGetListProcessor extends modObjectGetListProcessor {
     public function prepareQueryBeforeCount(xPDOQuery $c) {
         $c->leftJoin('modUserProfile', 'Profile');
         $c->leftJoin('GoodNewsSubscriberMeta', 'SubscriberMeta', 'modUser.id = SubscriberMeta.subscriber_id');
-        $c->where(array(
-            'Profile.blocked' => 0,
-        ));
         
         $query = $this->getProperty('query', '');
         if (!empty($query)) {
@@ -80,7 +77,7 @@ class SubscribersGetListProcessor extends modObjectGetListProcessor {
 
     public function prepareQueryAfterCount(xPDOQuery $c) {
         $c->select($this->modx->getSelectColumns('modUser', 'modUser'));
-        $c->select($this->modx->getSelectColumns('modUserProfile', 'Profile', '', array('fullname', 'email', 'blocked')));
+        $c->select($this->modx->getSelectColumns('modUserProfile', 'Profile', '', array('fullname', 'email')));
         $c->select($this->modx->getSelectColumns('GoodNewsSubscriberMeta', 'SubscriberMeta', '', array('testdummy', 'createdon', 'ip', 'soft_bounces', 'hard_bounces')));
         return $c;
     }

@@ -45,6 +45,7 @@ function bmhBodyRules($body) {
         ,'status_code' => ''
         ,'diag_code'   => ''
         ,'rule_no'     => '0000'
+        ,'time'        => ''
         ,'bounce_type' => false
     );
 

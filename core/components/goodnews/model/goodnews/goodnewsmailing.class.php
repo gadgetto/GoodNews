@@ -405,7 +405,6 @@ class GoodNewsMailing {
         $c->leftJoin('GoodNewsSubscriberMeta', 'SubscriberMeta', 'SubscriberMeta.subscriber_id = modUser.id');  
         $c->where(array(
             'modUser.active' => true,
-            'Profile.blocked' => false,
             'SubscriberMeta.testdummy' => 1,
         ));
         $users = $this->modx->getCollection('modUser', $c);

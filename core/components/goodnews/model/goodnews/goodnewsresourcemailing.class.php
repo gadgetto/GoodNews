@@ -268,8 +268,7 @@ class GoodNewsResourceMailingCreateProcessor extends modResourceCreateProcessor 
                 LEFT JOIN {$tblGoodNewsGroupMember} ON {$tblGoodNewsGroupMember}.member_id = {$tblUsers}.id
                 LEFT JOIN {$tblGoodNewsCategoryMember} ON {$tblGoodNewsCategoryMember}.member_id = {$tblUsers}.id
                 WHERE ({$tblGoodNewsGroupMember}.goodnewsgroup_id IN ({$groupslist}) OR {$tblGoodNewsCategoryMember}.goodnewscategory_id IN ({$categorieslist}))
-                AND {$tblUsers}.active = 1 
-                AND {$tblUserAttributes}.blocked = 0";
+                AND {$tblUsers}.active = 1";
 
         $query = $this->modx->query($sql);
         if ($query) {
@@ -312,12 +311,10 @@ class GoodNewsResourceMailingCreateProcessor extends modResourceCreateProcessor 
 
         $c->where(array(
             'modUser.active' => true,
-            'Profile.blocked' => false,
             'Group.id:IN' => $groups,
         ));
 
         $c->select($this->modx->getSelectColumns('modUser', 'modUser', '', array('id')));
-        //$c->select($this->modx->getSelectColumns('modUserProfile', 'Profile', '', array('blocked')));
 
         $users = $this->modx->getCollection('modUser', $c);
 
@@ -522,8 +519,7 @@ class GoodNewsResourceMailingUpdateProcessor extends modResourceUpdateProcessor 
                 LEFT JOIN {$tblGoodNewsGroupMember} ON {$tblGoodNewsGroupMember}.member_id = {$tblUsers}.id
                 LEFT JOIN {$tblGoodNewsCategoryMember} ON {$tblGoodNewsCategoryMember}.member_id = {$tblUsers}.id
                 WHERE ({$tblGoodNewsGroupMember}.goodnewsgroup_id IN ({$groupslist}) OR {$tblGoodNewsCategoryMember}.goodnewscategory_id IN ({$categorieslist}))
-                AND {$tblUsers}.active = 1 
-                AND {$tblUserAttributes}.blocked = 0";
+                AND {$tblUsers}.active = 1";
 
         $query = $this->modx->query($sql);
         if ($query) {
@@ -566,12 +562,10 @@ class GoodNewsResourceMailingUpdateProcessor extends modResourceUpdateProcessor 
 
         $c->where(array(
             'modUser.active' => true,
-            'Profile.blocked' => false,
             'Group.id:IN' => $groups,
         ));
 
         $c->select($this->modx->getSelectColumns('modUser', 'modUser', '', array('id')));
-        //$c->select($this->modx->getSelectColumns('modUserProfile', 'Profile', '', array('blocked')));
 
         $users = $this->modx->getCollection('modUser', $c);
 

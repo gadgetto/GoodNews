@@ -8,6 +8,7 @@ Enhancements
 - added automatic bounce handling (parsing bounced emails and automatically handle subscriber status)
 - moved all protected container settings into GoodNews system settings
 - added system check for PHP Imap extension
+- added auto-cleanup of susbcriptions (remove never activated accounts)
 
 
 GoodNews 1.0.1-pl

@@ -12,7 +12,7 @@ GoodNews.HomePanel = function(config) {
         id: 'goodnews-panel-home'
         ,cls: 'container'
         ,bodyStyle: ''
-        ,unstyled: true        
+        ,unstyled: true
         ,items: [{
             html: '<h2 class="gon-cmp-header gon-logo">'+_('goodnews.management')+'</h2>'
             ,border: false

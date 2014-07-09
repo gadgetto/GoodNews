@@ -120,12 +120,13 @@ if (!$modx->goodnews->isMultiProcessing) {
     }
 }
 
-// -> bounce handling
+
 bounceHandling($modx, $debug);
+cleanUpSubscriptions($modx, $debug);
 
 
 /**
- * bounceHandling function.
+ * Handle bounced messages.
  * 
  * @access public
  * @param mixed &$modx The modx object
@@ -136,7 +137,10 @@ function bounceHandling(&$modx, $debug_bmh = false) {
  
     $containerIDs = $modx->bmh->getGoodNewsBmhContainers();
     //$modx->log(modX::LOG_LEVEL_INFO,'[GoodNews] cron.php - mailing containers: '.print_r($containerIDs, true));
-
+    if (!is_array($containerIDs)) {
+        return false;
+    }
+    
     foreach ($containerIDs as $containerID) {
         $modx->bmh->getBmhContainerProperties($containerID);
         
@@ -150,9 +154,53 @@ function bounceHandling(&$modx, $debug_bmh = false) {
         } else {
             $modx->log(modX::LOG_LEVEL_ERROR,'[GoodNews] cron.php - Connection to mailhost failed: '.$modx->bmh->mailMailHost);
             if (!empty($modx->bmh->errorMsg)) {
-                $modx->log(modX::LOG_LEVEL_ERROR,'[GoodNews] cron.php - PhpIMAP error message: '.$modx->bmh->errorMsg);
+                $modx->log(modX::LOG_LEVEL_ERROR,'[GoodNews] cron.php - phpIMAP error message: '.$modx->bmh->errorMsg);
             }
         }
     }
     $modx->bmh->closeImapStream();
+}
+
+/**
+ * Cleanup subscriptions ( = MODX users):
+ * - delete subscriptions which were not activated within a specific time
+ * 
+ * @access public
+ * @param mixed &$modx The modx object
+ * @param bool $debug_bmh (default: false)
+ * @return void || false
+ */
+function cleanUpSubscriptions(&$modx, $debug_bmh = false) {
+    $autoCleanUpSubscriptions = $modx->getOption('goodnews.auto_cleanup_subscriptions', null, false) ? true : false;
+    if (!$autoCleanUpSubscriptions) { return false; }
+    
+    $autoCleanUpSubscriptionsTtl = $modx->getOption('goodnews.auto_cleanup_subscriptions_ttl', null, 360);
+    // convert UNIX timestamp value to ISO date (as "SubscriberMeta.createdon" is a date field)
+    $expDate = date('Y-m-d H:i:s', time() - ($autoCleanUpSubscriptionsTtl * 60));
+
+    $c = $modx->newQuery('modUser');
+    $c->leftJoin('GoodNewsSubscriberMeta', 'SubscriberMeta', 'modUser.id = SubscriberMeta.subscriber_id');
+
+    // modUser must:
+    // - be inactive
+    // - have a cachepwd (this means it's an unactivated account)
+    // - not be in a MODX group
+    // - must not be sudo
+    // - have SubscriberMeta.createdon date < expiration date (GoodNews setting)
+    $c->where(array(
+        'active' => false,
+        'cachepwd:!=' => '', 
+        'primary_group' => 0,
+        'sudo' => 0,
+        'SubscriberMeta.createdon:<' => $expDate,
+    ));
+    
+    $users = $modx->getIterator('modUser', $c);
+    foreach ($users as $idx => $user) {
+        if ($debug_bmh) {
+            $modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] cron.php::cleanUpSubscriptions - user with ID: '.$user->get('id').' would be deleted.');
+        } else {
+            $user->remove();
+        }
+    }
 }

@@ -126,6 +126,7 @@ Ext.extend(GoodNews.grid.Containers,MODx.grid.Grid,{
             });
         }
         this.updateContainerSettingsWindow.setValues(this.menu.record);
+        this.updateContainerSettingsWindow.enableDisableFields(this.menu.record.mail_service);
         this.updateContainerSettingsWindow.show(e.target);
     }
 });
@@ -257,22 +258,14 @@ GoodNews.window.UpdateContainerSettings = function(config) {
                     ,forceSelection: true
                     ,enableKeyEvents: true
                     ,anchor: '100%'
-                    /*
                     ,listeners: {
                         'select': {
                             scope:this
                             ,fn:function(combo,record,index) {
-                                var sb_message_action = Ext.getCmp('mail_softbounced_message_action');
-                                // disable/enable fields related to imap service
-                                if (index=='pop3') {
-                                    tplsel.show();
-                                } else {
-                                    tplsel.hide();
-                                }
+                                this.enableDisableFields(combo.value);
                             }
                         }
                     }
-                    */
                 },{
                     xtype: MODx.expandHelp ? 'label' : 'hidden'
                     ,forId: 'mail_service'
@@ -620,5 +613,30 @@ GoodNews.window.UpdateContainerSettings = function(config) {
     });
     GoodNews.window.UpdateContainerSettings.superclass.constructor.call(this,config);
 };
-Ext.extend(GoodNews.window.UpdateContainerSettings,MODx.Window);
+Ext.extend(GoodNews.window.UpdateContainerSettings,MODx.Window,{
+    enableDisableFields: function(service) {
+        var sbma = Ext.getCmp('mail_softbounced_message_action');
+        var hbma = Ext.getCmp('mail_hardbounced_message_action');
+        var smb  = Ext.getCmp('mail_soft_mailbox');
+        var hmb  = Ext.getCmp('mail_hard_mailbox');
+        var ncma = Ext.getCmp('mail_notclassified_message_action');
+        var ncmb = Ext.getCmp('mail_notclassified_mailbox');
+        // disable/enable fields related to imap service
+        if (service=='pop3') {
+            sbma.disable();
+            hbma.disable();
+            smb.disable();
+            hmb.disable();
+            ncma.disable();
+            ncmb.disable();
+        } else {
+            sbma.enable();
+            hbma.enable();
+            smb.enable();
+            hmb.enable();
+            ncma.enable();
+            ncmb.enable();
+        }
+    }
+});
 Ext.reg('goodnews-window-container-settings-update',GoodNews.window.UpdateContainerSettings);

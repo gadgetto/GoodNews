@@ -116,11 +116,11 @@ class GoodNewsBounceMailHandler {
     /** @var int $_cFetch Count of messages to fetch from mailbox (limited by $maxMailsBatchsize) */
     private $_cFetch = 0;
     
-    /** @var int $_cProcessed Count of messages which were processed */
-    private $_cProcessed = 0;
+    /** @var int $_cClassified Count of messages which could be classified */
+    private $_cClassified = 0;
 
-    /** @var int $_cUnprocessed Count of messages which were not processed */
-    private $_cUnprocessed = 0;
+    /** @var int $_cUnclassified Count of messages which could not be classified */
+    private $_cUnclassified = 0;
     
     /** @var int $_cDeleted Count of messages which were deleted */
     private $_cDeleted = 0;
@@ -178,23 +178,23 @@ class GoodNewsBounceMailHandler {
     }
 
     /**
-     * Getter for _cProcessed (Count of messages which were processed)
+     * Getter for _cClassified (Count of messages which could be classified)
      * 
      * @access public
-     * @return int $this->_cProcessed
+     * @return int $this->_cClassified
      */
-    public function get_cProcessed() {
-        return $this->_cProcessed;
+    public function get_cClassified() {
+        return $this->_cClassified;
     }
 
     /**
-     * Getter for _cUnprocessed (Count of messages which were not processed)
+     * Getter for _cUnclassified (Count of messages which could not be classified)
      * 
      * @access public
-     * @return int $this->_cUnprocessed
+     * @return int $this->_cUnclassified
      */
-    public function get_cUnprocessed() {
-        return $this->_cUnprocessed;
+    public function get_cUnclassified() {
+        return $this->_cUnclassified;
     }
 
     /**
@@ -303,7 +303,7 @@ class GoodNewsBounceMailHandler {
             foreach ($folderList as $key => $val) {
                 // Get the mailbox name only
                 $nameArr = explode('}', imap_utf7_decode($val->name));
-                echo print_r($nameArr, true).'<br>';
+                //echo print_r($nameArr, true).'<br>';
                 $nameRaw = $nameArr[count($nameArr) - 1];
                 if ($mailboxFolder == $nameRaw) {
                     $mailboxFolderFound = true;
@@ -332,17 +332,17 @@ class GoodNewsBounceMailHandler {
     public function processMailbox() {
         // Error: No mailbox object available (not initialized!)
 		if (!$this->_imapStream || !is_resource($this->_imapStream)) {
-            $this->modx->log(modX::LOG_LEVEL_ERROR, 'GoodNewsBounceMailHandler::processMailbox() - init error: No mailbox open.');
+            $this->modx->log(modX::LOG_LEVEL_ERROR, 'GoodNewsBounceMailHandler::processMailbox() - init error: No imapStream open.');
 		    return false;
 		}
 
         // Initialize counters
-        $this->_cTotal       = imap_num_msg($this->_imapStream);
-        $this->_cFetch       = $this->_cTotal;
-        $this->_cProcessed   = 0;
-        $this->_cUnprocessed = 0;
-        $this->_cDeleted     = 0;
-        $this->_cMoved       = 0;
+        $this->_cTotal        = imap_num_msg($this->_imapStream);
+        $this->_cFetch        = $this->_cTotal;
+        $this->_cClassified   = 0;
+        $this->_cUnclassified = 0;
+        $this->_cDeleted      = 0;
+        $this->_cMoved        = 0;
         
         // Maximum number of messages to process
         if ($this->_cFetch > $this->maxMailsBatchsize) { $this->_cFetch = $this->maxMailsBatchsize; }
@@ -367,7 +367,6 @@ class GoodNewsBounceMailHandler {
                 $result = $this->_classifyBounceMessage($msgnr, 'BODY');
             }
 
-
             // If the message is classified -> process it!
             // We should now have the following array (a sample):
             /*
@@ -379,36 +378,60 @@ class GoodNewsBounceMailHandler {
                 ,'status_code' => '5.0.0'
                 ,'diag_code'   => 'smtp; 554 mailbox not found'
                 ,'rule_no'     => '0000'
+                ,'time'        => '1392325284'
                 ,'bounce_type' => 'hard'
             )
             */
             if (is_array($result) && $result['bounce_type']) {
             
-                /*
-                if ((!$this->testmode) && (!$this->disableDelete)) {
-                
-                    @imap_delete($this->_imapStream, $msgnr);
-                    $this->_cDeleted++;
-                    
-                } elseif ($this->moveHard) {
-                
-                    // Check if the move directory exists, if not create it
-                    $this->mailboxFolderExists($this->mailHardMailbox);
-                    @imap_mail_move($this->_imapStream, $msgnr, $this->mailHardMailbox);
-                    $this->_cMoved++;
-                    
-                } elseif ($this->moveSoft) {
-                
-                    // Check if the move directory exists, if not create it
-                    $this->mailboxFolderExists($this->mailSoftMailbox);
-                    @imap_mail_move($this->_imapStream, $msgnr, $this->mailSoftMailbox);
-                    $this->_cMoved++;
+                if ($result['bounce_type'] == 'soft') {
+                    if ($this->mailSoftBouncedMessageAction == 'move') {
+                        $this->_moveMessage($msgnr, $this->mailSoftMailbox);
+                    } else {
+                        $this->_deleteMessage($msgnr);
+                    }
+                } else {
+                    if ($this->mailHardBouncedMessageAction == 'move') {
+                        $this->_moveMessage($msgnr, $this->mailHardMailbox);
+                    } else {
+                        $this->_deleteMessage($msgnr);
+                    }
+                }
+
+                // Now process the subscriber (if we have a userID)
+                if ($result['user_id']) {
+                    $this->addSubscriberBounce($result['user_id'], $result['time'], $result['bounce_type']);
+
+                    if ($result['bounce_type'] == 'soft') {
+                        $subscriberSoftBounceCounter = $this->getSubscriberBounceCounter($result['user_id'], 'soft');
+                        $subscriberSoftBounceLag     = $this->getSubscriberBounceLag($result['user_id'], 'soft');
+                        if ($subscriberSoftBounceCounter > $this->mailMaxSoftBounces && $subscriberSoftBounceLag > $this->mailMaxSoftBounceLag) {
+                            if ($this->mailMaxSoftBouncesAction == 'disable') {
+                                $this->_disableSubscriber($result['user_id']);
+                            } else {
+                                $this->_deleteSubscriber($result['user_id']);
+                            }
+                        }
+                    } else {
+                        $subscriberHardBounceCounter = $this->getSubscriberBounceCounter($result['user_id'], 'hard');
+                        $subscriberHardBounceLag     = $this->getSubscriberBounceLag($result['user_id'], 'hard');
+                        if ($subscriberHardBounceCounter > $this->mailMaxHardBounces && $subscriberHardBounceLag > $this->mailMaxHardBounceLag) {
+                            if ($this->mailMaxHardBouncesAction == 'disable') {
+                                $this->_disableSubscriber($result['user_id']);
+                            } else {
+                                $this->_deleteSubscriber($result['user_id']);
+                            }
+                        }
+                    }
                 }
                 
-                
-                $this->_cProcessed++;
-                */
-            
+                // At last process the mailing (if we have a mailingID)
+                if ($result['mailing_id']) {
+                    $this->increaseMailingBounceCounter($result['mailing_id'], $result['bounce_type']);
+                }            
+
+                $this->_cClassified++;
+                        
             // Delete or move messages which couldn't be classified/processed:
             //  - messages which have no usable information about the bounce reason
             //  - completely empty messages
@@ -419,6 +442,7 @@ class GoodNewsBounceMailHandler {
                 } else {
                     $this->_deleteMessage($msgnr);
                 }
+                $this->_cUnclassified++;
             }
         
         } // end: for
@@ -454,7 +478,6 @@ class GoodNewsBounceMailHandler {
             @imap_delete($this->_imapStream, $msgnr);
             $this->_cDeleted++;
         }
-        $this->_cUnprocessed++;
     }
 
     /**
@@ -546,6 +569,10 @@ class GoodNewsBounceMailHandler {
             $result['user_id'] = $this->getSubscriberID($result['email']);
         }
         
+        // Get the sending date of the bounce message
+        $msgheader = imap_headerinfo($this->_imapStream, $msgnr);
+        $result['time'] = $msgheader->udate;
+        
         // Debug output
         if ($this->debug) {
             $this->modx->log(modX::LOG_LEVEL_INFO, print_r($result, true));
@@ -609,10 +636,10 @@ class GoodNewsBounceMailHandler {
      * @param string $bounceType The bounce type (hard || soft)
      * @return bounce counter or false
      */
-    public function getSubscriberBounceCounter($subscriberID, $bounceType) {
-        $meta = $this->modx->getObject('GoodNewsSubscriberMeta', array('subscriber_id' => $subscriberID));
+    public function getSubscriberBounceCounter($subscriberId, $bounceType) {
+        $meta = $this->modx->getObject('GoodNewsSubscriberMeta', array('subscriber_id' => $subscriberId));
         if (!is_object($meta)) {
-            $this->modx->log(modX::LOG_LEVEL_INFO, 'Could not read bounce counter. Subscriber with ID: '.$subscriberID.' not found.');
+            $this->modx->log(modX::LOG_LEVEL_INFO, 'Could not read bounce counter. Subscriber with ID: '.$subscriberId.' not found.');
 		    return false;
         }
 
@@ -645,10 +672,10 @@ class GoodNewsBounceMailHandler {
      * @param string $bounceType The bounce type (hard || soft)
      * @return bounce delay in hours (rounded) or false
      */
-    public function getSubscriberBounceLag($subscriberID, $bounceType) {
-        $meta = $this->modx->getObject('GoodNewsSubscriberMeta', array('subscriber_id' => $subscriberID));
+    public function getSubscriberBounceLag($subscriberId, $bounceType) {
+        $meta = $this->modx->getObject('GoodNewsSubscriberMeta', array('subscriber_id' => $subscriberId));
         if (!is_object($meta)) {
-            $this->modx->log(modX::LOG_LEVEL_INFO, 'Could not read bounce delay. Subscriber with ID: '.$subscriberID.' not found.');
+            $this->modx->log(modX::LOG_LEVEL_INFO, 'Could not read bounce delay. Subscriber with ID: '.$subscriberId.' not found.');
 		    return false;
         }
 
@@ -677,7 +704,6 @@ class GoodNewsBounceMailHandler {
         return false;
     }
 
-
     /**
      * Method to add a bounce time-stamp to subscribers meta table (hard/soft).
      * 
@@ -690,10 +716,10 @@ class GoodNewsBounceMailHandler {
      * @param string $bounceType The bounce type (hard || soft)
      * @return boolean
      */
-    public function addSubscriberBounce($subscriberID, $timeStamp, $bounceType) {
-        $meta = $this->modx->getObject('GoodNewsSubscriberMeta', array('subscriber_id' => $subscriberID));
+    public function addSubscriberBounce($subscriberId, $timeStamp, $bounceType) {
+        $meta = $this->modx->getObject('GoodNewsSubscriberMeta', array('subscriber_id' => $subscriberId));
         if (!is_object($meta)) {
-            $this->modx->log(modX::LOG_LEVEL_INFO, 'Could not add bounce. Subscriber with ID: '.$subscriberID.' not found.');
+            $this->modx->log(modX::LOG_LEVEL_INFO, 'Could not add bounce. Subscriber with ID: '.$subscriberId.' not found.');
 		    return false;
         }
 
@@ -726,10 +752,10 @@ class GoodNewsBounceMailHandler {
      * @param string $bounceType The bounce type (hard || soft || default = both)
      * @return boolean
      */
-    public function resetSubscriberBounces($subscriberID, $bounceType = false) {
-        $meta = $this->modx->getObject('GoodNewsSubscriberMeta', array('subscriber_id' => $subscriberID));
+    public function resetSubscriberBounces($subscriberId, $bounceType = false) {
+        $meta = $this->modx->getObject('GoodNewsSubscriberMeta', array('subscriber_id' => $subscriberId));
         if (!is_object($meta)) {
-            $this->modx->log(modX::LOG_LEVEL_INFO, 'Could not reset bounces. Subscriber with ID: '.$subscriberID.' not found.');
+            $this->modx->log(modX::LOG_LEVEL_INFO, 'Could not reset bounces. Subscriber with ID: '.$subscriberId.' not found.');
 		    return false;
         }
 
@@ -753,6 +779,34 @@ class GoodNewsBounceMailHandler {
 		    return false;
         }
         return true;
+    }
+
+    /**
+     * Disable a subscriber.
+     * 
+     * @access private
+     * @param integer $subscriberId The ID of the subscriber ( = MODX userID)
+     * @return void
+     */
+    private function _disableSubscriber($subscriberId) {
+        // dont disable MODX users which have admin, editor, ... roles
+        $this->modx->log(modX::LOG_LEVEL_INFO, 'GoodNewsBounceMailHandler::_disableSubscriber() - Subscriber with id: '.$subscriberId.' disabled!');
+        
+        
+    }
+
+    /**
+     * Delete a subscriber.
+     * 
+     * @access private
+     * @param integer $subscriberId The ID of the subscriber ( = MODX userID)
+     * @return void
+     */
+    private function _deleteSubscriber($subscriberId) {
+        // dont delete MODX users which have admin, editor, ... roles
+        $this->modx->log(modX::LOG_LEVEL_INFO, 'GoodNewsBounceMailHandler::_deleteSubscriber() - Subscriber with id: '.$subscriberId.' deleted!');
+
+
     }
 
     /**
