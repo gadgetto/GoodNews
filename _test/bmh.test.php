@@ -109,6 +109,13 @@ if ($bmh->openImapStream()) {
     
     //$email = 'gadgetto66@gmail.com';
     //echo '<br>Subscriber ID for email address '.$email.': '.$bmh->getSubscriberID($email);
+
+    $bmh->disableSubscriber(7846);
+    $bmh->disableSubscriber(7847);
+    
+    $bmh->deleteSubscriber(8879);
+    
+    
     
     echo '<br>';
     echo '<br>Found mails: '.$bmh->get_cTotal();

@@ -407,9 +407,9 @@ class GoodNewsBounceMailHandler {
                         $subscriberSoftBounceLag     = $this->getSubscriberBounceLag($result['user_id'], 'soft');
                         if ($subscriberSoftBounceCounter > $this->mailMaxSoftBounces && $subscriberSoftBounceLag > $this->mailMaxSoftBounceLag) {
                             if ($this->mailMaxSoftBouncesAction == 'disable') {
-                                $this->_disableSubscriber($result['user_id']);
+                                $this->disableSubscriber($result['user_id']);
                             } else {
-                                $this->_deleteSubscriber($result['user_id']);
+                                $this->deleteSubscriber($result['user_id']);
                             }
                         }
                     } else {
@@ -417,9 +417,9 @@ class GoodNewsBounceMailHandler {
                         $subscriberHardBounceLag     = $this->getSubscriberBounceLag($result['user_id'], 'hard');
                         if ($subscriberHardBounceCounter > $this->mailMaxHardBounces && $subscriberHardBounceLag > $this->mailMaxHardBounceLag) {
                             if ($this->mailMaxHardBouncesAction == 'disable') {
-                                $this->_disableSubscriber($result['user_id']);
+                                $this->disableSubscriber($result['user_id']);
                             } else {
-                                $this->_deleteSubscriber($result['user_id']);
+                                $this->deleteSubscriber($result['user_id']);
                             }
                         }
                     }
@@ -784,29 +784,46 @@ class GoodNewsBounceMailHandler {
     /**
      * Disable a subscriber.
      * 
-     * @access private
+     * @access public
      * @param integer $subscriberId The ID of the subscriber ( = MODX userID)
-     * @return void
+     * @return boolean
      */
-    private function _disableSubscriber($subscriberId) {
-        // dont disable MODX users which have admin, editor, ... roles
-        $this->modx->log(modX::LOG_LEVEL_INFO, 'GoodNewsBounceMailHandler::_disableSubscriber() - Subscriber with id: '.$subscriberId.' disabled!');
-        
-        
+    public function disableSubscriber($subscriberId) {
+        // modUser must not:
+        // - be in a MODX group
+        // - be sudo
+        $subscriber = $this->modx->getObject('modUser', array('id' => $subscriberId, 'primary_group' => 0, 'sudo' => 0));
+        if (!is_object($subscriber)) { return false; }
+
+        $subscriber->set('active', 0);
+        if (!$subscriber->save()) {
+            $this->modx->log(modX::LOG_LEVEL_ERROR, 'GoodNewsBounceMailHandler::disableSubscriber() - save error: Could not deactivate user.');
+            return false;
+        }
+        $this->modx->log(modX::LOG_LEVEL_INFO, 'GoodNewsBounceMailHandler::disableSubscriber() - disabled user ID: '.$subscriberId. ' (too many bounces)');
+        return true;
     }
 
     /**
      * Delete a subscriber.
      * 
-     * @access private
+     * @access public
      * @param integer $subscriberId The ID of the subscriber ( = MODX userID)
-     * @return void
+     * @return boolean
      */
-    private function _deleteSubscriber($subscriberId) {
-        // dont delete MODX users which have admin, editor, ... roles
-        $this->modx->log(modX::LOG_LEVEL_INFO, 'GoodNewsBounceMailHandler::_deleteSubscriber() - Subscriber with id: '.$subscriberId.' deleted!');
+    public function deleteSubscriber($subscriberId) {
+        // modUser must not:
+        // - be in a MODX group
+        // - be sudo
+        $subscriber = $this->modx->getObject('modUser', array('id' => $subscriberId, 'primary_group' => 0, 'sudo' => 0));
+        if (!is_object($subscriber)) { return false; }
 
-
+        if (!$subscriber->remove()) {
+            $this->modx->log(modX::LOG_LEVEL_ERROR, 'GoodNewsBounceMailHandler::disableSubscriber() - remove error: Could not delete user.');
+            return false;
+        }
+        $this->modx->log(modX::LOG_LEVEL_INFO, 'GoodNewsBounceMailHandler::deleteSubscriber() - deleted user ID: '.$subscriberId. ' (too many bounces)');
+        return true;
     }
 
     /**
@@ -858,7 +875,7 @@ class GoodNewsBounceMailHandler {
             'deleted'   => false,
             'class_key' => 'GoodNewsResourceContainer'
         ));
-        $containers = $this->modx->getCollection('modResource', $c);
+        $containers = $this->modx->getCollection('modResource', $c); //todo: use getIterator!
 
         $containerIDs = array();
         foreach ($containers as $container) {
