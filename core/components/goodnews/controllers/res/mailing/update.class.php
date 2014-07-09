@@ -113,8 +113,8 @@ class GoodNewsResourceMailingUpdateManagerController extends ResourceUpdateManag
         $placeholders = parent::process($scriptProperties);
         $settings = $this->resource->getContainerSettings();
         $this->resourceArray['templatesCategory'] = (int)$this->modx->getOption('templatesCategory', $settings, 0);
-        $this->resourceArray['mailFrom'] = $this->modx->getOption('mailFrom', $settings, '');
-        $this->resourceArray['mailFromName'] = $this->modx->getOption('mailFromName', $settings, '');
+        //$this->resourceArray['mailFrom'] = $this->modx->getOption('mailFrom', $settings, '');
+        //$this->resourceArray['mailFromName'] = $this->modx->getOption('mailFromName', $settings, '');
 
         return $placeholders;
     }

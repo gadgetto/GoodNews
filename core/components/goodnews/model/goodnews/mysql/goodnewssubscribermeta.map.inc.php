@@ -14,6 +14,8 @@ $xpdo_meta_map['GoodNewsSubscriberMeta']= array (
     'createdon' => NULL,
     'testdummy' => 0,
     'ip' => '0',
+    'soft_bounces' => '',
+    'hard_bounces' => '',
   ),
   'fieldMeta' => 
   array (
@@ -56,6 +58,20 @@ $xpdo_meta_map['GoodNewsSubscriberMeta']= array (
       'phptype' => 'string',
       'null' => false,
       'default' => '0',
+    ),
+    'soft_bounces' => 
+    array (
+      'dbtype' => 'text',
+      'phptype' => 'string',
+      'null' => true,
+      'default' => '',
+    ),
+    'hard_bounces' => 
+    array (
+      'dbtype' => 'text',
+      'phptype' => 'string',
+      'null' => true,
+      'default' => '',
     ),
   ),
   'indexes' => 

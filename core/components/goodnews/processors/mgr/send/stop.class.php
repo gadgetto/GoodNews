@@ -18,7 +18,7 @@
  * Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-require_once dirname(dirname(dirname(dirname(__FILE__)))) . '/model/goodnews/goodnewsmailing.class.php';
+require_once dirname(dirname(dirname(dirname(__FILE__)))).'/model/goodnews/goodnewsmailing.class.php';
 
 /**
  * Stop sending newsletters processor

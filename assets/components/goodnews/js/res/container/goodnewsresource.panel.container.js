@@ -113,8 +113,73 @@ Ext.extend(GoodNewsResource.panel.Container,MODx.panel.Resource,{
         return [{
             xtype: 'hidden'
             ,name: 'class_key'
-            ,id: 'goodnewsresource-class-key'
             ,value: 'GoodNewsResourceContainer'
+        },{
+            xtype: 'hidden'
+            ,name: 'setting_editorGroups'
+        },{
+            xtype: 'hidden'
+            ,name: 'setting_mailFrom'
+        },{
+            xtype: 'hidden'
+            ,name: 'setting_mailFromName'
+        },{
+            xtype: 'hidden'
+            ,name: 'setting_mailReplyTo'
+        },{
+            xtype: 'hidden'
+            ,name: 'setting_mailBounceHandling'
+        },{
+            xtype: 'hidden'
+            ,name: 'setting_mailService'
+        },{
+            xtype: 'hidden'
+            ,name: 'setting_mailMailHost'
+        },{
+            xtype: 'hidden'
+            ,name: 'setting_mailMailboxUsername'
+        },{
+            xtype: 'hidden'
+            ,name: 'setting_mailMailboxPassword'
+        },{
+            xtype: 'hidden'
+            ,name: 'setting_mailBoxname'
+        },{
+            xtype: 'hidden'
+            ,name: 'setting_mailPort'
+        },{
+            xtype: 'hidden'
+            ,name: 'setting_mailServiceOption'
+        },{
+            xtype: 'hidden'
+            ,name: 'setting_mailSoftBouncedMessageAction'
+        },{
+            xtype: 'hidden'
+            ,name: 'setting_mailSoftMailbox'
+        },{
+            xtype: 'hidden'
+            ,name: 'setting_mailMaxSoftBounces'
+        },{
+            xtype: 'hidden'
+            ,name: 'setting_mailMaxSoftBouncesAction'
+        },{
+            xtype: 'hidden'
+            ,name: 'setting_mailHardBouncedMessageAction'
+        },{
+            xtype: 'hidden'
+            ,name: 'setting_mailHardMailbox'
+        },{
+            xtype: 'hidden'
+            ,name: 'setting_mailMaxHardBounces'
+        },{
+            xtype: 'hidden'
+            ,name: 'setting_mailMaxHardBouncesAction'
+        },{
+            xtype: 'hidden'
+            ,name: 'setting_mailNotClassifiedMessageAction'
+        },{
+            xtype: 'hidden'
+            ,name: 'setting_mailNotClassifiedMailbox'
         },{
             xtype: 'modx-field-parent-change'
             ,fieldLabel: _('resource_parent')
@@ -308,7 +373,15 @@ Ext.extend(GoodNewsResource.panel.Container,MODx.panel.Resource,{
             ,value: config.record.setting_mailingTemplate || 0
             ,anchor: '100%'
             ,editable: false
-        },{
+            ,baseParams: {
+                action: version_compare(MODx.config.version, '2.3.0-dev', '>=') ? 'element/template/getlist' : 'getlist'
+                ,combo: '1'
+                ,limit: 0
+            }
+        }];
+    }
+    ,getMailingsSettingRightFields: function(config) {
+        return [{
             xtype: 'textfield'
             ,fieldLabel: _('goodnews.container_unsubscribe_resource')
             ,description: '<b>[[+unsubscribeResource]]</b><br />'+_('goodnews.container_unsubscribe_resource_desc')
@@ -322,23 +395,6 @@ Ext.extend(GoodNewsResource.panel.Container,MODx.panel.Resource,{
             ,name: 'setting_profileResource'
             ,value: config.record.setting_profileResource || ''
             ,anchor: '60%'
-        }];
-    }
-    ,getMailingsSettingRightFields: function(config) {
-        return [{
-            xtype: 'textfield'
-            ,fieldLabel: _('goodnews.container_mail_from')
-            ,description: '<b>[[+mailFrom]]</b><br />'+_('goodnews.container_mail_from_desc')
-            ,name: 'setting_mailFrom'
-            ,value: config.record.setting_mailFrom || ''
-            ,anchor: '100%'
-        },{
-            xtype: 'textfield'
-            ,fieldLabel: _('goodnews.container_mail_from_name')
-            ,description: '<b>[[+mailFromName]]</b><br />'+_('goodnews.container_mail_from_name_desc')
-            ,name: 'setting_mailFromName'
-            ,value: config.record.setting_mailFromName || ''
-            ,anchor: '100%'
         }];
     }
 });

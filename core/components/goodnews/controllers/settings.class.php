@@ -49,6 +49,7 @@ class GoodNewsSettingsManagerController extends GoodNewsManagerController {
         // load widgets
         $this->addJavascript($this->goodnews->config['jsUrl'].'mgr/widgets/settings_general.panel.js');
         $this->addJavascript($this->goodnews->config['jsUrl'].'mgr/widgets/settings_container.panel.js');
+        // $this->addJavascript($this->goodnews->config['jsUrl'].'mgr/widgets/settings_bounceparsingrules.panel.js');
         $this->addJavascript($this->goodnews->config['jsUrl'].'mgr/widgets/settings_system.panel.js');
         $this->addJavascript($this->goodnews->config['jsUrl'].'mgr/widgets/settings_about.panel.js');
         

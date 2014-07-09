@@ -20,6 +20,8 @@ $xpdo_meta_map['GoodNewsMailingMeta']= array (
     'finishedon' => 0,
     'ipc_status' => 0,
     'scheduled' => 0,
+    'soft_bounces' => 0,
+    'hard_bounces' => 0,
   ),
   'fieldMeta' => 
   array (
@@ -111,6 +113,24 @@ $xpdo_meta_map['GoodNewsMailingMeta']= array (
       'precision' => '1',
       'attributes' => 'unsigned',
       'phptype' => 'boolean',
+      'null' => false,
+      'default' => 0,
+    ),
+    'soft_bounces' => 
+    array (
+      'dbtype' => 'int',
+      'precision' => '10',
+      'attributes' => 'unsigned',
+      'phptype' => 'integer',
+      'null' => false,
+      'default' => 0,
+    ),
+    'hard_bounces' => 
+    array (
+      'dbtype' => 'int',
+      'precision' => '10',
+      'attributes' => 'unsigned',
+      'phptype' => 'integer',
       'null' => false,
       'default' => 0,
     ),

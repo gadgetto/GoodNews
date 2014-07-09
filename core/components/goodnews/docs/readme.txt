@@ -1,10 +1,9 @@
---------------------------------------------------
+--------------------
 Extra: GoodNews
---------------------------------------------------
-Version: 1.0.4-pl
+--------------------
+Version: 1.1.0-pl
 Author: bitego <office@bitego.com> (Martin Gartner, Franz Gallei)
-Copyright: bitego
---------------------------------------------------
+--------------------
  
 An integrated group and newsletter mailing system.
 
@@ -18,10 +17,11 @@ is built with a lot of passion for details, a polished interface
 and easy operation. The sending process of GoodNews is lightning 
 fast due to its underlying multithreaded sending system.
 
-Requirements:
---------------------------------------------------
+Reqirements:
+
 - MODx 2.2 and above
 - Cron
+- PHP Imap Extension (for automatic bounce handling)
 
 Feel free to suggest ideas/improvements/bugs on our website:
 

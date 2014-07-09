@@ -36,6 +36,24 @@ $settings['goodnews.test_subject_prefix']->fromArray(array(
     'area'      => '',
 ), '', true, true);
 
+$settings['goodnews.auto_cleanup_subscriptions'] = $modx->newObject('modSystemSetting');
+$settings['goodnews.auto_cleanup_subscriptions']->fromArray(array(
+    'key'       => 'goodnews.auto_cleanup_subscriptions',
+    'value'     => '0',
+    'xtype'     => 'combo-boolean',
+    'namespace' => 'goodnews',
+    'area'      => '',
+), '', true, true);
+
+$settings['goodnews.auto_cleanup_subscriptions_ttl'] = $modx->newObject('modSystemSetting');
+$settings['goodnews.auto_cleanup_subscriptions_ttl']->fromArray(array(
+    'key'       => 'goodnews.auto_cleanup_subscriptions_ttl',
+    'value'     => '360',
+    'xtype'     => 'numberfield',
+    'namespace' => 'goodnews',
+    'area'      => '',
+), '', true, true);
+
 $settings['goodnews.mailing_bulk_size'] = $modx->newObject('modSystemSetting');
 $settings['goodnews.mailing_bulk_size']->fromArray(array(
     'key'       => 'goodnews.mailing_bulk_size',

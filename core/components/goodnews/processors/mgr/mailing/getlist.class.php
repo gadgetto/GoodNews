@@ -90,6 +90,8 @@ class NewsletterGetListProcessor extends modObjectGetListProcessor {
             'finishedon',
             'ipc_status',
             'scheduled',
+            'soft_bounces',
+            'hard_bounces',
         );
         $c->select($this->modx->getSelectColumns('GoodNewsMailingMeta', 'MailingMeta', '', $metaColumns));
 
@@ -286,7 +288,6 @@ class NewsletterGetListProcessor extends modObjectGetListProcessor {
         $c->leftJoin('GoodNewsSubscriberMeta', 'SubscriberMeta', 'SubscriberMeta.subscriber_id = modUser.id');  
         $c->where(array(
             'modUser.active' => true,
-            'Profile.blocked' => false,
             'SubscriberMeta.testdummy' => 1,
         ));
         $count = $this->modx->getCount('modUser', $c);

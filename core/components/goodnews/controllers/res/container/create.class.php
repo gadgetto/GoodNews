@@ -132,9 +132,13 @@ class GoodNewsResourceContainerCreateManagerController extends ResourceCreateMan
         }
         $this->resourceArray['template'] = $defaultContainerTemplate;
 
+        // The following setting can only be edited trough GoodNews system settings!
+        // But they need to be initialized here!
+        $this->resourceArray['setting_editorGroups'] = 'Administrator';
+        
         $mailFrom = $this->modx->getOption('emailsender', $settings, false);
         if (empty($mailFrom)) {
-            $mailFrom = 'noreply@mydomain.com';
+            $mailFrom = 'postmaster@mydomain.com';
         }
         $this->resourceArray['setting_mailFrom'] = $mailFrom;
         
@@ -144,8 +148,30 @@ class GoodNewsResourceContainerCreateManagerController extends ResourceCreateMan
         }
         $this->resourceArray['setting_mailFromName'] = $mailFromName;
 
-        // this setting can only be edited trough GoodNews system settings!
-        $this->resourceArray['setting_editorGroups'] = 'Administrator';
+        $mailReplyTo = $this->modx->getOption('emailsender', $settings, false);
+        if (empty($mailReplyTo)) {
+            $mailReplyTo = 'replyto@mydomain.com';
+        }
+        $this->resourceArray['setting_mailReplyTo'] = $mailReplyTo;
+        
+        $this->resourceArray['setting_mailBounceHandling']              = '0';
+        $this->resourceArray['setting_mailService']                     = 'imap';
+        $this->resourceArray['setting_mailMailHost']                    = '';
+        $this->resourceArray['setting_mailMailboxUsername']             = '';
+        $this->resourceArray['setting_mailMailboxPassword']             = '';
+        $this->resourceArray['setting_mailBoxname']                     = 'INBOX';
+        $this->resourceArray['setting_mailPort']                        = '143';
+        $this->resourceArray['setting_mailServiceOption']               = 'notls';
+        $this->resourceArray['setting_mailSoftBouncedMessageAction']    = 'delete';
+        $this->resourceArray['setting_mailSoftMailbox']                 = 'INBOX.Softbounces';
+        $this->resourceArray['setting_mailMaxSoftBounces']              = 3;
+        $this->resourceArray['setting_mailMaxSoftBouncesAction']        = 'disable';
+        $this->resourceArray['setting_mailHardBouncedMessageAction']    = 'delete';
+        $this->resourceArray['setting_mailHardMailbox']                 = 'INBOX.Hardbounces';
+        $this->resourceArray['setting_mailMaxHardBounces']              = 1;
+        $this->resourceArray['setting_mailMaxHardBouncesAction']        = 'delete';
+        $this->resourceArray['setting_mailNotClassifiedMessageAction']  = 'move';
+        $this->resourceArray['setting_mailNotClassifiedMailbox']        = 'INBOX.NotClassified';
 
         foreach ($settings as $k => $v) {
             $this->resourceArray['setting_'.$k] = $v;

@@ -73,6 +73,11 @@ GoodNews.grid.Subscribers = function(config){
             }
         }
         ,columns: [{
+            header: _('goodnews.id')
+            ,dataIndex: 'id'
+            ,sortable: true
+            ,width: 30
+        },{
             header: _('goodnews.subscriber_email')
             ,dataIndex: 'email'
             ,sortable: true

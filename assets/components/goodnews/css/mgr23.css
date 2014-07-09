@@ -79,16 +79,17 @@
 .x-grid3-row-body .gon-nlinfos {
     overflow: hidden;
     color: #9c9c9c;
-    padding: 5px 15px 15px 15px;
+    margin: 5px 20px 20px 20px;
+    border-collapse: collapse;
 }
 .x-grid3-row-body .gon-nlinfos-key {
-    text-align: right;
-    padding: 2px 3px 2px 3px;
+    text-align: left;
+    padding: 4px 6px 4px 6px;
     font-weight: bold;
 }
 .x-grid3-row-body .gon-nlinfos-val {
     text-align: left;
-    padding: 2px 20px 2px 3px;
+    padding: 4px 22px 4px 6px;
 }
 
 /* Status tag in newsletters grid */

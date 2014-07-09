@@ -43,6 +43,30 @@ GoodNews.panel.GeneralSettings = function(config) {
                 ,forId: 'admin_groups'
                 ,html: _('goodnews.settings_admin_groups_desc')
                 ,cls: 'gon-desc-under'
+            },{
+                xtype: 'xcheckbox'
+                ,name: 'auto_cleanup_subscriptions'
+                ,id: 'auto_cleanup_subscriptions'
+                ,hideLabel: true
+                ,boxLabel: _('goodnews.settings_auto_cleanup_subscriptions')
+                ,description: MODx.expandHelp ? '' : _('goodnews.settings_auto_cleanup_subscriptions_desc')
+            },{
+                xtype: MODx.expandHelp ? 'label' : 'hidden'
+                ,forId: 'auto_cleanup_subscriptions'
+                ,html: _('goodnews.settings_auto_cleanup_subscriptions_desc')
+                ,cls: 'gon-desc-under'
+            },{
+                xtype: 'numberfield'
+                ,name: 'auto_cleanup_subscriptions_ttl'
+                ,id: 'auto_cleanup_subscriptions_ttl'
+                ,fieldLabel: _('goodnews.settings_auto_cleanup_subscriptions_ttl')
+                ,description: MODx.expandHelp ? '' : _('goodnews.settings_auto_cleanup_subscriptions_ttl_desc')
+                ,anchor: '25%'
+            },{
+                xtype: MODx.expandHelp ? 'label' : 'hidden'
+                ,forId: 'auto_cleanup_subscriptions_ttl'
+                ,html: _('goodnews.settings_auto_cleanup_subscriptions_ttl_desc')
+                ,cls: 'gon-desc-under'
             }]
         }]    
     });
