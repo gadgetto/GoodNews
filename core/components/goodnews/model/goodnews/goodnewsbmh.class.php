@@ -875,7 +875,7 @@ class GoodNewsBounceMailHandler {
             'deleted'   => false,
             'class_key' => 'GoodNewsResourceContainer'
         ));
-        $containers = $this->modx->getCollection('modResource', $c); //todo: use getIterator!
+        $containers = $this->modx->getIterator('modResource', $c);
 
         $containerIDs = array();
         foreach ($containers as $container) {

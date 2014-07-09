@@ -120,6 +120,21 @@ class SubscribersGetListProcessor extends modObjectGetListProcessor {
         } elseif ($userArray['ip'] == 'manually') {
             $userArray['ip'] = $this->modx->lexicon('goodnews.subscriber_ip_manually');
         }
+        
+        $softBounces = unserialize($userArray['soft_bounces']);
+        if (!is_array($softBounces)) {
+            $userArray['soft_bounces'] = 0;
+        } else {
+            $userArray['soft_bounces'] = count($softBounces);
+        }
+        
+        $hardBounces = unserialize($userArray['hard_bounces']);
+        if (!is_array($hardBounces)) {
+            $userArray['hard_bounces'] = 0;
+        } else {
+            $userArray['hard_bounces'] = count($hardBounces);
+        }
+
         return $userArray;
     }
 

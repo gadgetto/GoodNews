@@ -96,8 +96,8 @@ if ($bmh->openImapStream()) {
     //$bmh->processMailbox();
     
     //$time = time();
-    //$bmh->addSubscriberBounce('2', $time, 'hard');
-    //$bmh->addSubscriberBounce('2', $time, 'soft');
+    $bmh->addSubscriberBounce('7846', $time, 'hard');
+    $bmh->addSubscriberBounce('6816', $time, 'soft');
 
     //echo '<br>Hard bounces for subscriber with ID 2: '.$bmh->getSubscriberBounceCounter('2', 'hard').' -> Hours between: '.$bmh->getSubscriberBounceLag('2', 'hard');
     //echo '<br>Soft bounces for subscriber with ID 2: '.$bmh->getSubscriberBounceCounter('2', 'soft').' -> Hours between: '.$bmh->getSubscriberBounceLag('2', 'soft');
@@ -110,11 +110,14 @@ if ($bmh->openImapStream()) {
     //$email = 'gadgetto66@gmail.com';
     //echo '<br>Subscriber ID for email address '.$email.': '.$bmh->getSubscriberID($email);
 
-    $bmh->disableSubscriber(7846);
-    $bmh->disableSubscriber(7847);
+    //$bmh->disableSubscriber(7846);
+    //$bmh->disableSubscriber(7847);
     
-    $bmh->deleteSubscriber(8879);
+    //$bmh->deleteSubscriber(8879);
     
+    $containerIDs = $bmh->getGoodNewsBmhContainers();
+    echo 'Containers with activated bounce handling:<br>';
+    echo print_r($containerIDs,true);
     
     
     echo '<br>';

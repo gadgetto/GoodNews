@@ -1,5 +1,12 @@
 Changelog for GoodNews
 
+GoodNews 1.1.1-pl (2014-07-09)
+--------------------------------------------------
+
+- added SB + HB column to Subscribers grid
+- fixed deleteSubscribers + updateSubscribers methods (also added groupmember and sudo check!)
+
+
 GoodNews 1.1.0-pl (2014-07-09)
 --------------------------------------------------
 

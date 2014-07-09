@@ -55,6 +55,8 @@ GoodNews.grid.Subscribers = function(config){
             ,'active'
             ,'createdon'
             ,'ip'
+            ,'soft_bounces'
+            ,'hard_bounces'
             ,'grpcount'
             ,'menu'
         ]
@@ -76,7 +78,7 @@ GoodNews.grid.Subscribers = function(config){
             header: _('goodnews.id')
             ,dataIndex: 'id'
             ,sortable: true
-            ,width: 30
+            ,width: 40
         },{
             header: _('goodnews.subscriber_email')
             ,dataIndex: 'email'
@@ -124,6 +126,18 @@ GoodNews.grid.Subscribers = function(config){
             ,dataIndex: 'ip'
             ,sortable: true
             ,width: 100
+        },{
+            header: _('goodnews.subscriber_soft_bounces')
+            ,dataIndex: 'soft_bounces'
+            ,align: 'center'
+            ,sortable: true
+            ,width: 30
+        },{
+            header: _('goodnews.subscriber_hard_bounces')
+            ,dataIndex: 'hard_bounces'
+            ,align: 'center'
+            ,sortable: true
+            ,width: 30
         }]
         ,tbar:[{
             text: _('goodnews.modx_user_create')
