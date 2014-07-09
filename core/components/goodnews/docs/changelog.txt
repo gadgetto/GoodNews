@@ -1,58 +1,64 @@
 Changelog for GoodNews
 
-GoodNews 1.1.0-pl
-====================================
-
-Enhancements
+GoodNews 1.1.0-pl (2014-07-09)
+--------------------------------------------------
 
 - added automatic bounce handling (parsing bounced emails and automatically handle subscriber status)
 - moved all protected container settings into GoodNews system settings
 - added system check for PHP Imap extension
 - added auto-cleanup of susbcriptions (remove never activated accounts)
+- added ID column to Subscribers grid
+
+
+GoodNews 1.0.4-pl (2014-06-16)
+--------------------------------------------------
+
+- [#11] Compatibility problems with Revolution >= 2.3
+
+
+GoodNews 1.0.3-pl (2014-06-10)
+--------------------------------------------------
+
+- [#10] cron.php cannot be called without the sid parameter when security key setting is disabled
+- [#9] cron.worker.php throws a warning to the MODX error log (Invalid argument supplied for foreach())
+
+
+GoodNews 1.0.2-pl (2014-06-08)
+--------------------------------------------------
+
+- [#7] Mailing: selection of subscribers in a category will erroneously also select the full group
 
 
 GoodNews 1.0.1-pl
-====================================
-
-Enhancements
+--------------------------------------------------
 
 - added feature/properties to optionally send user an email after successful subscription
 - added preinstalled Resource for successful subscriptions when activation isn't required
 
 
 GoodNews 1.0.0-pl
-====================================
+--------------------------------------------------
 
 - first stable release
 
 
 GoodNews 1.0.0-beta3
-====================================
-
-Enhancements
+--------------------------------------------------
 
 - added subscribers ip tracking
 - added subscription box chunk to place subscription form somewhere on site
-
-Fixes
-
 - fixed missing security check if user is entitled to manage GoodNews container
 
 
 GoodNews 1.0.0-beta2
-====================================
-
-Enhancements
+--------------------------------------------------
 
 - added necessary code to provide support for Revo version >= 2.3
 - added Revo version detection for backwards compatibillity
-
-Fixes
-
 - fixed a bug in multiprocessed sending (catch some rare race conditions)
 
 
 GoodNews 1.0.0-beta1
-====================================
+--------------------------------------------------
 
 - first public beta release
