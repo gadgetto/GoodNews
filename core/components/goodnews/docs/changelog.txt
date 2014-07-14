@@ -1,5 +1,12 @@
 Changelog for GoodNews
 
+GoodNews 1.1.2-pl (2014-07-14)
+--------------------------------------------------
+
+- fixed some installation issues (missing or wrong default settings, default container template)
+- changed default bounce handling settings to more secure values
+
+
 GoodNews 1.1.1-pl (2014-07-09)
 --------------------------------------------------
 

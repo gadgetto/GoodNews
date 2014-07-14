@@ -74,14 +74,37 @@ if ($object->xpdo) {
                 $modx->log(modX::LOG_LEVEL_ERROR, 'Custom Resource Properties Resolver - could not set profileResource property for GoodNews container.');
             }
             
-            // Set default sender email address
-            $properties['mailFrom'] = $modx->getOption('emailsender', null, 'noreply@mydomain.com');
+            // Set default editor groups
+            $properties['editorGroups'] = 'Administrator';
+
+            // Set default sender email address (this is also the mailbox for bounce messages)
+            $properties['mailFrom'] = $modx->getOption('emailsender', null, 'postmaster@mydomain.com');
             
             // Set default sender name
             $properties['mailFromName'] = $modx->getOption('site_name', null, 'Sender Name');
 
-            // Set default editor groups
-            $properties['editorGroups'] = 'Administrator';
+            // Set default reply-to email address
+            $properties['mailReplyTo'] = $modx->getOption('emailsender', null, 'replyto@mydomain.com');
+
+            // set default bounce-handling properties
+            $properties['mailBounceHandling']              = '0';
+            $properties['mailService']                     = 'imap';
+            $properties['mailMailHost']                    = '';
+            $properties['mailMailboxUsername']             = '';
+            $properties['mailMailboxPassword']             = '';
+            $properties['mailBoxname']                     = 'INBOX';
+            $properties['mailPort']                        = '143';
+            $properties['mailServiceOption']               = 'notls';
+            $properties['mailSoftBouncedMessageAction']    = 'delete';
+            $properties['mailSoftMailbox']                 = 'INBOX.Softbounces';
+            $properties['mailMaxSoftBounces']              = 3;
+            $properties['mailMaxSoftBouncesAction']        = 'disable';
+            $properties['mailHardBouncedMessageAction']    = 'delete';
+            $properties['mailHardMailbox']                 = 'INBOX.Hardbounces';
+            $properties['mailMaxHardBounces']              = 1;
+            $properties['mailMaxHardBouncesAction']        = 'disable';
+            $properties['mailNotClassifiedMessageAction']  = 'move';
+            $properties['mailNotClassifiedMailbox']        = 'INBOX.NotClassified';
 
             $resource->setProperties($properties, 'goodnews');
             if (!$resource->save()) {

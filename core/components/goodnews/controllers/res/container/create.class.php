@@ -169,7 +169,7 @@ class GoodNewsResourceContainerCreateManagerController extends ResourceCreateMan
         $this->resourceArray['setting_mailHardBouncedMessageAction']    = 'delete';
         $this->resourceArray['setting_mailHardMailbox']                 = 'INBOX.Hardbounces';
         $this->resourceArray['setting_mailMaxHardBounces']              = 1;
-        $this->resourceArray['setting_mailMaxHardBouncesAction']        = 'delete';
+        $this->resourceArray['setting_mailMaxHardBouncesAction']        = 'disable';
         $this->resourceArray['setting_mailNotClassifiedMessageAction']  = 'move';
         $this->resourceArray['setting_mailNotClassifiedMailbox']        = 'INBOX.NotClassified';
 

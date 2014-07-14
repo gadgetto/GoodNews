@@ -34,7 +34,7 @@ $templates[$i]->fromArray(array(
     'templatename' => 'sample.GoodNewsContainerTemplate',
     'description'  => 'A sample Template for GoodNews containers. Duplicate this to override it.',
     'content'      => file_get_contents($sources['templates'].'sample.goodnewscontainer.template.tpl'),
-    'icon'         => 'icon icon-envelope',
+    'icon'         => 'icon-envelope',
 ));
 
 $templates[++$i]= $modx->newObject('modTemplate');

@@ -310,13 +310,13 @@ $vehicle->resolve('php', array(
     'source' => $sources['resolvers'].'resolve.newslettertemplates.php',
 ));
 $vehicle->resolve('php', array(
-    'source' => $sources['resolvers'].'resolve.resources.php',
+    'source' => $sources['resolvers'].'resolve.customresources.php',           // Installation of the GoodNews container
 ));
 $vehicle->resolve('php', array(
-    'source' => $sources['resolvers'].'resolve.customresources.php',
+    'source' => $sources['resolvers'].'resolve.customresourceproperties.php',  // Set properties of custom resources (e.g. GoodNews container)
 ));
 $vehicle->resolve('php', array(
-    'source' => $sources['resolvers'].'resolve.customresourceproperties.php',
+    'source' => $sources['resolvers'].'resolve.resources.php',                 // Assign resource values after they are installed (templates, ...)
 ));
 /*
 $vehicle->resolve('php', array(
