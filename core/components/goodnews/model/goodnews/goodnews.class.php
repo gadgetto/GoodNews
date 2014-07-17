@@ -26,7 +26,7 @@
 
 class GoodNews {
 
-    const VERSION = '1.1.2';
+    const VERSION = '1.1.3';
     const RELEASE = 'pl';
 
     /** @var modX A reference to the modX object */
@@ -61,6 +61,9 @@ class GoodNews {
     
     /** @var boolean $debug Debug mode on/off */
     public $debug = false;
+
+    /** @var boolean $legacyMode based on MODX Revo version (true if < 2.3) */
+    public $legacyMode = false;
     
     /**
      * Constructor for GoodNews object
@@ -73,7 +76,7 @@ class GoodNews {
  
         $corePath = $this->modx->getOption('goodnews.core_path', $config, $this->modx->getOption('core_path').'components/goodnews/');
         $assetsUrl = $this->modx->getOption('goodnews.assets_url', $config, $this->modx->getOption('assets_url').'components/goodnews/');
-        
+
         $this->config = array_merge(array(            
             'corePath'       => $corePath,
             'modelPath'      => $corePath.'model/',
@@ -87,9 +90,13 @@ class GoodNews {
             'connectorUrl'   => $assetsUrl.'connector.php',
         ), $config);
 
-        // this part is only used in 'mgr' context
+        // This part is only used in 'mgr' context
         if ($this->modx->context->key == 'mgr') {
 
+            // Determine MODX Revo version and set legacy mode (for usage in ExtJS - deprecated connectors since 2.3)
+            $version = $this->modx->getVersionData();
+            $fullVersion = $version['full_version'];
+            $this->legacyMode         = version_compare($fullVersion, '2.3.0-dev', '>=') ? false : true;
             $this->debug              = $this->modx->getOption('goodnews.debug', null, false) ? true : false;
             $this->isMultiProcessing  = $this->_isMultiProcessing();
             $this->imapExtension      = $this->_imapExtension();
@@ -143,7 +150,8 @@ class GoodNews {
                 'componentRelease'   => self::RELEASE,
                 'developerName'      => 'bitego (Martin Gartner, Franz Gallei)',
                 'developerUrl'       => 'http://www.bitego.com',
-                'debug'              => $this-debug,
+                'debug'              => $this->debug,
+                'legacyMode'         => $this->legacyMode,
             ), $this->config);
 
         }

@@ -216,7 +216,7 @@ GoodNews.grid.Newsletters = function(config) {
             xtype: 'button'
             ,id: 'autorefresh'
             ,cls: 'gon-autorefresh-switch'
-            ,iconCls: version_compare(MODx.config.version, '2.3.0-dev', '>=') ? '' : 'gon-icn-autorefresh'
+            ,iconCls: GoodNews.config.legacyMode ? 'gon-icn-autorefresh' : ''
             ,text: _('goodnews.newsletter_grid_autorefresh')
             ,enableToggle: true
             ,listeners: {
@@ -541,9 +541,9 @@ Ext.extend(GoodNews.grid.Newsletters,MODx.grid.Grid,{
         MODx.msg.confirm({
             title: _('goodnews.newsletter_remove')
             ,text: _('goodnews.newsletter_remove_confirm')
-            ,url: version_compare(MODx.config.version, '2.3.0-dev', '>=') ? MODx.config.connector_url : MODx.config.connectors_url+'resource/index.php'
+            ,url: GoodNews.config.legacyMode ? MODx.config.connectors_url+'resource/index.php' : MODx.config.connector_url
             ,params: {
-                action: version_compare(MODx.config.version, '2.3.0-dev', '>=') ? 'resource/delete' : 'delete'
+                action: GoodNews.config.legacyMode ? 'delete' : 'resource/delete'
                 ,id: this.menu.record.id
             }
             ,listeners: {
@@ -553,9 +553,9 @@ Ext.extend(GoodNews.grid.Newsletters,MODx.grid.Grid,{
     }
     ,undeleteNewsletter: function(btn,e) {
         MODx.Ajax.request({
-            url: version_compare(MODx.config.version, '2.3.0-dev', '>=') ? MODx.config.connector_url : MODx.config.connectors_url+'resource/index.php'
+            url: GoodNews.config.legacyMode ?  MODx.config.connectors_url+'resource/index.php' : MODx.config.connector_url
             ,params: {
-                action: version_compare(MODx.config.version, '2.3.0-dev', '>=') ? 'resource/undelete' : 'undelete'
+                action: GoodNews.config.legacyMode ? 'undelete' : 'resource/undelete'
                 ,id: this.menu.record.id
             }
             ,listeners: {
@@ -565,9 +565,9 @@ Ext.extend(GoodNews.grid.Newsletters,MODx.grid.Grid,{
     }
     ,publishNewsletter: function(btn,e) {
         MODx.Ajax.request({
-            url: version_compare(MODx.config.version, '2.3.0-dev', '>=') ? MODx.config.connector_url : MODx.config.connectors_url+'resource/index.php'
+            url: GoodNews.config.legacyMode ? MODx.config.connectors_url+'resource/index.php' : MODx.config.connector_url
             ,params: {
-                action: version_compare(MODx.config.version, '2.3.0-dev', '>=') ? 'resource/publish' : 'publish'
+                action: GoodNews.config.legacyMode ? 'publish' : 'resource/publish'
                 ,id: this.menu.record.id
             }
             ,listeners: {
@@ -577,9 +577,9 @@ Ext.extend(GoodNews.grid.Newsletters,MODx.grid.Grid,{
     }
     ,unpublishNewsletter: function(btn,e) {
         MODx.Ajax.request({
-            url: version_compare(MODx.config.version, '2.3.0-dev', '>=') ? MODx.config.connector_url : MODx.config.connectors_url+'resource/index.php'
+            url: GoodNews.config.legacyMode ? MODx.config.connectors_url+'resource/index.php' : MODx.config.connector_url
             ,params: {
-                action: version_compare(MODx.config.version, '2.3.0-dev', '>=') ? 'resource/unpublish' : 'unpublish'
+                action: GoodNews.config.legacyMode ? 'unpublish' : 'resource/unpublish'
                 ,id: this.menu.record.id
             }
             ,listeners: {

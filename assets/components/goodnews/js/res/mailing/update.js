@@ -21,7 +21,7 @@ Ext.extend(GoodNewsResource.page.UpdateGoodNewsResourceMailing,MODx.page.UpdateR
         var btns = [];
         if (cfg.canSave == 1) {
             btns.push({
-                process: version_compare(MODx.config.version, '2.3.0-dev', '>=') ? 'resource/update' : 'update'
+                process: MODx.config.connector_url ? 'resource/update' : 'update'
                 ,text: _('save')
                 ,method: 'remote'
                 //,checkDirty: MODx.request.reload ? false : true

@@ -119,14 +119,14 @@ Ext.extend(GoodNews.ImportPanel,MODx.FormPanel,{
         buttons.push({
             text: _('goodnews.import_close_button')
             ,id: 'button-import-close'
-            ,iconCls: version_compare(MODx.config.version, '2.3.0-dev', '>=') ? '' : 'gon-icn-close'
+            ,iconCls: GoodNews.config.legacyMode ? 'gon-icn-close' : ''
             ,handler: this.closeImport
             ,scope: this
         },'-')
         buttons.push({
             text: _('help_ex')
             ,id: 'button-help'
-            ,iconCls: version_compare(MODx.config.version, '2.3.0-dev', '>=') ? '' : 'gon-icn-help'
+            ,iconCls: GoodNews.config.legacyMode ? 'gon-icn-help' : ''
             ,handler: function(){
                 MODx.config.help_url = GoodNews.config.helpUrl;
                 MODx.loadHelpPane();

@@ -21,7 +21,7 @@ Ext.extend(GoodNewsResource.page.CreateGoodNewsResourceMailing,MODx.page.CreateR
         var btns = [];
         if (cfg.canSave == 1) {
             btns.push({
-                process: version_compare(MODx.config.version, '2.3.0-dev', '>=') ? 'resource/create' : 'create'
+                process: MODx.config.connector_url ? 'resource/create' : 'create'
                 ,id: 'modx-abtn-save'
                 ,text: _('save')
                 ,method: 'remote'
