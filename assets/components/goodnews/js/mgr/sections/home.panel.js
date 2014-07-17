@@ -7,7 +7,7 @@
  * @xtype goodnews-panel-home
  */
 GoodNews.HomePanel = function(config) {
-    config = config || {};    
+    config = config || {};
     Ext.applyIf(config,{
         id: 'goodnews-panel-home'
         ,cls: 'container'
@@ -96,7 +96,7 @@ Ext.extend(GoodNews.HomePanel,MODx.Panel,{
             elements.push({
                 text: _('goodnews.button_settings')
                 ,id: 'button-settings'
-                ,iconCls: version_compare(MODx.config.version, '2.3.0-dev', '>=') ? '' : 'gon-icn-settings'
+                ,iconCls: GoodNews.config.legacyMode ? 'gon-icn-settings' : ''
                 ,handler: this.loadSettingsPanel
                 ,scope: this
             },'-')
@@ -105,7 +105,7 @@ Ext.extend(GoodNews.HomePanel,MODx.Panel,{
         elements.push({
             text: _('help_ex')
             ,id: 'button-help'
-            ,iconCls: version_compare(MODx.config.version, '2.3.0-dev', '>=') ? '' : 'gon-icn-help'
+            ,iconCls: GoodNews.config.legacyMode ? 'gon-icn-help' : ''
             ,handler: function(){
                 MODx.config.help_url = GoodNews.config.helpUrl;
                 MODx.loadHelpPane();
