@@ -45,9 +45,7 @@ abstract class GoodNewsManagerController extends modExtraManagerController {
         }
         
         // Add custom css file to manager-page header based on Revo version
-        $version = $this->modx->getVersionData();
-        $fullVersion = $version['full_version'];
-        if (version_compare($fullVersion, '2.3.0-dev', '>=')) {
+        if (!$this->goodnews->legacyMode) {
             // We are on Revo >= 2.3.0
             $cssFile = $this->goodnews->config['cssUrl'].'mgr23.css';
         } else {

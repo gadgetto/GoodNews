@@ -191,11 +191,9 @@ class GroupCategoryGetNodesProcessor extends modProcessor {
             $cssClass = '';
         }
         
-        $version = $this->modx->getVersionData();
-        $fullVersion = $version['full_version'];
-        if (version_compare($fullVersion, '2.3.0-dev', '>=')) {
+        if (!$this->goodnews->legacyMode) {
             // We are on Revo >= 2.3.0
-            $iconCls = 'icon icon-cube';
+            $iconCls = 'icon-cube';
         } else {
             // We are on Revo < 2.3.0
             $iconCls = 'gonr-icn-group';
@@ -230,11 +228,9 @@ class GroupCategoryGetNodesProcessor extends modProcessor {
             $checked = false;
         }
         
-        $version = $this->modx->getVersionData();
-        $fullVersion = $version['full_version'];
-        if (version_compare($fullVersion, '2.3.0-dev', '>=')) {
+        if (!$this->goodnews->legacyMode) {
             // We are on Revo >= 2.3.0
-            $iconCls = 'icon icon-tag';
+            $iconCls = 'icon-tag';
         } else {
             // We are on Revo < 2.3.0
             $iconCls = 'gonr-icn-category';
@@ -271,11 +267,9 @@ class GroupCategoryGetNodesProcessor extends modProcessor {
             $cssClasss = '';
         }
 
-        $version = $this->modx->getVersionData();
-        $fullVersion = $version['full_version'];
-        if (version_compare($fullVersion, '2.3.0-dev', '>=')) {
+        if (!$this->goodnews->legacyMode) {
             // We are on Revo >= 2.3.0
-            $iconCls = 'icon icon-cube';
+            $iconCls = 'icon-cube';
         } else {
             // We are on Revo < 2.3.0
             $iconCls = 'gonr-icn-group';
@@ -306,11 +300,9 @@ class GroupCategoryGetNodesProcessor extends modProcessor {
             $checked = false;
         }
         
-        $version = $this->modx->getVersionData();
-        $fullVersion = $version['full_version'];
-        if (version_compare($fullVersion, '2.3.0-dev', '>=')) {
+        if (!$this->goodnews->legacyMode) {
             // We are on Revo >= 2.3.0
-            $iconCls = 'icon icon-tag';
+            $iconCls = 'icon-tag';
         } else {
             // We are on Revo < 2.3.0
             $iconCls = 'gonr-icn-category';
