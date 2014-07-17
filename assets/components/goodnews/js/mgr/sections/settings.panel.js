@@ -72,7 +72,7 @@ Ext.extend(GoodNews.SettingsPanel,MODx.FormPanel,{
         buttons.push({
             text: _('goodnews.settings_save_button')
             ,id: 'button-settings-save'
-            ,iconCls: version_compare(MODx.config.version, '2.3.0-dev', '>=') ? '' : 'gon-icn-save'
+            ,iconCls: GoodNews.config.legacyMode ? 'gon-icn-save' : ''
             ,handler: this.updateSettings
             ,scope: this
             ,cls: 'primary-button'
@@ -80,14 +80,14 @@ Ext.extend(GoodNews.SettingsPanel,MODx.FormPanel,{
         buttons.push({
             text: _('goodnews.settings_close_button')
             ,id: 'button-settings-close'
-            ,iconCls: version_compare(MODx.config.version, '2.3.0-dev', '>=') ? '' : 'gon-icn-close'
+            ,iconCls: GoodNews.config.legacyMode ? 'gon-icn-close' : ''
             ,handler: this.closeSettings
             ,scope: this
         },'-')
         buttons.push({
             text: _('help_ex')
             ,id: 'button-help'
-            ,iconCls: version_compare(MODx.config.version, '2.3.0-dev', '>=') ? '' : 'gon-icn-help'
+            ,iconCls: GoodNews.config.legacyMode ? 'gon-icn-help' : ''
             ,handler: function(){
                 MODx.config.help_url = GoodNews.config.helpUrl;
                 MODx.loadHelpPane();
