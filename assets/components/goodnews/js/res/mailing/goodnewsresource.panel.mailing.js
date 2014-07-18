@@ -185,6 +185,7 @@ Ext.extend(GoodNewsResource.panel.Mailing,MODx.panel.Resource,{
             ,height: 450
             ,grow: false
             ,value: (config.record.content || config.record.ta) || ''
+            ,itemCls: 'contentblocks_replacement'
         },{
             id: 'modx-content-below'
             ,border: false
