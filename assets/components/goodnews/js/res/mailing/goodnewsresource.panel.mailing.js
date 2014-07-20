@@ -8,8 +8,8 @@
  */
 GoodNewsResource.panel.Mailing = function(config) {
     config = config || {};
+    config.trackResetOnLoad = true;
     Ext.applyIf(config,{});
-    //console.info(config.record);
     GoodNewsResource.panel.Mailing.superclass.constructor.call(this,config);
 };
 Ext.extend(GoodNewsResource.panel.Mailing,MODx.panel.Resource,{
