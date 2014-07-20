@@ -53,6 +53,7 @@ Ext.extend(GoodNewsResource.page.CreateGoodNewsResourceMailing,MODx.page.CreateR
         if (fp && fp.isDirty()) {
             Ext.Msg.confirm(_('warning'),_('resource_cancel_dirty_confirm'),function(e) {
                 if (e == 'yes') {
+                    fp.warnUnsavedChanges = false;
                     MODx.releaseLock(MODx.request.id);
                     MODx.sleep(400);
                     MODx.loadPage(''+MODx.action['goodnews:index'])

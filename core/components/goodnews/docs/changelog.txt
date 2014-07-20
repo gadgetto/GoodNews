@@ -1,5 +1,12 @@
 Changelog for GoodNews
 
+GoodNews 1.1.4-pl (2014-07-20)
+--------------------------------------------------
+
+- fixed #12 You have changes pending; are you sure you want to cancel?
+- added contentblocks_replacement class to make GoodNews compatible with ContentBlocks 1.1
+
+
 GoodNews 1.1.3-pl (2014-07-17)
 --------------------------------------------------
 

@@ -24,7 +24,6 @@ Ext.extend(GoodNewsResource.page.UpdateGoodNewsResourceMailing,MODx.page.UpdateR
                 process: MODx.config.connector_url ? 'resource/update' : 'update'
                 ,text: _('save')
                 ,method: 'remote'
-                //,checkDirty: MODx.request.reload ? false : true
                 ,checkDirty: cfg.richtext || MODx.request.activeSave == 1 ? false : true
                 ,id: 'modx-abtn-save'
                 ,keys: [{
@@ -70,6 +69,7 @@ Ext.extend(GoodNewsResource.page.UpdateGoodNewsResourceMailing,MODx.page.UpdateR
         if (fp && fp.isDirty()) {
             Ext.Msg.confirm(_('warning'),_('resource_cancel_dirty_confirm'),function(e) {
                 if (e == 'yes') {
+                    fp.warnUnsavedChanges = false;
                     MODx.releaseLock(MODx.request.id);
                     MODx.sleep(400);
                     MODx.loadPage(''+MODx.action['goodnews:index'])
