@@ -1,9 +1,19 @@
 Changelog for GoodNews
 
+GoodNews 1.1.5-pl (2014-07-25)
+--------------------------------------------------
+
+- additional CSS fixes (because of last minute changes in Revo 2.3)
+- small corrections/changes in lexicon strings
+- changed Auto-Refresh toggle to ExtJs Cycle element for better UX
+- other small cosmetical changes to match new Revo 2.3 manager skin
+- removed Cron trigger status field (and make worker_process_active == true by default)
+
+
 GoodNews 1.1.4-pl (2014-07-20)
 --------------------------------------------------
 
-- fixed #12 You have changes pending; are you sure you want to cancel?
+- [#12] You have changes pending; are you sure you want to cancel?
 - added contentblocks_replacement class to make GoodNews compatible with ContentBlocks 1.1
 
 

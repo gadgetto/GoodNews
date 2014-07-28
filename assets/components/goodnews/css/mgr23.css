@@ -1,5 +1,5 @@
 /**
- * Custom GoodNews (gon-) CMP styles for Revo >= 2.3.0
+ * Custom GoodNews CMP styles for Revo >= 2.3.0
  */
 
 /* FileUploadField component styles */
@@ -14,15 +14,14 @@
 	filter: alpha(opacity: 0);
 	opacity: 0;
 	z-index: 2;
-	height: 30px !important;
+	height: 32px !important;
 }
 .x-form-file-wrap .x-form-file-btn {
 	position: absolute;
 	right: 0;
 	z-index: 1;
-	padding: 0 !important;
-	height: 30px !important;
-	line-height: 30px !important;
+	height: 32px !important;
+	line-height: 32px !important;
 	padding: 0 15px !important;
 }
 .x-form-file-wrap .x-form-file-text {
@@ -32,13 +31,14 @@
     color: #777;
 }
 
-/* The auto-refresh button */
-.gon-autorefresh-switch.x-btn-pressed {
-    background-color: #9ec41a;
-    border: 1px solid #668200;
+/* The auto-refresh button (ExtJS Cycle button) */
+.gon-autorefresh-on button {
+    color: #6cb24a;
 }
-.gon-autorefresh-switch.x-btn-pressed .x-btn-text {
-    color: #fff;
+
+/* The container selector in ActionBar */
+.gon-choose-container .x-form-field-trigger-wrap {
+    margin: 0 0 0 7px !important;
 }
 
 /* The groups / categories tree */
@@ -59,17 +59,17 @@
     color: #73726b;
 }
 
-/* Cron trigger status display in newsletters grid */
-.gon-crontrigger-status {
-    font-size: 1.3em;
-    padding-left: 10px;
-    padding-right: 10px;
+/* Status display above newsletters grid */
+.gon-status {
+    background: #fff;
+    padding: 15px 15px 0 15px;
+    text-align: right;
 }
-.gon-crontrigger-status .gon-ok {
-    color: green;
+.gon-crontrigger-enabled {
+    color: #6cb24a;
 }
-.gon-crontrigger-status .gon-nok {
-    color: red;
+.gon-crontrigger-disabled {
+    color: #be0000;
 }
 
 /* Expanded row in newsletters grid */
@@ -114,17 +114,17 @@
         background: url(../img/sending-ani.gif) no-repeat center left;
     }
     .gon-stopped {
-        color: #ff6c6c; /* red */
+        color: #be0000; /* red */
     }
     .gon-finished {
-        color: #7cc77c; /* green */
+        color: #6cb24a; /* green */
     }
     .gon-scheduled {
         color: #71abf3; /* light-blue */
     }
     
     .gon-testdummy-no {
-        color: green;
+        color: #6cb24a;
     }
     .gon-testdummy-yes {
         color: #6060ff; /* blue */
@@ -135,12 +135,10 @@
     display: block;
     font-size: 12px;
     font-style: italic;
-    margin: -6px 0 16px 2px;
+    margin: 2px 2px 10px 2px;
 }
 .gon-slider-display {
-    padding: 0 !important;
     text-align: center;
-    color: #000000;
 }
 
 #newsletter-log-frame {
@@ -166,10 +164,10 @@
     margin-left: 20px;
 }
 .gon-about-box .gon-ok {
-    color: green;
+    color: #6cb24a;
 }
 .gon-about-box .gon-nok {
-    color: red;
+    color: #be0000;
 }
 
 /* System check table in About tab */
@@ -205,7 +203,8 @@
 
 /* No slider background */
 .gon-slider-field .x-form-field-wrap {
-    background-image: none !important;
+    background: none;
+    border: none;
 }
 
 /* Special grid styles */
@@ -219,21 +218,21 @@
 }
 
 /* Row expander icon */
+#goodnews-grid-newsletters .x-grid3-row-collapsed .x-grid3-row-expander::before {
+    font-family: fontawesome;
+    font-size: 14px;
+    content: "\f003";
+    color: #53595f;
+}
+#goodnews-grid-newsletters .x-grid3-row-expanded .x-grid3-row-expander::before {
+    font-family: fontawesome;
+    font-size: 14px;
+    content: "\f003";
+    color: #3697cd;
+}
+
 #goodnews-grid-newsletters .x-grid3-row-expander {
-    background-image: url(../img/row-expand-email-sprite.png);
-    background-repeat: no-repeat;
-    background-color: transparent;
-    overflow: hidden;
-    width: 16px;
-    height: 16px;
-    margin: 14px 0 0 2px;
     cursor: help;
-}
-#goodnews-grid-newsletters .x-grid3-row-collapsed .x-grid3-row-expander {
-    background-position: 0 0;
-}
-#goodnews-grid-newsletters .x-grid3-row-expanded .x-grid3-row-expander {
-    background-position: 0 -16px;
 }
 
 /* Textarea in plain-text mail preview window */
@@ -252,10 +251,6 @@
        (-webkit-min-device-pixel-ratio: 1.25),
        (min-resolution: 120dpi) {
 
-    #goodnews-grid-newsletters .x-grid3-row-expander {
-        background-image: url(../img/row-expand-email-sprite@2x.png);
-        background-size: 16px auto !important;
-    }
     .gon-in-progress {
         background-image: url(../img/sending-ani@2x.gif);
         background-size: 16px auto !important;

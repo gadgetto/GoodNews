@@ -26,7 +26,7 @@
 
 class GoodNews {
 
-    const VERSION = '1.1.4';
+    const VERSION = '1.1.5';
     const RELEASE = 'pl';
 
     /** @var modX A reference to the modX object */
@@ -122,7 +122,7 @@ class GoodNews {
             }
             
             $this->siteStatus        = $this->modx->getOption('site_status', null, false) ? true : false;
-            $this->cronTriggerStatus = $this->modx->getOption('goodnews.worker_process_active', null, false) ? true : false;
+            $this->cronTriggerStatus = $this->modx->getOption('goodnews.worker_process_active', null, 1) ? true : false;
             $contextKey = false;
             $mailingTemplate = false;
             

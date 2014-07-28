@@ -50,7 +50,7 @@ if (!empty($securityKey) && $_GET['sid'] !== $securityKey) {
 
 $debug = $modx->getOption('goodnews.debug', null, false) ? true : false;
 
-$workerProcessActive = $modx->getOption('goodnews.worker_process_active', null, 0);
+$workerProcessActive = $modx->getOption('goodnews.worker_process_active', null, 1);
 if (!$workerProcessActive) { exit(); }
 
 $corePath  = $modx->getOption('goodnews.core_path', null, $modx->getOption('core_path').'components/goodnews/');

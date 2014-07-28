@@ -66,7 +66,7 @@ $settings['goodnews.mailing_bulk_size']->fromArray(array(
 $settings['goodnews.worker_process_active'] = $modx->newObject('modSystemSetting');
 $settings['goodnews.worker_process_active']->fromArray(array(
     'key'       => 'goodnews.worker_process_active',
-    'value'     => '0',
+    'value'     => '1',
     'xtype'     => 'combo-boolean',
     'namespace' => 'goodnews',
     'area'      => '',
