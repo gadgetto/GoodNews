@@ -40,6 +40,8 @@ $_lang['goodnews.imap_extension_available']                         = 'IMAP Erwe
 $_lang['goodnews.site_status']                                      = 'Website ist im Internet veröffentlicht';
 $_lang['goodnews.ok']                                               = '<span class="gon-ok">Ja</span>';
 $_lang['goodnews.nok']                                              = '<span class="gon-nok">Nein</span>';
+$_lang['goodnews.on']                                               = 'EIN';
+$_lang['goodnews.off']                                              = 'AUS';
 $_lang['goodnews.id']                                               = 'ID';
 $_lang['goodnews.management']                                       = 'GoodNews - Gruppen & Newsletter Mailings';
 $_lang['goodnews.button_settings']                                  = 'Einstellungen';
@@ -57,7 +59,7 @@ $_lang['goodnews.mail_subject']                                     = 'Mail Betr
 $_lang['goodnews.mail_body']                                        = 'Mail Inhalt';
 
 $_lang['goodnews.newsletters']                                      = 'Mailings';
-$_lang['goodnews.newsletters_management_desc']                      = 'Verwalten Sie Ihre Mailings aus allen GoodNews Containers hier. Die Tabelle bietet Statusinformationen zu Ihren Gruppen und Newsletter Mail Dokumenten. Um zusätzliche Informationen anzuzeigen, klicken Sie bitte auf das blaue E-Mail Icon. Um während des Versandes Live Informationen zu erhalten, aktivieren Sie bitte den <strong>Auto-Refresh</strong> Button.';
+$_lang['goodnews.newsletters_management_desc']                      = 'Verwalten Sie Ihre Mailings aus allen GoodNews Containers hier. Die Tabelle bietet Statusinformationen zu Ihren Gruppen und Newsletter Mail Dokumenten. Um zusätzliche Informationen anzuzeigen, klicken Sie bitte auf das Email Icon. Um während des Versandes Live Informationen zu erhalten, aktivieren Sie bitte <strong>Auto-Refresh</strong>.';
 $_lang['goodnews.newsletter_create']                                = 'Mailing erstellen';
 $_lang['goodnews.newsletter_id']                                    = 'ID';
 $_lang['goodnews.newsletter_title']                                 = 'Mailing Titel';
@@ -113,9 +115,9 @@ $_lang['goodnews.newsletter_draft']                                 = '(Entwurf)
 $_lang['goodnews.newsletter_cat_not_defined']                       = '(keine gew&auml;hlt)';
 $_lang['goodnews.newsletter_cat_assign']                            = 'Mailing Kategorien zuweisen';
 $_lang['goodnews.newsletter_cat_assign_desc']                       = 'Entsprechend dieser Zuweisung erfolgt die Zusammenstellung der Empfänger.';
-$_lang['goodnews.newsletter_sending_process_enabled']               = 'SENDEPOZESS AKTIVIERT';
-$_lang['goodnews.newsletter_sending_process_disabled']              = 'SENDEPOZESS DEAKTIVIERT';
-$_lang['goodnews.newsletter_grid_autorefresh']                      = 'Auto-Refresh';
+$_lang['goodnews.newsletter_sending_process_enabled']               = 'Sendeprozess: AKTIVIERT';
+$_lang['goodnews.newsletter_sending_process_disabled']              = 'Sendeprozess: DEAKTIVIERT';
+$_lang['goodnews.newsletter_grid_autorefresh']                      = 'Auto-Refresh: ';
 $_lang['goodnews.newsletter_send_log_view']                         = 'Versand Protokoll öffnen';
 $_lang['goodnews.newsletter_send_log_window_title']                 = 'Versand Protokoll für Mailing ID: ';
 $_lang['goodnews.newsletter_send_log_close_button']                 = 'Schließen';

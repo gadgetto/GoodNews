@@ -1,5 +1,5 @@
 /**
- * Custom GoodNews (gon-) CMP styles for Revo < 2.3.0
+ * Custom GoodNews CMP styles for Revo < 2.3.0
  */
 
 /* FileUploadField component styles */
@@ -28,22 +28,9 @@
     color: #777;
 }
 
-/* The auto-refresh button */
-.gon-autorefresh-switch.x-btn-pressed {
-    -moz-box-shadow: 0 0 3px #aaaaaa inset;
-    -webkit-box-shadow: 0 0 3px #aaaaaa inset;
-    -o-box-shadow: 0 0 3px #aaaaaa inset;
-    box-shadow: 0 0 3px #aaaaaa inset;
-    background-color: #f5ffff;
-    background-image: none;
-    margin: 0 1px;
-	border-color: #cfcfcf #c0c0c0 #aaaaaa;
-}
-.gon-autorefresh-switch .gon-icn-autorefresh {
-    background: url(../img/autorefresh.png) no-repeat 5px 4px !important;
-}
-.gon-autorefresh-switch.x-btn-pressed .gon-icn-autorefresh {
-    background: url(../img/autorefresh-on.png) no-repeat 5px 4px !important;
+/* The auto-refresh button (ExtJS Cycle button) */
+.gon-autorefresh-on button {
+    color: #6cb24a;
 }
 
 /* The groups / categories tree */
@@ -64,16 +51,16 @@
     color: #73726b;
 }
 
-/* Cron trigger status display in newsletters grid */
-.gon-crontrigger-status {
-    font-size: 1.3em;
-    padding-left: 10px;
-    padding-right: 10px;
+/* Status display above newsletters grid */
+.gon-status {
+    background: #fff;
+    padding: 15px 15px 0 15px;
+    text-align: right;
 }
-.gon-crontrigger-status .gon-ok {
+.gon-crontrigger-enabled {
     color: green;
 }
-.gon-crontrigger-status .gon-nok {
+.gon-crontrigger-disabled {
     color: red;
 }
 

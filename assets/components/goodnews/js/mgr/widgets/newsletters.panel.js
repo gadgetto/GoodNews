@@ -9,6 +9,12 @@
 GoodNews.panel.Newsletters = function(config) {
     config = config || {};
     
+    if (GoodNews.config.cronTriggerStatus == true) {
+        var cronStatusText = '<span class="gon-crontrigger-enabled">'+_('goodnews.newsletter_sending_process_enabled')+'</span>';
+    } else {
+        var cronStatusText = '<span class="gon-crontrigger-disabled">'+_('goodnews.newsletter_sending_process_disabled')+'</span>';
+    }
+    
     Ext.applyIf(config,{
         id: 'goodnews-panel-newsletters'
         ,title: _('goodnews.newsletters')
@@ -16,7 +22,7 @@ GoodNews.panel.Newsletters = function(config) {
             border: false 
         }
         ,items:[{
-            html: '<p>'+_('goodnews.newsletters_management_desc')+'</p>'
+            html: '<div>'+_('goodnews.newsletters_management_desc')+'</div>'
             ,border: false
             ,bodyCssClass: 'panel-desc'
         },{
@@ -62,13 +68,6 @@ var gridrefresh = {
  */
 GoodNews.grid.Newsletters = function(config) {
     config = config || {};
-
-    // Cron trigger status display values
-    if (GoodNews.config.cronTriggerStatus == true) {
-        var cronStatusText = '<span class="gon-ok"><strong>'+_('goodnews.newsletter_sending_process_enabled')+'</strong></span>';
-    } else {
-        var cronStatusText = '<span class="gon-nok"><strong>'+_('goodnews.newsletter_sending_process_disabled')+'</strong></span>';
-    }
     
     // Content of the expanded newsletter grid row
     var nlInfos = [
@@ -208,19 +207,19 @@ GoodNews.grid.Newsletters = function(config) {
             ,scope: this
             ,cls: 'primary-button'
         },'->',{
-            xtype: 'label'
-            ,id: 'crontrigger-status'
-            ,cls: 'gon-crontrigger-status'
-            ,html: cronStatusText
-        },'-',{
-            xtype: 'button'
+            xtype: 'cycle'
             ,id: 'autorefresh'
-            ,cls: 'gon-autorefresh-switch'
-            ,iconCls: GoodNews.config.legacyMode ? 'gon-icn-autorefresh' : ''
-            ,text: _('goodnews.newsletter_grid_autorefresh')
-            ,enableToggle: true
-            ,listeners: {
-                'toggle': {fn:this.toggleAutoRefresh,scope:this}
+            ,showText: true
+            ,prependText: _('goodnews.newsletter_grid_autorefresh')
+            ,items: [{
+                text: _('goodnews.off')
+                ,itemId: 'off'
+            },{
+                text: _('goodnews.on')
+                ,itemId: 'on'
+            }]
+            ,changeHandler:function(btn,item){
+                this.toggleAutoRefresh(btn,item.itemId);
             }
         },'-',{
             xtype: 'modx-combo'
@@ -411,14 +410,13 @@ Ext.extend(GoodNews.grid.Newsletters,MODx.grid.Grid,{
         this.getBottomToolbar().changePage(1);
         this.refresh();
     }
-    ,toggleAutoRefresh: function(btn) {
-        var arb = Ext.getCmp('autorefresh');
-        if (btn.pressed) {
-            arb.addClass('gon-autorefresh-on');
+    ,toggleAutoRefresh: function(btn,state) {
+        if (state == 'on') {
             tr1.start(gridrefresh);
+            btn.addClass('gon-autorefresh-on');
         } else {
-            arb.removeClass('gon-autorefresh-on');
             tr1.stop(gridrefresh);
+            btn.removeClass('gon-autorefresh-on');
         }  
     }
     ,clearFilter: function() {

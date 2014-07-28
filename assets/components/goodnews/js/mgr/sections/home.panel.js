@@ -67,6 +67,7 @@ Ext.extend(GoodNews.HomePanel,MODx.Panel,{
             ,emptyText: _('goodnews.choose_container')
             ,width: 200
             ,listWidth: 200
+            ,ctCls: 'gon-choose-container'
             ,name: 'container'
             ,hiddenName: 'container'
             ,valueField: 'id'
