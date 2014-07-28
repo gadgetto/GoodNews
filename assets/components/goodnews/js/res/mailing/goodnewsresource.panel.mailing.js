@@ -213,7 +213,7 @@ Ext.extend(GoodNewsResource.panel.Mailing,MODx.panel.Resource,{
                 ,height: 200
                 ,root_id: 'n_gongrp_0'
                 ,root_name: _('goodnews.mail_groups_categories')
-                ,rootVisible: true
+                ,rootVisible: false
                 ,enableDD: false
                 ,ddAppendOnly: true
                 ,useDefaultToolbar: true

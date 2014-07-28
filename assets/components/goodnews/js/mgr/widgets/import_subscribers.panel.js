@@ -108,7 +108,7 @@ GoodNews.panel.ImportSubscribers = function(config) {
                             ,height: 380
                             ,root_id: 'n_gongrp_0'
                             ,root_name: _('goodnews.import_subscribers_grpcat')
-                            ,rootVisible: true
+                            ,rootVisible: false
                             ,enableDD: false
                             ,ddAppendOnly: true
                             ,useDefaultToolbar: true

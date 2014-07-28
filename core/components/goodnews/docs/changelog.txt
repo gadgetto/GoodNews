@@ -1,5 +1,8 @@
 Changelog for GoodNews
 
+- Cosmetical changes to Groups/Categories tree
+
+
 GoodNews 1.1.5-pl (2014-07-25)
 --------------------------------------------------
 
