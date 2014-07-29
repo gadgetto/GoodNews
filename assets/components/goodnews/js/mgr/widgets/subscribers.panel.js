@@ -42,6 +42,22 @@ Ext.reg('goodnews-panel-subscribers',GoodNews.panel.Subscribers);
 GoodNews.grid.Subscribers = function(config){
     config = config || {};
 
+    // Content of the expanded subscriber grid row
+    var subscrInfos = [
+        '<table id="gon-subscrinfo-{id}" class="gon-expinfos">',
+            '<tr>',
+                '<td class="gon-expinfos-key">'+_('goodnews.id')+'</td><td class="gon-expinfos-val">{id}</td>',
+                '<td class="gon-expinfos-key">'+_('goodnews.subscriber_ip')+'</td><td class="gon-expinfos-val">{ip}</td>',
+            '</tr>',
+        '</table>'
+        ].join('\n');
+
+    // A row expander for subscribers grid rows (additional informations)
+    this.subexpander = new Ext.ux.grid.RowExpander({
+        tpl: new Ext.Template(subscrInfos)
+        ,enableCaching: false
+    });
+
     Ext.applyIf(config,{
         id: 'goodnews-grid-subscribers'
         ,url: GoodNews.config.connectorUrl
@@ -63,27 +79,26 @@ GoodNews.grid.Subscribers = function(config){
         ,emptyText: _('goodnews.subscribers_none')
         ,paging: true
         ,remoteSort: true
+        ,plugins: [this.subexpander]
+        ,autoExpandColumn: 'username'
         ,viewConfig: {
             forceFit: true
             ,scrollOffset: 0
-            ,getRowClass: function(record, index) {
-                if (record.get('grpcount') == 0) {
-                    return 'gon-no-subscriptions';
-                } else {
-                    return '';
-                }
-            }
         }
-        ,columns: [{
-            header: _('goodnews.id')
-            ,dataIndex: 'id'
-            ,sortable: true
-            ,width: 40
-        },{
+        ,columns: [
+        this.subexpander
+        ,{
             header: _('goodnews.subscriber_email')
             ,dataIndex: 'email'
             ,sortable: true
             ,width: 100
+            ,renderer: function(value,meta,record){
+                if (record.get('grpcount') == 0) {
+                    return '<span class="gon-no-subscriptions">'+value+'</span>';
+                } else {
+                    return '<span>'+value+'</span>';
+                }
+            }
         },{
             header: _('goodnews.subscriber_fullname')
             ,dataIndex: 'fullname'
@@ -121,11 +136,6 @@ GoodNews.grid.Subscribers = function(config){
             ,dataIndex: 'createdon'
             ,sortable: true
             ,width: 80
-        },{
-            header: _('goodnews.subscriber_ip')
-            ,dataIndex: 'ip'
-            ,sortable: true
-            ,width: 100
         },{
             header: _('goodnews.subscriber_soft_bounces')
             ,dataIndex: 'soft_bounces'

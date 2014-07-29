@@ -64,24 +64,26 @@
     color: red;
 }
 
-/* Expanded row in newsletters grid */
+/* Expanded rows in grids */
 .x-grid3-row-body {
     padding: 0 !important;
 }
-.x-grid3-row-body .gon-nlinfos {
+.x-grid3-row-body .gon-expinfos {
     overflow: hidden;
     color: #9c9c9c;
     margin: 5px 20px 20px 20px;
     border-collapse: collapse;
 }
-.x-grid3-row-body .gon-nlinfos-key {
+.x-grid3-row-body .gon-expinfos-key {
     text-align: left;
     padding: 4px 6px 4px 6px;
     font-weight: bold;
+    line-height: 20px;
 }
-.x-grid3-row-body .gon-nlinfos-val {
+.x-grid3-row-body .gon-expinfos-val {
     text-align: left;
     padding: 4px 22px 4px 6px;
+    line-height: 20px;
 }
 
 /* Status tag in newsletters grid */
@@ -249,7 +251,7 @@
     color: #999; /* grey */
 }
 
-/* Row expander icon */
+/* Row expander icon for Newsletters grid */
 #goodnews-grid-newsletters .x-grid3-row-expander {
     background-image: url(../img/row-expand-email-sprite.png);
     background-repeat: no-repeat;
@@ -264,6 +266,24 @@
     background-position: 0 0;
 }
 #goodnews-grid-newsletters .x-grid3-row-expanded .x-grid3-row-expander {
+    background-position: 0 -16px;
+}
+
+/* Row expander icon for Subscribers grid */
+#goodnews-grid-subscribers .x-grid3-row-expander {
+    background-image: url(../img/row-expand-user-sprite.png);
+    background-repeat: no-repeat;
+    background-color: transparent;
+    overflow: hidden;
+    width: 16px;
+    height: 16px;
+    margin: 14px 0 0 2px;
+    cursor: help;
+}
+#goodnews-grid-subscribers .x-grid3-row-collapsed .x-grid3-row-expander {
+    background-position: 0 0;
+}
+#goodnews-grid-subscribers .x-grid3-row-expanded .x-grid3-row-expander {
     background-position: 0 -16px;
 }
 
@@ -317,6 +337,10 @@
     }
     #goodnews-grid-newsletters .x-grid3-row-expander {
         background-image: url(../img/row-expand-email-sprite@2x.png);
+        background-size: 16px auto !important;
+    }
+    #goodnews-grid-subscribers .x-grid3-row-expander {
+        background-image: url(../img/row-expand-user-sprite@2x.png);
         background-size: 16px auto !important;
     }
     .gon-in-progress {

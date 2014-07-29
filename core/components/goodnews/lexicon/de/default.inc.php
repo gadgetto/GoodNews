@@ -31,7 +31,7 @@ $_lang['goodnews.desc']                                             = 'Ein integ
 $_lang['goodnews.credits']                                          = 'Credits';
 $_lang['goodnews.credits_modx_community']                           = 'Herzlichen Dank der fantastischen MODx Community für ihre unermüdliche Hilfe!';
 $_lang['goodnews.credits_bob_ray']                                  = 'Methoden zur Generierung vollständiger URLs und Konvertierung von inline Image Styles von Bob Ray - <a href="http://bobsguides.com">http://bobsguides.com</a>';
-$_lang['goodnews.credits_icons_by']                                 = 'Icons von: FatCow Web Hosting - <a href="http://www.fatcow.com">http://www.fatcow.com</a>';
+$_lang['goodnews.credits_icons_by']                                 = 'Icons unter Revo 2.2.x von: FatCow Web Hosting - <a href="http://www.fatcow.com">http://www.fatcow.com</a>';
 $_lang['goodnews.system_checks']                                    = 'System Tests';
 $_lang['goodnews.system_check_title']                               = 'Titel';
 $_lang['goodnews.system_check_value']                               = 'Wert (Status)';
@@ -168,7 +168,7 @@ $_lang['goodnews.category_err_remove']                              = 'Beim Entf
 $_lang['goodnews.category_err_save']                                = 'Beim Speichern der Kategorie ist ein Fehler aufgetreten.';
 
 $_lang['goodnews.subscribers']                                      = 'Abonnenten';
-$_lang['goodnews.subscribers_desc']                                 = 'Verwalten Sie Ihre Mailing-Abonnenten hier. <span class="gon-no-subscriptions">Ausgegraute Benutzer</span> haben keine GoodNews Meta-Daten zugewiesen oder derzeit keine Abonnements aktiviert. Neue Abonnenten werden &uuml;ber Benutzer Abonnements, manuell &uuml;ber die MODx Benutzerverwaltung oder per Import erstellt.';
+$_lang['goodnews.subscribers_desc']                                 = 'Verwalten Sie Ihre Abonnenten hier. Benutzer mit <span class="gon-no-subscriptions">ausgegrauter</span> Email adresse haben keine GoodNews Meta-Daten zugewiesen oder derzeit keine Abonnements aktiviert. Neue Abonnenten werden &uuml;ber Benutzer Abonnements, manuell &uuml;ber die MODx Benutzerverwaltung oder per Import erstellt.';
 $_lang['goodnews.modx_user_create']                                 = 'MODx Benutzer erstellen';
 $_lang['goodnews.subscribers_user_group']                           = 'Abonnenten Gruppe';
 $_lang['goodnews.subscribers_user_group_filter']                    = 'Filtern nach Gruppe...';
