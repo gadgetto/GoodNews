@@ -194,9 +194,11 @@ $_lang['goodnews.subscribers_none']                                 = 'Keine Abo
 $_lang['goodnews.subscribers_no_group']                             = 'Keine Gruppe zugewiesen';
 $_lang['goodnews.subscriber_update']                                = 'Abonnements bearbeiten';
 $_lang['goodnews.subscriber_remove_subscriptions']                  = 'Alle Abonnements entfernen';
+$_lang['goodnews.subscriber_remove_subscriptions_confirm']          = 'Sind Sie sicher, dass Sie alle Abonnements dieses Benutzers entfernen m&ouml;chten?';
 $_lang['goodnews.subscriber_remove_meta_data']                      = 'Alle GoodNews Meta-Daten entfernen';
 $_lang['goodnews.subscriber_remove_meta_data_confirm']              = 'Sind Sie sicher, dass Sie alle GoodNews Meta-Daten dieses Benutzers entfernen m&ouml;chten?';
-$_lang['goodnews.subscriber_remove_subscriptions_confirm']          = 'Sind Sie sicher, dass Sie alle Abonnements dieses Benutzers entfernen m&ouml;chten?';
+$_lang['goodnews.subscriber_reset_bounce_counters']                 = 'Bounce Counters zurücksetzen';
+$_lang['goodnews.subscriber_reset_bounce_counters_confirm']         = 'Sind Sie sicher, dass Sie alle Bounce Counters dieses Benutzers zurücksetzen m&ouml;chten?';
 $_lang['goodnews.user_update']                                      = 'Benutzer bearbeiten (MODx Benutzer Tabelle)';
 
 $_lang['goodnews.settings']                                         = 'GoodNews - Einstellungen';

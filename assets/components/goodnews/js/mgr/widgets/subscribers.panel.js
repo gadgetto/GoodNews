@@ -234,6 +234,9 @@ Ext.extend(GoodNews.grid.Subscribers,MODx.grid.Grid,{
             text: _('goodnews.subscriber_update')
             ,handler: this.updateSubscriber
         },{
+            text: _('goodnews.subscriber_reset_bounce_counters')
+            ,handler: this.resetBounceCounters
+        },{
             text: _('goodnews.subscriber_remove_subscriptions')
             ,handler: this.removeSubscriptions
         },{
@@ -263,6 +266,20 @@ Ext.extend(GoodNews.grid.Subscribers,MODx.grid.Grid,{
     }
     ,updateUser: function(btn,e) {
         location.href = 'index.php?a='+MODx.action['security/user/update']+'&id='+this.menu.record.id;
+    }
+    ,resetBounceCounters: function() {
+        MODx.msg.confirm({
+            title: _('goodnews.subscriber_reset_bounce_counters')
+            ,text: _('goodnews.subscriber_reset_bounce_counters_confirm')
+            ,url: this.config.url
+            ,params: {
+                action: 'mgr/subscribers/resetBounceCounters'
+                ,id: this.menu.record.id
+            }
+            ,listeners: {
+                'success': {fn: this.refresh, scope: this}
+            }
+        });
     }
     ,removeSubscriptions: function() {
         MODx.msg.confirm({

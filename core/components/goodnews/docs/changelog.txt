@@ -2,6 +2,7 @@ Changelog for GoodNews
 
 GoodNews 1.1.6-pl (2014-07-28)
 --------------------------------------------------
+- added feature to manually reset bounce counters of a subscriber
 - Cosmetical changes to Groups/Categories tree
 - added row-expander to subscribers grid for detailed informations and save grid space
 - moved  subscriber id to row epander

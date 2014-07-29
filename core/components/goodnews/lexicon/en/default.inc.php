@@ -194,9 +194,11 @@ $_lang['goodnews.subscribers_none']                                 = 'No subscr
 $_lang['goodnews.subscribers_no_group']                             = 'No group assigned';
 $_lang['goodnews.subscriber_update']                                = 'Edit Subscriptions';
 $_lang['goodnews.subscriber_remove_subscriptions']                  = 'Remove All Subscriptions';
+$_lang['goodnews.subscriber_remove_subscriptions_confirm']          = 'Are you sure you want to remove all subscriptions of this user?';
 $_lang['goodnews.subscriber_remove_meta_data']                      = 'Remove All GoodNews Meta-Data';
 $_lang['goodnews.subscriber_remove_meta_data_confirm']              = 'Are you sure you want to remove all GoodNews meta-data of this user?';
-$_lang['goodnews.subscriber_remove_subscriptions_confirm']          = 'Are you sure you want to remove all subscriptions of this user?';
+$_lang['goodnews.subscriber_reset_bounce_counters']                 = 'Reset Bounce Counters';
+$_lang['goodnews.subscriber_reset_bounce_counters_confirm']         = 'Are you sure you want to reset all bounce counters of this user?';
 $_lang['goodnews.user_update']                                      = 'Edit User (MODx User Table)';
                                                             
 $_lang['goodnews.settings']                                         = 'GoodNews - Settings';
