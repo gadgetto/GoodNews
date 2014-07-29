@@ -40,7 +40,7 @@ GoodNews.panel.ImportSubscribers = function(config) {
                         xtype: MODx.expandHelp ? 'label' : 'hidden'
                         ,forId: 'csvfile'
                         ,html: _('goodnews.import_subscribers_csvfile_desc')
-                        ,cls: 'gon-desc-under'
+                        ,cls: 'desc-under'
                     },{
                         xtype: 'numberfield'
                         ,name: 'batchsize'
@@ -57,7 +57,7 @@ GoodNews.panel.ImportSubscribers = function(config) {
                         xtype: MODx.expandHelp ? 'label' : 'hidden'
                         ,forId: 'batchsize'
                         ,html: _('goodnews.import_subscribers_batchsize_desc')
-                        ,cls: 'gon-desc-under'
+                        ,cls: 'desc-under'
                     },{
                         xtype: 'textfield'
                         ,name: 'delimiter'
@@ -71,7 +71,7 @@ GoodNews.panel.ImportSubscribers = function(config) {
                         xtype: MODx.expandHelp ? 'label' : 'hidden'
                         ,forId: 'delimiter'
                         ,html: _('goodnews.import_subscribers_delimiter_desc')
-                        ,cls: 'gon-desc-under'
+                        ,cls: 'desc-under'
                     },{
                         xtype: 'textfield'
                         ,name: 'enclosure'
@@ -85,7 +85,7 @@ GoodNews.panel.ImportSubscribers = function(config) {
                         xtype: MODx.expandHelp ? 'label' : 'hidden'
                         ,forId: 'enclosure'
                         ,html: _('goodnews.import_subscribers_enclosure_desc')
-                        ,cls: 'gon-desc-under'
+                        ,cls: 'desc-under'
                     }]
                 },{
                     columnWidth: .5

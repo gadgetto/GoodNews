@@ -132,13 +132,6 @@
         color: #6060ff; /* blue */
     }
 
-.gon-desc-under {
-    color: #aaaaaa;
-    display: block;
-    font-size: 12px;
-    font-style: italic;
-    margin: 2px 2px 10px 2px;
-}
 .gon-slider-display {
     text-align: center;
 }

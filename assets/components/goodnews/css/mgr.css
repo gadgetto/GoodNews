@@ -149,13 +149,6 @@
     background: url(../img/close.png) no-repeat 5px 4px !important;
 }
 
-.gon-desc-under {
-    color: #aaaaaa;
-    display: block;
-    font-size: 12px;
-    font-style: italic;
-    margin: -6px 0 16px 2px;
-}
 .gon-slider-display {
     padding: 0 !important;
     text-align: center;

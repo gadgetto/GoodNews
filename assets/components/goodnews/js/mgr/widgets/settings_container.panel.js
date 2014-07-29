@@ -178,7 +178,7 @@ GoodNews.window.UpdateContainerSettings = function(config) {
                     xtype: MODx.expandHelp ? 'label' : 'hidden'
                     ,forId: 'editor_groups'
                     ,html: _('goodnews.settings_container_editor_groups_desc')
-                    ,cls: 'gon-desc-under'
+                    ,cls: 'desc-under'
                 },{
                     xtype: 'textfield'
                     ,fieldLabel: _('goodnews.settings_container_mail_from')
@@ -190,7 +190,7 @@ GoodNews.window.UpdateContainerSettings = function(config) {
                     xtype: MODx.expandHelp ? 'label' : 'hidden'
                     ,forId: 'mail_from'
                     ,html: _('goodnews.settings_container_mail_from_desc')
-                    ,cls: 'gon-desc-under'
+                    ,cls: 'desc-under'
                 },{
                     xtype: 'textfield'
                     ,fieldLabel: _('goodnews.settings_container_mail_from_name')
@@ -202,7 +202,7 @@ GoodNews.window.UpdateContainerSettings = function(config) {
                     xtype: MODx.expandHelp ? 'label' : 'hidden'
                     ,forId: 'mail_from_name'
                     ,html: _('goodnews.settings_container_mail_from_name_desc')
-                    ,cls: 'gon-desc-under'
+                    ,cls: 'desc-under'
                 },{
                     xtype: 'textfield'
                     ,fieldLabel: _('goodnews.settings_container_mail_reply_to')
@@ -214,7 +214,7 @@ GoodNews.window.UpdateContainerSettings = function(config) {
                     xtype: MODx.expandHelp ? 'label' : 'hidden'
                     ,forId: 'mail_reply_to'
                     ,html: _('goodnews.settings_container_mail_reply_to_desc')
-                    ,cls: 'gon-desc-under'
+                    ,cls: 'desc-under'
                 },{
                     xtype: 'modx-combo'
                     ,fieldLabel: _('goodnews.settings_container_mail_bouncehandling')
@@ -235,7 +235,7 @@ GoodNews.window.UpdateContainerSettings = function(config) {
                     xtype: MODx.expandHelp ? 'label' : 'hidden'
                     ,forId: 'mail_bouncehandling'
                     ,html: _('goodnews.settings_container_mail_bouncehandling_desc')
-                    ,cls: 'gon-desc-under'
+                    ,cls: 'desc-under'
                 }]
             },{
                 title: _('goodnews.settings_container_tab_bouncemailbox')
@@ -270,7 +270,7 @@ GoodNews.window.UpdateContainerSettings = function(config) {
                     xtype: MODx.expandHelp ? 'label' : 'hidden'
                     ,forId: 'mail_service'
                     ,html: _('goodnews.settings_container_mail_service_desc')
-                    ,cls: 'gon-desc-under'
+                    ,cls: 'desc-under'
                 },{
                     xtype: 'textfield'
                     ,fieldLabel: _('goodnews.settings_container_mail_mailhost')
@@ -282,7 +282,7 @@ GoodNews.window.UpdateContainerSettings = function(config) {
                     xtype: MODx.expandHelp ? 'label' : 'hidden'
                     ,forId: 'mail_mailhost'
                     ,html: _('goodnews.settings_container_mail_mailhost_desc')
-                    ,cls: 'gon-desc-under'
+                    ,cls: 'desc-under'
                 },{
                     layout: 'column'
                     ,border: false
@@ -307,7 +307,7 @@ GoodNews.window.UpdateContainerSettings = function(config) {
                             xtype: MODx.expandHelp ? 'label' : 'hidden'
                             ,forId: 'mail_mailbox_username'
                             ,html: _('goodnews.settings_container_mail_mailbox_username_desc')
-                            ,cls: 'gon-desc-under'
+                            ,cls: 'desc-under'
                         }]
                     },{
                         columnWidth: .5
@@ -324,7 +324,7 @@ GoodNews.window.UpdateContainerSettings = function(config) {
                             xtype: MODx.expandHelp ? 'label' : 'hidden'
                             ,forId: 'mail_boxname'
                             ,html: _('goodnews.settings_container_mail_mailbox_password_desc')
-                            ,cls: 'gon-desc-under'
+                            ,cls: 'desc-under'
                         }]
                     }]
                 },{
@@ -338,7 +338,7 @@ GoodNews.window.UpdateContainerSettings = function(config) {
                     xtype: MODx.expandHelp ? 'label' : 'hidden'
                     ,forId: 'mail_boxname'
                     ,html: _('goodnews.settings_container_mail_boxname_desc')
-                    ,cls: 'gon-desc-under'
+                    ,cls: 'desc-under'
                 },{
                     layout: 'column'
                     ,border: false
@@ -376,7 +376,7 @@ GoodNews.window.UpdateContainerSettings = function(config) {
                             xtype: MODx.expandHelp ? 'label' : 'hidden'
                             ,forId: 'mail_service_option'
                             ,html: _('goodnews.settings_container_mail_service_option_desc')
-                            ,cls: 'gon-desc-under'
+                            ,cls: 'desc-under'
                         }]
                     },{
                         columnWidth: .5
@@ -392,7 +392,7 @@ GoodNews.window.UpdateContainerSettings = function(config) {
                             xtype: MODx.expandHelp ? 'label' : 'hidden'
                             ,forId: 'mail_port'
                             ,html: _('goodnews.settings_container_mail_port_desc')
-                            ,cls: 'gon-desc-under'
+                            ,cls: 'desc-under'
                         }]
                     }]
                 }]
@@ -434,7 +434,7 @@ GoodNews.window.UpdateContainerSettings = function(config) {
                             xtype: MODx.expandHelp ? 'label' : 'hidden'
                             ,forId: 'mail_softbounced_message_action'
                             ,html: _('goodnews.settings_container_softbounced_msg_action_desc')
-                            ,cls: 'gon-desc-under'
+                            ,cls: 'desc-under'
                         },{
                             xtype: 'textfield'
                             ,fieldLabel: _('goodnews.settings_container_softbounces_mailbox')
@@ -446,7 +446,7 @@ GoodNews.window.UpdateContainerSettings = function(config) {
                             xtype: MODx.expandHelp ? 'label' : 'hidden'
                             ,forId: 'mail_soft_mailbox'
                             ,html: _('goodnews.settings_container_softbounces_mailbox_desc')
-                            ,cls: 'gon-desc-under'
+                            ,cls: 'desc-under'
                         },{
                             xtype: 'numberfield'
                             ,fieldLabel: _('goodnews.settings_container_max_softbounces')
@@ -460,7 +460,7 @@ GoodNews.window.UpdateContainerSettings = function(config) {
                             xtype: MODx.expandHelp ? 'label' : 'hidden'
                             ,forId: 'mail_max_softbounces'
                             ,html: _('goodnews.settings_container_max_softbounces_desc')
-                            ,cls: 'gon-desc-under'
+                            ,cls: 'desc-under'
                         },{
                             xtype: 'modx-combo'
                             ,fieldLabel: _('goodnews.settings_container_max_softbounces_action')
@@ -483,7 +483,7 @@ GoodNews.window.UpdateContainerSettings = function(config) {
                             xtype: MODx.expandHelp ? 'label' : 'hidden'
                             ,forId: 'mail_max_softbounces_action'
                             ,html: _('goodnews.settings_container_max_softbounces_action_desc')
-                            ,cls: 'gon-desc-under'
+                            ,cls: 'desc-under'
                         }]
                     },{
                         columnWidth: .5
@@ -510,7 +510,7 @@ GoodNews.window.UpdateContainerSettings = function(config) {
                             xtype: MODx.expandHelp ? 'label' : 'hidden'
                             ,forId: 'mail_hardbounced_message_action'
                             ,html: _('goodnews.settings_container_hardbounced_msg_action_desc')
-                            ,cls: 'gon-desc-under'
+                            ,cls: 'desc-under'
                         },{
                             xtype: 'textfield'
                             ,fieldLabel: _('goodnews.settings_container_hardbounces_mailbox')
@@ -522,7 +522,7 @@ GoodNews.window.UpdateContainerSettings = function(config) {
                             xtype: MODx.expandHelp ? 'label' : 'hidden'
                             ,forId: 'mail_hard_mailbox'
                             ,html: _('goodnews.settings_container_hardbounces_mailbox_desc')
-                            ,cls: 'gon-desc-under'
+                            ,cls: 'desc-under'
                         },{
                             xtype: 'numberfield'
                             ,fieldLabel: _('goodnews.settings_container_max_hardbounces')
@@ -536,7 +536,7 @@ GoodNews.window.UpdateContainerSettings = function(config) {
                             xtype: MODx.expandHelp ? 'label' : 'hidden'
                             ,forId: 'mail_max_hardbounces'
                             ,html: _('goodnews.settings_container_max_hardbounces_desc')
-                            ,cls: 'gon-desc-under'
+                            ,cls: 'desc-under'
                         },{
                             xtype: 'modx-combo'
                             ,fieldLabel: _('goodnews.settings_container_max_hardbounces_action')
@@ -559,7 +559,7 @@ GoodNews.window.UpdateContainerSettings = function(config) {
                             xtype: MODx.expandHelp ? 'label' : 'hidden'
                             ,forId: 'mail_max_hardbounces_action'
                             ,html: _('goodnews.settings_container_max_hardbounces_action_desc')
-                            ,cls: 'gon-desc-under'
+                            ,cls: 'desc-under'
                         }]
                     }]
                 }]
@@ -588,7 +588,7 @@ GoodNews.window.UpdateContainerSettings = function(config) {
                     xtype: MODx.expandHelp ? 'label' : 'hidden'
                     ,forId: 'mail_notclassified_message_action'
                     ,html: _('goodnews.settings_container_notclassified_msg_action_desc')
-                    ,cls: 'gon-desc-under'
+                    ,cls: 'desc-under'
                 },{
                     xtype: 'textfield'
                     ,fieldLabel: _('goodnews.settings_container_notclassified_mailbox')
@@ -600,7 +600,7 @@ GoodNews.window.UpdateContainerSettings = function(config) {
                     xtype: MODx.expandHelp ? 'label' : 'hidden'
                     ,forId: 'mail_notclassified_mailbox'
                     ,html: _('goodnews.settings_container_notclassified_mailbox_desc')
-                    ,cls: 'gon-desc-under'
+                    ,cls: 'desc-under'
                 }]
             }]
             ,listeners: {
