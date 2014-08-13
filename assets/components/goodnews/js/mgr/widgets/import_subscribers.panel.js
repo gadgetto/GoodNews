@@ -33,7 +33,6 @@ GoodNews.panel.ImportSubscribers = function(config) {
                         ,name: 'csvfile'
                         ,id: 'csvfile'
                         ,buttonText: _('goodnews.import_subscribers_csvfile_button')
-                        ,buttonOffset: 1
                         ,fieldLabel: _('goodnews.import_subscribers_csvfile')
                         ,anchor: '100%'
                     },{

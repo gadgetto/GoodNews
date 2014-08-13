@@ -46,8 +46,10 @@ class GoodNewsImportManagerController extends GoodNewsManagerController {
         // load utilities and reusable functions
         $this->addJavascript($this->goodnews->config['jsUrl'].'utils/utilities.js');
         
-        // load custom extension to implement a file upload field
-        $this->addJavascript($this->goodnews->config['jsUrl'].'utils/fileuploadfield.js');
+        // load custom extension to implement a file upload field for MODX versions < 2.3
+        if ($this->goodnews->legacyMode) {
+            $this->addJavascript($this->goodnews->config['jsUrl'].'utils/fileuploadfield.js');
+        }
         
         // load widgets
         $this->addJavascript($this->goodnews->config['jsUrl'].'mgr/widgets/import_subscribers.panel.js');

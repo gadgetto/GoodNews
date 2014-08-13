@@ -1,7 +1,8 @@
 Changelog for GoodNews
 
-GoodNews 1.1.6-pl (2014-07-28)
+GoodNews 1.1.6-pl (2014-08-13)
 --------------------------------------------------
+- fileuploadfield extension only needs to be loaded in MODX < 2.3 (natively supported in MODX >= 2.3)
 - removed custom form field description styles - using default MODx style
 - added feature to manually reset bounce counters of a subscriber
 - Cosmetical changes to Groups/Categories tree
