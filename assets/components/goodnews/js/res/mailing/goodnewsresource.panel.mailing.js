@@ -370,7 +370,7 @@ Ext.extend(GoodNewsResource.panel.Mailing,MODx.panel.Resource,{
                 ,name: 'created_by'
                 ,hiddenName: 'createdby'
                 ,id: 'modx-resource-createdby'
-                ,width: 300
+                ,anchor: '100%'
                 ,value: config.record.createdby || MODx.user.id
             }]
         }]
