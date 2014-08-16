@@ -2,6 +2,7 @@ Changelog for GoodNews
 
 GoodNews 1.1.6-pl (2014-08-13)
 --------------------------------------------------
+- security fix for subscribers getlist processor
 - fixed wrong width of "Created By" combo field in mailing editor
 - fileuploadfield extension only needs to be loaded in MODX < 2.3 (natively supported in MODX >= 2.3)
 - removed custom form field description styles - using default MODx style
