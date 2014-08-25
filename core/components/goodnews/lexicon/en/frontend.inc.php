@@ -51,12 +51,15 @@ $_lang['goodnews.spam_marked']                    = ' - marked as spam.';
 
 $_lang['goodnews.activation_email_subject']       = 'Thanks for your interest in our newsletter service. Please activate your subscription!';
 $_lang['goodnews.subscription_email_subject']     = 'Thanks for your interest in our newsletter service. Your subscription was successful!';
+$_lang['goodnews.requestlinks_email_subject']     = 'Your requested links to update or cancel your subscription.';
+
+$_lang['goodnews.requestlinks_success']           = 'The requested links were sent to the submitted email address.';
 
 $_lang['goodnews.email']                          = 'Email Address';
 $_lang['goodnews.fullname']                       = 'Full Name';
 $_lang['goodnews.address']                        = 'Address';
-$_lang['goodnews.zip']                            = 'Zip';
 $_lang['goodnews.city']                           = 'City';
+$_lang['goodnews.zip']                            = 'Zip';
 $_lang['goodnews.state']                          = 'State';
 $_lang['goodnews.country']                        = 'Country';
 $_lang['goodnews.email']                          = 'Email';

@@ -124,6 +124,22 @@ $_lang['prop_goodnewsgetnewsletters.outputseparator_desc']          = 'Trenner f
 $_lang['prop_goodnewsgetnewsletters.toplaceholder_desc']            = 'Wenn gesetzt, wird das Ergebnis in diesem Platzhalter gespeichert und nicht direkt ausgegeben.';
 $_lang['prop_goodnewsgetnewsletters.debug_desc']                    = 'Wenn aktiviert, wird der SQL Query String an das MODX System Log gesendet. Standard ist NEIN.';
 
+// GoodNewsRequestLinks snippet
+$_lang['prop_goodnewsrequestlinks.unsubscriberesourceid_desc']      = 'Die ID der Resource zur Auflösung von Abonnements.';
+$_lang['prop_goodnewsrequestlinks.profileresourceid_desc']          = 'Die ID der Resource zur Bearbeitung von Abo-Profilen.';
+$_lang['prop_goodnewsrequestlinks.submittedresourceid_desc']        = 'Weiterleiten des Abonnenten zur Ressource mit dieser ID nach dem Absenden des Formulars.';
+$_lang['prop_goodnewsrequestlinks.requestlinksemailsubject_desc']   = 'Der Betreff des Emails nach Anforderung der Links.';
+$_lang['prop_goodnewsrequestlinks.requestlinksemailtpl_desc']       = 'Das Template des Emails für Anforderung der Links.';
+$_lang['prop_goodnewsrequestlinks.requestlinksemailtplalt_desc']    = 'Plain-Text Alternative für das Template des Emails für Anforderung der Links.';
+$_lang['prop_goodnewsrequestlinks.requestlinksemailtpltype_desc']   = 'Der Templatetyp des Emails für Anforderung der Links.';
+$_lang['prop_goodnewsrequestlinks.errtpl_desc']                     = 'Das Template zur Fehlerausgabe in Feldern.';
+$_lang['prop_goodnewsrequestlinks.emailfield_desc']                 = 'Name des Feldes für die Email Adresse.';
+$_lang['prop_goodnewsrequestlinks.sendunauthorizedpage_desc']       = 'Wenn ein Benutzer anhand der übermittelten Email nicht identifiziert wird, wird dieser zur Unauthorized Seite weitergeleitet.';
+$_lang['prop_goodnewsrequestlinks.submitvar_desc']                  = 'Prüfvariable: Wenn leer oder nicht gesetzt, wird das Snippet alle POST-Variablen im Formular verwenden.';
+$_lang['prop_goodnewsrequestlinks.successmsg_desc']                 = 'Falls Sie nicht mittels des submittedResourceId Parameters weiterleiten, wird diese Nachricht angezeigt.';
+$_lang['prop_goodnewsrequestlinks.validate_desc']                   = 'Eine kommaseparierte Liste von Feldern zur Validierung im Format feldname:validator (z.B.: email:required). Die Felder können auch verkettet werden (z.B.: email:email:required).';
+$_lang['prop_goodnewsrequestlinks.placeholderprefix_desc']          = 'Ein Prefix, welches für alle Platzhalter des Snippets verwendet werden soll.';
+
 // List options
 $_lang['opt_goodnews.chunk']    = 'Chunk';
 $_lang['opt_goodnews.file']     = 'Datei';

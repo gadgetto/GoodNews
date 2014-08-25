@@ -124,6 +124,22 @@ $_lang['prop_goodnewsgetnewsletters.outputseparator_desc']          = 'Separator
 $_lang['prop_goodnewsgetnewsletters.toplaceholder_desc']            = 'If set, will assign the result to this placeholder instead of outputting it directly.';
 $_lang['prop_goodnewsgetnewsletters.debug_desc']                    = 'If true, will send the SQL query to the MODX log. Defaults to false.';
 
+// GoodNewsRequestLinks snippet
+$_lang['prop_goodnewsrequestlinks.unsubscriberesourceid_desc']      = 'The ID of the Resource to cancel subscriptions.';
+$_lang['prop_goodnewsrequestlinks.profileresourceid_desc']          = 'The ID of the Resource to edit subscription profiles.';
+$_lang['prop_goodnewsrequestlinks.submittedresourceid_desc']        = 'Redirect to the Resource with the specified ID after the subscriber submits the form.';
+$_lang['prop_goodnewsrequestlinks.requestlinksemailsubject_desc']   = 'The subject of the request links email.';
+$_lang['prop_goodnewsrequestlinks.requestlinksemailtpl_desc']       = 'The request links email template.';
+$_lang['prop_goodnewsrequestlinks.requestlinksemailtplalt_desc']    = 'Plain-text alternative for the request links email template.';
+$_lang['prop_goodnewsrequestlinks.requestlinksemailtpltype_desc']   = 'The template-type for the request links email.';
+$_lang['prop_goodnewsrequestlinks.errtpl_desc']                     = 'The template for error message output in fields.';
+$_lang['prop_goodnewsrequestlinks.emailfield_desc']                 = 'Name of the field to use for the email address.';
+$_lang['prop_goodnewsrequestlinks.sendunauthorizedpage_desc']       = 'If a user is not identified by the submiited email, redirect him to the Unauthorized Page.';
+$_lang['prop_goodnewsrequestlinks.submitvar_desc']                  = 'Variable for check: If empty or set to false, the snippet will process the form with all POST variables.';
+$_lang['prop_goodnewsrequestlinks.successmsg_desc']                 = 'If not redirecting using the submittedResourceId parameter, will display this message instead.';
+$_lang['prop_goodnewsrequestlinks.validate_desc']                   = 'A comma-separated list of fields to validate, with each field name as name:validator (eg: email:required). Validators can also be chained, like email:email:required.';
+$_lang['prop_goodnewsrequestlinks.placeholderprefix_desc']          = 'The prefix to use for all placeholders set by this snippet.';
+
 // List options
 $_lang['opt_goodnews.chunk']    = 'Chunk';
 $_lang['opt_goodnews.file']     = 'File';

@@ -1,7 +1,8 @@
 Changelog for GoodNews
 
-GoodNews 1.1.6-pl (2014-08-13)
+GoodNews 1.1.6-pl (2014-08-24)
 --------------------------------------------------
+- [#19] new feature to request secure links via email
 - security fix for subscribers getlist processor
 - fixed wrong width of "Created By" combo field in mailing editor
 - fileuploadfield extension only needs to be loaded in MODX < 2.3 (natively supported in MODX >= 2.3)

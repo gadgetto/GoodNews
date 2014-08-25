@@ -70,6 +70,9 @@ abstract class GoodNewsSubscriptionController {
     /** @var GoodNewsSubscriberMeta.sid $sid */
     public $sid;
 
+    /** @var string $email */
+    public $email;
+
     /**
      * The constructor for the GoodNewsSubscriptionController class.
      *
@@ -139,7 +142,7 @@ abstract class GoodNewsSubscriptionController {
         }
         return $this->sid;
     }
-    
+
     /**
      * Gets a user by the sid field from the GoodNewsSubscriberMeta table.
      *
@@ -613,7 +616,6 @@ abstract class GoodNewsSubscriptionController {
             if (!class_exists($className)) {
                 $className = include_once $processorFile;
             }
-            /** @var GoodNewsSubscriptionProcessor $processor */
             $processor = new $className($this->goodnewssubscription, $this);
         } catch (Exception $e) {
             $this->modx->log(modX::LOG_LEVEL_ERROR, '[GoodNews] '.$e->getMessage());
