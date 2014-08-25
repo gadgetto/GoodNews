@@ -213,7 +213,7 @@ Ext.extend(GoodNewsResource.panel.Mailing,MODx.panel.Resource,{
                 ,height: 200
                 ,root_id: 'n_gongrp_0'
                 ,root_name: _('goodnews.mail_groups_categories')
-                ,rootVisible: true
+                ,rootVisible: false
                 ,enableDD: false
                 ,ddAppendOnly: true
                 ,useDefaultToolbar: true
@@ -370,7 +370,7 @@ Ext.extend(GoodNewsResource.panel.Mailing,MODx.panel.Resource,{
                 ,name: 'created_by'
                 ,hiddenName: 'createdby'
                 ,id: 'modx-resource-createdby'
-                ,width: 300
+                ,anchor: '100%'
                 ,value: config.record.createdby || MODx.user.id
             }]
         }]

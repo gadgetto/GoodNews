@@ -193,7 +193,7 @@ class GroupCategoryGetNodesProcessor extends modProcessor {
         
         if (!$this->goodnews->legacyMode) {
             // We are on Revo >= 2.3.0
-            $iconCls = 'icon-cube';
+            $iconCls = 'icon-tags';
         } else {
             // We are on Revo < 2.3.0
             $iconCls = 'gonr-icn-group';
@@ -269,7 +269,7 @@ class GroupCategoryGetNodesProcessor extends modProcessor {
 
         if (!$this->goodnews->legacyMode) {
             // We are on Revo >= 2.3.0
-            $iconCls = 'icon-cube';
+            $iconCls = 'icon-tags';
         } else {
             // We are on Revo < 2.3.0
             $iconCls = 'gonr-icn-group';

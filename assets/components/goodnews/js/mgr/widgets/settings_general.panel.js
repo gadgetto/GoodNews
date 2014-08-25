@@ -30,7 +30,7 @@ GoodNews.panel.GeneralSettings = function(config) {
                 xtype: MODx.expandHelp ? 'label' : 'hidden'
                 ,forId: 'test_subject_prefix'
                 ,html: _('goodnews.settings_test_subject_prefix_desc')
-                ,cls: 'gon-desc-under'
+                ,cls: 'desc-under'
             },{
                 xtype: 'textfield'
                 ,name: 'admin_groups'
@@ -42,7 +42,7 @@ GoodNews.panel.GeneralSettings = function(config) {
                 xtype: MODx.expandHelp ? 'label' : 'hidden'
                 ,forId: 'admin_groups'
                 ,html: _('goodnews.settings_admin_groups_desc')
-                ,cls: 'gon-desc-under'
+                ,cls: 'desc-under'
             },{
                 xtype: 'xcheckbox'
                 ,name: 'auto_cleanup_subscriptions'
@@ -54,7 +54,7 @@ GoodNews.panel.GeneralSettings = function(config) {
                 xtype: MODx.expandHelp ? 'label' : 'hidden'
                 ,forId: 'auto_cleanup_subscriptions'
                 ,html: _('goodnews.settings_auto_cleanup_subscriptions_desc')
-                ,cls: 'gon-desc-under'
+                ,cls: 'desc-under'
             },{
                 xtype: 'numberfield'
                 ,name: 'auto_cleanup_subscriptions_ttl'
@@ -66,7 +66,7 @@ GoodNews.panel.GeneralSettings = function(config) {
                 xtype: MODx.expandHelp ? 'label' : 'hidden'
                 ,forId: 'auto_cleanup_subscriptions_ttl'
                 ,html: _('goodnews.settings_auto_cleanup_subscriptions_ttl_desc')
-                ,cls: 'gon-desc-under'
+                ,cls: 'desc-under'
             }]
         }]    
     });

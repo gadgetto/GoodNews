@@ -134,6 +134,9 @@ class SubscribersGetListProcessor extends modObjectGetListProcessor {
         } else {
             $userArray['hard_bounces'] = count($hardBounces);
         }
+        
+        // security! (we dont want these values in our array)
+        unset($userArray['password'], $userArray['cachepwd'], $userArray['salt']);
 
         return $userArray;
     }

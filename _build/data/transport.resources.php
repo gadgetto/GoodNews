@@ -311,4 +311,51 @@ $resources[$i]->fromArray(array (
 ), '', true, true);
 $resources[$i]->setContent(file_get_contents($sources['resources'].'sample.unsubscribe.resource.tpl'));
 
+$resources[++$i] = $modx->newObject('modResource');
+$resources[$i]->fromArray(array (
+    'id'                    => $i,
+    'type'                  => 'document',
+    'contentType'           => 'text/html',
+    'pagetitle'             => 'Request Links',
+    'longtitle'             => '',
+    'description'           => '',
+    'alias'                 => 'request-links',
+    'link_attributes'       => '',
+    'published'             => 1,
+    'pub_date'              => 0,
+    'unpub_date'            => 0,
+    'parent'                => 0,
+    'isfolder'              => 0,
+    'introtext'             => '',
+    'richtext'              => 0,
+    'template'              => 0,
+    'menuindex'             => 0,
+    'searchable'            => 0,
+    'cacheable'             => 1,
+    'createdby'             => 0,
+    'createdon'             => $epoch,
+    'editedby'              => 0,
+    'editedon'              => $epoch,
+    'deleted'               => 0,
+    'deletedon'             => 0,
+    'deletedby'             => 0,
+    'publishedon'           => $epoch,
+    'publishedby'           => 0,
+    'menutitle'             => '',
+    'donthit'               => 0,
+    'privateweb'            => 0,
+    'privatemgr'            => 0,
+    'content_dispo'         => 0,
+    'hidemenu'              => 1,
+    'class_key'             => 'modDocument',
+    'context_key'           => 'web',
+    'content_type'          => 1,
+    'uri'                   => '',
+    'uri_override'          => 0,
+    'hide_children_in_tree' => 0,
+    'show_in_tree'          => 1,
+    'properties'            => NULL,
+), '', true, true);
+$resources[$i]->setContent(file_get_contents($sources['resources'].'sample.request-links.resource.tpl'));
+
 return $resources;

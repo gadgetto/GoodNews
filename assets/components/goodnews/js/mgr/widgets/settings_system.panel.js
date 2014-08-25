@@ -55,7 +55,7 @@ GoodNews.panel.SystemSettings = function(config) {
                         xtype: MODx.expandHelp ? 'label' : 'hidden'
                         ,forId: 'mailing_bulk_size'
                         ,html: _('goodnews.settings_mailing_bulk_size_desc')
-                        ,cls: 'gon-desc-under'
+                        ,cls: 'desc-under'
                     }]
                 },{
                     width: 200
@@ -103,7 +103,7 @@ GoodNews.panel.SystemSettings = function(config) {
                         xtype: MODx.expandHelp ? 'label' : 'hidden'
                         ,forId: 'worker_process_limit'
                         ,html: _('goodnews.settings_worker_process_limit_desc')
-                        ,cls: 'gon-desc-under'
+                        ,cls: 'desc-under'
                     }]
                 },{
                     width: 200
@@ -127,7 +127,7 @@ GoodNews.panel.SystemSettings = function(config) {
                 xtype: MODx.expandHelp ? 'label' : 'hidden'
                 ,forId: 'worker_process_active'
                 ,html: _('goodnews.settings_worker_process_active_desc')
-                ,cls: 'gon-desc-under'
+                ,cls: 'desc-under'
             },{
                 xtype: 'textfield'
                 ,name: 'cron_security_key'
@@ -140,7 +140,7 @@ GoodNews.panel.SystemSettings = function(config) {
                 xtype: MODx.expandHelp ? 'label' : 'hidden'
                 ,forId: 'cron_security_key'
                 ,html: _('goodnews.settings_cron_security_key_desc')
-                ,cls: 'gon-desc-under'
+                ,cls: 'desc-under'
             }]
         }]    
     });

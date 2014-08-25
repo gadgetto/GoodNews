@@ -1,5 +1,20 @@
 Changelog for GoodNews
 
+GoodNews 1.1.6-pl (2014-08-24)
+--------------------------------------------------
+- [#19] new feature to request secure links via email
+- security fix for subscribers getlist processor
+- fixed wrong width of "Created By" combo field in mailing editor
+- fileuploadfield extension only needs to be loaded in MODX < 2.3 (natively supported in MODX >= 2.3)
+- removed custom form field description styles - using default MODx style
+- added feature to manually reset bounce counters of a subscriber
+- Cosmetical changes to Groups/Categories tree
+- added row-expander to subscribers grid for detailed informations and save grid space
+- moved  subscriber id to row epander
+- moved  subscriber ip address to row epander
+- small corrections/changes in lexicon strings
+
+
 GoodNews 1.1.5-pl (2014-07-25)
 --------------------------------------------------
 

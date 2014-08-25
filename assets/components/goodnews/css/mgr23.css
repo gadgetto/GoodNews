@@ -2,35 +2,6 @@
  * Custom GoodNews CMP styles for Revo >= 2.3.0
  */
 
-/* FileUploadField component styles */
-.x-form-file-wrap {
-    position: relative;
-    height: 32px !important;
-}
-.x-form-file-wrap .x-form-file {
-	position: absolute;
-	right: 0;
-	-moz-opacity: 0;
-	filter: alpha(opacity: 0);
-	opacity: 0;
-	z-index: 2;
-	height: 32px !important;
-}
-.x-form-file-wrap .x-form-file-btn {
-	position: absolute;
-	right: 0;
-	z-index: 1;
-	height: 32px !important;
-	line-height: 32px !important;
-	padding: 0 15px !important;
-}
-.x-form-file-wrap .x-form-file-text {
-    position: absolute;
-    left: 0;
-    z-index: 3;
-    color: #777;
-}
-
 /* The auto-refresh button (ExtJS Cycle button) */
 .gon-autorefresh-on button {
     color: #6cb24a;
@@ -72,24 +43,26 @@
     color: #be0000;
 }
 
-/* Expanded row in newsletters grid */
+/* Expanded rows in grids */
 .x-grid3-row-body {
     padding: 0 !important;
 }
-.x-grid3-row-body .gon-nlinfos {
+.x-grid3-row-body .gon-expinfos {
     overflow: hidden;
     color: #9c9c9c;
     margin: 5px 20px 20px 20px;
     border-collapse: collapse;
 }
-.x-grid3-row-body .gon-nlinfos-key {
+.x-grid3-row-body .gon-expinfos-key {
     text-align: left;
     padding: 4px 6px 4px 6px;
     font-weight: bold;
+    line-height: 20px;
 }
-.x-grid3-row-body .gon-nlinfos-val {
+.x-grid3-row-body .gon-expinfos-val {
     text-align: left;
     padding: 4px 22px 4px 6px;
+    line-height: 20px;
 }
 
 /* Status tag in newsletters grid */
@@ -130,13 +103,6 @@
         color: #6060ff; /* blue */
     }
 
-.gon-desc-under {
-    color: #aaaaaa;
-    display: block;
-    font-size: 12px;
-    font-style: italic;
-    margin: 2px 2px 10px 2px;
-}
 .gon-slider-display {
     text-align: center;
 }
@@ -217,7 +183,7 @@
     color: #999; /* grey */
 }
 
-/* Row expander icon */
+/* Row expander icon for Newsletters grid */
 #goodnews-grid-newsletters .x-grid3-row-collapsed .x-grid3-row-expander::before {
     font-family: fontawesome;
     font-size: 14px;
@@ -230,8 +196,24 @@
     content: "\f003";
     color: #3697cd;
 }
-
 #goodnews-grid-newsletters .x-grid3-row-expander {
+    cursor: help;
+}
+
+/* Row expander icon for Subscribers grid */
+#goodnews-grid-subscribers .x-grid3-row-collapsed .x-grid3-row-expander::before {
+    font-family: fontawesome;
+    font-size: 14px;
+    content: "\f007";
+    color: #53595f;
+}
+#goodnews-grid-subscribers .x-grid3-row-expanded .x-grid3-row-expander::before {
+    font-family: fontawesome;
+    font-size: 14px;
+    content: "\f007";
+    color: #3697cd;
+}
+#goodnews-grid-subscribers .x-grid3-row-expander {
     cursor: help;
 }
 

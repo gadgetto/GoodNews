@@ -29,9 +29,9 @@
 $_lang['goodnews']                                                  = 'GoodNews';
 $_lang['goodnews.desc']                                             = 'An integrated group and newsletter mailing system.';
 $_lang['goodnews.credits']                                          = 'Credits';
-$_lang['goodnews.credits_modx_community']                           = 'Many thanks to the stunning MODx community for their strenuous help!';
+$_lang['goodnews.credits_modx_community']                           = 'Many thanks to the stunning MODx community for their tireless help!';
 $_lang['goodnews.credits_bob_ray']                                  = 'Methods to generate full URLs and convert inline image styles by Bob Ray - <a href="http://bobsguides.com">http://bobsguides.com</a>';
-$_lang['goodnews.credits_icons_by']                                 = 'Icons by: FatCow Web Hosting - <a href="http://www.fatcow.com">http://www.fatcow.com</a>';
+$_lang['goodnews.credits_icons_by']                                 = 'Icons under Revo 2.2.x by: FatCow Web Hosting - <a href="http://www.fatcow.com">http://www.fatcow.com</a>';
 $_lang['goodnews.system_checks']                                    = 'System Checks';
 $_lang['goodnews.system_check_title']                               = 'Title';
 $_lang['goodnews.system_check_value']                               = 'Value (Status)';
@@ -168,7 +168,7 @@ $_lang['goodnews.category_err_remove']                              = 'An error 
 $_lang['goodnews.category_err_save']                                = 'An error occurred while trying to save the category.';
                                                             
 $_lang['goodnews.subscribers']                                      = 'Subscribers';
-$_lang['goodnews.subscribers_desc']                                 = 'Manage your mailing subscribers here. <span class="gon-no-subscriptions">Greyed out users</span> have no GoodNews meta-data assigned or currently no subscriptions enabled. New subscribers are created through user subscriptions, manually through MODx user management or by importing.';
+$_lang['goodnews.subscribers_desc']                                 = 'Manage your subscribers here. Users with <span class="gon-no-subscriptions">greyed out</span> email address don\'t have GoodNews meta-data assigned or currently no subscriptions enabled. New subscribers are created through user subscriptions, manually through MODx user management or by importing.';
 $_lang['goodnews.modx_user_create']                                 = 'Create MODx User';
 $_lang['goodnews.subscribers_user_group']                           = 'Subscribers Group';
 $_lang['goodnews.subscribers_user_group_filter']                    = 'Filter by Group...';
@@ -194,9 +194,11 @@ $_lang['goodnews.subscribers_none']                                 = 'No subscr
 $_lang['goodnews.subscribers_no_group']                             = 'No group assigned';
 $_lang['goodnews.subscriber_update']                                = 'Edit Subscriptions';
 $_lang['goodnews.subscriber_remove_subscriptions']                  = 'Remove All Subscriptions';
+$_lang['goodnews.subscriber_remove_subscriptions_confirm']          = 'Are you sure you want to remove all subscriptions of this user?';
 $_lang['goodnews.subscriber_remove_meta_data']                      = 'Remove All GoodNews Meta-Data';
 $_lang['goodnews.subscriber_remove_meta_data_confirm']              = 'Are you sure you want to remove all GoodNews meta-data of this user?';
-$_lang['goodnews.subscriber_remove_subscriptions_confirm']          = 'Are you sure you want to remove all subscriptions of this user?';
+$_lang['goodnews.subscriber_reset_bounce_counters']                 = 'Reset Bounce Counters';
+$_lang['goodnews.subscriber_reset_bounce_counters_confirm']         = 'Are you sure you want to reset all bounce counters of this user?';
 $_lang['goodnews.user_update']                                      = 'Edit User (MODx User Table)';
                                                             
 $_lang['goodnews.settings']                                         = 'GoodNews - Settings';

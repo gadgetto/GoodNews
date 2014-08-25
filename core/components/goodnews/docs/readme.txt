@@ -1,7 +1,7 @@
 --------------------
 Extra: GoodNews
 --------------------
-Version: 1.1.5-pl
+Version: 1.1.6-pl
 Author: bitego <office@bitego.com> (Martin Gartner, Franz Gallei)
 --------------------
  
@@ -14,8 +14,14 @@ With GoodNews you can easily create mailings or newsletters
 and have them sent to your subscribers or internal MODX user 
 groups automatically right from your MODX back-end. GoodNews 
 is built with a lot of passion for details, a polished interface 
-and easy operation. The sending process of GoodNews is lightning 
+and easy operation.
+
+The sending process of GoodNews is lightning 
 fast due to its underlying multithreaded sending system.
+
+GoodNews has built in bounce handling for scanning bounced email
+messages and to automatically perform some actions on subscribers 
+based on bounce counters.
 
 Reqirements:
 

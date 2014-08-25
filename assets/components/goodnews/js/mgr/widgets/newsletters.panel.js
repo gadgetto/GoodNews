@@ -71,33 +71,33 @@ GoodNews.grid.Newsletters = function(config) {
     
     // Content of the expanded newsletter grid row
     var nlInfos = [
-        '<table id="gon-nlinfo-{id}" class="gon-nlinfos">',
+        '<table id="gon-nlinfo-{id}" class="gon-expinfos">',
             '<tr>',
-                '<td class="gon-nlinfos-key">'+_('goodnews.newsletter_id')+'</td><td class="gon-nlinfos-val">{id}</td>',
-                '<td class="gon-nlinfos-key">'+_('goodnews.newsletter_createdon')+'</td><td class="gon-nlinfos-val">{createdon_formatted}</td>',
-                '<td class="gon-nlinfos-key">'+_('goodnews.newsletter_publishedon')+'</td><td class="gon-nlinfos-val">{publishedon_formatted}</td>',
-                '<td class="gon-nlinfos-key">'+_('goodnews.newsletter_sender')+'</td><td class="gon-nlinfos-val">{sentby_username}</td>',
-                '<td class="gon-nlinfos-key">'+_('goodnews.newsletter_scheduled')+'</td><td class="gon-nlinfos-val gon-scheduled">{pub_date_formatted}</td>',
+                '<td class="gon-expinfos-key">'+_('goodnews.id')+'</td><td class="gon-expinfos-val">{id}</td>',
+                '<td class="gon-expinfos-key">'+_('goodnews.newsletter_createdon')+'</td><td class="gon-expinfos-val">{createdon_formatted}</td>',
+                '<td class="gon-expinfos-key">'+_('goodnews.newsletter_publishedon')+'</td><td class="gon-expinfos-val">{publishedon_formatted}</td>',
+                '<td class="gon-expinfos-key">'+_('goodnews.newsletter_sender')+'</td><td class="gon-expinfos-val">{sentby_username}</td>',
+                '<td class="gon-expinfos-key">'+_('goodnews.newsletter_scheduled')+'</td><td class="gon-expinfos-val gon-scheduled">{pub_date_formatted}</td>',
             '</tr>',
             '<tr>',
-                '<td class="gon-nlinfos-key"></td><td class="gon-nlinfos-val"></td>',
-                '<td class="gon-nlinfos-key">'+_('goodnews.newsletter_createdby')+'</td><td class="gon-nlinfos-val">{createdby_username}</td>',
-                '<td class="gon-nlinfos-key">'+_('goodnews.newsletter_publishedby')+'</td><td class="gon-nlinfos-val">{publishedby_username}</td>',
-                '<td class="gon-nlinfos-key"></td><td class="gon-nlinfos-val"></td>',
-                '<td class="gon-nlinfos-key"></td><td class="gon-nlinfos-val"></td>',
+                '<td class="gon-expinfos-key"></td><td class="gon-expinfos-val"></td>',
+                '<td class="gon-expinfos-key">'+_('goodnews.newsletter_createdby')+'</td><td class="gon-expinfos-val">{createdby_username}</td>',
+                '<td class="gon-expinfos-key">'+_('goodnews.newsletter_publishedby')+'</td><td class="gon-expinfos-val">{publishedby_username}</td>',
+                '<td class="gon-expinfos-key"></td><td class="gon-expinfos-val"></td>',
+                '<td class="gon-expinfos-key"></td><td class="gon-expinfos-val"></td>',
             '</tr>',
             '<tr>',
-                '<td class="gon-nlinfos-key"></td><td class="gon-nlinfos-val"></td>',
-                '<td class="gon-nlinfos-key">'+_('goodnews.newsletter_soft_bounces')+'</td><td class="gon-nlinfos-val">{soft_bounces}</td>',
-                '<td class="gon-nlinfos-key">'+_('goodnews.newsletter_hard_bounces')+'</td><td class="gon-nlinfos-val">{hard_bounces}</td>',
-                '<td class="gon-nlinfos-key"></td><td class="gon-nlinfos-val"></td>',
-                '<td class="gon-nlinfos-key"></td><td class="gon-nlinfos-val"></td>',
+                '<td class="gon-expinfos-key"></td><td class="gon-expinfos-val"></td>',
+                '<td class="gon-expinfos-key">'+_('goodnews.newsletter_soft_bounces')+'</td><td class="gon-expinfos-val">{soft_bounces}</td>',
+                '<td class="gon-expinfos-key">'+_('goodnews.newsletter_hard_bounces')+'</td><td class="gon-expinfos-val">{hard_bounces}</td>',
+                '<td class="gon-expinfos-key"></td><td class="gon-expinfos-val"></td>',
+                '<td class="gon-expinfos-key"></td><td class="gon-expinfos-val"></td>',
             '</tr>',
         '</table>'
         ].join('\n');
 
     // A row expander for newsletter grid rows (additional informations)
-    this.expander = new Ext.ux.grid.RowExpander({
+    this.nlexpander = new Ext.ux.grid.RowExpander({
         tpl: new Ext.Template(nlInfos)
         ,enableCaching: false
     });
@@ -140,10 +140,10 @@ GoodNews.grid.Newsletters = function(config) {
         ,emptyText: _('goodnews.newsletters_none')
         ,paging: true
         ,remoteSort: true
-        ,plugins: [this.expander]
+        ,plugins: [this.nlexpander]
         ,autoExpandColumn: 'pagetitle'
         ,columns: [
-        this.expander
+        this.nlexpander
         ,{
             header: _('goodnews.newsletter_title')
             ,dataIndex: 'pagetitle'
