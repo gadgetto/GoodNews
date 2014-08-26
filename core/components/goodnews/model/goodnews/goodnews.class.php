@@ -107,9 +107,11 @@ class GoodNews {
                 $this->setupError = true;
             }
             // If request has a container id - switch to this container
-            $reqid = $_GET['id'];
-            if (!empty($reqid) && is_numeric($reqid)) {
-                $this->setUserCurrentContainer($reqid);
+            if (isset($_GET['id'])) {
+                $reqid = $_GET['id'];
+                if (!empty($reqid) && is_numeric($reqid)) {
+                    $this->setUserCurrentContainer($reqid);
+                }
             }
             
             $this->currentContainer = $this->_getUserCurrentContainer();
