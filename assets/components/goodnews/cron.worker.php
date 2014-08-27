@@ -49,7 +49,7 @@ $modx->initialize('mgr');
 
 // If set - worker script may only be continued if the correct security key is provided by cron (@param sid)
 $securityKey = $modx->getOption('goodnews.cron_security_key', null, '');
-if (!empty($securityKey) && $_GET['sid'] !== $securityKey) {
+if ($_GET['sid'] !== $securityKey) {
     exit('[GoodNews] cron.worker.php - Missing or wrong authentification! Sorry Dude!');
 }
 
