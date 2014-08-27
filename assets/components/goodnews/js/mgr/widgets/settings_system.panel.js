@@ -37,18 +37,10 @@ GoodNews.panel.SystemSettings = function(config) {
                         ,description: MODx.expandHelp ? '' : _('goodnews.settings_mailing_bulk_size_desc')
                         ,minValue: 1
                         ,maxValue: 100
-                        ,increment: 1
+                        ,increment: 5
                         ,listeners: {
-                            render: function(){
-                                var sliderElement = Ext.getCmp('mailing_bulk_size');
-                                var bulkSizeDisplay = Ext.getCmp('mailing_bulk_size_display');
-                                bulkSizeDisplay.setValue(sliderElement.getValue()+_('goodnews.settings_mails_per_bulk'));
-                            }
-                            ,change: function(field,newVal,oldVal){
-                                //this.bulkSizeDisplay.setValue(newVal);
-                                // todo: learn this damn scope thing!!!
-                                Ext.getCmp('mailing_bulk_size_display').setValue(newVal+_('goodnews.settings_mails_per_bulk'));
-                            }
+                             'render': {fn: this.changeBulkSizeDisplay, scope: this}
+                            ,'change': {fn: this.changeBulkSizeDisplay, scope: this}
                             ,scope: this
                         }
                     },{
@@ -58,7 +50,7 @@ GoodNews.panel.SystemSettings = function(config) {
                         ,cls: 'desc-under'
                     }]
                 },{
-                    width: 200
+                    width: 220
                     ,items: [{
                         xtype: 'textfield'
                         ,name: 'mailing_bulk_size_display'
@@ -89,14 +81,7 @@ GoodNews.panel.SystemSettings = function(config) {
                         ,disabled: GoodNews.config.isMultiProcessing ? false : true
                         ,increment: 1
                         ,listeners: {
-                            render: function(){
-                                var sliderElement = Ext.getCmp('worker_process_limit');
-                                var workerProcessDisplay = Ext.getCmp('worker_process_limit_display');
-                                workerProcessDisplay.setValue(sliderElement.getValue()+_('goodnews.settings_process_max'));
-                            }
-                            ,change: function(field,newVal,oldVal){
-                                Ext.getCmp('worker_process_limit_display').setValue(newVal+_('goodnews.settings_process_max'));
-                            }
+                            'change': {fn: this.changeWorkerProcessDisplay, scope: this}
                             ,scope: this
                         }
                     },{
@@ -106,7 +91,7 @@ GoodNews.panel.SystemSettings = function(config) {
                         ,cls: 'desc-under'
                     }]
                 },{
-                    width: 200
+                    width: 220
                     ,items: [{
                         xtype: 'textfield'
                         ,name: 'worker_process_limit_display'
@@ -146,5 +131,20 @@ GoodNews.panel.SystemSettings = function(config) {
     });
     GoodNews.panel.SystemSettings.superclass.constructor.call(this,config);
 };
-Ext.extend(GoodNews.panel.SystemSettings,Ext.Panel);
+Ext.extend(GoodNews.panel.SystemSettings,Ext.Panel,{
+    changeWorkerProcessDisplay: function() {
+        if (Ext.getCmp('worker_process_limit').getValue() <= 1) {
+            Ext.getCmp('worker_process_limit_display').addClass('gon-disabled');
+            Ext.getCmp('worker_process_limit_display').setValue(_('goodnews.settings_multiprocessing_disabled'));
+            console.log('disabled');
+        } else {
+            Ext.getCmp('worker_process_limit_display').removeClass('gon-disabled');
+            Ext.getCmp('worker_process_limit_display').setValue(Ext.getCmp('worker_process_limit').getValue()+_('goodnews.settings_process_max'));
+            console.log('enabled');
+        }
+    }    
+    ,changeBulkSizeDisplay: function() {
+        Ext.getCmp('mailing_bulk_size_display').setValue(Ext.getCmp('mailing_bulk_size').getValue()+_('goodnews.settings_mails_per_bulk'));
+    }    
+});
 Ext.reg('goodnews-panel-settings-system', GoodNews.panel.SystemSettings);

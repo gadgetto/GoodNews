@@ -1,7 +1,6 @@
 --------------------
 Extra: GoodNews
 --------------------
-Version: 1.1.6-pl
 Author: bitego <office@bitego.com> (Martin Gartner, Franz Gallei)
 --------------------
  

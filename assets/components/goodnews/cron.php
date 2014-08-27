@@ -71,7 +71,8 @@ if (!($modx->bmh instanceof GoodNewsBounceMailHandler)) {
 }
 
 // If multi processing isn't available we directly send mails without a worker process
-if (!$modx->goodnews->isMultiProcessing) {
+$workerProcessLimit = $modx->getOption('goodnews.worker_process_limit', null, 1);
+if (!$modx->goodnews->isMultiProcessing || $workerProcessLimit <= 1) {
 
     require_once $corePath.'model/goodnews/goodnewsmailing.class.php';
     $modx->goodnewsmailing = new GoodNewsMailing($modx);
@@ -100,8 +101,6 @@ if (!$modx->goodnews->isMultiProcessing) {
     // Cleanup old processes and get count of actual running processes
     $actualProcessCount = $modx->goodnewsprocesshandler->cleanupProcessStatuses();
     if ($debug) { $modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] cron.php - Actual process count: '.$actualProcessCount); }
-        
-    $workerProcessLimit = $modx->getOption('goodnews.worker_process_limit', null, 1);
     
     while ($actualProcessCount < $workerProcessLimit) {
             
