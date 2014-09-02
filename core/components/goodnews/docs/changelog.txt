@@ -1,9 +1,10 @@
 Changelog for GoodNews
 
-GoodNews 1.1.7-pl (2014-08-27)
+GoodNews 1.1.7-pl (2014-09-02)
 --------------------------------------------------
 - [#20] new feature to manually disable multiprocessing
 - fixed another small bug in how cron security keys are checked :)
+- added error handler loading to cron.php and cron.worker.php (needed since MODX 2.3+)
 
 
 GoodNews 1.1.6-pl (2014-08-24)

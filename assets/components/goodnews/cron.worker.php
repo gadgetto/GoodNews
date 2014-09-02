@@ -46,6 +46,7 @@ require_once dirname(dirname(dirname(dirname(__FILE__)))).'/config.core.php';
 require_once MODX_CORE_PATH.'model/modx/modx.class.php';
 $modx = new modX();
 $modx->initialize('mgr');
+$modx->getService('error', 'error.modError', '', '');
 
 // If set - worker script may only be continued if the correct security key is provided by cron (@param sid)
 $securityKey = $modx->getOption('goodnews.cron_security_key', null, '');
