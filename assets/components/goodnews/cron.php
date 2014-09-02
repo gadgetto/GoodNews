@@ -41,11 +41,12 @@ require_once dirname(dirname(dirname(dirname(__FILE__)))).'/config.core.php';
 require_once MODX_CORE_PATH.'model/modx/modx.class.php';
 $modx = new modX();
 $modx->initialize('mgr');
+$modx->getService('error', 'error.modError', '', '');
 
 // If set - connector script may only be continued if the correct security key is provided by cron (@param sid)
 $securityKey = $modx->getOption('goodnews.cron_security_key', null, '');
-if (!empty($securityKey) && $_GET['sid'] !== $securityKey) {
-    exit('[GoodNews] cron.php: Missing or wrong authentification! Sorry Dude!');
+if ($_GET['sid'] !== $securityKey) {
+    exit('[GoodNews] cron.php - Missing or wrong authentification! Sorry Dude!');
 }
 
 $debug = $modx->getOption('goodnews.debug', null, false) ? true : false;
@@ -71,7 +72,8 @@ if (!($modx->bmh instanceof GoodNewsBounceMailHandler)) {
 }
 
 // If multi processing isn't available we directly send mails without a worker process
-if (!$modx->goodnews->isMultiProcessing) {
+$workerProcessLimit = $modx->getOption('goodnews.worker_process_limit', null, 1);
+if (!$modx->goodnews->isMultiProcessing || $workerProcessLimit <= 1) {
 
     require_once $corePath.'model/goodnews/goodnewsmailing.class.php';
     $modx->goodnewsmailing = new GoodNewsMailing($modx);
@@ -100,8 +102,6 @@ if (!$modx->goodnews->isMultiProcessing) {
     // Cleanup old processes and get count of actual running processes
     $actualProcessCount = $modx->goodnewsprocesshandler->cleanupProcessStatuses();
     if ($debug) { $modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] cron.php - Actual process count: '.$actualProcessCount); }
-        
-    $workerProcessLimit = $modx->getOption('goodnews.worker_process_limit', null, 1);
     
     while ($actualProcessCount < $workerProcessLimit) {
             

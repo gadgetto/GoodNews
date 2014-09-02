@@ -177,10 +177,15 @@
     list-style-type: disc;
     margin-left: 20px;
 }
-.gon-about-box .gon-ok {
+
+/* status colors */
+.gon-ok {
     color: green;
 }
-.gon-about-box .gon-nok {
+.gon-nok {
+    color: red;
+}
+.gon-disabled {
     color: red;
 }
 

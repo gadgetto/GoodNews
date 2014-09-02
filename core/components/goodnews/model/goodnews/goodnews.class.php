@@ -26,7 +26,7 @@
 
 class GoodNews {
 
-    const VERSION = '1.1.6';
+    const VERSION = '1.1.7';
     const RELEASE = 'pl';
 
     /** @var modX A reference to the modX object */
@@ -35,7 +35,7 @@ class GoodNews {
     /** @var array $config GoodNews config array */
     public $config = array();
     
-    /** @var boolean $multiProcessing Is multi processing enabled? (depends on server settings/features) */
+    /** @var boolean $multiProcessing Is multi processing available? (depends on server settings/features) */
     public $isMultiProcessing = false;
     
     /** @var boolean $imapExtension Is the php IMAP extension available? (required for automatic bounce handling) */
@@ -107,9 +107,11 @@ class GoodNews {
                 $this->setupError = true;
             }
             // If request has a container id - switch to this container
-            $reqid = $_GET['id'];
-            if (!empty($reqid) && is_numeric($reqid)) {
-                $this->setUserCurrentContainer($reqid);
+            if (isset($_GET['id'])) {
+                $reqid = $_GET['id'];
+                if (!empty($reqid) && is_numeric($reqid)) {
+                    $this->setUserCurrentContainer($reqid);
+                }
             }
             
             $this->currentContainer = $this->_getUserCurrentContainer();
