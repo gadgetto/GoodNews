@@ -49,6 +49,8 @@ if ($object->xpdo) {
 
             // 1.2.0-pl+
             $manager->addField('GoodNewsMailingMeta', 'recipients_error', array('after' => 'recipients_sent'));
+            $manager->createObjectContainer('GoodNewsRecipient');
+            $manager->createObjectContainer('GoodNewsSubscriberLog');
             
             //GoodNewsMailingMeta - recipients_list field deprecated since 1.2.0-pl+
 
