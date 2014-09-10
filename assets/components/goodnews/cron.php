@@ -74,14 +74,14 @@ if (!($modx->bmh instanceof GoodNewsBounceMailHandler)) {
 // If multi processing isn't available we directly send mails without a worker process
 $workerProcessLimit = $modx->getOption('goodnews.worker_process_limit', null, 1);
 if (!$modx->goodnews->isMultiProcessing || $workerProcessLimit <= 1) {
-
+    
     require_once $corePath.'model/goodnews/goodnewsmailing.class.php';
     $modx->goodnewsmailing = new GoodNewsMailing($modx);
     if (!($modx->goodnewsmailing instanceof GoodNewsMailing)) {
         $modx->log(modX::LOG_LEVEL_ERROR,'[GoodNews] cron.php - Could not load GoodNewsMailing class.');
         exit();
     }
-    
+
     $mailingsToSend = $modx->goodnewsmailing->getMailingsToSend();
     if (is_array($mailingsToSend)) {
         foreach ($mailingsToSend as $mailingid) {
@@ -122,10 +122,8 @@ if (!$modx->goodnews->isMultiProcessing || $workerProcessLimit <= 1) {
     }
 }
 
-
 bounceHandling($modx, $debug);
 cleanUpSubscriptions($modx, $debug);
-
 
 /**
  * Handle bounced messages.
@@ -169,10 +167,10 @@ function bounceHandling(&$modx, $debug_bmh = false) {
  * 
  * @access public
  * @param mixed &$modx The modx object
- * @param bool $debug_bmh (default: false)
+ * @param bool $debug_cs (default: false)
  * @return void || false
  */
-function cleanUpSubscriptions(&$modx, $debug_bmh = false) {
+function cleanUpSubscriptions(&$modx, $debug_cs = false) {
     $autoCleanUpSubscriptions = $modx->getOption('goodnews.auto_cleanup_subscriptions', null, false) ? true : false;
     if (!$autoCleanUpSubscriptions) { return false; }
     
@@ -199,7 +197,7 @@ function cleanUpSubscriptions(&$modx, $debug_bmh = false) {
     
     $users = $modx->getIterator('modUser', $c);
     foreach ($users as $idx => $user) {
-        if ($debug_bmh) {
+        if ($debug_cs) {
             $modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] cron.php::cleanUpSubscriptions - user with ID: '.$user->get('id').' would be deleted.');
         } else {
             $user->remove();
