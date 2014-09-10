@@ -27,16 +27,9 @@ require_once dirname(dirname(__FILE__)).'/csstoinlinestyles/CssToInlineStyles.ph
  * @package goodnews
  */
 class GoodNewsMailing {
-
-    const GON_USER_NOT_YET_SENT = 0;
-    const GON_USER_SENT         = 1;
-    const GON_USER_SEND_ERROR   = 2;
-    const GON_USER_RESERVED     = 4;
     
     const GON_IPC_STATUS_STOPPED  = 0;
     const GON_IPC_STATUS_STARTED  = 1;
-    
-    const PROCESS_TIMEOUT = 90;
 
     /** @var modX $modx A reference to the modX object */
     public $modx = null;
@@ -46,6 +39,9 @@ class GoodNewsMailing {
 
     /** @var GoodNewsProcessHandler $goodnewsprocesshandler A processhandler object */
     public $goodnewsprocesshandler = null;
+        
+    /** @var GoodNewsRecipientHandler $goodnewsrecipienthandler A recipientshandler object */
+    public $goodnewsrecipienthandler = null;
         
     /** @var int $mailingid The id of the current mailing resource */
     public $mailingid = 0;
@@ -72,12 +68,21 @@ class GoodNewsMailing {
         $this->debug     = $this->modx->getOption('goodnews.debug', null, false) ? true : false;
         $this->bulksize  = $this->modx->getOption('goodnews.mailing_bulk_size', null, 30);
         $this->_createLockFileDir();
-        $corePath = $this->modx->getOption('goodnews.core_path', null, $modx->getOption('core_path').'components/goodnews/');
+        
+        $corePath = $this->modx->getOption('goodnews.core_path', null, $this->modx->getOption('core_path').'components/goodnews/');
+
         if (!$this->modx->loadClass('GoodNewsProcessHandler', $corePath.'model/goodnews/', true, true)) {
             $this->modx->log(modX::LOG_LEVEL_ERROR,'[GoodNews] Could not load GoodNewsProcessHandler class.');
             exit();
         }
         $this->goodnewsprocesshandler = new GoodNewsProcessHandler($this->modx);
+
+        if (!$this->modx->loadClass('GoodNewsRecipientHandler', $corePath.'model/goodnews/', true, true)) {
+            $this->modx->log(modX::LOG_LEVEL_ERROR,'[GoodNews] Could not load GoodNewsRecipientHandler class.');
+            exit();
+        }
+        $this->goodnewsrecipienthandler = new GoodNewsRecipientHandler($this->modx);
+
         $this->modx->lexicon->load('goodnews:default');
     }
 
@@ -111,16 +116,17 @@ class GoodNewsMailing {
      * Get the subscriber properties and collect in array.
      * 
      * @access private
+     * @param integer $subscriberId The ID of the subscriber
      * @return array $properties The collection of properties || false
      */
-    private function _getSubscriberProperties($userid) {
-        $subscribermeta = $this->modx->getObject('GoodNewsSubscriberMeta', array('subscriber_id'=>$userid));
+    private function _getSubscriberProperties($subscriberId) {
+        $subscribermeta = $this->modx->getObject('GoodNewsSubscriberMeta', array('subscriber_id'=>$subscriberId));
         if (!is_object($subscribermeta)) {
-            if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsMailing::_getSubscriberProperties - Recipient [id: '.$userid.'] not found.'); }
+            if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsMailing::_getSubscriberProperties - Recipient [id: '.$subscriberId.'] not found.'); }
             return false;
         }
-        $subscriberprofile = $this->modx->getObject('modUserProfile', array('internalKey'=>$userid));
-        $properties['id']        = $userid;
+        $subscriberprofile = $this->modx->getObject('modUserProfile', array('internalKey'=>$subscriberId));
+        $properties['id']        = $subscriberId;
         $properties['email']     = $subscriberprofile->get('email');
         $properties['fullname']  = $subscriberprofile->get('fullname');
         $properties['sid']       = $subscribermeta->get('sid');
@@ -132,6 +138,7 @@ class GoodNewsMailing {
     /**
      * Get the mail subject from resource document.
      *
+     * @access private
      * @param integer $id The ID of the resource
      * @return string $subject The pagetitle of resource object
      */
@@ -224,7 +231,7 @@ class GoodNewsMailing {
     private function _getPlainMailBody() {
         // Get content of mail directly from resource content field
         $body = $this->mailing->get('content');
-        if ($body === FALSE) {
+        if ($body === false) {
             $this->modx->log(modX::LOG_LEVEL_ERROR, '[GoodNews] Plain mail body for mailing [id: '.$this->mailingid.'] could not be created.');
             return false;
         }
@@ -261,7 +268,7 @@ class GoodNewsMailing {
      * (gets next recipient which is not yet sent and reserve it for further processing)
      *
      * @access public
-     * @return mixed array $recipient or false if empty
+     * @return mixed integer $recipientId || false if empty
      */
     public function getNextRecipient() {
         if ($this->debug) {
@@ -273,49 +280,23 @@ class GoodNewsMailing {
 
         $this->_lock();
 
-        // Database access has to be exclusively for each recipient - not class wide!
-        // Otherwise multiprocessing will have caching related problems.
-        $meta = $this->modx->getObject('GoodNewsMailingMeta',  array('mailing_id'=>$this->mailingid));
-        if (!is_object($meta)) { return false; }
+        // Look if we find a timed out recipient for cleanup!
+        $timeoutRecipientId = $this->goodnewsrecipienthandler->cleanupRecipientTimeout($this->mailingid);
+        if ($timeoutRecipientId) {
+            if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsMailing::getNextRecipient - Sending for recipient [id: '.$timeoutRecipientId.'] timed out.'); }
+        }
+        
+        // Find next unsent recipient
+        $recipientId = $this->goodnewsrecipienthandler->getRecipientUnsent($this->mailingid);
 
-        $recipients = unserialize($meta->get('recipients_list'));
-        if (!is_array($recipients) || count($recipients) == 0) {
-            if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsMailing::getRecipient - Recipients list is empty.'); }
+        // No more recipients (or list is empty which shouldn't happen here)
+        if (!$recipientId) {
+            if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsMailing::getNextRecipient - No unsent recipients found.'); }
             $this->_unlock();
             return false;
         }
-
-        $currentTime = time();
-        
-        // Search for next recipient with GON_USER_NOT_YET_SENT
-        foreach ($recipients as $key => &$val) {
-            // Check if reservation timestamp is too old, which means the mail could not be sent within 90 seconds
-            if ($val[0] == self::GON_USER_RESERVED) {
-                if ((($currentTime) - self::PROCESS_TIMEOUT) > $val[1]) {
-                    $val[0] = self::GON_USER_SEND_ERROR;
-                }
-                
-            }
-            if ($val[0] == self::GON_USER_NOT_YET_SENT) {
-                $recipient = $key;
-                break;
-            }
-        }
-        unset($key, $val);
-        
-        if ($recipient) {
-            if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsMailing::getRecipient - Unsent recipient [id: '.$recipient.'] found.'); }
-            // Set recipient status to GON_USER_RESERVED + current time stamp
-            $recipients[$recipient] = array(self::GON_USER_RESERVED,$currentTime);
-            $meta->set('recipients_list', serialize($recipients));
-
-            if (!$meta->save()) {
-                if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsMailing::getRecipient - Recipient [id: '.$recipient.'] could not be set to status: '.self::GON_USER_RESERVED); }
-                $recipient = false;
-            }
-        } else {
-            if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsMailing::getRecipient - No more unsent recipients found.'); }
-        }
+        // Habemus recipient!
+        if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsMailing::getNextRecipient - Unsent recipient [id: '.$recipientId.'] found.'); }
         
         $this->_unlock();
         
@@ -326,21 +307,21 @@ class GoodNewsMailing {
             $tend = $mtime;
             $totalTime = ($tend - $tstart);
             $totalTime = sprintf("%2.4f s", $totalTime);
-            $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsMailing::getRecipient - Lock time: '.$totalTime);
+            $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsMailing::getNextRecipient - Lock time: '.$totalTime);
         }
 
-        return $recipient;
+        return $recipientId;
     }
 
     /**
-     * Update recipient status.
+     * Update the status of a recipient.
      *
      * @access public
-     * @param $recipient
-     * @param $status
-     * @return mixed array $recipient or false if empty
+     * @param integer $recipientId The id of the recipient
+     * @param integer $status The status of the recipient
+     * @return boolean
      */
-    public function updateRecipientStatus($recipient, $status) {
+    public function updateRecipientStatus($recipientId, $status) {
         if ($this->debug) {
             $mtime = microtime();
             $mtime = explode(' ', $mtime);
@@ -350,33 +331,26 @@ class GoodNewsMailing {
         
         $this->_lock();
 
-        // Database access has to be exclusively for each recipient - not class wide!
-        // Otherwise multiprocessing will have caching related problems.
-        $meta = $this->modx->getObject('GoodNewsMailingMeta',  array('mailing_id'=>$this->mailingid));
-        if (!is_object($meta)) { return false; }
-
-        $recipients = unserialize($meta->get('recipients_list'));
-        if (!is_array($recipients) || count($recipients) == 0) {
-            if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsMailing::updateRecipientStatus - Recipients list is empty.'); }
+        if (!$this->goodnewsrecipienthandler->cleanupRecipient($recipientId, $this->mailingid, $status)) {
+            if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsMailing::updateRecipientStatus - Status for recipient [id: '.$recipientId.'] could not be updated to: '.$status); }
             $this->_unlock();
             return false;
         }
-        
-        // Increase sent counter
+
+        $meta = $this->modx->getObject('GoodNewsMailingMeta',  array('mailing_id'=>$this->mailingid));
+        if (!is_object($meta)) { return false; }
+
+        // Increase sent counter in mailing meta
         $recipientsSent = $meta->get('recipients_sent') + 1;
-        $currentTime = time();
-
-        // Set recipient status to GON_USER_SENT or GON_USER_SEND_ERROR + current time stamp
-        $recipients[$recipient] = array($status,$currentTime);
-        $meta->set('recipients_list', serialize($recipients));
         $meta->set('recipients_sent', $recipientsSent);
-
-        if (!$meta->save()) {
-            if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsMailing::updateRecipientStatus - Status for recipient [id: '.$recipient.'] could not be updated to: '.$status); }
-            $update = false;
-        } else {
-            $update = true;
+        
+        if ($status == GoodNewsRecipientHandler::GON_USER_SEND_ERROR) {
+            // Increase error counter in mailing meta
+            $recipientsError = $meta->get('recipients_error') + 1;
+            $meta->set('recipients_error', $recipientsError);
         }
+        $meta->save();
+        unset($meta);
         
         $this->_unlock();
         
@@ -389,7 +363,7 @@ class GoodNewsMailing {
             $totalTime = sprintf("%2.4f s", $totalTime);
             $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsMailing::updateRecipientStatus - Lock time: '.$totalTime);
         }
-        return $update;
+        return true;
     }
 
     /**
@@ -397,24 +371,23 @@ class GoodNewsMailing {
      * (get test-recipients from users table - not pre-generated!)
      *
      * @access public
-     * @return mixed array $testrecipients or false if empty
+     * @return mixed array $testrecipients || false if empty
      */
     public function getTestRecipients() {
         $c = $this->modx->newQuery('modUser');
-        $c->leftJoin('modUserProfile', 'Profile');
         $c->leftJoin('GoodNewsSubscriberMeta', 'SubscriberMeta', 'SubscriberMeta.subscriber_id = modUser.id');  
         $c->where(array(
             'modUser.active' => true,
             'SubscriberMeta.testdummy' => 1,
         ));
-        $users = $this->modx->getCollection('modUser', $c);
+        $recipients = $this->modx->getIterator('modUser', $c);
 
         $testrecipients = array();
-        foreach ($users as $user) {
-            $testrecipients[] = $user->get('id');            
+        foreach ($recipients as $recipient) {
+            $testrecipients[] = $recipient->get('id');            
         }
         if (count($testrecipients) == 0) {
-            if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsMailing::collectTestRecipients - Test-recipients list is empty.'); }
+            if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsMailing::getTestRecipients - Test-recipients list is empty.'); }
             $testrecipients = false;
         }
         return $testrecipients;
@@ -441,9 +414,9 @@ class GoodNewsMailing {
             'modResource.published'  => true,
             'modResource.deleted'    => false,
             'modResource.parent:IN'  => $containerIDs,
-            'MailingMeta.ipc_status' => self::GON_IPC_STATUS_STARTED
+            'MailingMeta.ipc_status' => self::GON_IPC_STATUS_STARTED,
         ));
-        $mailings = $this->modx->getCollection('modResource', $c);
+        $mailings = $this->modx->getIterator('modResource', $c);
         
         $mailingIDs = array();
         foreach ($mailings as $mailing) {
@@ -457,8 +430,34 @@ class GoodNewsMailing {
     }
 
     /**
+     * Get all mailing resources where sending has finished.
+     *
+     * @access public
+     * @return array $mailingIDs or false
+     */
+    public function getMailingsFinished() {
+        $c = $this->modx->newQuery('GoodNewsMailingMeta');
+        $c->where(array(
+            'recipients_total > 0',
+            'recipients_total = recipients_sent',
+            'finishedon > 0',
+            'ipc_status' => self::GON_IPC_STATUS_STOPPED,
+        ));
+        $mailings = $this->modx->getIterator('GoodNewsMailingMeta', $c);
+        
+        $mailingIDs = array();
+        foreach ($mailings as $mailing) {
+            $mailingIDs[] = $mailing->get('id');
+        }
+        if (count($mailingIDs) == 0) {
+            if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsMailing::getMailingsFinished - No mailing resources found for processing.'); }
+            $mailingIDs = false;
+        }
+        return $mailingIDs;
+    }
+
+    /**
      * Processes a mailing.
-     * (This is also the initialization method of the class)
      *
      * @access public
      * @param integer $id The ID of the mailing resource
@@ -469,42 +468,51 @@ class GoodNewsMailing {
         $this->mailingid = $id;
         $this->mailing   = $this->_getMailingObject();
         if (!$this->mailing) { return false; }
-       
+
         $this->_createLockFile();
         
         $mail = $this->_getMailProperties();
         
+        // Send a defined bulk of emails
         for ($n = 0; $n < $this->bulksize; $n++) {
             
-            $recipient = $this->getNextRecipient();
-            if (!$recipient) {
-                // If there are no more recipients to send, my process will stop immediately!
-                // So I need to remove my process status!
+            $recipientId = $this->getNextRecipient();
+            
+            // There are no more recipients -> mailing has finished!
+            if (!$recipientId) {
+                // Stop this process!
                 $this->goodnewsprocesshandler->setPid(getmypid());
                 $this->goodnewsprocesshandler->deleteProcessStatus();
                 
                 // Also we set the mailing to finished (= IPCstatus "stopped")
                 $this->setIPCstop($this->mailingid, true);
                 if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsMailing::processMailing - Mailing [id: '.$this->mailingid.'] finished.'); }
+ 
+                // @todo: send status report to sender of mailing!
+                //
+                
                 break;
             }            
-            
-            $subscriber = $this->_getSubscriberProperties($recipient);
-            if (!$subscriber) {
-                $userStatus = self::GON_USER_SEND_ERROR; // todo: other status required eg. GON_USER_NOT_FOUND
-            } else {
+
+            $subscriber = $this->_getSubscriberProperties($recipientId);
+            if ($subscriber) {
                 $temp_mail = $mail;
-                $temp_mail['body'] = $this->_gonPlaceholders($temp_mail['body'], $subscriber['sid'], $subscriber['fullname'], $subscriber['email']);
-                $sent = $this->sendEmail($temp_mail, $subscriber);            
-                if ($sent) {
-                    $userStatus = self::GON_USER_SENT;
+                $temp_mail['body'] = $this->_gonPlaceholders($temp_mail['body'], $subscriber['sid'], $subscriber['fullname'], $subscriber['email']);            
+ 
+                if ($this->sendEmail($temp_mail, $subscriber)) {
+                    $status = GoodNewsRecipientHandler::GON_USER_SENT;
                 } else {
-                    $userStatus = self::GON_USER_SEND_ERROR;
+                    $status = GoodNewsRecipientHandler::GON_USER_SEND_ERROR;
                 }
-                
+            
+            // this could happen, if a subscriber was deleted while mailing is processed
+            } else {
+                $status = GoodNewsRecipientHandler::GON_USER_SEND_ERROR; // @todo: other status required eg. GON_USER_NOT_FOUND
             }
-            $this->updateRecipientStatus($recipient, $userStatus);
+            
+            $this->updateRecipientStatus($recipientId, $status);
         }
+
         return true;
     }
 
@@ -523,12 +531,10 @@ class GoodNewsMailing {
         
         $mail       = $this->_getMailProperties();
         $recipients = $this->getTestRecipients();
-        if (empty($recipients)) {
-            return false;
-        }
+        if (empty($recipients)) { return false; }
 
-        foreach ($recipients as $recipient) {
-            $subscriber = $this->_getSubscriberProperties($recipient);
+        foreach ($recipients as $recipientId) {
+            $subscriber = $this->_getSubscriberProperties($recipientId);
             $temp_mail = $mail;
             $temp_mail['body'] = $this->_gonPlaceholders($temp_mail['body'], $subscriber['sid'], $subscriber['fullname'], $subscriber['email']);
             $sent = $this->sendEmail($temp_mail, $subscriber);            
@@ -584,7 +590,7 @@ class GoodNewsMailing {
             'deleted'   => false,
             'class_key' => 'GoodNewsResourceContainer'
         ));
-        $containers = $this->modx->getCollection('modResource', $c);
+        $containers = $this->modx->getIterator('modResource', $c);
 
         $containerIDs = array();
         foreach ($containers as $container){
@@ -952,7 +958,7 @@ class GoodNewsMailing {
     }
     
     /**
-     * Helper method to replace values in a give array.
+     * Helper method to replace values in an array.
      *
      * @access private
      * @param array $replace

@@ -47,6 +47,11 @@ if ($object->xpdo) {
             $manager->addField('GoodNewsMailingMeta', 'hard_bounces', array('after' => 'scheduled'));
             $manager->addField('GoodNewsMailingMeta', 'soft_bounces', array('after' => 'scheduled'));
 
+            // 1.2.0-pl+
+            $manager->addField('GoodNewsMailingMeta', 'recipients_error', array('after' => 'recipients_sent'));
+            
+            //GoodNewsMailingMeta - recipients_list field deprecated since 1.2.0-pl+
+
             // Set bakck log-level to previous level
             $modx->setLogLevel($oldLogLevel);
             break;

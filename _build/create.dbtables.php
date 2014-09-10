@@ -46,7 +46,9 @@ $modx->setLogTarget('HTML');
 
 $objects = array(
     //'GoodNewsMailingMeta',
+    //'GoodNewsRecipient',
     //'GoodNewsSubscriberMeta',
+    //'GoodNewsSubscriberLog',
     //'GoodNewsGroup',
     //'GoodNewsGroupMember',
     //'GoodNewsCategory',

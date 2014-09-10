@@ -69,6 +69,7 @@ $_lang['goodnews.newsletter_finished_on']                           = 'Abgeschlo
 $_lang['goodnews.newsletter_categories']                            = 'Kategorien';
 $_lang['goodnews.newsletter_recipients']                            = 'Empfänger: ';
 $_lang['goodnews.newsletter_recipients_sent']                       = 'Empfänger / Gesendet';
+$_lang['goodnews.newsletter_sending_errors']                        = 'Sendefehler';
 $_lang['goodnews.newsletter_status']                                = 'Status';
 $_lang['goodnews.newsletter_status_finished']                       = 'Versendet';
 $_lang['goodnews.newsletter_status_stopped']                        = 'Gestoppt';

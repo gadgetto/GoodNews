@@ -53,6 +53,7 @@ class GoodNewsResourceMailing extends modResource {
      * Get the controller path for our resource type.
      * 
      * {@inheritDoc}
+     *
      * @static
      * @param xPDO $modx
      * @return string
@@ -65,6 +66,7 @@ class GoodNewsResourceMailing extends modResource {
      * Override modResource::process to set custom placeholders for the Resource when rendering it in front-end.
      *
      * {@inheritDoc}
+     *
      * @return string
      */
     public function process() {
@@ -89,16 +91,6 @@ class GoodNewsResourceMailing extends modResource {
         }
         return is_array($settings) ? $settings : array();
     }
-
-    /**
-     * Prevent isLazy error
-     *
-     * @param string $key
-     * @return bool
-     */
-    public function isLazy($key = '') {
-        return false;
-    }
 }
 
 
@@ -109,23 +101,46 @@ class GoodNewsResourceMailing extends modResource {
  */
 class GoodNewsResourceMailingCreateProcessor extends modResourceCreateProcessor {
 
-    const GON_USER_NOT_YET_SENT = 0;
-    const GON_USER_SENT         = 1;
-    const GON_USER_SEND_ERROR   = 2;
-    const GON_USER_RESERVED     = 4;
-
-    const GON_IPC_STATUS_STOPPED  = 0;
-    const GON_IPC_STATUS_STARTED  = 1;
-
     public $classKey = 'GoodNewsResourceMailing';
     public $languageTopics = array('resource','goodnews:resource');
 
     /** @var GoodNewsResourceMailing $object */
     public $object;
+
+    /** @var GoodNewsMailingMeta $object */
+    public $meta;
+
+    /** @var GoodnewsRecipientHandler $object */
+    public $goodnewsrecipienthandler;
     
     /** @var boolean $isPublishing */
     public $isPublishing = false;
 
+    /**
+     * Create the GoodNewsResourceMailing (modResource) object for manipulation
+     *
+     * {@inheritDoc}
+     *
+     * @return string|modResource
+     */
+    public function initialize() {
+        $initialized = parent::initialize();
+
+        $corePath = $this->modx->getOption('goodnews.core_path', null, $this->modx->getOption('core_path').'components/goodnews/');
+        
+        $this->meta = $this->modx->newObject('GoodNewsMailingMeta');
+        if (!is_object($this->meta)) {
+            return $this->modx->lexicon('resource_err_create');
+        }
+        
+        if (!$this->modx->loadClass('GoodNewsRecipientHandler', $corePath.'model/goodnews/', true, true)) {
+            $this->modx->log(modX::LOG_LEVEL_ERROR,'[GoodNews] Could not load GoodNewsRecipientHandler class.');
+            return $this->modx->lexicon('resource_err_create');
+        }
+        $this->goodnewsrecipienthandler = new GoodNewsRecipientHandler($this->modx);
+
+        return $initialized;
+    }
 
     public function beforeSet() {
         $this->setProperty('class_key', 'GoodNewsResourceMailing');
@@ -140,26 +155,23 @@ class GoodNewsResourceMailingCreateProcessor extends modResourceCreateProcessor 
      * Override modResourceCreateProcessor::beforeSave
      *
      * {@inheritDoc}
+     *
      * @return boolean
      */
     public function beforeSave() {
-        // Set related meta data for this resource
-        $meta = $this->modx->newObject('GoodNewsMailingMeta');
-        if (!$meta) {
-            return $this->modx->lexicon('resource_err_save');
-        }
         
         $nodelist = $this->getProperty('groupscategories');
 
         $this->prepareGroupsCategories();
-        $meta->set('groups', $this->getProperty('groups'));
-        $meta->set('categories', $this->getProperty('categories'));
+        $groups = $this->getProperty('groups');
+        $categories = $this->getProperty('categories');
+        
+        $this->meta->set('groups', $groups);
+        $this->meta->set('categories', $categories);
 
-        $this->collectRecipients();
-        $meta->set('recipients_list', $this->getProperty('recipients_list'));
-        $meta->set('recipients_total', $this->getProperty('recipients_total'));
-
-        $this->object->addOne($meta);   
+        $this->goodnewsrecipienthandler->collect(unserialize($groups), unserialize($categories));
+        $this->meta->set('recipients_total', $this->goodnewsrecipienthandler->getRecipientsTotal());
+        $this->object->addOne($this->meta);
 
         if (!$this->parentResource) {
             $this->parentResource = $this->object->getOne('Parent');
@@ -173,7 +185,7 @@ class GoodNewsResourceMailingCreateProcessor extends modResourceCreateProcessor 
         }
         
         $this->isPublishing = $this->object->isDirty('published') && $this->object->get('published');
-        
+                
         return parent::beforeSave();
     }
 
@@ -182,10 +194,15 @@ class GoodNewsResourceMailingCreateProcessor extends modResourceCreateProcessor 
      * Override modResourceCreateProcessor::afterSave
      *
      * {@inheritDoc}
+     *
      * @return boolean
      */
     public function afterSave() {
         $this->clearContainerCache();
+        
+        // save recipients list
+        $this->goodnewsrecipienthandler->saveRecipientsCollection($this->object->get('id'));
+
         return parent::afterSave();
     }
 
@@ -231,101 +248,6 @@ class GoodNewsResourceMailingCreateProcessor extends modResourceCreateProcessor 
         $this->setProperty('groups', serialize($groups));
         $this->setProperty('categories', serialize($categories));
     }
-
-    /**
-     * Collect recipients based on groups and categories and MODx user groups
-     *
-     * @return void
-     */
-    public function collectRecipients() {
-
-        $recipients = array();
-        $modxgrouprecipients = array();
-        $groups = array();
-        $categories = array();
-        
-        $groups = unserialize($this->getProperty('groups'));
-        if (empty($groups)){
-            $groups = array('0');
-        }
-        $categories = unserialize($this->getProperty('categories'));
-        if (empty($categories)){
-            $categories = array('0');
-        }
-        
-        // Select subscribers based on groups/categories + assigned MODx user groups
-        $tblUsers                  = $this->modx->getTableName('modUser');
-        $tblUserAttributes         = $this->modx->getTableName('modUserProfile');
-        $tblGoodNewsGroupMember    = $this->modx->getTableName('GoodNewsGroupMember');
-        $tblGoodNewsCategoryMember = $this->modx->getTableName('GoodNewsCategoryMember');
-        
-        $groupslist = implode(',', $groups);
-        $categorieslist = implode(',', $categories);
-        
-        $sql = "SELECT DISTINCT {$tblUsers}.id
-                FROM {$tblUsers} 
-                LEFT JOIN {$tblUserAttributes} ON {$tblUserAttributes}.internalKey = {$tblUsers}.id
-                LEFT JOIN {$tblGoodNewsGroupMember} ON {$tblGoodNewsGroupMember}.member_id = {$tblUsers}.id
-                LEFT JOIN {$tblGoodNewsCategoryMember} ON {$tblGoodNewsCategoryMember}.member_id = {$tblUsers}.id
-                WHERE ({$tblGoodNewsGroupMember}.goodnewsgroup_id IN ({$groupslist}) OR {$tblGoodNewsCategoryMember}.goodnewscategory_id IN ({$categorieslist}))
-                AND {$tblUsers}.active = 1";
-
-        $query = $this->modx->query($sql);
-        if ($query) {
-            $users = $query->fetchAll(PDO::FETCH_COLUMN);
-        }
-
-        // Initialize each userid with status not_yet_sent + timestamp placeholder 0
-        foreach ($users as $id) {
-            $recipients[$id] = array(self::GON_USER_NOT_YET_SENT,0);
-        }
-
-        $modxgrouprecipients = $this->_collectModxGroupRecipients();
-        $recipients += $modxgrouprecipients;
-        
-        $this->setProperty('recipients_list', serialize($recipients));
-        $this->setProperty('recipients_total', count($recipients));
-    }
-
-    /**
-     * Collect recipients from MODx user groups
-     * (if goodnews group is assigned to MODx user group)
-     *
-     * @return array $modxgrouprecipients
-     */
-    private function _collectModxGroupRecipients() {
-
-        $modxgrouprecipients = array();
-        $groups = array();
-        
-        $groups = unserialize($this->getProperty('groups'));
-        if (empty($groups)){
-            $groups = array('0');
-        }
-
-        // Select MODx group recipients
-        $c = $this->modx->newQuery('modUser');
-        $c->leftJoin('modUserProfile', 'Profile');
-        $c->innerJoin('modUserGroupMember','UserGroupMembers');
-        $c->innerJoin('GoodNewsGroup','Group','UserGroupMembers.user_group = Group.modxusergroup');
-
-        $c->where(array(
-            'modUser.active' => true,
-            'Group.id:IN' => $groups,
-        ));
-
-        $c->select($this->modx->getSelectColumns('modUser', 'modUser', '', array('id')));
-
-        $users = $this->modx->getCollection('modUser', $c);
-
-        // Initialize each userid with status not_yet_sent + timestamp placeholder 0
-        foreach ($users as $user) {
-            $userID = $user->get('id');            
-            $modxgrouprecipients[$userID] = array(self::GON_USER_NOT_YET_SENT,0);
-        }
-        
-        return $modxgrouprecipients;
-    }
 }
 
 /**
@@ -335,25 +257,53 @@ class GoodNewsResourceMailingCreateProcessor extends modResourceCreateProcessor 
  */
 class GoodNewsResourceMailingUpdateProcessor extends modResourceUpdateProcessor {
 
-    const GON_USER_NOT_YET_SENT = 0;
-    const GON_USER_SENT         = 1;
-    const GON_USER_SEND_ERROR   = 2;
-    const GON_USER_RESERVED     = 4;
-
-    const GON_IPC_STATUS_STOPPED  = 0;
-    const GON_IPC_STATUS_STARTED  = 1;
-
     public $classKey = 'GoodNewsResourceMailing';
     public $languageTopics = array('resource','goodnews:resource');
 
     /** @var GoodNewsResourceMailing $object */
     public $object;
 
+    /** @var GoodNewsMailingMeta $object */
+    public $meta;
+
+     /** @var GoodnewsRecipientHandler $object */
+    public $goodnewsrecipienthandler;
+    
     /** @var boolean $isPublishing */
     public $isPublishing = false;
 
     /**
+     * Create the GoodNewsResourceMailing (modResource) object for manipulation
+     *
      * {@inheritDoc}
+     *
+     * @return string|modResource
+     */
+    public function initialize() {
+        $initialized = parent::initialize();
+
+        $corePath = $this->modx->getOption('goodnews.core_path', null, $this->modx->getOption('core_path').'components/goodnews/');
+        
+        $this->meta = $this->modx->getObject('GoodNewsMailingMeta', array('mailing_id'=>$this->object->get('id')));
+        if (!is_object($this->meta)) {
+            $this->meta = $this->modx->newObject('GoodNewsMailingMeta');
+            if (!is_object($this->meta)) {
+                return $this->modx->lexicon('resource_err_update');
+            }
+        }
+
+        if (!$this->modx->loadClass('GoodNewsRecipientHandler', $corePath.'model/goodnews/', true, true)) {
+            $this->modx->log(modX::LOG_LEVEL_ERROR,'[GoodNews] Could not load GoodNewsRecipientHandler class.');
+            return $this->modx->lexicon('resource_err_update');
+        }
+        $this->goodnewsrecipienthandler = new GoodNewsRecipientHandler($this->modx);
+
+        return $initialized;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
      * @return boolean|string
      */
     public function beforeSet() {
@@ -365,35 +315,29 @@ class GoodNewsResourceMailingUpdateProcessor extends modResourceUpdateProcessor 
      * Override modResourceUpdateProcessor::beforeSave
      * 
      * {@inheritDoc}
+     *
      * @return boolean
      */
     public function beforeSave() {
-        // Set related meta data for this resource
-        $meta = $this->modx->getObject('GoodNewsMailingMeta', array('mailing_id'=>$this->object->get('id')));
-        if (!is_object($meta)) {
-            $meta = $this->modx->newObject('GoodNewsMailingMeta');
-            if (!is_object($meta)) {
-                return $this->modx->lexicon('resource_err_save');
-            }
-        }
 
         // If sending has already been startet, the resource can't be changed any longer
         // (normaly this shouldn't happen as we don't provide an 'Edit' menu in this case)
-        if ($meta->get('recipients_sent') != 0) {
+        if ($this->meta->get('recipients_sent') != 0) {
             return $this->modx->lexicon('goodnews.newsletter_err_save_already_sending');
         }
 
         $nodelist = $this->getProperty('groupscategories');
 
         $this->prepareGroupsCategories();
-        $meta->set('groups', $this->getProperty('groups'));
-        $meta->set('categories', $this->getProperty('categories'));
+        $groups = $this->getProperty('groups');
+        $categories = $this->getProperty('categories');
+        
+        $this->meta->set('groups', $groups);
+        $this->meta->set('categories', $categories);
 
-        $this->collectRecipients();
-        $meta->set('recipients_list', $this->getProperty('recipients_list'));
-        $meta->set('recipients_total', $this->getProperty('recipients_total'));
-
-        $this->object->addOne($meta);   
+        $this->goodnewsrecipienthandler->collect(unserialize($groups), unserialize($categories));
+        $this->meta->set('recipients_total', $this->goodnewsrecipienthandler->getRecipientsTotal());
+        $this->object->addOne($this->meta);
         
         // Copy container properties to mailing object properties
         $container = $this->modx->getObject('GoodNewsResourceContainer', $this->object->get('parent'));
@@ -410,15 +354,21 @@ class GoodNewsResourceMailingUpdateProcessor extends modResourceUpdateProcessor 
      * Override modResourceUpdateProcessor::afterSave
      *
      * {@inheritDoc}
+     *
      * @return boolean
      */
     public function afterSave() {
         $this->clearContainerCache();
+
+        // update recipients list
+        $this->goodnewsrecipienthandler->updateRecipientsCollection($this->object->get('id'));
+        
         return parent::afterSave();
     }
 
     /**
      * Clears the container cache to ensure that the container listing is updated
+     *
      * @return void
      */
     public function clearContainerCache() {
@@ -481,100 +431,5 @@ class GoodNewsResourceMailingUpdateProcessor extends modResourceUpdateProcessor 
         }
         $this->setProperty('groups', serialize($groups));
         $this->setProperty('categories', serialize($categories));
-    }
-
-    /**
-     * Collect recipients based on groups and categories and MODx user groups
-     *
-     * @return void
-     */
-    public function collectRecipients() {
-
-        $recipients = array();
-        $modxgrouprecipients = array();
-        $groups = array();
-        $categories = array();
-        
-        $groups = unserialize($this->getProperty('groups'));
-        if (empty($groups)){
-            $groups = array('0');
-        }
-        $categories = unserialize($this->getProperty('categories'));
-        if (empty($categories)){
-            $categories = array('0');
-        }
-        
-        // Select subscribers based on groups/categories + assigned MODx user groups
-        $tblUsers                  = $this->modx->getTableName('modUser');
-        $tblUserAttributes         = $this->modx->getTableName('modUserProfile');
-        $tblGoodNewsGroupMember    = $this->modx->getTableName('GoodNewsGroupMember');
-        $tblGoodNewsCategoryMember = $this->modx->getTableName('GoodNewsCategoryMember');
-        
-        $groupslist = implode(',', $groups);
-        $categorieslist = implode(',', $categories);
-        
-        $sql = "SELECT DISTINCT {$tblUsers}.id
-                FROM {$tblUsers} 
-                LEFT JOIN {$tblUserAttributes} ON {$tblUserAttributes}.internalKey = {$tblUsers}.id
-                LEFT JOIN {$tblGoodNewsGroupMember} ON {$tblGoodNewsGroupMember}.member_id = {$tblUsers}.id
-                LEFT JOIN {$tblGoodNewsCategoryMember} ON {$tblGoodNewsCategoryMember}.member_id = {$tblUsers}.id
-                WHERE ({$tblGoodNewsGroupMember}.goodnewsgroup_id IN ({$groupslist}) OR {$tblGoodNewsCategoryMember}.goodnewscategory_id IN ({$categorieslist}))
-                AND {$tblUsers}.active = 1";
-
-        $query = $this->modx->query($sql);
-        if ($query) {
-            $users = $query->fetchAll(PDO::FETCH_COLUMN);
-        }
-
-        // Initialize each userid with status not_yet_sent + timestamp placeholder 0
-        foreach ($users as $id) {
-            $recipients[$id] = array(self::GON_USER_NOT_YET_SENT,0);
-        }
-
-        $modxgrouprecipients = $this->_collectModxGroupRecipients();
-        $recipients += $modxgrouprecipients;
-        
-        $this->setProperty('recipients_list', serialize($recipients));
-        $this->setProperty('recipients_total', count($recipients));
-    }
-
-    /**
-     * Collect recipients from MODx user groups
-     * (if goodnews group is assigned to MODx user group)
-     *
-     * @return array $modxgrouprecipients
-     */
-    private function _collectModxGroupRecipients() {
-
-        $modxgrouprecipients = array();
-        $groups = array();
-        
-        $groups = unserialize($this->getProperty('groups'));
-        if (empty($groups)){
-            $groups = array('0');
-        }
-
-        // Select MODx group recipients
-        $c = $this->modx->newQuery('modUser');
-        $c->leftJoin('modUserProfile', 'Profile');
-        $c->innerJoin('modUserGroupMember','UserGroupMembers');
-        $c->innerJoin('GoodNewsGroup','Group','UserGroupMembers.user_group = Group.modxusergroup');
-
-        $c->where(array(
-            'modUser.active' => true,
-            'Group.id:IN' => $groups,
-        ));
-
-        $c->select($this->modx->getSelectColumns('modUser', 'modUser', '', array('id')));
-
-        $users = $this->modx->getCollection('modUser', $c);
-
-        // Initialize each userid with status not_yet_sent + timestamp placeholder 0
-        foreach ($users as $user) {
-            $userID = $user->get('id');            
-            $modxgrouprecipients[$userID] = array(self::GON_USER_NOT_YET_SENT,0);
-        }
-        
-        return $modxgrouprecipients;
     }
 }

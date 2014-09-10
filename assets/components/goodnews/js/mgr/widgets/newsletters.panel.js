@@ -88,9 +88,9 @@ GoodNews.grid.Newsletters = function(config) {
             '</tr>',
             '<tr>',
                 '<td class="gon-expinfos-key"></td><td class="gon-expinfos-val"></td>',
+                '<td class="gon-expinfos-key">'+_('goodnews.newsletter_sending_errors')+'</td><td class="gon-expinfos-val">{recipients_error}</td>',
                 '<td class="gon-expinfos-key">'+_('goodnews.newsletter_soft_bounces')+'</td><td class="gon-expinfos-val">{soft_bounces}</td>',
                 '<td class="gon-expinfos-key">'+_('goodnews.newsletter_hard_bounces')+'</td><td class="gon-expinfos-val">{hard_bounces}</td>',
-                '<td class="gon-expinfos-key"></td><td class="gon-expinfos-val"></td>',
                 '<td class="gon-expinfos-key"></td><td class="gon-expinfos-val"></td>',
             '</tr>',
         '</table>'
@@ -129,6 +129,7 @@ GoodNews.grid.Newsletters = function(config) {
             ,'recipients_sent'
             ,'recipients_total_sent'
             ,'recipients_open'
+            ,'recipients_error'
             ,'ipc_status'
             ,'scheduled'
             ,'soft_bounces'

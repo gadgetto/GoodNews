@@ -85,6 +85,7 @@ class NewsletterGetListProcessor extends modObjectGetListProcessor {
         $metaColumns = array(
             'recipients_total',
             'recipients_sent',
+            'recipients_error',
             'senton',
             'sentby',
             'finishedon',

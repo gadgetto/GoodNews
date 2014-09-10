@@ -15,6 +15,7 @@ $xpdo_meta_map['GoodNewsMailingMeta']= array (
     'recipients_list' => '',
     'recipients_total' => 0,
     'recipients_sent' => 0,
+    'recipients_error' => 0,
     'senton' => 0,
     'sentby' => 0,
     'finishedon' => 0,
@@ -65,6 +66,15 @@ $xpdo_meta_map['GoodNewsMailingMeta']= array (
       'default' => 0,
     ),
     'recipients_sent' => 
+    array (
+      'dbtype' => 'int',
+      'precision' => '10',
+      'attributes' => 'unsigned',
+      'phptype' => 'integer',
+      'null' => false,
+      'default' => 0,
+    ),
+    'recipients_error' => 
     array (
       'dbtype' => 'int',
       'precision' => '10',
@@ -152,6 +162,17 @@ $xpdo_meta_map['GoodNewsMailingMeta']= array (
           'null' => false,
         ),
       ),
+    ),
+  ),
+  'composites' => 
+  array (
+    'Recipient' => 
+    array (
+      'class' => 'GoodNewsRecipient',
+      'local' => 'mailing_id',
+      'foreign' => 'mailing_id',
+      'cardinality' => 'many',
+      'owner' => 'local',
     ),
   ),
   'aggregates' => 

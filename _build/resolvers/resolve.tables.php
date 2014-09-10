@@ -38,7 +38,9 @@ if ($object->xpdo) {
 
             $objects = array(
                 'GoodNewsMailingMeta',
+                'GoodNewsRecipient',
                 'GoodNewsSubscriberMeta',
+                'GoodNewsSubscriberLog',
                 'GoodNewsGroup',
                 'GoodNewsGroupMember',
                 'GoodNewsCategory',
