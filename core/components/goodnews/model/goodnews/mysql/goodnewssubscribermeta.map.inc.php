@@ -93,6 +93,17 @@ $xpdo_meta_map['GoodNewsSubscriberMeta']= array (
       ),
     ),
   ),
+  'composites' => 
+  array (
+    'SubscriberLog' => 
+    array (
+      'class' => 'GoodNewsSubscriberLog',
+      'local' => 'subscriber_id',
+      'foreign' => 'subscriber_id',
+      'cardinality' => 'many',
+      'owner' => 'local',
+    ),
+  ),
   'aggregates' => 
   array (
     'User' => 

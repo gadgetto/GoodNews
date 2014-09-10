@@ -1,5 +1,14 @@
 Changelog for GoodNews
 
+GoodNews 1.2.0-pl (2014-09-09)
+--------------------------------------------------
+- [#23] fixed PHP memory limit problem on server with huge list of subscribers
+- complete rewrite on how the sending engine handles recipients!
+- huge performance increase and much better memory management for sending engine
+- many other small memory and performance related enhancements
+- added sending error counter to mailing grid
+
+
 GoodNews 1.1.7-pl (2014-09-02)
 --------------------------------------------------
 - [#20] new feature to manually disable multiprocessing

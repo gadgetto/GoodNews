@@ -9,11 +9,13 @@ $xpdo_meta_map = array (
   'xPDOSimpleObject' => 
   array (
     0 => 'GoodNewsMailingMeta',
-    1 => 'GoodNewsSubscriberMeta',
-    2 => 'GoodNewsGroup',
-    3 => 'GoodNewsGroupMember',
-    4 => 'GoodNewsCategory',
-    5 => 'GoodNewsCategoryMember',
-    6 => 'GoodNewsProcess',
+    1 => 'GoodNewsRecipient',
+    2 => 'GoodNewsSubscriberMeta',
+    3 => 'GoodNewsSubscriberLog',
+    4 => 'GoodNewsGroup',
+    5 => 'GoodNewsGroupMember',
+    6 => 'GoodNewsCategory',
+    7 => 'GoodNewsCategoryMember',
+    8 => 'GoodNewsProcess',
   ),
 );

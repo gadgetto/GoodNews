@@ -24,7 +24,7 @@ based on bounce counters.
 
 Reqirements:
 
-- MODx 2.2 and above
+- MODX 2.2.1 or later
 - Cron
 - PHP Imap Extension (for automatic bounce handling)
 
