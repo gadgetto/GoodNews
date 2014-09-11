@@ -205,7 +205,7 @@ class NewsletterGetListProcessor extends modObjectGetListProcessor {
                 }
             
             // Sending in progress or stopped
-            } elseif ((int)$resourceArray['recipients_total'] != (int)$resourceArray['recipients_sent']) {
+            } elseif ((int)$resourceArray['recipients_total'] != (int)$resourceArray['recipients_sent'] && (int)$resourceArray['recipients_sent'] != 0) {
     
                 if ((int)$resourceArray['ipc_status'] == self::GON_IPC_STATUS_STOPPED) {
                     $resourceArray['status'] = self::GON_NEWSLETTER_STATUS_STOPPED;
