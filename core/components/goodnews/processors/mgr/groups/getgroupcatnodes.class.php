@@ -52,11 +52,17 @@ class GroupCategoryGetNodesProcessor extends modProcessor {
      * @return mixed
      */
     public function initialize() {
+        // Determine MODX Revo version and set legacy mode (for usage in ExtJS - deprecated connectors since 2.3)
+        $version = $this->modx->getVersionData();
+        $fullVersion = $version['full_version'];
+
         $this->setDefaultProperties(array(
-            'id' => 0,
-            'sort' => 'name',
-            'dir' => 'ASC',
+            'id'         => 0,
+            'sort'       => 'name',
+            'dir'        => 'ASC',
+            'legacyMode' => version_compare($fullVersion, '2.3.0-dev', '>=') ? false : true,
         ));
+
         return true;
     }
 
@@ -69,7 +75,7 @@ class GroupCategoryGetNodesProcessor extends modProcessor {
  
         $this->userID = $this->getProperty('userID', 0);
         $this->resourceID = $this->getProperty('resourceID', 0);
-        
+                
         if (!empty($this->resourceID)) {
             $meta = $this->modx->getObject('GoodNewsMailingMeta', array('mailing_id'=>$this->resourceID));
             if ($meta) {
@@ -191,7 +197,7 @@ class GroupCategoryGetNodesProcessor extends modProcessor {
             $cssClass = '';
         }
         
-        if (!$this->goodnews->legacyMode) {
+        if (!$this->getProperty('legacyMode')) {
             // We are on Revo >= 2.3.0
             $iconCls = 'icon-tags';
         } else {
@@ -227,8 +233,8 @@ class GroupCategoryGetNodesProcessor extends modProcessor {
         } else {
             $checked = false;
         }
-        
-        if (!$this->goodnews->legacyMode) {
+
+        if (!$this->getProperty('legacyMode')) {
             // We are on Revo >= 2.3.0
             $iconCls = 'icon-tag';
         } else {
@@ -264,10 +270,10 @@ class GroupCategoryGetNodesProcessor extends modProcessor {
         if ($group->get('modxusergroup')) {
             $cssClass = 'gonr-modx-group-assigned';
         } else {
-            $cssClasss = '';
+            $cssClass = '';
         }
 
-        if (!$this->goodnews->legacyMode) {
+        if (!$this->getProperty('legacyMode')) {
             // We are on Revo >= 2.3.0
             $iconCls = 'icon-tags';
         } else {
@@ -300,7 +306,7 @@ class GroupCategoryGetNodesProcessor extends modProcessor {
             $checked = false;
         }
         
-        if (!$this->goodnews->legacyMode) {
+        if (!$this->getProperty('legacyMode')) {
             // We are on Revo >= 2.3.0
             $iconCls = 'icon-tag';
         } else {

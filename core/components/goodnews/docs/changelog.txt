@@ -1,5 +1,10 @@
 Changelog for GoodNews
 
+GoodNews 1.2.1-pl (2014-09-10)
+--------------------------------------------------
+- fixed some PHP warnings in getgroupcatnodes.class.php
+
+
 GoodNews 1.2.0-pl (2014-09-09)
 --------------------------------------------------
 - [#23] fixed PHP memory limit problem on server with huge list of subscribers
