@@ -153,8 +153,8 @@ function bounceHandling(&$modx, $debug_bmh = false) {
             $modx->bmh->processMailbox();
         } else {
             $modx->log(modX::LOG_LEVEL_ERROR,'[GoodNews] cron.php - Connection to mailhost failed: '.$modx->bmh->mailMailHost);
-            if (!empty($modx->bmh->errorMsg)) {
-                $modx->log(modX::LOG_LEVEL_ERROR,'[GoodNews] cron.php - phpIMAP error message: '.$modx->bmh->errorMsg);
+            if (!empty($modx->bmh->lastErrorMsg)) {
+                $modx->log(modX::LOG_LEVEL_ERROR,'[GoodNews] cron.php - phpIMAP error message: '.$modx->bmh->lastErrorMsg);
             }
         }
     }

@@ -3,6 +3,7 @@ Changelog for GoodNews
 GoodNews 1.2.1-pl (2014-09-10)
 --------------------------------------------------
 - fixed some PHP warnings in getgroupcatnodes.class.php
+- fixed some IMAP warnings in bounce handler
 
 
 GoodNews 1.2.0-pl (2014-09-09)

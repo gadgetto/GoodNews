@@ -47,8 +47,14 @@ class GoodNewsBounceMailHandler {
     /** @var boolean $disableDelete Enable/disable the message delete function */
     public $disableDelete = false;
 
-    /** @var string $errorMsg A string containing the last error msg */
-    public $errorMsg = null;
+    /** @var string $lastErrorMsg A string containing the last error msg */
+    public $lastErrorMsg = null;
+    
+    /** @var array $errors An array containing all error messages */
+    public $errors = array();
+    
+    /** @var array $alerts An array containing all allert messages */
+    public $alerts = array();
     
     /** @var string $mailService The service ('imap' or 'pop3') */
     public $mailService = 'imap';
@@ -251,9 +257,7 @@ class GoodNewsBounceMailHandler {
         } else {
             $this->_imapStream = @imap_open('{'.$this->mailMailHost.':'.$portstring.'}'.$this->mailBoxname, $this->mailMailboxUsername, $this->mailMailboxPassword);
         }
-		if (!$this->_imapStream) {
-			$this->errorMsg = imap_last_error();
-		}
+        $this->lastErrorMsg = imap_last_error();
         return $this->_imapStream;
     }
 
@@ -265,6 +269,9 @@ class GoodNewsBounceMailHandler {
 	 */
 	public function closeImapStream() {
 		if ($this->_imapStream && is_resource($this->_imapStream)) {
+    		// clears the error and alert stack
+            $this->errors = imap_errors();
+            $this->alerts = imap_alerts();
             if (!$this->testmode) {
 			    imap_close($this->_imapStream, CL_EXPUNGE);
 			 } else {
@@ -290,8 +297,8 @@ class GoodNewsBounceMailHandler {
         $portstring = $this->mailPort.'/'.$this->mailService.'/'.$this->mailServiceOption;
         
         $imapStream = @imap_open('{'.$this->mailMailHost.':'.$portstring.'}'.$this->mailBoxname, $this->mailMailboxUsername, $this->mailMailboxPassword, OP_HALFOPEN);
+        $this->lastErrorMsg = imap_last_error();
         if (!$imapStream) {
-			$this->errorMsg = imap_last_error();
 			return false;
 		}
 
@@ -313,11 +320,15 @@ class GoodNewsBounceMailHandler {
 
         if ((!$mailboxFolderFound) && $autocreate) {
             if (@imap_createmailbox($imapStream, imap_utf7_encode('{'.$this->mailMailHost.':'.$portstring.'}'.$mailboxFolder))) {
+                $this->errors = imap_errors();
+                $this->alerts = imap_alerts();
                 imap_close($imapStream);
                 return true;
             }
         }
         
+        $this->errors = imap_errors();
+        $this->alerts = imap_alerts();
         imap_close($imapStream);
         return false;
     }
