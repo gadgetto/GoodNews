@@ -3,7 +3,8 @@ GoodNews.panel.ContainerSettings = function(config) {
 
     Ext.applyIf(config,{
         id: 'goodnews-panel-settings-container'
-        ,title: _('goodnews.settings_container_tab')   
+        ,title: _('goodnews.settings_container_tab')
+        ,layout: 'anchor'
         ,defaults: { 
             border: false 
         }

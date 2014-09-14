@@ -49,6 +49,7 @@ GoodNews.panel.AboutSettings = function(config) {
     Ext.applyIf(config,{
         id: 'goodnews-panel-settings-about'
         ,title: _('goodnews.settings_about_tab')   
+        ,layout: 'anchor'
         ,defaults: { 
             border: false 
         }

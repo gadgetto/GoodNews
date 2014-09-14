@@ -7,10 +7,12 @@
  * @xtype goodnews-panel-categories
  */
 GoodNews.panel.Categories = function(config) {
-    config = config || {};    
+    config = config || {};
+
     Ext.applyIf(config,{
         id: 'goodnews-panel-categories'
         ,title: _('goodnews.categories')
+        ,layout: 'anchor'
         ,defaults: { 
             border: false 
         }
@@ -79,7 +81,7 @@ GoodNews.grid.Categories = function(config) {
             header: _('goodnews.id')
             ,dataIndex: 'id'
             ,sortable: true
-            ,width: 30
+            ,width: 40
         },{
             header: _('goodnews.category_name')
             ,dataIndex: 'name'

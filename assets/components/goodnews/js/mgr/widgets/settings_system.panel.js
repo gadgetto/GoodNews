@@ -4,6 +4,7 @@ GoodNews.panel.SystemSettings = function(config) {
     Ext.applyIf(config,{
         id: 'goodnews-panel-settings-system'
         ,title: _('goodnews.settings_system_tab')   
+        ,layout: 'anchor'
         ,defaults: { 
             border: false 
         }

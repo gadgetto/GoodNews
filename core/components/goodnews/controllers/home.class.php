@@ -54,7 +54,7 @@ class GoodNewsHomeManagerController extends GoodNewsManagerController {
         Ext.onReady(function(){
             GoodNews.config = '.$this->modx->toJSON($this->goodnews->config).';
             GoodNews.request = '.$this->modx->toJSON($_GET).';
-            Ext.onReady(function(){MODx.add("goodnews-panel-home");});
+            MODx.add("goodnews-panel-home");
         });
         </script>');
     }

@@ -4,6 +4,7 @@ GoodNews.panel.BounceParsingRulesSettings = function(config) {
     Ext.applyIf(config,{
         id: 'goodnews-panel-settings-bounceparsingrules'
         ,title: _('goodnews.settings_bounceparsingrules_tab')   
+        ,layout: 'anchor'
         ,defaults: { 
             border: false 
         }
