@@ -2,6 +2,7 @@ Changelog for GoodNews
 
 GoodNews 1.2.1-pl (2014-09-14)
 --------------------------------------------------
+- adapted searchfilter fields + reset buttons above grids to match MODX 2.3 style
 - added debug-mode status to System Checks table
 - [#24] fixed rendering of grids in tab panels (resizing problem)
 - fixed some PHP warnings in getgroupcatnodes.class.php

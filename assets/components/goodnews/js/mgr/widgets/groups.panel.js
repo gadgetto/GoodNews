@@ -123,6 +123,7 @@ GoodNews.grid.Groups = function(config) {
             ,cls: 'primary-button'
         },'->',{
             xtype: 'textfield'
+            ,cls: 'x-form-filter'
             ,id: 'goodnews-groups-search-filter'
             ,emptyText: _('goodnews.input_search_filter')
             ,listeners: {
@@ -141,6 +142,7 @@ GoodNews.grid.Groups = function(config) {
             }
         },{
             xtype: 'button'
+            ,cls: 'x-form-filter-clear'
             ,id: 'goodnews-groups-filter-clear'
             ,text: _('goodnews.button_filter_clear')
             ,listeners: {

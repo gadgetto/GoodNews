@@ -194,6 +194,7 @@ GoodNews.grid.Subscribers = function(config){
             }
         },'-',{
             xtype: 'textfield'
+            ,cls: 'x-form-filter'
             ,id: 'goodnews-subscribers-search-filter'
             ,emptyText: _('goodnews.input_search_filter')
             ,listeners: {
@@ -213,6 +214,7 @@ GoodNews.grid.Subscribers = function(config){
             }
         },{
             xtype: 'button'
+            ,cls: 'x-form-filter-clear'
             ,id: 'goodnews-subscribers-filter-clear'
             ,text: _('goodnews.button_filter_clear')
             ,listeners: {

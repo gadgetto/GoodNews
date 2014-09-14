@@ -268,6 +268,7 @@ GoodNews.grid.Newsletters = function(config) {
             }
         },{
             xtype: 'button'
+            ,cls: 'x-form-filter-clear'
             ,id: 'modx-newsletter-filter-clear'
             ,text: _('goodnews.button_filter_clear')
             ,listeners: {

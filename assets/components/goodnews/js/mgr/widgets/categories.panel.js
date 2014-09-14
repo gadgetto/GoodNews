@@ -148,6 +148,7 @@ GoodNews.grid.Categories = function(config) {
             }
         },'-',{
             xtype: 'textfield'
+            ,cls: 'x-form-filter'
             ,id: 'goodnews-categories-search-filter'
             ,emptyText: _('goodnews.input_search_filter')
             ,listeners: {
@@ -167,6 +168,7 @@ GoodNews.grid.Categories = function(config) {
         },{
             xtype: 'button'
             ,id: 'goodnews-categories-filter-clear'
+            ,cls: 'x-form-filter-clear'
             ,text: _('goodnews.button_filter_clear')
             ,listeners: {
                 'click': {fn: this.clearFilter, scope: this}
