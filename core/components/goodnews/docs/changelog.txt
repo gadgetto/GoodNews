@@ -2,6 +2,7 @@ Changelog for GoodNews
 
 GoodNews 1.2.1-pl (2014-09-14)
 --------------------------------------------------
+- added debug-mode status to System Checks table
 - [#24] fixed rendering of grids in tab panels (resizing problem)
 - fixed some PHP warnings in getgroupcatnodes.class.php
 - fixed some IMAP warnings in bounce handler

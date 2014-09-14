@@ -38,8 +38,9 @@ $_lang['goodnews.system_check_value']                               = 'Value (St
 $_lang['goodnews.multi_processing_for_sending']                     = 'Multi processing for sending mails available';
 $_lang['goodnews.imap_extension_available']                         = 'IMAP extension available (Bounce Handling)';
 $_lang['goodnews.site_status']                                      = 'Site is published to the web';
-$_lang['goodnews.ok']                                               = '<span class="gon-ok">Yes</span>';
-$_lang['goodnews.nok']                                              = '<span class="gon-nok">No</span>';
+$_lang['goodnews.debug_mode']                                       = 'GoodNews debug-mode';
+$_lang['goodnews.activated']                                        = 'Activated';
+$_lang['goodnews.deactivated']                                      = 'Deactivated';
 $_lang['goodnews.on']                                               = 'ON';
 $_lang['goodnews.off']                                              = 'OFF';
 $_lang['goodnews.id']                                               = 'ID';
