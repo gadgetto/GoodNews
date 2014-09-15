@@ -2,6 +2,15 @@
  * Custom GoodNews CMP styles for Revo < 2.3.0
  */
 
+/* workaround: different styles in Revo < 2.3 */
+#goodnews-panel-settings .desc-under {
+    color: #aaaaaa;
+    display: block;
+    font-size: 11px;
+    font-style: italic;
+    margin: -8px 0 16px;
+}
+
 /* FileUploadField component styles */
 .x-form-file-wrap {
     position: relative;
