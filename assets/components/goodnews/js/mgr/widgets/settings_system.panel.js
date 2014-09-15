@@ -63,6 +63,7 @@ GoodNews.panel.SystemSettings = function(config) {
                 }]
             },{
                 layout: 'column'
+                ,cls: 'gon-x-panel-add-padding-top'
                 ,border: false
                 ,defaults: {
                     layout: 'form'

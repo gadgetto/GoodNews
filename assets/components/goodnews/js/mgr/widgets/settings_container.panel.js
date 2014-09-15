@@ -286,6 +286,7 @@ GoodNews.window.UpdateContainerSettings = function(config) {
                     ,cls: 'desc-under'
                 },{
                     layout: 'column'
+                    ,cls: 'gon-x-panel-add-padding-top'
                     ,border: false
                     ,anchor: '100%'
                     ,defaults: {
@@ -342,6 +343,7 @@ GoodNews.window.UpdateContainerSettings = function(config) {
                     ,cls: 'desc-under'
                 },{
                     layout: 'column'
+                    ,cls: 'gon-x-panel-add-padding-top'
                     ,border: false
                     ,anchor: '100%'
                     ,defaults: {

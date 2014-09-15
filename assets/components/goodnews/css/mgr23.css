@@ -103,6 +103,11 @@
         color: #6060ff; /* blue */
     }
 
+/* slider panels in system settings */
+.gon-slider-field .x-form-field-wrap {
+    background: none;
+    border: none;
+}
 .gon-slider-display {
     text-align: center;
 }
@@ -172,12 +177,6 @@
         background-color: #fafafa;
     }
 
-/* No slider background */
-.gon-slider-field .x-form-field-wrap {
-    background: none;
-    border: none;
-}
-
 /* Special grid styles */
 .gon-modx-group-assigned,
 .gon-modx-group-assigned .x-grid3-cell-inner {
@@ -231,6 +230,11 @@
     font-weight: normal;
     line-height: 1.2;
     padding: 5px;
+}
+
+/* Other helper classes */
+.gon-x-panel-add-padding-top {
+    padding-top: 15px;
 }
 
 /* Style adjustments for high resolution devices */

@@ -1,5 +1,10 @@
 Changelog for GoodNews
 
+GoodNews 1.2.2-pl (2014-09-15)
+--------------------------------------------------
+- some small cosmetical changes in forms
+
+
 GoodNews 1.2.1-pl (2014-09-14)
 --------------------------------------------------
 - adapted searchfilter fields + reset buttons above grids to match MODX 2.3 style
