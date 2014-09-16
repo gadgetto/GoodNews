@@ -63,9 +63,9 @@ $_lang['goodnews.mail_summary_desc']                       = 'A short summary of
 $_lang['goodnews.mail_body']                               = 'Mail Body';
 $_lang['goodnews.mail_publishing_information']             = 'Publishing Informations';
 $_lang['goodnews.mail_status']                             = 'Status';
+$_lang['goodnews.mail_options']                            = 'Mail Options';
 $_lang['goodnews.mail_sending_scheduled']                  = 'Scheduled Sending';
 $_lang['goodnews.mail_sending_scheduled_desc']             = 'Specify a future time, the mailing should be sent automatically.';
-$_lang['goodnews.mail_options']                            = 'Mail Options';
 $_lang['goodnews.mail_send_to']                            = 'Send to';
 $_lang['goodnews.mail_groups_categories']                  = 'Groups and Categories';
 $_lang['goodnews.mail_template']                           = 'Mail Template';
@@ -74,6 +74,15 @@ $_lang['goodnews.mail_format']                             = 'Mail Format';
 $_lang['goodnews.mail_format_desc']                        = 'The format of the mail body.';
 $_lang['goodnews.mail_format_html']                        = 'HTML';
 $_lang['goodnews.mail_format_plaintxt']                    = 'Plain text';
+
+$_lang['goodnews.mailing_resource_collection']             = 'Collection: ';
+$_lang['goodnews.mailing_resource_collection_desc']        = 'Select Resource documents, to be automatically inserted into the mail body (e.g. a list of news entries).';
+$_lang['goodnews.mailing_rc_container']                    = 'Container';
+$_lang['goodnews.mailing_rc_resource']                     = 'Resource';
+$_lang['goodnews.mailing_rc_resources']                    = 'Resources';
+$_lang['goodnews.mailing_rc_resources_none']               = 'No Resource Documents';
+$_lang['goodnews.mailing_rc_search_filter']                = 'Searchfilter...';
+$_lang['goodnews.mailing_rc_filter_clear']                 = 'Reset';
 
 $_lang['setting_goodnews.default_container_template']      = 'Default GoodNews Container Template';
 $_lang['setting_goodnews.default_container_template_desc'] = 'The default Template to use when creating a new GoodNews Container';

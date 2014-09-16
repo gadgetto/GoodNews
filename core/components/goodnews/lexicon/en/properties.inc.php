@@ -124,6 +124,17 @@ $_lang['prop_goodnewsgetnewsletters.outputseparator_desc']          = 'Separator
 $_lang['prop_goodnewsgetnewsletters.toplaceholder_desc']            = 'If set, will assign the result to this placeholder instead of outputting it directly.';
 $_lang['prop_goodnewsgetnewsletters.debug_desc']                    = 'If true, will send the SQL query to the MODX log. Defaults to false.';
 
+// GoodNewsContentCollection snippet
+$_lang['prop_goodnewscontentcollection.collectionid_desc']          = 'Internal name of the content collection (collection1, collection2 or collection3).';
+$_lang['prop_goodnewscontentcollection.tpl_desc']                   = 'Name of a Chunk serving as template for a Resource row. NOTE: if not provided, properties are dumped to output for each resource.';
+$_lang['prop_goodnewscontentcollection.tplwrapper_desc']            = 'Name of a Chunk serving as wrapper template for the Snippet output.';
+$_lang['prop_goodnewscontentcollection.sortby_desc']                = 'A field name to sort by or JSON object of field names and sortdir for each field, e.g. {"publishedon":"ASC","createdon":"DESC"}. Defaults to publishedon.';
+$_lang['prop_goodnewscontentcollection.sortdir_desc']               = 'Order which to sort by. Defaults to DESC.';
+$_lang['prop_goodnewscontentcollection.includecontent_desc']        = 'Indicates if the content of each resource should be returned in the results. Defaults to false.';
+$_lang['prop_goodnewscontentcollection.outputseparator_desc']       = 'Separator for the output of row chunks.';
+$_lang['prop_goodnewscontentcollection.toplaceholder_desc']         = 'If set, will assign the result to this placeholder instead of outputting it directly.';
+$_lang['prop_goodnewscontentcollection.debug_desc']                 = 'If true, will send the SQL query to the MODX log. Defaults to false.';
+
 // GoodNewsRequestLinks snippet
 $_lang['prop_goodnewsrequestlinks.unsubscriberesourceid_desc']      = 'The ID of the Resource to cancel subscriptions.';
 $_lang['prop_goodnewsrequestlinks.profileresourceid_desc']          = 'The ID of the Resource to edit subscription profiles.';

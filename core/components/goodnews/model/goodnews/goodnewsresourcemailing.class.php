@@ -160,14 +160,20 @@ class GoodNewsResourceMailingCreateProcessor extends modResourceCreateProcessor 
      */
     public function beforeSave() {
         
-        $nodelist = $this->getProperty('groupscategories');
-
         $this->prepareGroupsCategories();
-        $groups = $this->getProperty('groups');
-        $categories = $this->getProperty('categories');
+        $groups      = $this->getProperty('groups');
+        $categories  = $this->getProperty('categories');
+        $collection1 = array_filter(explode(',', $this->getProperty('collection1')));
+        $collection2 = array_filter(explode(',', $this->getProperty('collection2')));
+        $collection3 = array_filter(explode(',', $this->getProperty('collection3')));
+        $collections = array();
+        $collections['collection1'] = $collection1;
+        $collections['collection2'] = $collection2;
+        $collections['collection3'] = $collection3;
         
         $this->meta->set('groups', $groups);
         $this->meta->set('categories', $categories);
+        $this->meta->set('collections', serialize($collections));
 
         $this->goodnewsrecipienthandler->collect(unserialize($groups), unserialize($categories));
         $this->meta->set('recipients_total', $this->goodnewsrecipienthandler->getRecipientsTotal());
@@ -326,14 +332,20 @@ class GoodNewsResourceMailingUpdateProcessor extends modResourceUpdateProcessor 
             return $this->modx->lexicon('goodnews.newsletter_err_save_already_sending');
         }
 
-        $nodelist = $this->getProperty('groupscategories');
-
         $this->prepareGroupsCategories();
-        $groups = $this->getProperty('groups');
-        $categories = $this->getProperty('categories');
+        $groups      = $this->getProperty('groups');
+        $categories  = $this->getProperty('categories');
+        $collection1 = array_filter(explode(',', $this->getProperty('collection1')));
+        $collection2 = array_filter(explode(',', $this->getProperty('collection2')));
+        $collection3 = array_filter(explode(',', $this->getProperty('collection3')));
+        $collections = array();
+        $collections['collection1'] = $collection1;
+        $collections['collection2'] = $collection2;
+        $collections['collection3'] = $collection3;
         
         $this->meta->set('groups', $groups);
         $this->meta->set('categories', $categories);
+        $this->meta->set('collections', serialize($collections));
 
         $this->goodnewsrecipienthandler->collect(unserialize($groups), unserialize($categories));
         $this->meta->set('recipients_total', $this->goodnewsrecipienthandler->getRecipientsTotal());

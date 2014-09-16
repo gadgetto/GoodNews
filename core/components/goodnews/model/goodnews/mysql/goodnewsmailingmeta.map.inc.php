@@ -12,6 +12,7 @@ $xpdo_meta_map['GoodNewsMailingMeta']= array (
     'mailing_id' => NULL,
     'groups' => '',
     'categories' => '',
+    'collections' => '',
     'recipients_list' => '',
     'recipients_total' => 0,
     'recipients_sent' => 0,
@@ -43,6 +44,13 @@ $xpdo_meta_map['GoodNewsMailingMeta']= array (
       'default' => '',
     ),
     'categories' => 
+    array (
+      'dbtype' => 'text',
+      'phptype' => 'string',
+      'null' => false,
+      'default' => '',
+    ),
+    'collections' => 
     array (
       'dbtype' => 'text',
       'phptype' => 'string',

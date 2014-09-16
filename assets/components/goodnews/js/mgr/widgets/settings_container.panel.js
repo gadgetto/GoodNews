@@ -57,6 +57,12 @@ GoodNews.grid.Containers = function(config) {
             ,'mail_max_hardbounces_action'
             ,'mail_notclassified_message_action'
             ,'mail_notclassified_mailbox'
+            ,'collection1_name'
+            ,'collection1_parents'
+            ,'collection2_name'
+            ,'collection2_parents'
+            ,'collection3_name'
+            ,'collection3_parents'
             ,'context_key'
             ,'menu'
         ]
@@ -143,7 +149,7 @@ GoodNews.window.UpdateContainerSettings = function(config) {
             action: 'mgr/settings/containers/update'
         }
         ,autoHeight: true
-        ,width: 640
+        ,width: 680
         ,closeAction: 'hide'
         ,fields: [{
             xtype: 'modx-tabs'
@@ -567,7 +573,7 @@ GoodNews.window.UpdateContainerSettings = function(config) {
                     }]
                 }]
             },{
-                title: _('goodnews.settings_container_tab_notclassified_rules')
+                title: _('goodnews.settings_container_tab_unclassified_bounces')
                 ,layout: 'form'
                 ,items: [{
                     xtype: 'modx-combo'
@@ -604,6 +610,100 @@ GoodNews.window.UpdateContainerSettings = function(config) {
                     ,forId: 'mail_notclassified_mailbox'
                     ,html: _('goodnews.settings_container_notclassified_mailbox_desc')
                     ,cls: 'desc-under'
+                }]
+            },{
+                title: _('goodnews.settings_container_tab_resource_collection')
+                ,layout: 'accordion'
+                ,items: [{
+                    xtype:'fieldset'
+                    ,title:  _('goodnews.settings_container_collection1_fieldset')
+                    ,autoHeight: true
+                    ,items: [{
+                        xtype: 'textfield'
+                        ,fieldLabel: _('goodnews.settings_container_collection_label')
+                        ,description: MODx.expandHelp ? '' : _('goodnews.settings_container_collection_label_desc')
+                        ,id: 'collection1_name'
+                        ,name: 'collection1_name'
+                        ,anchor: '100%'
+                    },{
+                        xtype: MODx.expandHelp ? 'label' : 'hidden'
+                        ,forId: 'collection1_name'
+                        ,html: _('goodnews.settings_container_collection_label_desc')
+                        ,cls: 'desc-under'
+                    },{
+                        xtype: 'textfield'
+                        ,fieldLabel: _('goodnews.settings_container_collection_parents')
+                        ,description: MODx.expandHelp ? '' : _('goodnews.settings_container_collection_parents_desc')
+                        ,id: 'collection1_parents'
+                        ,name: 'collection1_parents'
+                        ,maskRe: /[\d,]+/
+                        ,anchor: '100%'
+                    },{
+                        xtype: MODx.expandHelp ? 'label' : 'hidden'
+                        ,forId: 'collection1_parents'
+                        ,html: _('goodnews.settings_container_collection_parents_desc')
+                        ,cls: 'desc-under'
+                    }]
+                },{
+                    xtype:'fieldset'
+                    ,title:  _('goodnews.settings_container_collection2_fieldset')
+                    ,autoHeight: true
+                    ,items: [{
+                        xtype: 'textfield'
+                        ,fieldLabel: _('goodnews.settings_container_collection_label')
+                        ,description: MODx.expandHelp ? '' : _('goodnews.settings_container_collection_label_desc')
+                        ,id: 'collection2_name'
+                        ,name: 'collection2_name'
+                        ,anchor: '100%'
+                    },{
+                        xtype: MODx.expandHelp ? 'label' : 'hidden'
+                        ,forId: 'collection2_name'
+                        ,html: _('goodnews.settings_container_collection_label_desc')
+                        ,cls: 'desc-under'
+                    },{
+                        xtype: 'textfield'
+                        ,fieldLabel: _('goodnews.settings_container_collection_parents')
+                        ,description: MODx.expandHelp ? '' : _('goodnews.settings_container_collection_parents_desc')
+                        ,id: 'collection2_parents'
+                        ,name: 'collection2_parents'
+                        ,maskRe: /[\d,]+/
+                        ,anchor: '100%'
+                    },{
+                        xtype: MODx.expandHelp ? 'label' : 'hidden'
+                        ,forId: 'collection2_parents'
+                        ,html: _('goodnews.settings_container_collection_parents_desc')
+                        ,cls: 'desc-under'
+                    }]
+                },{
+                    xtype:'fieldset'
+                    ,title:  _('goodnews.settings_container_collection3_fieldset')
+                    ,autoHeight: true
+                    ,items: [{
+                        xtype: 'textfield'
+                        ,fieldLabel: _('goodnews.settings_container_collection_label')
+                        ,description: MODx.expandHelp ? '' : _('goodnews.settings_container_collection_label_desc')
+                        ,id: 'collection3_name'
+                        ,name: 'collection3_name'
+                        ,anchor: '100%'
+                    },{
+                        xtype: MODx.expandHelp ? 'label' : 'hidden'
+                        ,forId: 'collection3_name'
+                        ,html: _('goodnews.settings_container_collection_label_desc')
+                        ,cls: 'desc-under'
+                    },{
+                        xtype: 'textfield'
+                        ,fieldLabel: _('goodnews.settings_container_collection_parents')
+                        ,description: MODx.expandHelp ? '' : _('goodnews.settings_container_collection_parents_desc')
+                        ,id: 'collection3_parents'
+                        ,name: 'collection3_parents'
+                        ,maskRe: /[\d,]+/
+                        ,anchor: '100%'
+                    },{
+                        xtype: MODx.expandHelp ? 'label' : 'hidden'
+                        ,forId: 'collection3_parents'
+                        ,html: _('goodnews.settings_container_collection_parents_desc')
+                        ,cls: 'desc-under'
+                    }]
                 }]
             }]
             ,listeners: {

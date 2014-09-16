@@ -65,6 +65,7 @@ class GoodNewsResourceMailingCreateManagerController extends ResourceCreateManag
         
         $this->addJavascript($goodNewsJsUrl.'utils/utilities.js');
         $this->addJavascript($goodNewsJsUrl.'res/goodnewsresource.js');
+        $this->addJavascript($goodNewsJsUrl.'res/mailing/collect_resources.grid.js');
         $this->addJavascript($goodNewsJsUrl.'res/mailing/goodnewsresource.panel.mailing.js');
         $this->addLastJavascript($goodNewsJsUrl.'res/mailing/create.js');   
 
@@ -126,10 +127,14 @@ class GoodNewsResourceMailingCreateManagerController extends ResourceCreateManag
         $container = $this->modx->getObject('GoodNewsResourceContainer', array('id' => $this->parent->get('id')));
         if ($container) {
             $properties = $container->getProperties('goodnews');
-            $this->resourceArray['template'] = (int)$this->modx->getOption('mailingTemplate', $properties, 0);
-            $this->resourceArray['templatesCategory'] = (int)$this->modx->getOption('templatesCategory', $properties, 0);
-            //$this->resourceArray['mailFrom'] = $this->modx->getOption('mailFrom', $properties, '');
-            //$this->resourceArray['mailFromName'] = $this->modx->getOption('mailFromName', $properties, '');
+            $this->resourceArray['template']           = (int)$this->modx->getOption('mailingTemplate', $properties, 0);
+            $this->resourceArray['templatesCategory']  = (int)$this->modx->getOption('templatesCategory', $properties, 0);
+            $this->resourceArray['collection1Name']    = $this->modx->getOption('collection1Name', $properties, '');
+            $this->resourceArray['collection2Name']    = $this->modx->getOption('collection2Name', $properties, '');
+            $this->resourceArray['collection3Name']    = $this->modx->getOption('collection3Name', $properties, '');
+            $this->resourceArray['collection1Parents'] = $this->modx->getOption('collection1Parents', $properties, '');
+            $this->resourceArray['collection2Parents'] = $this->modx->getOption('collection2Parents', $properties, '');
+            $this->resourceArray['collection3Parents'] = $this->modx->getOption('collection3Parents', $properties, '');
         }
     }
 }

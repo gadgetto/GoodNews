@@ -75,6 +75,15 @@ $_lang['goodnews.mail_format_desc']                        = 'Das Format des Mai
 $_lang['goodnews.mail_format_html']                        = 'HTML';
 $_lang['goodnews.mail_format_plaintxt']                    = 'Nur Text';
 
+$_lang['goodnews.mailing_resource_collection']             = 'Sammlung: ';
+$_lang['goodnews.mailing_resource_collection_desc']        = 'Wählen Sie Resource Dokumente aus, welche automatisch in den Inhalt des Mails eingebunden werden sollen (zB. eine Liste von Newsbeiträgen).';
+$_lang['goodnews.mailing_rc_container']                    = 'Container';
+$_lang['goodnews.mailing_rc_resource']                     = 'Resource';
+$_lang['goodnews.mailing_rc_resources']                    = 'Resources';
+$_lang['goodnews.mailing_rc_resources_none']               = 'Keine Resource Dokumente';
+$_lang['goodnews.mailing_rc_search_filter']                = 'Suchfilter...';
+$_lang['goodnews.mailing_rc_filter_clear']                 = 'Zurücksetzen';
+
 $_lang['setting_goodnews.default_container_template']      = 'Standard GoodNews-Container Template';
 $_lang['setting_goodnews.default_container_template_desc'] = 'Das Template, welches standardmäßig verwendet wird, wenn ein GoodNews-Container erstellt wird.';
 

@@ -67,6 +67,7 @@ class GoodNewsResourceMailingUpdateManagerController extends ResourceUpdateManag
 
         $this->addJavascript($goodNewsJsUrl.'utils/utilities.js');
         $this->addJavascript($goodNewsJsUrl.'res/goodnewsresource.js');
+        $this->addJavascript($goodNewsJsUrl.'res/mailing/collect_resources.grid.js');
         $this->addJavascript($goodNewsJsUrl.'res/mailing/goodnewsresource.panel.mailing.js');
         $this->addLastJavascript($goodNewsJsUrl.'res/mailing/update.js');   
 
@@ -112,10 +113,34 @@ class GoodNewsResourceMailingUpdateManagerController extends ResourceUpdateManag
     public function process(array $scriptProperties = array()) {
         $placeholders = parent::process($scriptProperties);
         $settings = $this->resource->getContainerSettings();
-        $this->resourceArray['templatesCategory'] = (int)$this->modx->getOption('templatesCategory', $settings, 0);
-        //$this->resourceArray['mailFrom'] = $this->modx->getOption('mailFrom', $settings, '');
-        //$this->resourceArray['mailFromName'] = $this->modx->getOption('mailFromName', $settings, '');
+        $this->resourceArray['templatesCategory']  = (int)$this->modx->getOption('templatesCategory', $settings, 0);
+        $this->resourceArray['collection1Name']    = $this->modx->getOption('collection1Name', $settings, '');
+        $this->resourceArray['collection2Name']    = $this->modx->getOption('collection2Name', $settings, '');
+        $this->resourceArray['collection3Name']    = $this->modx->getOption('collection3Name', $settings, '');
+        $this->resourceArray['collection1Parents'] = $this->modx->getOption('collection1Parents', $settings, '');
+        $this->resourceArray['collection2Parents'] = $this->modx->getOption('collection2Parents', $settings, '');
+        $this->resourceArray['collection3Parents'] = $this->modx->getOption('collection3Parents', $settings, '');
+        $this->getMailingMeta();
 
         return $placeholders;
     }
+
+    /**
+     * Get values from the mailing meta and add to the resourceArray
+     *
+     * @return void
+     */
+    public function getMailingMeta() {
+        $meta = $this->modx->getObject('GoodNewsMailingMeta', array('mailing_id' => $this->resource->get('id')));
+        if ($meta) {
+            $collections = unserialize($meta->get('collections'));
+            $collection1 = implode(',', $collections['collection1']);
+            $collection2 = implode(',', $collections['collection2']);
+            $collection3 = implode(',', $collections['collection3']);
+            $this->resourceArray['collection1'] = $collection1;
+            $this->resourceArray['collection2'] = $collection2;
+            $this->resourceArray['collection3'] = $collection3;
+        }
+    }
+
 }

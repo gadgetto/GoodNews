@@ -95,6 +95,14 @@ $chunks[$i]->fromArray(array(
 $chunks[++$i] = $modx->newObject('modChunk');
 $chunks[$i]->fromArray(array(
     'id'          => $i,
+    'name'        => 'sample.GoodNewsContentCollectionRowTpl',
+    'description' => 'The template code for a GoodNews content collection row in mailing content output. Duplicate this to override it.',
+    'snippet'     => file_get_contents($sources['chunks'].'sample.goodnewscontentcollectionrow.chunk.tpl'),
+), '', true, true);
+
+$chunks[++$i] = $modx->newObject('modChunk');
+$chunks[$i]->fromArray(array(
+    'id'          => $i,
     'name'        => 'sample.GoodNewsSubscriptionBoxTpl',
     'description' => 'The template code for a GoodNews subscription box to be placed somewhere on you site. Duplicate this to override it.',
     'snippet'     => file_get_contents($sources['chunks'].'sample.goodnewssubscriptionbox.chunk.tpl'),

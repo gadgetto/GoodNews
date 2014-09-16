@@ -99,12 +99,12 @@ class ContainerSettingsGetListProcessor extends modObjectGetListProcessor {
             if (array_key_exists('mailMailboxUsername', $properties['goodnews'])) {
                 $resourceArray['mail_mailbox_username'] = $properties['goodnews']['mailMailboxUsername'];
             } else {
-                $resourceArray['mailbox_username'] = '';
+                $resourceArray['mail_mailbox_username'] = '';
             }
             if (array_key_exists('mailMailboxPassword', $properties['goodnews'])) {
                 $resourceArray['mail_mailbox_password'] = $properties['goodnews']['mailMailboxPassword'];
             } else {
-                $resourceArray['mailbox_password'] = '';
+                $resourceArray['mail_mailbox_password'] = '';
             }
             if (array_key_exists('mailBoxname', $properties['goodnews'])) {
                 $resourceArray['mail_boxname'] = $properties['goodnews']['mailBoxname'];
@@ -177,6 +177,39 @@ class ContainerSettingsGetListProcessor extends modObjectGetListProcessor {
             } else {
                 $resourceArray['mail_notclassified_mailbox'] = 'INBOX.NotClassified';
             }
+            
+            // content collection handling
+            if (array_key_exists('collection1Name', $properties['goodnews'])) {
+                $resourceArray['collection1_name'] = $properties['goodnews']['collection1Name'];
+            } else {
+                $resourceArray['collection1_name'] = '';
+            }
+            if (array_key_exists('collection1Parents', $properties['goodnews'])) {
+                $resourceArray['collection1_parents'] = $properties['goodnews']['collection1Parents'];
+            } else {
+                $resourceArray['collection1_parents'] = '';
+            }
+            if (array_key_exists('collection2Name', $properties['goodnews'])) {
+                $resourceArray['collection2_name'] = $properties['goodnews']['collection2Name'];
+            } else {
+                $resourceArray['collection2_name'] = '';
+            }
+            if (array_key_exists('collection2Parents', $properties['goodnews'])) {
+                $resourceArray['collection2_parents'] = $properties['goodnews']['collection2Parents'];
+            } else {
+                $resourceArray['collection2_parents'] = '';
+            }
+            if (array_key_exists('collection3Name', $properties['goodnews'])) {
+                $resourceArray['collection3_name'] = $properties['goodnews']['collection3Name'];
+            } else {
+                $resourceArray['collection3_name'] = '';
+            }
+            if (array_key_exists('collection3Parents', $properties['goodnews'])) {
+                $resourceArray['collection3_parents'] = $properties['goodnews']['collection3Parents'];
+            } else {
+                $resourceArray['collection3_parents'] = '';
+            }
+
         }
         return $resourceArray;
     }

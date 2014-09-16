@@ -14,6 +14,7 @@
         <field key="mailing_id" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="false" index="unique" />
         <field key="groups" dbtype="text" phptype="string" null="false" default="" />
         <field key="categories" dbtype="text" phptype="string" null="false" default="" />
+        <field key="collections" dbtype="text" phptype="string" null="false" default="" />
         <field key="recipients_list" dbtype="mediumtext" phptype="string" null="false" default="" />
         <field key="recipients_total" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="false" default="0" />
         <field key="recipients_sent" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="false" default="0" />
