@@ -181,6 +181,24 @@ Ext.extend(GoodNewsResource.panel.Container,MODx.panel.Resource,{
             xtype: 'hidden'
             ,name: 'setting_mailNotClassifiedMailbox'
         },{
+            xtype: 'hidden'
+            ,name: 'setting_collection1Name'
+        },{
+            xtype: 'hidden'
+            ,name: 'setting_collection1Parents'
+        },{
+            xtype: 'hidden'
+            ,name: 'setting_collection2Name'
+        },{
+            xtype: 'hidden'
+            ,name: 'setting_collection2Parents'
+        },{
+            xtype: 'hidden'
+            ,name: 'setting_collection3Name'
+        },{
+            xtype: 'hidden'
+            ,name: 'setting_collection3Parents'
+        },{
             xtype: 'modx-field-parent-change'
             ,fieldLabel: _('resource_parent')
             ,description: '<b>[[*parent]]</b><br />'+_('resource_parent_help')

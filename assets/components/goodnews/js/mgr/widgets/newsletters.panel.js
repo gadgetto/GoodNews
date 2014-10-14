@@ -8,7 +8,7 @@
  */
 GoodNews.panel.Newsletters = function(config) {
     config = config || {};
-    
+
     if (GoodNews.config.cronTriggerStatus == true) {
         var cronStatusText = '<span class="gon-crontrigger-enabled">'+_('goodnews.newsletter_sending_process_enabled')+'</span>';
     } else {
@@ -18,8 +18,9 @@ GoodNews.panel.Newsletters = function(config) {
     Ext.applyIf(config,{
         id: 'goodnews-panel-newsletters'
         ,title: _('goodnews.newsletters')
+        ,layout: 'anchor'
         ,defaults: { 
-            border: false 
+            border: false
         }
         ,items:[{
             html: '<div>'+_('goodnews.newsletters_management_desc')+'</div>'
@@ -29,7 +30,7 @@ GoodNews.panel.Newsletters = function(config) {
             xtype: 'goodnews-grid-newsletters'
             ,cls: 'main-wrapper'
             ,preventRender: true
-        }]    
+        }]
     });
     GoodNews.panel.Newsletters.superclass.constructor.call(this,config);
 };
@@ -140,6 +141,7 @@ GoodNews.grid.Newsletters = function(config) {
         ]
         ,emptyText: _('goodnews.newsletters_none')
         ,paging: true
+        ,pageSize: 10
         ,remoteSort: true
         ,plugins: [this.nlexpander]
         ,autoExpandColumn: 'pagetitle'
@@ -247,6 +249,7 @@ GoodNews.grid.Newsletters = function(config) {
             }
         },'-',{
             xtype: 'textfield'
+            ,cls: 'x-form-filter'
             ,id: 'goodnews-newsletters-search-filter'
             ,emptyText: _('goodnews.input_search_filter')
             ,listeners: {
@@ -265,6 +268,7 @@ GoodNews.grid.Newsletters = function(config) {
             }
         },{
             xtype: 'button'
+            ,cls: 'x-form-filter-clear'
             ,id: 'modx-newsletter-filter-clear'
             ,text: _('goodnews.button_filter_clear')
             ,listeners: {

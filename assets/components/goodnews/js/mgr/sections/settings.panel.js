@@ -51,6 +51,12 @@ GoodNews.SettingsPanel = function(config) {
             },{
                 xtype: 'goodnews-panel-settings-about'
             }]
+            ,listeners: {
+                'tabchange': {fn: function(panel) {
+                    panel.doLayout();
+                }
+                ,scope: this}
+            }
         }]
     });
     GoodNews.SettingsPanel.superclass.constructor.call(this,config);

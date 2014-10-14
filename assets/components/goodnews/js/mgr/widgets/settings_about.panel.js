@@ -32,15 +32,19 @@ GoodNews.panel.AboutSettings = function(config) {
         '    <tbody>',
         '    <tr class="gon-odd">',
         '        <td>'+_('goodnews.multi_processing_for_sending')+'</td>',
-        '        <td>'+((GoodNews.config.isMultiProcessing) ? _('goodnews.ok') : _('goodnews.nok'))+'</td>',
+        '        <td>'+((GoodNews.config.isMultiProcessing) ? '<span class="gon-ok">'+_('yes')+'</span>' : '<span class="gon-nok">'+_('no'))+'</span></td>',
         '    </tr>',
         '    <tr class="gon-even">',
         '        <td>'+_('goodnews.imap_extension_available')+'</td>',
-        '        <td>'+((GoodNews.config.imapExtension) ? _('goodnews.ok') : _('goodnews.nok'))+'</td>',
+        '        <td>'+((GoodNews.config.imapExtension) ? '<span class="gon-ok">'+_('yes')+'</span>' : '<span class="gon-nok">'+_('no'))+'</span></td>',
         '    </tr>',
         '    <tr class="gon-odd">',
         '        <td>'+_('goodnews.site_status')+'</td>',
-        '        <td>'+((GoodNews.config.siteStatus) ? _('goodnews.ok') : _('goodnews.nok'))+'</td>',
+        '        <td>'+((GoodNews.config.siteStatus) ? '<span class="gon-ok">'+_('yes')+'</span>' : '<span class="gon-nok">'+_('no'))+'</span></td>',
+        '    </tr>',
+        '    <tr class="gon-even">',
+        '        <td>'+_('goodnews.debug_mode')+'</td>',
+        '        <td>'+((GoodNews.config.debug) ? '<span class="gon-nok">'+_('goodnews.activated')+'</span>' : '<span class="gon-ok">'+_('goodnews.deactivated'))+'</span></td>',
         '    </tr>',
         '    </tbody>',
         '</table>',
@@ -49,6 +53,7 @@ GoodNews.panel.AboutSettings = function(config) {
     Ext.applyIf(config,{
         id: 'goodnews-panel-settings-about'
         ,title: _('goodnews.settings_about_tab')   
+        ,layout: 'anchor'
         ,defaults: { 
             border: false 
         }

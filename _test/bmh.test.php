@@ -86,12 +86,12 @@ $bmh->mailMailboxPassword  = 'n0r3ply'; // your mailbox password
 
 
 //$bmh->mailboxFolderExists('INBOX.Test');
-echo $bmh->errorMsg;
+echo $bmh->lastErrorMsg;
 
 if ($bmh->openImapStream()) {
     echo 'Connected to mailbox.<br><br>';
 
-    echo $bmh->errorMsg;
+    echo $bmh->lastErrorMsg;
         
     //$bmh->processMailbox();
     

@@ -97,6 +97,17 @@ unset($properties);
 $snippets[++$i] = $modx->newObject('modSnippet');
 $snippets[$i]->fromArray(array(
     'id'          => $i,
+    'name'        => 'GoodNewsContentCollection',
+    'description' => 'Snippet to get a list of collected resource documents for inserting in newsletter body.',
+    'snippet'     => getFileContent($sources['snippets'].'goodnewscontentcollection.snippet.php'),
+), '', true, true);
+$properties = include $sources['properties'].'properties.goodnewscontentcollection.php';
+$snippets[$i]->setProperties($properties);
+unset($properties);
+
+$snippets[++$i] = $modx->newObject('modSnippet');
+$snippets[$i]->fromArray(array(
+    'id'          => $i,
     'name'        => 'GoodNewsRequestLinks',
     'description' => 'Upon request - sends a subscriber an email with secure links to update or cancel his subscription.',
     'snippet'     => getFileContent($sources['snippets'].'goodnewsrequestlinks.snippet.php'),

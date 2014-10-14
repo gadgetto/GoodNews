@@ -136,6 +136,25 @@ class ContainerSettingsUpdateProcessor extends modObjectUpdateProcessor {
         $mailNotClassifiedMailbox = $this->getProperty('mail_notclassified_mailbox');
         $this->object->setProperty('mailNotClassifiedMailbox', $mailNotClassifiedMailbox, 'goodnews');
 
+        // resource collection settings
+        $collection1Name    = $this->getProperty('collection1_name');
+        $this->object->setProperty('collection1Name', $collection1Name, 'goodnews');
+        
+        $collection1Parents = $this->getProperty('collection1_parents');
+        $this->object->setProperty('collection1Parents', $collection1Parents, 'goodnews');
+        
+        $collection2Name    = $this->getProperty('collection2_name');
+        $this->object->setProperty('collection2Name', $collection2Name, 'goodnews');
+        
+        $collection2Parents = $this->getProperty('collection2_parents');
+        $this->object->setProperty('collection2Parents', $collection2Parents, 'goodnews');
+        
+        $collection3Name    = $this->getProperty('collection3_name');
+        $this->object->setProperty('collection3Name', $collection3Name, 'goodnews');
+        
+        $collection3Parents = $this->getProperty('collection3_parents');
+        $this->object->setProperty('collection3Parents', $collection3Parents, 'goodnews');
+
         $this->object->set('editedby', $this->modx->user->get('id'));
         $this->object->set('editedon', time(), 'integer');
 

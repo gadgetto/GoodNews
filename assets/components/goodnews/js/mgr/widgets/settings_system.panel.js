@@ -4,6 +4,7 @@ GoodNews.panel.SystemSettings = function(config) {
     Ext.applyIf(config,{
         id: 'goodnews-panel-settings-system'
         ,title: _('goodnews.settings_system_tab')   
+        ,layout: 'anchor'
         ,defaults: { 
             border: false 
         }
@@ -62,6 +63,7 @@ GoodNews.panel.SystemSettings = function(config) {
                 }]
             },{
                 layout: 'column'
+                ,cls: 'gon-x-panel-add-padding-top'
                 ,border: false
                 ,defaults: {
                     layout: 'form'

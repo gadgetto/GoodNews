@@ -8,9 +8,11 @@
  */
 GoodNews.panel.Groups = function(config) {
     config = config || {};
+
     Ext.applyIf(config,{
         id: 'goodnews-panel-groups'
         ,title: _('goodnews.groups')
+        ,layout: 'anchor'
         ,defaults: {
             border: false
         }
@@ -66,9 +68,10 @@ GoodNews.grid.Groups = function(config) {
         ,save_action: 'mgr/groups/updateFromGrid'
         ,autosave: true
         ,autoExpandColumn: 'description'
+        /*
         ,viewConfig: {
             forceFit: true
-            ,getRowClass: function(record, index) {
+            getRowClass: function(record, index) {
                 if (record.get('modxusergroup_name') !== null) {
                     return 'gon-modx-group-assigned';
                 } else {
@@ -76,17 +79,25 @@ GoodNews.grid.Groups = function(config) {
                 }
             }
         }
+        */
         ,columns: [{
             header: _('goodnews.id')
             ,dataIndex: 'id'
             ,sortable: true
-            ,width: 30
+            ,width: 40
         },{
             header: _('goodnews.group_name')
             ,dataIndex: 'name'
             ,sortable: true
             ,width: 150
             ,editor: { xtype: 'textfield' }
+            ,renderer: function(value,meta,record){
+                if (record.get('modxusergroup_name') !== null) {
+                    return '<span class="gon-modx-group-assigned">'+value+'</span>';
+                } else {
+                    return '<span>'+value+'</span>';
+                }
+            }
         },{
             header: _('goodnews.group_description')
             ,dataIndex: 'description'
@@ -112,6 +123,7 @@ GoodNews.grid.Groups = function(config) {
             ,cls: 'primary-button'
         },'->',{
             xtype: 'textfield'
+            ,cls: 'x-form-filter'
             ,id: 'goodnews-groups-search-filter'
             ,emptyText: _('goodnews.input_search_filter')
             ,listeners: {
@@ -130,6 +142,7 @@ GoodNews.grid.Groups = function(config) {
             }
         },{
             xtype: 'button'
+            ,cls: 'x-form-filter-clear'
             ,id: 'goodnews-groups-filter-clear'
             ,text: _('goodnews.button_filter_clear')
             ,listeners: {

@@ -2,6 +2,15 @@
  * Custom GoodNews CMP styles for Revo < 2.3.0
  */
 
+/* workaround: different styles in Revo < 2.3 */
+#goodnews-panel-settings .desc-under {
+    color: #aaaaaa;
+    display: block;
+    font-size: 11px;
+    font-style: italic;
+    margin: -8px 0 16px;
+}
+
 /* FileUploadField component styles */
 .x-form-file-wrap {
     position: relative;
@@ -124,6 +133,16 @@
         color: #6060ff; /* blue */
     }
 
+/* Slider panels in system settings */
+.gon-slider-field .x-form-field-wrap {
+    background-image: none !important;
+}
+.gon-slider-display {
+    padding: 0 !important;
+    text-align: center;
+    color: #000000;
+}
+
 /* Edit subscribers tree-node icons */
 .gon-icn-group {
     background: url(../img/gongroup.png) no-repeat center left !important;
@@ -147,12 +166,6 @@
 }
 .gon-icn-close {
     background: url(../img/close.png) no-repeat 5px 4px !important;
-}
-
-.gon-slider-display {
-    padding: 0 !important;
-    text-align: center;
-    color: #000000;
 }
 
 #newsletter-log-frame {
@@ -234,9 +247,6 @@
     border-bottom: 1px solid #eaeaea !important;
     border-top: 1px solid #eaeaea !important;
     color: #565550;
-}
-.gon-slider-field .x-form-field-wrap {
-    background-image: none !important;
 }
 
 /* Special grid styles */

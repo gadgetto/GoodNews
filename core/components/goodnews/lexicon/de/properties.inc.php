@@ -124,6 +124,17 @@ $_lang['prop_goodnewsgetnewsletters.outputseparator_desc']          = 'Trenner f
 $_lang['prop_goodnewsgetnewsletters.toplaceholder_desc']            = 'Wenn gesetzt, wird das Ergebnis in diesem Platzhalter gespeichert und nicht direkt ausgegeben.';
 $_lang['prop_goodnewsgetnewsletters.debug_desc']                    = 'Wenn aktiviert, wird der SQL Query String an das MODX System Log gesendet. Standard ist NEIN.';
 
+// GoodNewsContentCollection snippet
+$_lang['prop_goodnewscontentcollection.collectionid_desc']          = 'Interner Name der Inhalts Sammlung (collection1, collection2 oder collection3).';
+$_lang['prop_goodnewscontentcollection.tpl_desc']                   = 'Name eines Chunks, welcher als Template für die Ausgabe einer Resource-Zeile dient. ANMERKUNG: wenn nicht angegeben, erfolgt die Ausgabe als Array Dump.';
+$_lang['prop_goodnewscontentcollection.tplwrapper_desc']            = 'Name eines Chunks, welcher als Wrapper Template für die Snippet-Ausgabe dient.';
+$_lang['prop_goodnewscontentcollection.sortby_desc']                = 'Der Name des Feldes nach dem sortiert werden soll. Es kann auch ein JSON Objekt für die Sortierung nach mehreren Feldern verwendet werden, z.B. {"publishedon":"ASC","createdon":"DESC"}. Standard ist publishedon.';
+$_lang['prop_goodnewscontentcollection.sortdir_desc']               = 'Richtung nach der die Dokumente sortiert werden sollen.';
+$_lang['prop_goodnewscontentcollection.includecontent_desc']        = 'Legt fest, ob das Inhaltsfeld von Dokumenten in den Ergebnissen enthalten sein soll. Standard is NEIN';
+$_lang['prop_goodnewscontentcollection.outputseparator_desc']       = 'Trenner für die Ausgabe der einzelnen Templates.';
+$_lang['prop_goodnewscontentcollection.toplaceholder_desc']         = 'Wenn gesetzt, wird das Ergebnis in diesem Platzhalter gespeichert und nicht direkt ausgegeben.';
+$_lang['prop_goodnewscontentcollection.debug_desc']                 = 'Wenn aktiviert, wird der SQL Query String an das MODX System Log gesendet. Standard ist NEIN.';
+
 // GoodNewsRequestLinks snippet
 $_lang['prop_goodnewsrequestlinks.unsubscriberesourceid_desc']      = 'Die ID der Resource zur Auflösung von Abonnements.';
 $_lang['prop_goodnewsrequestlinks.profileresourceid_desc']          = 'Die ID der Resource zur Bearbeitung von Abo-Profilen.';

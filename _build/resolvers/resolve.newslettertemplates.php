@@ -57,6 +57,7 @@ if ($object->xpdo) {
             
             $newsletterTemplates = array(
                 'sample.GoodNewsNewsletterTemplate1',
+                'sample.GoodNewsNewsletterTemplate2',
             );
 
 

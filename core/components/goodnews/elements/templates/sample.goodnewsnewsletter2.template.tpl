@@ -4,7 +4,7 @@
 <head>
     
     <!--
-    Type: single column
+    Type: single column with content collection
     
     This template is inspired by the superb "Antwort" email boilerplate
     (http://internations.github.io/antwort/index.html)
@@ -15,6 +15,7 @@
     <meta name="format-detection" content="telephone=no" /> <!-- Disable auto phone number linking in iOS -->
     
     <title>[[++site_name]] | [[*pagetitle]]</title>
+    <!-- base tag is needed for previewing the newsletter from within the MODX back-end -->
     <base href="[[++site_url]]" />
     <style type="text/css">
     
@@ -94,7 +95,7 @@
                         <td class="header-padding" bgcolor="#ebebeb" align="center" style="background-color: #ebebeb; text-align: center; padding-left: 30px; padding-right: 30px; font-size: 14px; line-height: 20px; font-family: Helvetica, sans-serif; color: #333;">
                             <br>
                             [[*introtext:notempty=`<p>[[*introtext]]</p>`]]
-                        	<p>Trouble viewing this email? <a href="[[~[[*id]]]]" target="_blank">Read it online</a></p>
+                        	<p>Trouble viewing this email? <a style="color: #9ec41a;" href="[[~[[*id]]]]" target="_blank"><span style="color: #9ec41a;">Read it online</span></a></p>
                         </td>
                     </tr>
                 </table>
@@ -112,21 +113,42 @@
                     <tr>
                         <td class="container-padding" bgcolor="#ffffff" style="background-color: #ffffff; padding-left: 30px; padding-right: 30px; font-size: 16px; line-height: 22px; font-family: Helvetica, sans-serif; color: #333;">
                             [[*content]]
+                            <br>
                         </td>
                     </tr>
                 </table>
                 <!--/600px container -->
+
+                <!-- 600px Content Collection Header (grey) -->
+                <table border="0" width="600" cellpadding="0" cellspacing="0" class="container" bgcolor="#ebebeb">
+                    <tr>
+                        <td class="container-padding" bgcolor="#ebebeb" style="text-align: center; background-color: #ebebeb; padding-left: 30px; padding-right: 30px; padding-top: 10px; padding-bottom: 10px; font-size: 20px; line-height: 24px; font-family: Helvetica, sans-serif; color: #333;">
+                            Popular News Articles
+                        </td>
+                    </tr>
+                </table>
+                <!--/600px Content Collection Header (grey) -->
+                <!-- 600px Content Collection Body (white) -->
+                <table border="0" width="600" cellpadding="0" cellspacing="0" class="container" bgcolor="#ffffff">
+                    <tr>
+                        <td class="container-padding" bgcolor="#ffffff" style="background-color: #ffffff; padding-left: 30px; padding-right: 30px; font-size: 16px; line-height: 22px; font-family: Helvetica, sans-serif; color: #333;">
+                            <br>
+                            [[!GoodNewsContentCollection? &collectionId=`collection1` &includeContent=`1` &tpl=`sample.GoodNewsContentCollectionRowTpl`]] 
+                        </td>
+                    </tr>
+                </table>
+                <!--/600px Content Collection Body (white) -->
     
                 <!-- 600px footer (grey background) -->
                 <table border="0" width="600" cellpadding="0" cellspacing="0" class="footer" bgcolor="#ebebeb">
                     <tr>
                         <td class="footer-padding" bgcolor="#ebebeb" align="center" style="background-color: #ebebeb; text-align: center; padding-left: 30px; padding-right: 30px; font-size: 14px; line-height: 20px; font-family: Helvetica, sans-serif; color: #333;">
                             <br>
-                            Your are receiving this e-mail because you signed up for this newsletter at: [[++site_url]]<br>
+                            Your are receiving this e-mail because you signed up for this newsletter at: <a style="color: #9ec41a;" href="[[++site_url]]"><span style="color: #9ec41a;">[[++site_url]]</span></a><br>
                             <br>
                             You registered with e-mail address: [[+EMAIL]]<br>
                             <br>
-                            <a href="[[~[[+unsubscribeResource]]]]?sid=[[+SID]]">Unsubscribe</a> | <a href="[[~[[+profileResource]]]]?sid=[[+SID]]">Edit Mailing Profile</a><br>
+                            <a style="color: #9ec41a;" href="[[~[[+unsubscribeResource]]]]?sid=[[+SID]]"><span style="color: #9ec41a;">Unsubscribe</span></a> | <a style="color: #9ec41a;" href="[[~[[+profileResource]]]]?sid=[[+SID]]"><span style="color: #9ec41a;">Edit Mailing Profile</span></a><br>
                             <br>
                             Please feel free to contact us: [[++emailsender]]<br>
                             <em>Copyright &copy; [[++site_name]], All rights reserved.</em><br>

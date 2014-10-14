@@ -38,8 +38,9 @@ $_lang['goodnews.system_check_value']                               = 'Wert (Sta
 $_lang['goodnews.multi_processing_for_sending']                     = 'Multi Processing für Mailversand verfügbar';
 $_lang['goodnews.imap_extension_available']                         = 'IMAP Erweiterung verfügbar (Bounce Handling)';
 $_lang['goodnews.site_status']                                      = 'Website ist im Internet veröffentlicht';
-$_lang['goodnews.ok']                                               = '<span class="gon-ok">Ja</span>';
-$_lang['goodnews.nok']                                              = '<span class="gon-nok">Nein</span>';
+$_lang['goodnews.debug_mode']                                       = 'GoodNews Debug Modus';
+$_lang['goodnews.activated']                                        = 'Aktiviert';
+$_lang['goodnews.deactivated']                                      = 'Deaktiviert';
 $_lang['goodnews.on']                                               = 'EIN';
 $_lang['goodnews.off']                                              = 'AUS';
 $_lang['goodnews.id']                                               = 'ID';
@@ -283,6 +284,13 @@ $_lang['goodnews.settings_container_notclassified_msg_action']      = 'Aktion f�
 $_lang['goodnews.settings_container_notclassified_msg_action_desc'] = 'Was soll mit unklassifizierten Nachrichten geschehen?';
 $_lang['goodnews.settings_container_notclassified_mailbox']         = 'Mailordner für unklassifizierte Nachrichten';
 $_lang['goodnews.settings_container_notclassified_mailbox_desc']    = 'Name des Mailordners für das Verschieben von unklassifizierten Nachrichten.';
+$_lang['goodnews.settings_container_collection1_fieldset']          = 'Sammlung 1';
+$_lang['goodnews.settings_container_collection2_fieldset']          = 'Sammlung 2';
+$_lang['goodnews.settings_container_collection3_fieldset']          = 'Sammlung 3';
+$_lang['goodnews.settings_container_collection_label']              = 'Bezeichner für Sammlung';
+$_lang['goodnews.settings_container_collection_label_desc']         = 'Bezeichner für diese Sammlung eingeben (wird als Tab-Titel im Mailing Editor verwendet).';
+$_lang['goodnews.settings_container_collection_parents']            = 'Container ID(s)';
+$_lang['goodnews.settings_container_collection_parents_desc']       = 'Kommasep. Liste von Resource Container IDs woraus Resources gesammelt werden sollen.';
 
 $_lang['goodnews.settings_container_mail_pop3']                     = 'POP3';
 $_lang['goodnews.settings_container_mail_imap']                     = 'IMAP';
@@ -302,10 +310,11 @@ $_lang['goodnews.settings_container_notclassified_msg_move']        = 'Verschieb
 $_lang['goodnews.settings_container_notclassified_msg_delete']      = 'Löschen';
 
 $_lang['goodnews.settings_container_update']                        = 'Container Einstellungen bearbeiten';
-$_lang['goodnews.settings_container_tab_general']                   = 'Allgemein';
+$_lang['goodnews.settings_container_tab_general']                   = 'Allgemein'
 $_lang['goodnews.settings_container_tab_bouncemailbox']             = 'Bounce Mailbox';
 $_lang['goodnews.settings_container_tab_bouncerules']               = 'Bounce Regeln';
-$_lang['goodnews.settings_container_tab_notclassified_rules']       = 'Unklassifiziert Regeln';
+$_lang['goodnews.settings_container_tab_unclassified_bounces']      = 'Unklassifiz. Bounces';
+$_lang['goodnews.settings_container_tab_resource_collection']       = 'Inhalts Sammlung';
 $_lang['goodnews.settings_container_err_ns_editor_groups']          = 'Bitte geben Sie mindestens eine Container Editor Gruppe an.';
 $_lang['goodnews.settings_container_err_ns_mail_from']              = 'Bitte geben Sie die Absender E-Mail Adresse an (für Bounce Messages).';
 $_lang['goodnews.settings_container_err_ns_mail_from_name']         = 'Bitte geben Sie den Absender Namen an.';

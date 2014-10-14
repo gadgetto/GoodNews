@@ -61,7 +61,7 @@ class GoodNewsImportManagerController extends GoodNewsManagerController {
         Ext.onReady(function(){
             GoodNews.config = '.$this->modx->toJSON($this->goodnews->config).';
             GoodNews.request = '.$this->modx->toJSON($_GET).';
-            Ext.onReady(function(){MODx.add("goodnews-panel-import");});
+            MODx.add("goodnews-panel-import");
         });
         </script>');
     }

@@ -41,7 +41,7 @@ $templates[++$i]= $modx->newObject('modTemplate');
 $templates[$i]->fromArray(array(
     'id'           => $i,
     'templatename' => 'sample.GoodNewsProfileTemplate',
-    'description'  => 'A sample Template for GoodNews subscrption pages (Subscription, Unsubscription, Update Subscription, Confirmation, ...). Duplicate this to override it.',
+    'description'  => 'A sample Template for GoodNews subscription pages (Subscription, Unsubscription, Update Subscription, Confirmation, ...). Duplicate this to override it.',
     'content'      => file_get_contents($sources['templates'].'sample.goodnewsprofile.template.tpl'),
 ));
 
@@ -49,8 +49,16 @@ $templates[++$i]= $modx->newObject('modTemplate');
 $templates[$i]->fromArray(array(
     'id'           => $i,
     'templatename' => 'sample.GoodNewsNewsletterTemplate1',
-    'description'  => 'A sample Template for GoodNews newsletters. Duplicate this to override it.',
+    'description'  => 'A sample Template for GoodNews newsletters: Single column. Duplicate this to override it.',
     'content'      => file_get_contents($sources['templates'].'sample.goodnewsnewsletter1.template.tpl'),
+));
+
+$templates[++$i]= $modx->newObject('modTemplate');
+$templates[$i]->fromArray(array(
+    'id'           => $i,
+    'templatename' => 'sample.GoodNewsNewsletterTemplate2',
+    'description'  => 'A sample Template for GoodNews newsletters: Single column with Content Collection. Duplicate this to override it.',
+    'content'      => file_get_contents($sources['templates'].'sample.goodnewsnewsletter2.template.tpl'),
 ));
 
 return $templates;

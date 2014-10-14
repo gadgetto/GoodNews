@@ -45,11 +45,60 @@ Ext.extend(GoodNewsResource.panel.Mailing,MODx.panel.Resource,{
             }
             nodeIDs += node.id;
         });
-        // write selected nodes to hidden field
+        // write selected nodes to hidden field for saving
         this.getForm().setValues({
           groupscategories: nodeIDs
         });
+
+        // get selected rows from collect resources grids for saving
+        var rc1grid = Ext.getCmp('goodnewsresource-collection1-grid');
+        var rc1IDs = '';
+        if (rc1grid) {
+            var rc1gridSel = rc1grid.getSelectionModel().getSelections();
+            Ext.each(rc1gridSel, function(record){
+                if (rc1IDs!='') {
+                    rc1IDs += ',';
+                }
+                rc1IDs += record.id;
+            });
+        }
+        // write resource collection to hidden field for saving
+        this.getForm().setValues({
+          collection1: rc1IDs
+        });
         
+        var rc2grid = Ext.getCmp('goodnewsresource-collection2-grid');
+        var rc2IDs = '';
+        if (rc2grid) {
+            var rc2gridSel = rc2grid.getSelectionModel().getSelections();
+            Ext.each(rc2gridSel, function(record){
+                if (rc2IDs!='') {
+                    rc2IDs += ',';
+                }
+                rc2IDs += record.id;
+            });
+        }
+        // write resource collection to hidden field for saving
+        this.getForm().setValues({
+          collection2: rc2IDs
+        });
+
+        var rc3grid = Ext.getCmp('goodnewsresource-collection3-grid');
+        var rc3IDs = '';
+        if (rc3grid) {
+            var rc3gridSel = rc3grid.getSelectionModel().getSelections();
+            Ext.each(rc3gridSel, function(record){
+                if (rc3IDs!='') {
+                    rc3IDs += ',';
+                }
+                rc3IDs += record.id;
+            });
+        }
+        // write resource collection to hidden field for saving
+        this.getForm().setValues({
+          collection3: rc3IDs
+        });
+
         return this.fireEvent('save',{
             values: this.getForm().getValues()
             ,stay: Ext.state.Manager.get('modx.stay.'+MODx.request.a,'stay')
@@ -73,6 +122,7 @@ Ext.extend(GoodNewsResource.panel.Mailing,MODx.panel.Resource,{
             }
             ,items: this.getMainFields(config)
         });
+        it.push(this.getResourceCollectionTabs(config));
         if (config.show_tvs && MODx.config.tvs_below_content != 1) {
             it.push(this.getTemplateVariablesPanel(config));
         }
@@ -97,6 +147,79 @@ Ext.extend(GoodNewsResource.panel.Mailing,MODx.panel.Resource,{
             its.push(tvs);
         }
         return its;
+    }
+    ,getResourceCollectionTabs: function(config) {
+        var cTabs = [];
+        if (config.record.collection1Name && config.record.collection1Parents) {
+            cTabs.push({
+                id: 'goodnewsresource-collection1-tab'
+                ,autoHeight: true
+                ,title: _('goodnews.mailing_resource_collection')+config.record.collection1Name
+                ,layout: 'form'
+                ,anchor: '100%'
+                ,items: [{
+                    html: '<p>'+_('goodnews.mailing_resource_collection_desc')+'</p>'
+                    ,bodyCssClass: 'panel-desc'
+                    ,border: false
+                },{
+                    xtype: 'goodnewsresource-grid-collect-resources'
+                    ,id: 'goodnewsresource-collection1-grid'
+                    ,baseParams: {
+                        action: 'mgr/collection/getResourceList'
+                        ,parentIds: config.record.collection1Parents
+                        ,collectionIds: config.record.collection1
+                        ,collectionInternalName: 'collection1'
+                    }
+                }]
+            });
+        }
+        if (config.record.collection2Name && config.record.collection2Parents) {
+            cTabs.push({
+                id: 'goodnewsresource-collection2-tab'
+                ,autoHeight: true
+                ,title: _('goodnews.mailing_resource_collection')+config.record.collection2Name
+                ,layout: 'form'
+                ,anchor: '100%'
+                ,items: [{
+                    html: '<p>'+_('goodnews.mailing_resource_collection_desc')+'</p>'
+                    ,bodyCssClass: 'panel-desc'
+                    ,border: false
+                },{
+                    xtype: 'goodnewsresource-grid-collect-resources'
+                    ,id: 'goodnewsresource-collection2-grid'
+                    ,baseParams: {
+                        action: 'mgr/collection/getResourceList'
+                        ,parentIds: config.record.collection2Parents
+                        ,collectionIds: config.record.collection2
+                        ,collectionInternalName: 'collection2'
+                    }
+                }]
+            });
+        }
+        if (config.record.collection3Name && config.record.collection3Parents) {
+            cTabs.push({
+                id: 'goodnewsresource-collection3-tab'
+                ,autoHeight: true
+                ,title: _('goodnews.mailing_resource_collection')+config.record.collection3Name
+                ,layout: 'form'
+                ,anchor: '100%'
+                ,items: [{
+                    html: '<p>'+_('goodnews.mailing_resource_collection_desc')+'</p>'
+                    ,bodyCssClass: 'panel-desc'
+                    ,border: false
+                },{
+                    xtype: 'goodnewsresource-grid-collect-resources'
+                    ,id: 'goodnewsresource-collection3-grid'
+                    ,baseParams: {
+                        action: 'mgr/collection/getResourceList'
+                        ,parentIds: config.record.collection3Parents
+                        ,collectionIds: config.record.collection3
+                        ,collectionInternalName: 'collection3'
+                    }
+                }]
+            });
+        }
+        return cTabs;
     }
     ,getPageHeader: function(config) {
         config = config || {record:{}};
@@ -138,6 +261,18 @@ Ext.extend(GoodNewsResource.panel.Mailing,MODx.panel.Resource,{
         },{
             xtype: 'hidden'
             ,name: 'groupscategories'
+        },{
+            xtype: 'hidden'
+            ,name: 'collection1'
+            ,id: 'goodnewsresource-collection1'
+        },{
+            xtype: 'hidden'
+            ,name: 'collection2'
+            ,id: 'goodnewsresource-collection2'
+        },{
+            xtype: 'hidden'
+            ,name: 'collection3'
+            ,id: 'goodnewsresource-collection3'
         }];
         mlf.push({
             xtype: 'textfield'
