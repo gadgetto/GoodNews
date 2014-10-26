@@ -36,6 +36,9 @@ class GoodNewsImportSubscribers {
     /** @var array $config An array of config values */
     public $config = array();
     
+    /** @var boolean $update If import mode = update */
+    public $update = false;
+
     /** @var resource $fileHandle A valid file pointer to a file successfully opened */
     public $fileHandle = false;
     
@@ -92,6 +95,7 @@ class GoodNewsImportSubscribers {
      * Initialize csv file import.
      * 
      * @access public
+     * @param bool $update (default: false)
      * @param string $filePath
      * @param string $delimiter (default: ,)
      * @param string $enclosure (default: ")
@@ -100,8 +104,9 @@ class GoodNewsImportSubscribers {
      * @param bool $hasHeader (default: false)
      * @return boolean
      */
-    public function init($filePath, $delimiter = ',', $enclosure = '"', $escape = '\\', $lineLength = 1024, $hasHeader = false) {
+    public function init($update, $filePath, $delimiter = ',', $enclosure = '"', $escape = '\\', $lineLength = 1024, $hasHeader = false) {
 
+        $this->update      = $update;
         if ($this->_openFile($filePath) == false) {
             return false;
         }
@@ -109,7 +114,7 @@ class GoodNewsImportSubscribers {
         $this->enclosure   = $enclosure; 
         $this->escape      = $escape; 
         $this->lineLength  = $lineLength; 
-        $this->hasHeader = $hasHeader; 
+        $this->hasHeader   = $hasHeader; 
         if ($this->hasHeader) {
             $this->_getHeader();
         }
@@ -186,7 +191,7 @@ class GoodNewsImportSubscribers {
      * @param int $batchSize (default: 0) If set to 0, get all the data at once
      * @param array $gonGroups Array of GoodNews group ids
      * @param array $gonCategories Array of GoodNews category ids
-     * @return int $importCount
+     * @return mixed int $importCount || bool
      */
     public function importUsers($batchSize = 0, $gonGroups = array(), $gonCategories = array()){
         $this->batchSize = $batchSize;
@@ -196,15 +201,93 @@ class GoodNewsImportSubscribers {
             return false;
         }
         
-        $newSubscribers = $this->_getImportUsers();
-
+        $importUsers = $this->_getImportUsers();
         $importCount = 0;
-        foreach ($newSubscribers as $newSusbcriber) {
-            if ($this->_saveSubscriber($newSusbcriber, $gonGroups, $gonCategories)) {
-                $importCount++;
+        foreach ($importUsers as $importUser) {
+            
+            if ($this->emailExists($importUser[self::EMAIL]) || $this->usernameExists($importUser[self::EMAIL])) {
+                // If update mode is enabled
+                if ($this->update) {
+                    if ($this->_updateSubscriber($importUser, $gonGroups, $gonCategories)) {
+                        $importCount++;
+                    }
+                } else {
+            		$this->modx->log(modX::LOG_LEVEL_WARN, '-> '.$this->modx->lexicon('goodnews.import_subscribers_log_err_subscr_ae').$importUser[self::EMAIL]);
+                }         
+            } else {
+                if ($this->_saveSubscriber($importUser, $gonGroups, $gonCategories)) {
+                    $importCount++;
+                }
             }
         }
         return $importCount;
+    }
+
+    /**
+     * Update a user + profile + subscriber meta + group member entry.
+     * 
+     * @access private
+     * @param array $fields The field values for the new MODX user ($fields[0] = email, $fields[1] = fullname)
+     * @param array $groups The GoodNews group IDs for the new MODX user
+     * @param array $categories The GoodNews category IDs for the new MODX user
+     * @return boolean $subscriberUpdated
+     */
+    private function _updateSubscriber($fields, $groups = array(), $categories = array()) {
+        
+        $subscriberUpdated = false;
+        
+        // Select a modUserProfile based on email
+        $subscriberProfile = $this->modx->getObject('modUserProfile', array('email' => $fields[self::EMAIL]));
+
+        // Update the subscribers Full name if provided
+        if (!empty($fields[self::FULLNAME])) {
+            $subscriberProfile->set('fullname', $fields[self::FULLNAME]);
+        }
+        
+		if ($subscriberProfile->save()) {
+		    $subscriberUpdated = true;
+    		$id = $subscriberProfile->get('internalKey'); // preserve id of updated user for later use
+
+            // Update GoodNewsGroupMember entries (preserve existing!)            
+		    foreach ($groups as $groupid) {
+    		    if ($this->modx->getObject('GoodNewsGroupMember', array('goodnewsgroup_id' => $groupid,'member_id' => $id))) {
+        		    continue;
+    		    }
+                $groupmember = $this->modx->newObject('GoodNewsGroupMember');
+                $groupmember->set('goodnewsgroup_id', $groupid);
+                $groupmember->set('member_id', $id);
+        		
+        		if (!$groupmember->save()) {
+            		$subscriberUpdated = false;
+            		break;
+        		}
+		    }
+
+            // Update GoodNewsCategoryMember entries (preserve existing!)            
+            if ($subscriberUpdated) {
+    		    foreach ($categories as $categoryid) {
+        		    if ($this->modx->getObject('GoodNewsCategoryMember', array('goodnewscategory_id' => $categoryid,'member_id' => $id))) {
+            		    continue;
+        		    }
+        		    
+                    $categorymember = $this->modx->newObject('GoodNewsCategoryMember');
+                    $categorymember->set('goodnewscategory_id', $categoryid);
+                    $categorymember->set('member_id', $id);
+            		
+            		if (!$categorymember->save()) {
+                		$subscriberUpdated = false;
+                		break;
+            		}
+    		    }
+            }
+		}
+		if (!$subscriberUpdated) {
+    		// @todo: rollback if upd failed
+    		$this->modx->log(modX::LOG_LEVEL_WARN, '-> '.$this->modx->lexicon('goodnews.import_subscribers_log_err_subscr_update').$fields[self::EMAIL]);
+		} else {
+    		$this->modx->log(modX::LOG_LEVEL_INFO, '-> '.$this->modx->lexicon('goodnews.import_subscribers_log_subscr_updated').$fields[self::EMAIL]);
+		}
+		return $subscriberUpdated;
     }
 
     /**
@@ -219,11 +302,6 @@ class GoodNewsImportSubscribers {
     private function _saveSubscriber($fields, $groups = array(), $categories = array()) {
         if (!$this->validEmail($fields[self::EMAIL])) {
     		$this->modx->log(modX::LOG_LEVEL_WARN, '-> '.$this->modx->lexicon('goodnews.import_subscribers_log_err_email_invalid').$fields[self::EMAIL]);
-            return false;
-        }
-        
-        if ($this->emailExists($fields[self::EMAIL]) || $this->usernameExists($fields[self::EMAIL])) {
-    		$this->modx->log(modX::LOG_LEVEL_WARN, '-> '.$this->modx->lexicon('goodnews.import_subscribers_log_err_subscr_ae').$fields[self::EMAIL]);
             return false;
         }
         
@@ -286,14 +364,14 @@ class GoodNewsImportSubscribers {
     		}
 		}
 		if (!$subscriberSaved) {
-    		$this->modx->log(modX::LOG_LEVEL_WARN, '-> '.$this->modx->lexicon('goodnews.import_subscribers_log_err_subscr_failed').$fields[self::EMAIL]);
+    		$this->modx->log(modX::LOG_LEVEL_WARN, '-> '.$this->modx->lexicon('goodnews.import_subscribers_log_err_subscr_save').$fields[self::EMAIL]);
     		// Rollback if one of the savings failed!
             $meta = $this->modx->getObject('GoodNewsSubscriberMeta', array('subscriber_id' => $id));
             if ($meta) { $meta->remove(); }
             $this->modx->removeCollection('GoodNewsGroupMember', array('member_id' => $id));
             $this->modx->removeCollection('GoodNewsCategoryMember', array('member_id' => $id));
 		} else {
-    		$this->modx->log(modX::LOG_LEVEL_INFO, '-> '.$this->modx->lexicon('goodnews.import_subscribers_log_imported_subscr').$fields[self::EMAIL]);
+    		$this->modx->log(modX::LOG_LEVEL_INFO, '-> '.$this->modx->lexicon('goodnews.import_subscribers_log_subscr_imported').$fields[self::EMAIL]);
 		}
 		return $subscriberSaved;
     }

@@ -55,22 +55,19 @@ Ext.extend(GoodNews.ImportPanel,MODx.FormPanel,{
     }
     ,startSubscriberImport: function(){
 
-        if (this.console == null || this.console == undefined) {
-            this.console = MODx.load({
-                xtype: 'modx-console'
-                ,register: register
-                ,topic: topic
-                ,listeners: {
-                    'shutdown': {fn:function() {
-                        //refresh page to reset fields
-                        //location.href = MODx.config.manager_url + '?a=' + MODx.request.a + '&action=import';
-                    }
-                    ,scope:this}
+        this.console = MODx.load({
+            xtype: 'modx-console'
+            ,register: register
+            ,topic: topic
+            ,closeAction: 'close'
+            ,listeners: {
+                'shutdown': {fn:function() {
+                    //refresh page to reset fields
+                    //location.href = MODx.config.manager_url + '?a=' + MODx.request.a + '&action=import';
                 }
-            });
-        } else {
-            this.console.setRegister(register,topic);
-        }
+                ,scope:this}
+            }
+        });
         this.console.show(Ext.getBody());
 
         // get selected groups and categories from tree

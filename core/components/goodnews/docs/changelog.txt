@@ -1,6 +1,15 @@
 Changelog for GoodNews
 
-GoodNews 1.3.0-pl (2014-09-16)
+GoodNews 1.3.1-pl (2014-10-28)
+--------------------------------------------------
+- [#25] Extend Subscriber Importer to enable "Update" of existing subscribers
+- fixed a bug in Import console window (console window is now destroyed after closing)
+- fixed a bug in German lexicon file (missing semicolon could lead to white page -> sorry for this!)
+- GoodNews management interface now takes account of MODX manager date and time format settings
+- deleted mailing editor users are now recognized and it's id is now shown instead empty string
+
+
+GoodNews 1.3.0-pl (2014-10-13)
 --------------------------------------------------
 - [#15] new feature: Content collector
 

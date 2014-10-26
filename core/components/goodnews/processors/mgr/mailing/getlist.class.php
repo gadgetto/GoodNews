@@ -148,7 +148,9 @@ class NewsletterGetListProcessor extends modObjectGetListProcessor {
         $resourceArray = parent::prepareRow($object);
 
         $charset = $this->modx->getOption('modx_charset', null, 'UTF-8');
-        $dateFormat = '%Y-%m-%d %H:%M:%S';
+        $managerDateFormat = $this->modx->getOption('manager_date_format', null, 'Y-m-d');
+        $managerTimeFormat = $this->modx->getOption('manager_time_format', null, 'H:i');
+        $dateTimeFormat = $managerDateFormat.' '.$managerTimeFormat;
         
         $resourceArray['pagetitle'] = htmlentities($resourceArray['pagetitle'], ENT_COMPAT, $charset);
 
@@ -219,33 +221,18 @@ class NewsletterGetListProcessor extends modObjectGetListProcessor {
         
         }
 
-        /*
-        if ($resourceArray['status'] == self::GON_NEWSLETTER_STATUS_SENT || 
-            $resourceArray['status'] == self::GON_NEWSLETTER_STATUS_IN_PROGRESS ||
-            $resourceArray['status'] == self::GON_NEWSLETTER_STATUS_STOPPED) {
-            
-            $user = $this->modx->getObject('modUser', $resourceArray['sentby']);
-            $username = $user->get('username');
-            $resourceArray['sentby_username'] = $username;
-        } else {
-            $resourceArray['sentby_username'] = '-';
-        }
-        */
-        if ($resourceArray['sentby']) {
-            $user = $this->modx->getObject('modUser', $resourceArray['sentby']);
-            $username = $user->get('username');
-            $resourceArray['sentby_username'] = $username;
-            unset($user, $username);
-        } else {
-            $resourceArray['sentby_username'] = '-';
-        }
-        
         $createdon = strtotime($resourceArray['createdon']);
-        $resourceArray['createdon_formatted'] = strftime($dateFormat, $createdon);
+        $resourceArray['createdon_formatted'] = date($dateTimeFormat, $createdon);
+        if (empty($resourceArray['createdby_username'])) {
+            $resourceArray['createdby_username'] = $resourceArray['createdby'];
+        }
 
         if ($resourceArray['published']) {
         	$publishedon = strtotime($resourceArray['publishedon']);
-            $resourceArray['publishedon_formatted'] = strftime($dateFormat, $publishedon);
+            $resourceArray['publishedon_formatted'] = date($dateTimeFormat, $publishedon);
+            if (empty($resourceArray['publishedby_username'])) {
+                $resourceArray['publishedby_username'] = $resourceArray['publishedby'];
+            }
         } else {
             $resourceArray['publishedon_formatted'] = '-';
             $resourceArray['publishedby_username'] = '-';            
@@ -253,7 +240,7 @@ class NewsletterGetListProcessor extends modObjectGetListProcessor {
 
         if ($resourceArray['pub_date']) {
         	$pub_date = strtotime($resourceArray['pub_date']);
-            $resourceArray['pub_date_formatted'] = strftime($dateFormat, $pub_date);
+            $resourceArray['pub_date_formatted'] = date($dateTimeFormat, $pub_date);
         } else {
             if ($resourceArray['scheduled']) {
                 $resourceArray['pub_date_formatted'] = $this->modx->lexicon('goodnews.newsletter_sent_scheduled');
@@ -263,13 +250,25 @@ class NewsletterGetListProcessor extends modObjectGetListProcessor {
         }
 
         if ($resourceArray['senton']) {
-            $resourceArray['senton_formatted'] = strftime($dateFormat, $resourceArray['senton']);
+            $resourceArray['senton_formatted'] = date($dateTimeFormat, $resourceArray['senton']);
         } else {
             $resourceArray['senton_formatted'] = '-';
         }
-        
+
+        if ($resourceArray['sentby']) {
+            $user = $this->modx->getObject('modUser', $resourceArray['sentby']);
+            if (is_object($user)) {
+                $resourceArray['sentby_username'] = $user->get('username');
+            } else {
+                $resourceArray['sentby_username'] = $resourceArray['sentby'];
+            }
+            unset($user);
+        } else {
+            $resourceArray['sentby_username'] = '-';
+        }
+
         if ($resourceArray['finishedon']) {
-            $resourceArray['finishedon_formatted'] = strftime($dateFormat, $resourceArray['finishedon']);
+            $resourceArray['finishedon_formatted'] = date($dateTimeFormat, $resourceArray['finishedon']);
         } else {
             $resourceArray['finishedon_formatted'] = '-';
         }

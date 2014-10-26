@@ -127,6 +127,9 @@ class SubscribersImportProcessor extends modProcessor {
             }
         }
         
+        // Update mode?
+        $update = $this->getProperty('update') ? true : false;
+        
         // Only continue with processing if no errors occured
         if ($error || $this->hasErrors()) {
             $this->modx->log(modX::LOG_LEVEL_ERROR, $this->modx->lexicon('goodnews.import_subscribers_log_failed'));
@@ -141,7 +144,7 @@ class SubscribersImportProcessor extends modProcessor {
         sleep(1);
 
         // Initialize the GoodNewsImportSubscribers object
-        if ($this->goodnewsimportsubscribers->init($csvfile['tmp_name'], $delimiter, $enclosure) == false) {
+        if ($this->goodnewsimportsubscribers->init($update, $csvfile['tmp_name'], $delimiter, $enclosure) == false) {
             $this->modx->log(modX::LOG_LEVEL_ERROR, $this->modx->lexicon('goodnews.import_subscribers_err_open_csvfile'));
             sleep(1);
             $error = true;
