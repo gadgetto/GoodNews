@@ -92,6 +92,10 @@ class SubscribersGetListProcessor extends modObjectGetListProcessor {
     public function prepareRow(xPDOObject $object) {
         $userArray = $object->toArray();
 
+        $managerDateFormat = $this->modx->getOption('manager_date_format', null, 'Y-m-d');
+        $managerTimeFormat = $this->modx->getOption('manager_time_format', null, 'H:i');
+        $dateTimeFormat = $managerDateFormat.' '.$managerTimeFormat;
+
         //todo: remove this quickhack and get the count in prepareQueryBeforeCount
         if (!empty($userArray['id'])) {
             // count group subscriptions
@@ -108,7 +112,12 @@ class SubscribersGetListProcessor extends modObjectGetListProcessor {
         }
         
         if ($userArray['createdon'] == null || $userArray['createdon'] == '') {
-            $userArray['createdon'] = '-';
+            $userArray['createdon_formatted'] = '-';
+        } else {
+            // @todo: change date field in goodnews_subscriber_meta to timestamp field
+            // currently we get a iso date-time so need to convert to timestamp first
+            $createdonTimeStamp = strtotime($userArray['createdon']);
+            $userArray['createdon_formatted'] = date($dateTimeFormat, $createdonTimeStamp);
         }
         
         if ($userArray['ip'] == null || $userArray['ip'] == '0') {

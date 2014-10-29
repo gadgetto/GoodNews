@@ -346,8 +346,14 @@ Ext.extend(GoodNewsResource.panel.Mailing,MODx.panel.Resource,{
                 }
                 ,autoHeight: false
                 ,height: 200
-                ,root_id: 'n_gongrp_0'
-                ,root_name: _('goodnews.mail_groups_categories')
+                ,root: {
+                    text: _('goodnews.mail_groups_categories')
+                    ,id: 'n_gongrp_0'
+                    ,cls: 'tree-pseudoroot-node'
+                    ,iconCls: 'icon-tags'
+                    ,draggable: false
+                    ,nodeType: 'async'
+                }
                 ,rootVisible: false
                 ,enableDD: false
                 ,ddAppendOnly: true
