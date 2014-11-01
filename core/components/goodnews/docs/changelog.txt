@@ -1,5 +1,10 @@
 Changelog for GoodNews
 
+GoodNews 1.3.2-pl (2014-11-01)
+--------------------------------------------------
+- small lexicon adjustments to better match MODX 2.3
+
+
 GoodNews 1.3.1-pl (2014-10-28)
 --------------------------------------------------
 - [#25] Extend Subscriber Importer to enable "Update" of existing subscribers

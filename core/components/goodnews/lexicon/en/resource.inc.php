@@ -27,7 +27,7 @@
  */
 
 $_lang['goodnews.container']                               = 'GoodNews';
-$_lang['goodnews.container_create_here']                   = 'Create a GoodNews Container Here';
+$_lang['goodnews.container_create_here']                   = 'GoodNews Container';
 $_lang['goodnews.container_new']                           = 'New GoodNews Container';
                                                            
 $_lang['goodnews.container_tab_container']                 = 'GoodNews';
