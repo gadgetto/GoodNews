@@ -380,6 +380,7 @@ Ext.extend(GoodNewsResource.panel.Container,MODx.panel.Resource,{
             ,hiddenName: 'setting_templatesCategory'
             ,id: 'goodnewsresource-templates-category'
             ,value: config.record.setting_templatesCategory || 0
+            ,pageSize: 20
             ,anchor: '100%'
         },{
             xtype: 'modx-combo-template'
