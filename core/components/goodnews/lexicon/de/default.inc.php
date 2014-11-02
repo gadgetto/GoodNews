@@ -351,6 +351,7 @@ $_lang['goodnews.import_subscribers_log_subscr_imported']           = 'Importier
 $_lang['goodnews.import_subscribers_log_subscr_updated']            = 'Aktualisiert: ';
 $_lang['goodnews.import_subscribers_log_err_subscr_save']           = 'Nicht importiert. Speichern fehlgeschlagen: ';
 $_lang['goodnews.import_subscribers_log_err_subscr_update']         = 'Nicht importiert. Aktualisierung fehlgeschlagen: ';
+$_lang['goodnews.import_subscribers_log_err_duplicate_email']       = 'Nicht importiert. Doppelte Email: ';
 $_lang['goodnews.import_subscribers_log_err_subscr_ae']             = 'Nicht importiert. Existiert bereits: ';
 $_lang['goodnews.import_subscribers_log_err_subscr_data']           = 'Nicht importiert. Datenformat falsch: ';
 $_lang['goodnews.import_subscribers_log_err_email_invalid']         = 'Nicht importiert. Email Adresse ungültig: ';

@@ -27,8 +27,8 @@
  */
 
 $_lang['goodnews.container']                               = 'GoodNews';
-$_lang['goodnews.container_create_here']                   = 'GoodNews-Container hier erstellen';
-$_lang['goodnews.container_new']                           = 'Neuer GoodNews-Container';
+$_lang['goodnews.container_create_here']                   = 'GoodNews Container';
+$_lang['goodnews.container_new']                           = 'Neuer GoodNews Container';
                                                            
 $_lang['goodnews.container_tab_container']                 = 'GoodNews';
 $_lang['goodnews.container_tab_settings_container']        = 'Container Einstellungen';
@@ -45,13 +45,13 @@ $_lang['goodnews.container_unsubscribe_resource_desc']     = 'Ziehen Sie die Res
 $_lang['goodnews.container_profile_resource']              = 'Resource ID für Bearbeitung des Mailing Profils';
 $_lang['goodnews.container_profile_resource_desc']         = 'Ziehen Sie die Resource für die Bearbeitung des Mailing Profils aus dem MODx Baum in dieses Feld.';
 
-$_lang['goodnews.container_manage']                        = 'GoodNews-Container bearbeiten';
+$_lang['goodnews.container_manage']                        = 'GoodNews Container bearbeiten';
 $_lang['goodnews.mailing_create_new']                      = 'Neues Mailing erstellen';
-$_lang['goodnews.container_unpublish']                     = 'GoodNews-Container zurückziehen';
-$_lang['goodnews.container_publish']                       = 'GoodNews-Container veröffentlichen';
-$_lang['goodnews.container_undelete']                      = 'GoodNews-Container wiederherstellen';
-$_lang['goodnews.container_delete']                        = 'GoodNews-Container löschen';
-$_lang['goodnews.container_view']                          = 'GoodNews-Container anzeigen';
+$_lang['goodnews.container_unpublish']                     = 'GoodNews Container zurückziehen';
+$_lang['goodnews.container_publish']                       = 'GoodNews Container veröffentlichen';
+$_lang['goodnews.container_undelete']                      = 'GoodNews Container wiederherstellen';
+$_lang['goodnews.container_delete']                        = 'GoodNews Container löschen';
+$_lang['goodnews.container_view']                          = 'GoodNews Container anzeigen';
 $_lang['goodnews.manage_mailings']                         = 'Mailings verwalten';
 
 $_lang['goodnews.mailing']                                 = 'Mailing';
@@ -84,8 +84,8 @@ $_lang['goodnews.mailing_rc_resources_none']               = 'Keine Resource Dok
 $_lang['goodnews.mailing_rc_search_filter']                = 'Suchfilter...';
 $_lang['goodnews.mailing_rc_filter_clear']                 = 'Zurücksetzen';
 
-$_lang['setting_goodnews.default_container_template']      = 'Standard GoodNews-Container Template';
-$_lang['setting_goodnews.default_container_template_desc'] = 'Das Template, welches standardmäßig verwendet wird, wenn ein GoodNews-Container erstellt wird.';
+$_lang['setting_goodnews.default_container_template']      = 'Standard GoodNews Container Template';
+$_lang['setting_goodnews.default_container_template_desc'] = 'Das Template, welches standardmäßig verwendet wird, wenn ein GoodNews Container erstellt wird.';
 
-$_lang['setting_goodnews.default_mailing_template']        = 'Standard GoodNews-Mailing/Newsletter Template';
+$_lang['setting_goodnews.default_mailing_template']        = 'Standard GoodNews Mailing/Newsletter Template';
 $_lang['setting_goodnews.default_mailing_template_desc']   = 'Das Template, welches standardmäßig verwendet wird, wenn ein Mailing/Newsletter erstellt wird und im Container selbst kein Template angegeben ist.';
