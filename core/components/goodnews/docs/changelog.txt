@@ -2,8 +2,9 @@ Changelog for GoodNews
 
 GoodNews 1.3.2-pl (2014-11-01)
 --------------------------------------------------
-- small lexicon adjustments to better match MODX 2.3
+- [#27] Subscriber meta data not created for existing MODX users when using the "Import Update Feature"
 - [#26] Editing a GoodNews Container - mailing templates category dropdown doesn't list all Categories
+- small lexicon adjustments to better match MODX 2.3
 
 
 GoodNews 1.3.1-pl (2014-10-28)

@@ -205,7 +205,8 @@ class GoodNewsImportSubscribers {
         $importCount = 0;
         foreach ($importUsers as $importUser) {
             
-            if ($this->emailExists($importUser[self::EMAIL]) || $this->usernameExists($importUser[self::EMAIL])) {
+            if ($this->emailExists($importUser[self::EMAIL])) {
+
                 // If update mode is enabled
                 if ($this->update) {
                     if ($this->_updateSubscriber($importUser, $gonGroups, $gonCategories)) {
@@ -224,7 +225,7 @@ class GoodNewsImportSubscribers {
     }
 
     /**
-     * Update a user + profile + subscriber meta + group member entry.
+     * Update a userprofile + subscriber meta + group/category member entry.
      * 
      * @access private
      * @param array $fields The field values for the new MODX user ($fields[0] = email, $fields[1] = fullname)
@@ -236,7 +237,14 @@ class GoodNewsImportSubscribers {
         
         $subscriberUpdated = false;
         
-        // Select a modUserProfile based on email
+        // Check if we have more than 1 modUserProfiles based on this email
+        // -> Normally this should't be necessary but it's possible that we have multiple users with the same email address (if enabled in MODX system settings)
+        // If we finde multiple users -> the update can't be performed!
+        if ($this->modx->getCount('modUserProfile', array('email' => $fields[self::EMAIL])) > 1) {
+    		$this->modx->log(modX::LOG_LEVEL_WARN, '-> '.$this->modx->lexicon('goodnews.import_subscribers_log_err_duplicate_email').$fields[self::EMAIL]);
+            return false;
+        }
+
         $subscriberProfile = $this->modx->getObject('modUserProfile', array('email' => $fields[self::EMAIL]));
 
         // Update the subscribers Full name if provided
@@ -248,20 +256,38 @@ class GoodNewsImportSubscribers {
 		    $subscriberUpdated = true;
     		$id = $subscriberProfile->get('internalKey'); // preserve id of updated user for later use
 
-            // Update GoodNewsGroupMember entries (preserve existing!)            
-		    foreach ($groups as $groupid) {
-    		    if ($this->modx->getObject('GoodNewsGroupMember', array('goodnewsgroup_id' => $groupid,'member_id' => $id))) {
-        		    continue;
-    		    }
-                $groupmember = $this->modx->newObject('GoodNewsGroupMember');
-                $groupmember->set('goodnewsgroup_id', $groupid);
-                $groupmember->set('member_id', $id);
-        		
-        		if (!$groupmember->save()) {
-            		$subscriberUpdated = false;
-            		break;
-        		}
+    		// New GoodNewsSubscriberMeta if not exists
+		    if (!$this->modx->getObject('GoodNewsSubscriberMeta', array('subscriber_id' => $id))) {
+
+                $subscriberMeta = $this->modx->newObject('GoodNewsSubscriberMeta');
+                $subscriberMeta->set('subscriber_id', $id);
+                $sid = md5(time().$id);
+                $subscriberMeta->set('sid', $sid);
+                $createdon = strftime('%Y-%m-%d %H:%M:%S');
+                $subscriberMeta->set('createdon', $createdon);
+                $subscriberMeta->set('ip', 'imported'); // Set IP field to string 'imported' for later reference
+                
+        		if (!$subscriberMeta->save()) {
+        		    $subscriberUpdated = false;
+                }
 		    }
+    		
+            // Update GoodNewsGroupMember entries (preserve existing!)            
+            if ($subscriberUpdated) {
+    		    foreach ($groups as $groupid) {
+        		    if ($this->modx->getObject('GoodNewsGroupMember', array('goodnewsgroup_id' => $groupid,'member_id' => $id))) {
+            		    continue;
+        		    }
+                    $groupmember = $this->modx->newObject('GoodNewsGroupMember');
+                    $groupmember->set('goodnewsgroup_id', $groupid);
+                    $groupmember->set('member_id', $id);
+            		
+            		if (!$groupmember->save()) {
+                		$subscriberUpdated = false;
+                		break;
+            		}
+    		    }
+            }
 
             // Update GoodNewsCategoryMember entries (preserve existing!)            
             if ($subscriberUpdated) {
@@ -291,7 +317,7 @@ class GoodNewsImportSubscribers {
     }
 
     /**
-     * Save a new user + profile + subscriber meta + group member entry.
+     * Save a new user + profile + subscriber meta + group/category member entry.
      * 
      * @access private
      * @param array $fields The field values for the new MODX user ($fields[0] = email, $fields[1] = fullname)
@@ -304,13 +330,13 @@ class GoodNewsImportSubscribers {
     		$this->modx->log(modX::LOG_LEVEL_WARN, '-> '.$this->modx->lexicon('goodnews.import_subscribers_log_err_email_invalid').$fields[self::EMAIL]);
             return false;
         }
-        
         $subscriberSaved = false;
         
         // New modUser
         $subscriber = $this->modx->newObject('modUser');
         $password = $subscriber->generatePassword(8);
-        $subscriber->set('username', $fields[self::EMAIL]); // username = email
+        $username = $this->newUsername($fields[self::EMAIL]);
+        $subscriber->set('username', $username);
 		$subscriber->set('password', $password);
 		$subscriber->set('active', 1);
 		$subscriber->set('blocked', 0);
@@ -377,19 +403,20 @@ class GoodNewsImportSubscribers {
     }
     
     /**
-     * Check if a username already exists.
+     * Generate a new unique username based on given email address.
      * 
      * @access public
-     * @param string $username
+     * @param string $email
      * @return mixed ID of MODX user or false
      */
-    public function usernameExists($username) {
-		$user = $this->modx->getObject('modUser', array('username' => $username));
-		if (is_object($user)) {
-    		return $user->get('id');
-		} else {
-    		return false;
-		}
+    public function newUsername($email) {
+        $newusername = $email;
+        $counter = 0;
+        while ($this->usernameExists($newusername)) {
+            $newusername = $newusername.'_'.$counter;
+            $counter++;
+        }
+        return $newusername;
     }
     
     /**
@@ -403,6 +430,22 @@ class GoodNewsImportSubscribers {
 		$userProfile = $this->modx->getObject('modUserProfile', array('email' => $email));
 		if (is_object($userProfile)) {
     		return $userProfile->get('internalKey');
+		} else {
+    		return false;
+		}
+    }
+    
+    /**
+     * Check if a user(name) already exists.
+     * 
+     * @access public
+     * @param string $username
+     * @return mixed ID of MODX user or false
+     */
+    public function usernameExists($username) {
+		$user = $this->modx->getObject('modUser', array('username' => $username));
+		if (is_object($user)) {
+    		return $user->get('id');
 		} else {
     		return false;
 		}

@@ -163,9 +163,6 @@ class SubscribersImportProcessor extends modProcessor {
         $this->modx->log(modX::LOG_LEVEL_INFO, $this->modx->lexicon('goodnews.import_subscribers_log_finished').$count);
         sleep(2);
         return $this->success();
-
 	}
-	
-
 }
 return 'SubscribersImportProcessor';

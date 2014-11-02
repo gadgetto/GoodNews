@@ -351,6 +351,7 @@ $_lang['goodnews.import_subscribers_log_subscr_imported']           = 'Imported:
 $_lang['goodnews.import_subscribers_log_subscr_updated']            = 'Updated: ';
 $_lang['goodnews.import_subscribers_log_err_subscr_save']           = 'Not imported. Saving failed: ';
 $_lang['goodnews.import_subscribers_log_err_subscr_update']         = 'Not imported. Update failed: ';
+$_lang['goodnews.import_subscribers_log_err_duplicate_email']       = 'Not imported. Duplicate email: ';
 $_lang['goodnews.import_subscribers_log_err_subscr_ae']             = 'Not imported. Already exists: ';
 $_lang['goodnews.import_subscribers_log_err_subscr_data']           = 'Not imported. Wrong data: ';
 $_lang['goodnews.import_subscribers_log_err_email_invalid']         = 'Not imported. No valid email address: ';
