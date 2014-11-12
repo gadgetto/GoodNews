@@ -14,7 +14,7 @@
     
     &activation=`0`
     &sendSubscriptionEmail=`1`
-    &submittedResourceId=`[[!GoodNewsGetResourceID? &pagetitle=`Subscription Success`]]`
+    &submittedResourceId=`123`
     
     &groupsOnly=`1`
     &includeGroups=`4,6`
