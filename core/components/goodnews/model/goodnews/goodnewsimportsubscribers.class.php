@@ -335,7 +335,7 @@ class GoodNewsImportSubscribers {
         // New modUser
         $subscriber = $this->modx->newObject('modUser');
         $password = $subscriber->generatePassword(8);
-        $username = $this->newUsername($fields[self::EMAIL]);
+        $username = $this->generateUsername($fields[self::EMAIL]);
         $subscriber->set('username', $username);
 		$subscriber->set('password', $password);
 		$subscriber->set('active', 1);
@@ -403,22 +403,44 @@ class GoodNewsImportSubscribers {
     }
     
     /**
-     * Generate a new unique username based on given email address.
+     * Generate a new unique username based on email address.
      * 
      * @access public
-     * @param string $email
-     * @return mixed ID of MODX user or false
+     * @return string $newusername
      */
-    public function newUsername($email) {
-        $newusername = $email;
+    public function generateUsername($email) {
+        // Username is generated from userid part of email address
+        $parts = explode('@', $email);
+        $usernamepart = $parts[0];
+
+        // Add counter (john.doe_1, martin_2, ...) if username already exists
         $counter = 0;
+        $newusername = $usernamepart;
         while ($this->usernameExists($newusername)) {
-            $newusername = $newusername.'_'.$counter;
+            $newusername = $usernamepart.'_'.$counter;
             $counter++;
         }
         return $newusername;
     }
-    
+
+    /**
+     * Check if a user(name) already exists.
+     * 
+     * @access public
+     * @param string $username
+     * @return boolean
+     */
+    public function usernameExists($username) {
+        
+        $usernameExists = false;
+        
+        $user = $this->modx->getObject('modUser', array('username' => $username));
+		if (is_object($user)) {
+    		$usernameExists = true;
+        }
+        return $usernameExists;
+    }
+
     /**
      * Check if an email address already exists.
      * 
@@ -430,22 +452,6 @@ class GoodNewsImportSubscribers {
 		$userProfile = $this->modx->getObject('modUserProfile', array('email' => $email));
 		if (is_object($userProfile)) {
     		return $userProfile->get('internalKey');
-		} else {
-    		return false;
-		}
-    }
-    
-    /**
-     * Check if a user(name) already exists.
-     * 
-     * @access public
-     * @param string $username
-     * @return mixed ID of MODX user or false
-     */
-    public function usernameExists($username) {
-		$user = $this->modx->getObject('modUser', array('username' => $username));
-		if (is_object($user)) {
-    		return $user->get('id');
 		} else {
     		return false;
 		}
