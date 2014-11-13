@@ -204,9 +204,8 @@ abstract class GoodNewsSubscriptionController {
             $categories = $this->collectGoodNewsCategories();
         }
 
-        // Groups/categories fields are hidden - subscriber cant select and will be added to
-        // all configured default groups/categories.
-        // Most other properties are ignored in this case!
+        // Groups/categories fields are hidden - subscriber can't select and will be automatically assigned
+        // (most other properties are ignored in this case)
         if (!empty($defaultGroups) || !empty($defaultCategories)) {
 
             // Set a helper placeholder for filtering output
@@ -232,53 +231,53 @@ abstract class GoodNewsSubscriptionController {
                 }
             }
 
-        // Groups/categories fields are built as visible tree/list - subscriber can select and will be added to
-        // all selected groups/categories.
+        // Groups/categories fields are built as visible list - subscriber can select
         } else {
             
             foreach ($groups as $group) {
             
                 $grpPlaceholders = $group->toArray();
                 
-                // Add placeholder checked with value ' checked="checked"' if ...
-                if (in_array($grpPlaceholders['id'], $checkedGroups)) {
-                  $grpPlaceholders['checked'] = ' checked="checked"';
-                }
+                if (in_array($grpPlaceholders['id'], $checkedGroups)) { $grpPlaceholders['checked'] = ' checked="checked"'; }
                 
                 if ((bool)$groupsOnly) {
                     // Add selectable group field to output
                     $fieldsOutput .= $this->modx->getChunk($grpFieldTpl, $grpPlaceholders);
                 } else {
-                    // Add group name to output (in this case the group is selected automatically by its child category)
+                    // Add group name to output (in this case the group will be selected automatically by its child category)
                     $fieldsOutput .= $this->modx->getChunk($grpNameTpl, $grpPlaceholders);
             
                     foreach ($categories as $category) {
                     
                         $catPlaceholders = $category->toArray();
-                        // Only category field of current group
+                        
+                        // Only categories which are assigned to current group
                         if ($catPlaceholders['goodnewsgroup_id'] == $grpPlaceholders['id']) {
 
-                            // Add placeholder checked with value ' checked="checked"' if ...
-                            if (in_array($catPlaceholders['id'], $checkedCategories)) {
-                              $catPlaceholders['checked'] = ' checked="checked"';
-                            }
+                            if (in_array($catPlaceholders['id'], $checkedCategories)) { $catPlaceholders['checked'] = ' checked="checked"'; }
 
                             // Add category field to output
                             $fieldsOutput .= $this->modx->getChunk($catFieldTpl, $catPlaceholders);
                         }
                     }
+                    
+                    // Each single group + related categories is wrapped within a fieldset
+                    $fieldsPlaceholder = array('grpcatfields' => $fieldsOutput);
+                    unset($fieldsOutput);
+                    $output .= $this->modx->getChunk($grpFieldsetTpl, $fieldsPlaceholder);
                 }
-            
-                $fieldsPlaceholder = array('grpcatfields' => $fieldsOutput);
-                $fieldsPlaceholder['grpname'] = $grpPlaceholders['name'];
-                unset($fieldsOutput);
-            
-                $output .= $this->modx->getChunk($grpFieldsetTpl, $fieldsPlaceholder);
+
             }
             
+            // If only groups are used, the groups list as a whole is wrapped with a fieldset
+            if ((bool)$groupsOnly) {
+                $fieldsPlaceholder = array('grpcatfields' => $fieldsOutput);
+                $output = $this->modx->getChunk($grpFieldsetTpl, $fieldsPlaceholder);
+            }
         }
 
-        // Write output to defined placeholder
+        // Write whole output to defined placeholder
+        // -> this placeholder is used to output the whole group/category tree/list in frontend
         $this->modx->setPlaceholder($grpCatPlaceholder, $output);
     }
 

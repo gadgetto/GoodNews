@@ -5,8 +5,10 @@
     &activationEmailSubject=`Thank you for joining our newsletter service at [[++site_name]]`
     &validate=`
         email:email:required,
+        gongroups:required,
         nospam:blank`
-    &defaultGroups=`1`
+    &groupsOnly=`1`
+    &gongroups.vTextRequired=`Please choose at least one mailing group.`
 ]]
 <!--
     Samples of other available configuration parameters:
@@ -14,12 +16,11 @@
     
     &activation=`0`
     &sendSubscriptionEmail=`1`
-    &submittedResourceId=`123`
+    &submittedResourceId=`[[!GoodNewsGetResourceID? &pagetitle=`Subscription Success`]]`
     
-    &groupsOnly=`1`
+    &defaultGroups=`1`
     &includeGroups=`4,6`
     &defaultCategories=`3,36,40,48`
-    &gongroups.vTextRequired=`Please choose at least one mailing group.`
     &goncategories.vTextRequired=`Please choose at least one category of your interest.`
 -->
 
