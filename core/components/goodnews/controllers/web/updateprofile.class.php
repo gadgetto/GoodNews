@@ -88,8 +88,6 @@ class GoodNewsSubscriptionUpdateProfileController extends GoodNewsSubscriptionCo
             $this->modx->setPlaceholder($placeholderPrefix.'authorization_success', true);
         }
 
-        $this->setFieldPlaceholders();
-
         $memberGroups = $this->collectGoodNewsGroupMembers($this->user->get('id'));
         $memberCategories = $this->collectGoodNewsCategoryMembers($this->user->get('id'));
         $this->generateGrpCatFields($memberGroups, $memberCategories);
@@ -124,6 +122,9 @@ class GoodNewsSubscriptionUpdateProfileController extends GoodNewsSubscriptionCo
                 }
             }
         }
+        
+        $this->setFieldPlaceholders();
+
         return '';
     }
 
