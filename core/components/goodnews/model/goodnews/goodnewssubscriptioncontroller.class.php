@@ -133,14 +133,14 @@ abstract class GoodNewsSubscriptionController {
      * Gets the sid param from GET request.
      *
      * @access public
-     * @return void
+     * @return mixed string $sid or false
      */
     public function getSid() {
-        $this->sid = $_GET['sid'];
-        if (empty($this->sid)) {
-            $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] Could not read sid parameter from URL.');
+        if (isset($_GET['sid'])) {
+            $this->sid = $_GET['sid'];
+            return $this->sid;
         }
-        return $this->sid;
+        return false;
     }
 
     /**
@@ -197,6 +197,9 @@ abstract class GoodNewsSubscriptionController {
         $defaultCategories = $this->getProperty('defaultCategories', '');
         $grpCatPlaceholder = $this->getProperty('grpCatPlaceholder', 'grpcatfieldsets');
         $placeholderPrefix = $this->getProperty('placeholderPrefix', '');
+
+        $output = '';
+        $fieldsOutput = '';
         
         // Read available groups and categories from database
         $groups = $this->collectGoodNewsGroups();
