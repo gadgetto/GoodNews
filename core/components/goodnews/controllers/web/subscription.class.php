@@ -110,8 +110,8 @@ class GoodNewsSubscriptionSubscriptionController extends GoodNewsSubscriptionCon
         // (A category cant be selected without its parent group!)
         if (!$groupsOnly) { $this->selectParentGroupsByCategories(); }
      
-        // Username is autom. created/validated from email field
-        if (!$this->generateUsername()) { return ''; }
+        // Username is created automatically
+        $this->generateUsername();
         
         // Password is created automatically
         $this->generatePassword();
@@ -222,39 +222,45 @@ class GoodNewsSubscriptionSubscriptionController extends GoodNewsSubscriptionCon
     }
 
     /**
-     * Generate the username from email field and ensure its not taken.
-     * Also remove an expired/not activated subscription which already has the actual username!
+     * Generate a new unique username based on email address.
      * 
-     * @return string $username || false
+     * @access public
+     * @return string $newusername
      */
     public function generateUsername() {
-    
-        // Username field = email field!
-        $usernameField = $this->getProperty('emailField', 'email');
-        $username = $this->dictionary->get($usernameField);
-        $success = true;
-        
-        // Make sure username isnt taken
-        $alreadyExists = $this->modx->getObject('modUser', array('username' => $username));
-        
-        if ($alreadyExists) {
-            $cachePwd = $alreadyExists->get('cachepwd');
-            if ($alreadyExists->get('active') == 0 && !empty($cachePwd)) {
-                // If inactive and has a cachepwd, probably an expired activation account, 
-                // so let's remove it and let user re-register
-                if (!$alreadyExists->remove()) {
-                    $this->modx->log(modX::LOG_LEVEL_ERROR, '[GoodNews] Could not remove old, inactive user.');
-                    $success = false;
-                }
-            }
+        // Username is generated from userid part of email address
+        $emailField = $this->getProperty('emailField', 'email');
+        $email = $this->dictionary->get($emailField);
+        $parts = explode('@', $email);
+        $usernamepart = $parts[0];
+
+        // Add counter (john.doe_1, martin_2, ...) if username already exists
+        $counter = 0;
+        $newusername = $usernamepart;
+        while ($this->usernameExists($newusername)) {
+            $newusername = $usernamepart.'_'.$counter;
+            $counter++;
         }
-        if ($success) {
-            $this->dictionary->set('username', $username);
-            return $username;
-        } else {
-            // normally shouldnt happen
-            return false;
+        $this->dictionary->set('username', $newusername);
+        return $newusername;
+    }
+
+    /**
+     * Check if a user(name) already exists.
+     * 
+     * @access public
+     * @param string $username
+     * @return boolean
+     */
+    public function usernameExists($username) {
+        
+        $usernameExists = false;
+        
+        $user = $this->modx->getObject('modUser', array('username' => $username));
+		if (is_object($user)) {
+    		$usernameExists = true;
         }
+        return $usernameExists;
     }
 
     /**

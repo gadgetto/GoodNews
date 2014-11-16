@@ -52,29 +52,11 @@
         .main {
             margin: 30px;
         }
-        .main h2 {
+        .main h2 { 
             font-size: 20px;
             font-weight: normal;
             color: #333;
             margin-bottom: 15px;
-        }
-        .errorMsg {
-            font-size: 18px;
-            text-align: center;
-            padding: 8px;
-            margin-bottom: 20px;
-            color: #f2430e;
-            background-color: #f9dfd7;
-            border-radius: 5px;
-        }
-        .successMsg {
-            font-size: 18px;
-            text-align: center;
-            padding: 8px;
-            margin-bottom: 20px;
-            color: #9ec41a;
-            background-color: #e4e8d0;
-            border-radius: 5px;
         }
         .aside { margin: 30px; }
         .aside a {
@@ -93,6 +75,28 @@
         .footer p {
             text-align: center;
             margin: 0;
+        }
+        .errorMsg {
+            display: block;
+            overflow: hidden;
+            font-size: 18px;
+            text-align: center;
+            padding: 8px;
+            margin-bottom: 20px !important;
+            color: #f2430e;
+            background-color: #f9dfd7;
+            border-radius: 5px;
+        }
+        .successMsg {
+            display: block;
+            overflow: hidden;
+            font-size: 18px;
+            text-align: center;
+            padding: 8px;
+            margin-bottom: 20px !important;
+            color: #9ec41a;
+            background-color: #e4e8d0;
+            border-radius: 5px;
         }
         
         /* form styles */

@@ -1,17 +1,18 @@
 [[!GoodNewsUpdateProfile?
     &validate=`
         email:email:required,
+        gongroups:required,
         nospam:blank`
-    &defaultGroups=`1`
+    &groupsOnly=`1`
+    &gongroups.vTextRequired=`Please choose at least one mailing group.`
 ]]
 <!--
     Samples of other available configuration parameters:
     (Please read the documentation for a full list of parameters)
     
-    &groupsOnly=`1`
+    &defaultGroups=`1`
     &includeGroups=`4,6`
     &defaultCategories=`3,36,40,48`
-    &gongroups.vTextRequired=`Please choose at least one mailing group.`
     &goncategories.vTextRequired=`Please choose at least one category of your interest.`
 -->
 
@@ -78,6 +79,11 @@
                 </p>
                 [[!+grpcatfieldsets]]
             </fieldset>
+            `]]
+            [[!+config_error:is=`1`:then=`
+            <p class="errorMsg">
+                Snippet configuration error: Please check your GoodNewsUpdateProfile Snippet configuration!
+            </p>
             `]]
             <p>
                 <button type="submit" role="button" name="goodnews-updateprofile-btn" value="Update" class="button green">Update profile</button>

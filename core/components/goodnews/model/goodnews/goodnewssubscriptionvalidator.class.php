@@ -355,7 +355,7 @@ class GoodNewsSubscriptionValidator {
         
         return $success ? true : $this->_getErrorMessage($key, 'vTextRequired', 'goodnews.validator_field_required', array(
             'field' => $key,
-            'value' => $value,
+            'value' => is_array($value) ? implode(',',$value) : $value,
         ));
     }
 
