@@ -2,6 +2,7 @@ Changelog for GoodNews
 
 GoodNews 1.3.3-pl (2014-11-16)
 --------------------------------------------------
+- fixed an issue with checkboxes causing text-parsing problems when using the "required" validator
 - [#5] Render warning message to GoodNews forms if Snippets are mis-configured
 - fixed a few PHP warnings in goodnewssubscriptioncontroller.class.php
 - when updating the subscription profile: update form fields with new values when reloadOnSuccess = false
