@@ -72,6 +72,11 @@
                     [[!+grpcatfieldsets]]
                 </fieldset>
             `]]
+            [[!+config_error:is=`1`:then=`
+            <p class="errorMsg">
+                Snippet configuration error: Please check your GoodNewsSubscription Snippet configuration!
+            </p>
+            `]]
             <p>
                 <button type="submit" role="button" name="goodnews-subscription-btn" value="Subscribe" class="button green">Subscribe now</button>
             </p>

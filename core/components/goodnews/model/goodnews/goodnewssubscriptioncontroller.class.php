@@ -203,6 +203,10 @@ abstract class GoodNewsSubscriptionController {
         
         // Read available groups and categories from database
         $groups = $this->collectGoodNewsGroups();
+        if (!$groups) {
+            $this->modx->setPlaceholder($placeholderPrefix.'config_error', '1');
+            return false;
+        }
         if (!(bool)$groupsOnly) {
             $categories = $this->collectGoodNewsCategories();
         }
@@ -288,7 +292,7 @@ abstract class GoodNewsSubscriptionController {
      * Read GoodNewsGroups from database.
      * 
      * @access public
-     * @return goodnewsGroups object or null
+     * @return collection of goodnewsGroup objects or null
      */
     public function collectGoodNewsGroups() {
         // Get default properties.
@@ -318,7 +322,7 @@ abstract class GoodNewsSubscriptionController {
      * Read GoodNewsCategories from database.
      * 
      * @access public
-     * @return goodnewsCategories object or null
+     * @return collection of goodnewsCategory objects or null
      */
     public function collectGoodNewsCategories() {
         // Get default properties.
