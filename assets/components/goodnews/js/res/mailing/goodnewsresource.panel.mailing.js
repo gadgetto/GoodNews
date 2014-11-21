@@ -167,7 +167,7 @@ Ext.extend(GoodNewsResource.panel.Mailing,MODx.panel.Resource,{
                     ,baseParams: {
                         action: 'mgr/collection/getResourceList'
                         ,parentIds: config.record.collection1Parents
-                        ,collectionIds: config.record.collection1
+                        ,collectionIds: config.record.collection1 || ''
                         ,collectionInternalName: 'collection1'
                     }
                 }]
@@ -190,7 +190,7 @@ Ext.extend(GoodNewsResource.panel.Mailing,MODx.panel.Resource,{
                     ,baseParams: {
                         action: 'mgr/collection/getResourceList'
                         ,parentIds: config.record.collection2Parents
-                        ,collectionIds: config.record.collection2
+                        ,collectionIds: config.record.collection2 || ''
                         ,collectionInternalName: 'collection2'
                     }
                 }]
@@ -213,7 +213,7 @@ Ext.extend(GoodNewsResource.panel.Mailing,MODx.panel.Resource,{
                     ,baseParams: {
                         action: 'mgr/collection/getResourceList'
                         ,parentIds: config.record.collection3Parents
-                        ,collectionIds: config.record.collection3
+                        ,collectionIds: config.record.collection3 || ''
                         ,collectionInternalName: 'collection3'
                     }
                 }]
