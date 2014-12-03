@@ -45,7 +45,7 @@ $modx->getService('error', 'error.modError', '', '');
 
 // If set - connector script may only be continued if the correct security key is provided by cron (@param sid)
 $securityKey = $modx->getOption('goodnews.cron_security_key', null, '');
-if ($_GET['sid'] !== $securityKey) {
+if ($_GET['sid'] != $securityKey) {
     exit('[GoodNews] cron.php - Missing or wrong authentification! Sorry Dude!');
 }
 

@@ -58,15 +58,22 @@ class ResourcesGetListProcessor extends modObjectGetListProcessor {
             'parent:IN' => $parentIds,
             'published' => 1,
         ));
-
-        // fixed sorting needed for grouping!
-        $c->sortBy('parent', 'ASC');
         
-        // seems that $defaultSortField and $defaultSortDirection doesn't work when using 
-        // a grouped grid, so we create our own default sorting:
-        $sort = $this->getProperty('sort', 'publishedon');
-        $dir  = $this->getProperty('dir', 'DESC');
-        $c->sortby($sort, $dir);
+        $parentfilter = $this->getProperty('parentfilter', '');
+        if (!empty($parentfilter)) {
+            if ($parentfilter != 'all') {
+                $c->where(array('parent' => $parentfilter));
+            }
+        }
+        
+        if (!empty($groupfilter)) {
+            $c->leftJoin('GoodNewsGroupMember', 'GroupMember', 'modUser.id = GroupMember.member_id');
+            if ($groupfilter == 'nogroup') {
+                $c->where(array('GroupMember.goodnewsgroup_id' => NULL));
+            } else {
+                $c->where(array('GroupMember.goodnewsgroup_id' => $groupfilter));
+            }
+        }
 
         return $c;
     }

@@ -900,6 +900,7 @@ class GoodNewsMailing {
     /**
      * Convert HTML into HTML with inline styles.
      * (https://github.com/tijsverkoyen/CssToInlineStyles)
+     * Requires PHP 5.3 (or later)!
      *
      * @param string $html HTML content
      * @return string $html HTML content with inlined CSS
