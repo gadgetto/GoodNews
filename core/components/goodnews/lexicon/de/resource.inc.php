@@ -81,6 +81,8 @@ $_lang['goodnews.mailing_rc_container']                    = 'Container';
 $_lang['goodnews.mailing_rc_resource']                     = 'Resource';
 $_lang['goodnews.mailing_rc_resources']                    = 'Resources';
 $_lang['goodnews.mailing_rc_resources_none']               = 'Keine Resource Dokumente';
+$_lang['goodnews.mailing_rc_parent_filter']                = 'Filter nach Container';
+$_lang['goodnews.mailing_rc_resources_all']                = 'Alle Resource Dokumente';
 $_lang['goodnews.mailing_rc_search_filter']                = 'Suchfilter...';
 $_lang['goodnews.mailing_rc_filter_clear']                 = 'Zurücksetzen';
 

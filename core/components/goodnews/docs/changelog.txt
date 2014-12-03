@@ -1,7 +1,10 @@
 Changelog for GoodNews
 
-GoodNews 1.3.4-pl (2014-11-24)
+GoodNews 1.3.4-pl (2014-12-03)
 --------------------------------------------------
+- fixed a problem where Resource Collections aren't restored correctly from database
+- added container filter dropdown in Resource Collections grid (better user experience)
+- removed grouping by container in Resource Collections grid
 - added PHP 5.3 (or later) requirement to readme.txt
 - again fixed another small bug in how cron security keys are checked :)
 - fixed a problem where Resource Collections are empty on first load (no Collections array available in mailing_meta)

@@ -9,24 +9,40 @@
 GoodNewsResource.grid.CollectResources = function(config) {
     config = config || {};
     
+    this.key = config.baseParams.collectionInternalName;
+    this.selectedRecords = [];
+    this.selectedRecords[this.key] = [];
+    this.selectionRestoreFinished = false;
+    
+    // Initially fill selectedRecords array with restored ids from database
+    // (converted to integer as the store holds its record ids as integers!)
+    var tmpArray = config.baseParams.collectionIds.split(',');
+    var len = tmpArray.length;
+    for (var i=0; i<len; ++i) {
+        var id = parseInt(tmpArray[i],10);
+        this.rememberRow(id);
+    }
+    
     this.sm = new Ext.grid.CheckboxSelectionModel({
         listeners: {
             'rowselect': function(sm,rowIndex,record) {
-                this.rememberRow(record);
+                this.rememberRow(record.id);
             },scope: this
             ,'rowdeselect': function(sm,rowIndex,record) {
-                this.forgetRow(record);
+                this.forgetRow(record.id);
             },scope: this
         }
     });
+        
     this.exp = new Ext.grid.RowExpander({
         tpl : new Ext.Template(
             '<p>{preview}</p>'
         )
     });
-    
+
 	Ext.applyIf(config,{
 		title: _('resources_active')
+		,id: 'goodnewsresource-'+config.baseParams.collectionInternalName+'-grid'
         ,url: GoodNewsResource.connector_url
 		,fields: [
 		    'id'
@@ -37,10 +53,6 @@ GoodNewsResource.grid.CollectResources = function(config) {
 		    ,'parent'
         ]
         ,cls: 'main-wrapper'
-        ,grouping: true
-        ,groupBy: 'parent'
-        ,singleText: _('goodnews.mailing_rc_resource')
-        ,pluralText: _('goodnews.mailing_rc_resources')
         ,remoteSort: true
         ,sortBy: 'publishedon' // default sort field of grouped grid (this is not the grouping field!)
         ,sortDir: 'DESC'       // (the grouping field is pre-sorted in getlist processor)
@@ -76,9 +88,31 @@ GoodNewsResource.grid.CollectResources = function(config) {
         },{
             header: _('goodnews.mailing_rc_container')
             ,dataIndex: 'parent'
-            ,hidden: true
             ,width: 120
             ,sortable: true
+        }]
+        ,tbar:['->',{
+            xtype: 'modx-combo'
+            ,id: 'goodnewsresource-'+config.baseParams.collectionInternalName+'-parent-filter'
+            ,emptyText: _('goodnews.mailing_rc_parent_filter')
+            ,width: 300
+            ,listWidth: 300
+            ,displayField: 'container'
+            ,valueField: 'id'
+            ,value: 'all'
+            ,store: new Ext.data.JsonStore({
+                url: GoodNewsResource.connector_url
+                ,baseParams: {
+                    action: 'mgr/collection/getParentList'
+                    ,addAllOption: true
+                    ,parentIds: config.baseParams.parentIds
+                }
+                ,fields: ['id','container']
+                ,root: 'results'
+            })
+            ,listeners: {
+                'select': {fn: this.filterByParent, scope: this}
+            }
         }]
         ,listeners: {
             // little workaround as we cant differentiate if store is loaded for the first time or refreshed
@@ -86,45 +120,42 @@ GoodNewsResource.grid.CollectResources = function(config) {
         }
 	});
 	GoodNewsResource.grid.CollectResources.superclass.constructor.call(this,config);
-    this.store.on('load',this.restoreSelection,this);
-    this.getView().on('refresh',this.refreshSelection,this);
+    this.store.on('load',this.refreshSelection,this);
 };
 Ext.extend(GoodNewsResource.grid.CollectResources,MODx.grid.Grid,{
-    selectionRestoreFinished: false
-    ,selectedRecords: []
-    ,rememberRow: function(record) {
-        if(this.selectedRecords.indexOf(record.id) == -1){
-            this.selectedRecords.push(record.id);
+    rememberRow: function(resourceid) {
+        if (this.selectedRecords[this.key].indexOf(resourceid) == -1){
+            this.selectedRecords[this.key].push(resourceid);
         }
     }
-    ,forgetRow: function(record) {
-        this.selectedRecords.remove(record.id);
+    ,forgetRow: function(resourceid) {
+        this.selectedRecords[this.key].remove(resourceid);
     }
     ,refreshSelection: function() {
-        var rowsToSelect = [];
-        Ext.each(this.selectedRecords,function(item){
+        var rowsToSelect = [];        
+        Ext.each(this.selectedRecords[this.key],function(item){
             rowsToSelect.push(this.store.indexOfId(item));
-        },this);
-        this.getSelectionModel().selectRows(rowsToSelect);
-    }
-    ,getSelectedAsList: function() {
-        return this.selectedRecords.join();
-    }
-    ,restoreSelection: function() {
-        // only execute on initial store load!
+        },this);       
+        Ext.getCmp(this.config.id).getSelectionModel().selectRows(rowsToSelect);
+        
+        // workaround:
+        // @todo: find fix for: checkboxes are only checked in first grid
         if (!this.selectionRestoreFinished) {
-            var collection = this.config.baseParams.collectionIds.split(',');
-            var rowIndex;
-            for (var i=0; i<collection.length; ++i) {
-                rowIndex = this.store.find('id',collection[i]);
-                this.getSelectionModel().selectRow(rowIndex,true);
-            }
             this.refresh(); 
             this.selectionRestoreFinished = true;
         }
     }
+    ,getSelectedAsList: function(){
+        return this.selectedRecords[this.key].join();
+    }
     ,makeDirty: function() {
         Ext.getCmp('goodnewsresource-'+this.config.baseParams.collectionInternalName).fireEvent('change');
+    }
+    ,filterByParent: function(combo) {
+        var s = this.getStore();
+        s.baseParams.parentfilter = combo.getValue();
+        this.getBottomToolbar().changePage(1);
+        this.refresh();
     }
 });
 Ext.reg('goodnewsresource-grid-collect-resources',GoodNewsResource.grid.CollectResources);
