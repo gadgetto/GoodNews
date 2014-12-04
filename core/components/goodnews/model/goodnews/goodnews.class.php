@@ -28,6 +28,8 @@ class GoodNews {
 
     const VERSION = '1.3.4';
     const RELEASE = 'pl';
+    
+    const MIN_PHP_VERSION = '5.3.0';
 
     /** @var modX A reference to the modX object */
     public $modx = null;
@@ -40,6 +42,15 @@ class GoodNews {
     
     /** @var boolean $imapExtension Is the php IMAP extension available? (required for automatic bounce handling) */
     public $imapExtension = false;
+    
+    /** @var string $actualPhpVersion The current PHP version */
+    public $actualPhpVersion = null;
+    
+    /** @var string $requiredPhpVersion The required PHP version */
+    public $requiredPhpVersion = null;
+    
+    /** @var boolean $phpVersionOK Is the php version sufficient? */
+    public $phpVersionOK = false;
     
     /** @var boolean $isGoodNewsAdmin Is the current user a GoodNews admin? */
     public $isGoodNewsAdmin = false;
@@ -100,6 +111,9 @@ class GoodNews {
             $this->debug              = $this->modx->getOption('goodnews.debug', null, false) ? true : false;
             $this->isMultiProcessing  = $this->_isMultiProcessing();
             $this->imapExtension      = $this->_imapExtension();
+            $this->actualPhpVersion   = phpversion();
+            $this->requiredPhpVersion = self::MIN_PHP_VERSION;
+            $this->phpVersionOK       = version_compare($this->actualPhpVersion, $this->requiredPhpVersion, '>=') ? true : false;
             $this->isGoodNewsAdmin    = $this->_isGoodNewsAdmin();
             $this->assignedContainers = $this->_assignedContainers();
             
@@ -143,6 +157,9 @@ class GoodNews {
                 'mailingTemplate'    => $mailingTemplate,
                 'isMultiProcessing'  => $this->isMultiProcessing,
                 'imapExtension'      => $this->imapExtension,
+                'actualPhpVersion'   => $this->actualPhpVersion,   
+                'requiredPhpVersion' => $this->requiredPhpVersion,   
+                'phpVersionOK'       => $this->phpVersionOK,   
                 'isGoodNewsAdmin'    => $this->isGoodNewsAdmin,
                 'siteStatus'         => $this->siteStatus,
                 'cronTriggerStatus'  => $this->cronTriggerStatus,
@@ -218,7 +235,7 @@ class GoodNews {
     private function _imapExtension() {
         return function_exists('imap_open');
     }
-
+    
     /**
      * Checks if the current logged in user has permissions to administrate GoodNews system
      *

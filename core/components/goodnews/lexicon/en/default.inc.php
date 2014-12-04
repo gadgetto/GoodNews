@@ -37,6 +37,7 @@ $_lang['goodnews.system_check_title']                               = 'Title';
 $_lang['goodnews.system_check_value']                               = 'Value (Status)';
 $_lang['goodnews.multi_processing_for_sending']                     = 'Multi processing for sending mails available';
 $_lang['goodnews.imap_extension_available']                         = 'IMAP extension available (Bounce Handling)';
+$_lang['goodnews.php_version_required']                             = 'PHP version required: ';
 $_lang['goodnews.site_status']                                      = 'Site is published to the web';
 $_lang['goodnews.debug_mode']                                       = 'GoodNews debug-mode';
 $_lang['goodnews.activated']                                        = 'Activated';
