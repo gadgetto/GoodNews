@@ -1,5 +1,8 @@
 Changelog for GoodNews
 
+- fixed a bug in resource rendering (this was a tricky one!)
+
+
 GoodNews 1.3.4-pl (2014-12-03)
 --------------------------------------------------
 - fixed a problem where Resource Collections aren't restored correctly from database
