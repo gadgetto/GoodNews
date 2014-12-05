@@ -1,5 +1,6 @@
 Changelog for GoodNews
 
+- fixed a problem in System settings when Admin or Editor group names have leading or trailing spaces
 - fixed a bug with slider value displays in GoodNews - System settings
 - [#30] added indicator in GoodNews - System Checks for requirement of PHP versions > 5.3.0
 - fixed a bug in resource rendering (this was a tricky one!)

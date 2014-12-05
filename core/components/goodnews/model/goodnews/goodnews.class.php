@@ -249,7 +249,8 @@ class GoodNews {
             $gonadmin = false;
         }
         $groups = explode(',', $this->modx->getOption('goodnews.admin_groups', null, 'Administrator'));
-        
+        $groups = array_map('trim', $groups);
+
         // Check if group member
         if ($this->modx->user->isMember($groups)) {
             $gonadmin = true;
@@ -314,7 +315,8 @@ class GoodNews {
         $goneditor = false;
         
         // read GoodNews editor groups from container properties
-        $groups = explode(',', $gonrc->getProperty('editorGroups', 'goodnews', 'Administrator'));   
+        $groups = explode(',', $gonrc->getProperty('editorGroups', 'goodnews', 'Administrator'));
+        $groups = array_map('trim', $groups);
              
         // Check if group member
         if ($this->modx->user->isMember($groups)) {
