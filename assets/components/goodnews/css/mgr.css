@@ -64,6 +64,15 @@
 .x-grid3-row-selected .gon-newsletter-title {
     color: #73726b;
 }
+.gon-newsletter-title a {
+    color: #081922;
+    text-decoration: none
+}
+.gon-newsletter-title a:focus,
+.gon-newsletter-title a:hover {
+    color: #297aa7;
+    text-decoration: underline
+}
 
 /* Expanded rows in grids */
 .x-grid3-row-body {

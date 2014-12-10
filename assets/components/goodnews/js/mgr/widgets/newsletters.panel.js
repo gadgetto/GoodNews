@@ -97,9 +97,10 @@ GoodNews.grid.Newsletters = function(config) {
         ,enableCaching: false
     });
 
+    var editPage = MODx.action ? MODx.action['resource/update'] : 'resource/update';
     this.tplPageTitle = new Ext.XTemplate(
         '<tpl for=".">'
-            +'<h3 class="gon-newsletter-title"><a href="?a=resource/update&id={id}" title="'+_('goodnews.newsletter_update')+'" class="x-grid-link">{pagetitle}</a></h3>'
+            +'<h3 class="gon-newsletter-title"><a href="?a='+editPage+'&id={id}" title="'+_('goodnews.newsletter_update')+'" class="x-grid-link">{pagetitle}</a></h3>'
         +'</tpl>'
     ,{compiled: true});
 
