@@ -97,6 +97,12 @@ GoodNews.grid.Newsletters = function(config) {
         ,enableCaching: false
     });
 
+    this.tplPageTitle = new Ext.XTemplate(
+        '<tpl for=".">'
+            +'<h3 class="gon-newsletter-title"><a href="?a=resource/update&id={id}" title="'+_('goodnews.newsletter_update')+'" class="x-grid-link">{pagetitle}</a></h3>'
+        +'</tpl>'
+    ,{compiled: true});
+
     Ext.applyIf(config,{
         id: 'goodnews-grid-newsletters'
         ,url: GoodNews.config.connectorUrl
@@ -646,11 +652,6 @@ Ext.extend(GoodNews.grid.Newsletters,MODx.grid.Grid,{
         });
     }
 	,_renderPageTitle:function(v,md,rec) {
-        this.tplPageTitle = new Ext.XTemplate(
-            '<tpl for=".">'
-                +'<h3 class="gon-newsletter-title">{pagetitle}</h3>'
-            +'</tpl>'
-		,{compiled:true});
 		return this.tplPageTitle.apply(rec.data);
 	}
     /*

@@ -1,6 +1,7 @@
 Changelog for GoodNews
 
-- Added a switch above Newsletters grid to quickly activate/deactivate send-processes
+- added ability to click on newsletter title to edit the newsletter
+- added a switch above Newsletters grid to quickly activate/deactivate send-processes
 - [#32] Add back an indicator for displaying if sending processes are activated/deactivated in settings
 - fixed a problem in System settings when Admin or Editor group names have leading or trailing spaces
 - fixed a bug with slider value displays in GoodNews - System settings
