@@ -1,5 +1,7 @@
 Changelog for GoodNews
 
+GoodNews 1.3.5-pl (2014-12-10)
+--------------------------------------------------
 - added ability to click on newsletter title to edit the newsletter
 - added a switch above Newsletters grid to quickly activate/deactivate send-processes
 - [#32] Add back an indicator for displaying if sending processes are activated/deactivated in settings
