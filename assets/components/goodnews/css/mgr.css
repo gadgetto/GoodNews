@@ -37,9 +37,14 @@
     color: #777;
 }
 
-/* The auto-refresh button (ExtJS Cycle button) */
+/* The auto-refresh button: status on (ExtJS Cycle button) */
 .gon-autorefresh-on button {
-    color: #6cb24a;
+    color: green;
+}
+
+/* The send-process button: status off (ExtJS Cycle button) */
+.gon-sendprocess-off button {
+    color: red;
 }
 
 /* The groups / categories tree */
@@ -59,18 +64,14 @@
 .x-grid3-row-selected .gon-newsletter-title {
     color: #73726b;
 }
-
-/* Status display above newsletters grid */
-.gon-status {
-    background: #fff;
-    padding: 15px 15px 0 15px;
-    text-align: right;
+.gon-newsletter-title a {
+    color: #081922;
+    text-decoration: none
 }
-.gon-crontrigger-enabled {
-    color: green;
-}
-.gon-crontrigger-disabled {
-    color: red;
+.gon-newsletter-title a:focus,
+.gon-newsletter-title a:hover {
+    color: #297aa7;
+    text-decoration: underline
 }
 
 /* Expanded rows in grids */

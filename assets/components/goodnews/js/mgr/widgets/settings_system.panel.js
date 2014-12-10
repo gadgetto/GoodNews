@@ -40,8 +40,8 @@ GoodNews.panel.SystemSettings = function(config) {
                         ,maxValue: 100
                         ,increment: 5
                         ,listeners: {
-                             'render': {fn: this.changeBulkSizeDisplay, scope: this}
-                            ,'change': {fn: this.changeBulkSizeDisplay, scope: this}
+                             'afterrender': {fn: this.updateBulkSizeDisplay, scope: this}
+                            ,'change': {fn: this.updateBulkSizeDisplay, scope: this}
                             ,scope: this
                         }
                     },{
@@ -83,7 +83,8 @@ GoodNews.panel.SystemSettings = function(config) {
                         ,disabled: GoodNews.config.isMultiProcessing ? false : true
                         ,increment: 1
                         ,listeners: {
-                            'change': {fn: this.changeWorkerProcessDisplay, scope: this}
+                             'afterrender': {fn: this.updateWorkerProcessDisplay, scope: this}
+                            ,'change': {fn: this.updateWorkerProcessDisplay, scope: this}
                             ,scope: this
                         }
                     },{
@@ -132,21 +133,21 @@ GoodNews.panel.SystemSettings = function(config) {
         }]    
     });
     GoodNews.panel.SystemSettings.superclass.constructor.call(this,config);
+    this.workerProcessLimitDisplay = Ext.getCmp('worker_process_limit_display');
+    this.mailingBulkSizeDisplay = Ext.getCmp('mailing_bulk_size_display');
 };
 Ext.extend(GoodNews.panel.SystemSettings,Ext.Panel,{
-    changeWorkerProcessDisplay: function() {
-        if (Ext.getCmp('worker_process_limit').getValue() <= 1) {
-            Ext.getCmp('worker_process_limit_display').addClass('gon-disabled');
-            Ext.getCmp('worker_process_limit_display').setValue(_('goodnews.settings_multiprocessing_disabled'));
-            console.log('disabled');
+    updateWorkerProcessDisplay: function() {
+        if (Ext.getCmp('worker_process_limit').getValue() == 1) {
+            this.workerProcessLimitDisplay.setValue(_('goodnews.settings_multiprocessing_disabled'));
+            //this.workerProcessLimitDisplay.addClass('gon-disabled');
         } else {
-            Ext.getCmp('worker_process_limit_display').removeClass('gon-disabled');
-            Ext.getCmp('worker_process_limit_display').setValue(Ext.getCmp('worker_process_limit').getValue()+_('goodnews.settings_process_max'));
-            console.log('enabled');
+            this.workerProcessLimitDisplay.setValue(Ext.getCmp('worker_process_limit').getValue()+_('goodnews.settings_process_max'));
+            //this.workerProcessLimitDisplay.removeClass('gon-disabled');
         }
-    }    
-    ,changeBulkSizeDisplay: function() {
-        Ext.getCmp('mailing_bulk_size_display').setValue(Ext.getCmp('mailing_bulk_size').getValue()+_('goodnews.settings_mails_per_bulk'));
+    }
+    ,updateBulkSizeDisplay: function() {
+        this.mailingBulkSizeDisplay.setValue(Ext.getCmp('mailing_bulk_size').getValue()+_('goodnews.settings_mails_per_bulk'));
     }    
 });
 Ext.reg('goodnews-panel-settings-system', GoodNews.panel.SystemSettings);

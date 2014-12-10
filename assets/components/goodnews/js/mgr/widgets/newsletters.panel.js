@@ -9,12 +9,6 @@
 GoodNews.panel.Newsletters = function(config) {
     config = config || {};
 
-    if (GoodNews.config.cronTriggerStatus == true) {
-        var cronStatusText = '<span class="gon-crontrigger-enabled">'+_('goodnews.newsletter_sending_process_enabled')+'</span>';
-    } else {
-        var cronStatusText = '<span class="gon-crontrigger-disabled">'+_('goodnews.newsletter_sending_process_disabled')+'</span>';
-    }
-    
     Ext.applyIf(config,{
         id: 'goodnews-panel-newsletters'
         ,title: _('goodnews.newsletters')
@@ -102,6 +96,13 @@ GoodNews.grid.Newsletters = function(config) {
         tpl: new Ext.Template(nlInfos)
         ,enableCaching: false
     });
+
+    var editPage = MODx.action ? MODx.action['resource/update'] : 'resource/update';
+    this.tplPageTitle = new Ext.XTemplate(
+        '<tpl for=".">'
+            +'<h3 class="gon-newsletter-title"><a href="?a='+editPage+'&id={id}" title="'+_('goodnews.newsletter_update')+'" class="x-grid-link">{pagetitle}</a></h3>'
+        +'</tpl>'
+    ,{compiled: true});
 
     Ext.applyIf(config,{
         id: 'goodnews-grid-newsletters'
@@ -210,6 +211,25 @@ GoodNews.grid.Newsletters = function(config) {
             ,scope: this
             ,cls: 'primary-button'
         },'->',{
+            xtype: 'cycle'
+            ,id: 'sendprocess'
+            ,disabled: GoodNews.config.isGoodNewsAdmin ? false : true
+            ,showText: true
+            ,cls: GoodNews.config.cronTriggerStatus ? '' : 'gon-sendprocess-off'
+            ,prependText: _('goodnews.newsletter_send_process')
+            ,items: [{
+                text: _('goodnews.off')
+                ,itemId: 'off'
+                ,checked: GoodNews.config.cronTriggerStatus ? false : true
+            },{
+                text: _('goodnews.on')
+                ,itemId: 'on'
+                ,checked: GoodNews.config.cronTriggerStatus ? true : false
+            }]
+            ,changeHandler:function(btn,item){
+                this.toggleSendProcess(btn,item.itemId);
+            }
+        },'-',{
             xtype: 'cycle'
             ,id: 'autorefresh'
             ,showText: true
@@ -424,6 +444,48 @@ Ext.extend(GoodNews.grid.Newsletters,MODx.grid.Grid,{
             btn.removeClass('gon-autorefresh-on');
         }  
     }
+    ,toggleSendProcess: function(btn,state) {
+        MODx.Ajax.request({
+            url: GoodNews.config.connectorUrl
+            ,params: {
+                action: 'mgr/send/switchSendProcess'
+                ,state: state
+            }
+            ,method: 'post'
+            ,scope: this
+            ,listeners: {
+                'success':{fn:function(r) {
+                    if (state == 'off') {
+                        btn.addClass('gon-sendprocess-off');
+                    } else {
+                        btn.removeClass('gon-sendprocess-off');
+                    }
+                    MODx.msg.status({
+                        title: _('success')
+                        ,message: r.message
+                        ,delay: 3
+                    })
+                },scope:this}
+                ,'failure':{fn:function(r) {
+                    // Restore state of cycle button to previous value
+                    var m = btn.menu;
+                    var nextIdx, checkItem;
+                    for (var i = 1; i < btn.itemCount; i++) {
+                        nextIdx = (btn.activeItem.itemIndex + i) % btn.itemCount;
+                        // Check the potential item without firing event
+                        checkItem = m.items.itemAt(nextIdx);
+                        btn.setActiveItem(checkItem,true);
+                        break;
+                    }                    
+                    MODx.msg.status({
+                        title: _('failure')
+                        ,message: r.message
+                        ,delay: 3
+                    })
+                },scope:this}
+            }
+        });
+    }
     ,clearFilter: function() {
     	this.getStore().baseParams = {
             action: 'mgr/mailing/getList'
@@ -591,11 +653,6 @@ Ext.extend(GoodNews.grid.Newsletters,MODx.grid.Grid,{
         });
     }
 	,_renderPageTitle:function(v,md,rec) {
-        this.tplPageTitle = new Ext.XTemplate(
-            '<tpl for=".">'
-                +'<h3 class="gon-newsletter-title">{pagetitle}</h3>'
-            +'</tpl>'
-		,{compiled:true});
 		return this.tplPageTitle.apply(rec.data);
 	}
     /*

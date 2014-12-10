@@ -165,7 +165,7 @@ class GoodNewsMailing {
         $currentResourceIdentifier = $this->modx->resourceIdentifier;
         $currentElementCache       = $this->modx->elementCache;
         
-        // Changes are made to prepare to process the Resource
+        // Prepare to process the Resource
         $this->modx->resource           = $this->mailing;
         $this->modx->resourceIdentifier = $this->mailing->get('id');
         $this->modx->elementCache       = array();
@@ -177,11 +177,6 @@ class GoodNewsMailing {
         // Process and return the cacheable content of the Resource
         $html = $this->modx->resource->process();
 
-        // Restore the original values
-        $this->modx->elementCache       = $currentElementCache;
-        $this->modx->resourceIdentifier = $currentResourceIdentifier;
-        $this->modx->resource           = $currentResource;
-         
         // Determine how many passes the parser should take at a maximum
         $maxIterations = intval($this->modx->getOption('parser_max_iterations', null, 10));
          
@@ -202,7 +197,7 @@ class GoodNewsMailing {
          
         // Process the non-cacheable content of the Resource, this time removing the unprocessed tags
         $this->modx->parser->processElementTags('', $html, true, true, '[[', ']]', array(), $maxIterations);
-         
+
         // Set back GoodNews placeholders
         $search = array();
         $replace = array();
@@ -211,6 +206,11 @@ class GoodNewsMailing {
             $replace[] = '[[+'.$phs;
         }
         $html = str_replace($search, $replace, $html);
+
+        // Restore original values
+        $this->modx->elementCache       = $currentElementCache;
+        $this->modx->resourceIdentifier = $currentResourceIdentifier;
+        $this->modx->resource           = $currentResource;
 
         // Process embeded CSS
         $html = $this->_inlineCSS($html);
