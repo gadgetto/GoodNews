@@ -68,7 +68,7 @@ if (!is_array($collections)) {
 $collection = $collections[$collectionId];
 if (empty($collection)) {
     $modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] ContentCollection snippet - '.$collectionId.' is empty.');
-    return $collectionId.' is empty.';
+    return '';
 }
 
 // Query db
