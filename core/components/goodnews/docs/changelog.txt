@@ -1,5 +1,6 @@
 Changelog for GoodNews
 
+- fixed a problem in ContentCollection snippet when using tplWrapper
 - removed ContentCollectionSnippet output if collection is empty
 
 
