@@ -61,6 +61,7 @@ class GoodNewsSettingsManagerController extends GoodNewsManagerController {
             GoodNews.config = '.$this->modx->toJSON($this->goodnews->config).';
             GoodNews.request = '.$this->modx->toJSON($_GET).';
             MODx.add("goodnews-panel-settings");
+            Ext.getCmp("modx-layout").hideLeftbar(true,false);
         });
         </script>');
     }

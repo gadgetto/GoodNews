@@ -1,5 +1,6 @@
 Changelog for GoodNews
 
+- hide the MODX elements tree when GoodNews loads
 - [#33] Integrate functionality to auto-detect images and convert physical image dimensions based on src or style attributes
 - fixed a problem in ContentCollection snippet when using tplWrapper
 - removed ContentCollectionSnippet output if collection is empty
