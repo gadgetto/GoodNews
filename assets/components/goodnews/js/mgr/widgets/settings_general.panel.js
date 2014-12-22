@@ -46,6 +46,18 @@ GoodNews.panel.GeneralSettings = function(config) {
                 ,cls: 'desc-under'
             },{
                 xtype: 'xcheckbox'
+                ,name: 'auto_fix_imagesizes'
+                ,id: 'auto_fix_imagesizes'
+                ,hideLabel: true
+                ,boxLabel: _('goodnews.settings_auto_fix_imagesizes')
+                ,description: MODx.expandHelp ? '' : _('goodnews.settings_auto_fix_imagesizes_desc')
+            },{
+                xtype: MODx.expandHelp ? 'label' : 'hidden'
+                ,forId: 'auto_fix_imagesizes'
+                ,html: _('goodnews.settings_auto_fix_imagesizes_desc')
+                ,cls: 'desc-under'
+            },{
+                xtype: 'xcheckbox'
                 ,name: 'auto_cleanup_subscriptions'
                 ,id: 'auto_cleanup_subscriptions'
                 ,hideLabel: true
