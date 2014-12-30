@@ -48,6 +48,7 @@ GoodNews.panel.GeneralSettings = function(config) {
                 xtype: 'xcheckbox'
                 ,name: 'auto_fix_imagesizes'
                 ,id: 'auto_fix_imagesizes'
+                ,disabled: GoodNews.config.pThumbAddOn ? false : true
                 ,hideLabel: true
                 ,boxLabel: _('goodnews.settings_auto_fix_imagesizes')
                 ,description: MODx.expandHelp ? '' : _('goodnews.settings_auto_fix_imagesizes_desc')
