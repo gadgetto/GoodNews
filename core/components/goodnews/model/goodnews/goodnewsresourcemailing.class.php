@@ -264,7 +264,7 @@ class GoodNewsResourceMailingCreateProcessor extends modResourceCreateProcessor 
 class GoodNewsResourceMailingUpdateProcessor extends modResourceUpdateProcessor {
 
     public $classKey = 'GoodNewsResourceMailing';
-    public $languageTopics = array('resource','goodnews:resource');
+    public $languageTopics = array('resource','goodnews:default');
 
     /** @var GoodNewsResourceMailing $object */
     public $object;

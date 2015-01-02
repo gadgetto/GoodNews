@@ -124,7 +124,7 @@ $_lang['goodnews.newsletter_grid_autorefresh']                      = 'Auto-Refr
 $_lang['goodnews.newsletter_send_log_view']                         = 'Versand Protokoll öffnen';
 $_lang['goodnews.newsletter_send_log_window_title']                 = 'Versand Protokoll für Mailing ID: ';
 $_lang['goodnews.newsletter_send_log_close_button']                 = 'Schließen';
-$_lang['goodnews.newsletter_err_save_already_sending']              = 'Änderungen können nicht gespeichert werden, da der Mailversand bereits gestartet wurde.';
+$_lang['goodnews.newsletter_err_save_already_sending']              = 'Das Mailing kann nicht mehr geändert/bearbeitet werden nachdem der Mailversand gestartet wurde.';
 
 $_lang['goodnews.groups']                                           = 'Gruppen';
 $_lang['goodnews.groups_management_desc']                           = 'Verwalten Sie Ihre Abonnenten-Gruppen hier. Wird eine GoodNews Gruppe mit einer MODx Benutzergruppe verkn&uuml;pft (<span class="gon-modx-group-assigned">blau markiert</span>), erm&ouml;glicht dies den Versand eines Mailings an s&auml;mtliche Mitglieder dieser MODx Benutzergruppe. Bei Verkn&uuml;pfung mit einer MODx Benutzergruppe, kann diese GoodNews Gruppe <strong>nicht</strong> f&uuml;r die Verwaltung von Abonnenten verwendet werden.';

@@ -124,7 +124,7 @@ $_lang['goodnews.newsletter_grid_autorefresh']                      = 'Auto-Refr
 $_lang['goodnews.newsletter_send_log_view']                         = 'View Send Log';
 $_lang['goodnews.newsletter_send_log_window_title']                 = 'Send Log for Mailing ID: ';
 $_lang['goodnews.newsletter_send_log_close_button']                 = 'Close';
-$_lang['goodnews.newsletter_err_save_already_sending']              = 'Changes can not be saved, because sending of this mailing has already been startet.';
+$_lang['goodnews.newsletter_err_save_already_sending']              = 'The mailing can not be changed/edited any longer after sending has been started.';
 
 $_lang['goodnews.groups']                                           = 'Groups';
 $_lang['goodnews.groups_management_desc']                           = 'Manage your subscriber groups here. Assigning a GoodNews group to a MODx user-group (<span class="gon-modx-group-assigned">blue marker</span>), makes it possible to send mailings to all members of this MODx user-group. If you assign a MODx user-group, this GoodNews group can <strong>not</strong> be used to manage subscribers.';
