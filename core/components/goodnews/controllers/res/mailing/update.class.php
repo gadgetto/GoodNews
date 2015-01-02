@@ -131,6 +131,10 @@ class GoodNewsResourceMailingUpdateManagerController extends ResourceUpdateManag
      * @return void
      */
     public function getMailingMeta() {
+        $collection1 = '';
+        $collection2 = '';
+        $collection3 = '';
+        
         $meta = $this->modx->getObject('GoodNewsMailingMeta', array('mailing_id' => $this->resource->get('id')));
         if (is_object($meta)) {
             $collections = unserialize($meta->get('collections'));
@@ -138,10 +142,10 @@ class GoodNewsResourceMailingUpdateManagerController extends ResourceUpdateManag
                 $collection1 = implode(',', $collections['collection1']);
                 $collection2 = implode(',', $collections['collection2']);
                 $collection3 = implode(',', $collections['collection3']);
-                $this->resourceArray['collection1'] = $collection1;
-                $this->resourceArray['collection2'] = $collection2;
-                $this->resourceArray['collection3'] = $collection3;
             }
         }
+        $this->resourceArray['collection1'] = $collection1;
+        $this->resourceArray['collection2'] = $collection2;
+        $this->resourceArray['collection3'] = $collection3;
     }
 }
