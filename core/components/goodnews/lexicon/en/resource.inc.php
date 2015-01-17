@@ -55,6 +55,7 @@ $_lang['goodnews.container_view']                          = 'View GoodNews Cont
 $_lang['goodnews.manage_mailings']                         = 'Manage Mailings';
 
 $_lang['goodnews.mailing']                                 = 'Mailing';
+$_lang['goodnews.mailing_readonly']                        = 'Read Only';
 $_lang['goodnews.mailing_new']                             = 'New Mailing';
 $_lang['goodnews.mail_subject']                            = 'Mail Subject';
 $_lang['goodnews.mail_subject_desc']                       = 'The subject of the mail.';

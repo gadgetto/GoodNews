@@ -1,5 +1,6 @@
 Changelog for GoodNews
 
+- added indicator in mailing editor if mailing is in read-only mode (sending already started)
 - fixed waring message when mailing resource is in read-only mode
 - fixed some PHP warnings if collections field of mailing_meta is empty (happens for resources prior to version 1.3.0-pl)
 - [#33] Integrate functionality to auto-detect images and convert physical image dimensions based on src or style attributes

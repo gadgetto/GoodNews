@@ -34,8 +34,12 @@ require_once $modx->getOption('manager_path', null, MODX_MANAGER_PATH).'controll
  * @subpackage controllers
  */
 class GoodNewsResourceMailingUpdateManagerController extends ResourceUpdateManagerController {
+
     /** @var GoodNewsResourceMailing $resource */
     public $resource;
+    
+    /** @var boolean $readOnly Whether or not this Resource is in read-only mode */
+    public $readOnly = false;
     
     /**
      * Language topics
@@ -86,6 +90,7 @@ class GoodNewsResourceMailingUpdateManagerController extends ResourceUpdateManag
                 ,record: '.$this->modx->toJSON($this->resourceArray).'
                 ,publish_document: "'.$this->canPublish.'"
                 ,preview_url: "'.$this->previewUrl.'"
+                ,readOnly: '.($this->readOnly ? 1 : 0).'
                 ,locked: '.($this->locked ? 1 : 0).'
                 ,lockedText: "'.$this->lockedText.'"
                 ,canSave: '.($this->canSave ? 1 : 0).'
@@ -112,6 +117,7 @@ class GoodNewsResourceMailingUpdateManagerController extends ResourceUpdateManag
      */
     public function process(array $scriptProperties = array()) {
         $placeholders = parent::process($scriptProperties);
+        
         $settings = $this->resource->getContainerSettings();
         $this->resourceArray['templatesCategory']  = (int)$this->modx->getOption('templatesCategory', $settings, 0);
         $this->resourceArray['collection1Name']    = $this->modx->getOption('collection1Name', $settings, '');
@@ -121,6 +127,9 @@ class GoodNewsResourceMailingUpdateManagerController extends ResourceUpdateManag
         $this->resourceArray['collection2Parents'] = $this->modx->getOption('collection2Parents', $settings, '');
         $this->resourceArray['collection3Parents'] = $this->modx->getOption('collection3Parents', $settings, '');
         $this->getMailingMeta();
+
+        // check for read-only status
+        $this->checkForReadOnly();
 
         return $placeholders;
     }
@@ -144,8 +153,25 @@ class GoodNewsResourceMailingUpdateManagerController extends ResourceUpdateManag
                 $collection3 = implode(',', $collections['collection3']);
             }
         }
-        $this->resourceArray['collection1'] = $collection1;
-        $this->resourceArray['collection2'] = $collection2;
-        $this->resourceArray['collection3'] = $collection3;
+        $this->resourceArray['collection1']     = $collection1;
+        $this->resourceArray['collection2']     = $collection2;
+        $this->resourceArray['collection3']     = $collection3;
+        $this->resourceArray['recipients_sent'] = $meta->get('recipients_sent');
+    }
+
+    /**
+     * Check for read-only mode on the Resource
+     * (sending has already been started?)
+     *
+     * @return bool
+     */
+    public function checkForReadOnly() {
+        $this->readOnly = false;
+
+        // Sending in progress?
+        if ((int)$this->resourceArray['recipients_sent'] > 0) {
+            $this->readOnly = true;
+        }
+        return $this->readOnly;
     }
 }
