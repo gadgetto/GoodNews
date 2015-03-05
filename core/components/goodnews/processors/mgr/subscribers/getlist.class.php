@@ -37,6 +37,11 @@ class SubscribersGetListProcessor extends modObjectGetListProcessor {
             'groupfilter' => '',
             'testdummyfilter' => '',
         ));
+
+        if ($this->getProperty('sort') == 'createdon_formatted') {
+            $this->setProperty('sort', 'SubscriberMeta.createdon');
+        }
+  
         return $initialized;
     }
     
