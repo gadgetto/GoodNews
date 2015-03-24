@@ -1,5 +1,6 @@
 Changelog for GoodNews
 
+- fixed missing english strings + small typo in lexicon
 - fixed a bug when sorting the Subscribers grid by subscription date
 - added indicator in mailing editor if mailing is in read-only mode (sending already started)
 - fixed waring message when mailing resource is in read-only mode
