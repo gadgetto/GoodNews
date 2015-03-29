@@ -37,6 +37,7 @@ $_lang['goodnews.system_check_title']                               = 'Title';
 $_lang['goodnews.system_check_value']                               = 'Value (Status)';
 $_lang['goodnews.multi_processing_for_sending']                     = 'Multi processing for sending mails available';
 $_lang['goodnews.imap_extension_available']                         = 'IMAP extension available (Bounce Handling)';
+$_lang['goodnews.pthumb_addon_installed']                           = 'MODX Add-On: pThumb installed (auto-fix image sizes)';
 $_lang['goodnews.php_version_required']                             = 'PHP version required: ';
 $_lang['goodnews.site_status']                                      = 'Site is published to the web';
 $_lang['goodnews.debug_mode']                                       = 'GoodNews debug-mode';
@@ -123,7 +124,7 @@ $_lang['goodnews.newsletter_grid_autorefresh']                      = 'Auto-Refr
 $_lang['goodnews.newsletter_send_log_view']                         = 'View Send Log';
 $_lang['goodnews.newsletter_send_log_window_title']                 = 'Send Log for Mailing ID: ';
 $_lang['goodnews.newsletter_send_log_close_button']                 = 'Close';
-$_lang['goodnews.newsletter_err_save_already_sending']              = 'Changes can not be saved, because sending of this mailing has already been startet.';
+$_lang['goodnews.newsletter_err_save_already_sending']              = 'The mailing can not be changed/edited any longer after sending has been started.';
 
 $_lang['goodnews.groups']                                           = 'Groups';
 $_lang['goodnews.groups_management_desc']                           = 'Manage your subscriber groups here. Assigning a GoodNews group to a MODx user-group (<span class="gon-modx-group-assigned">blue marker</span>), makes it possible to send mailings to all members of this MODx user-group. If you assign a MODx user-group, this GoodNews group can <strong>not</strong> be used to manage subscribers.';
@@ -231,6 +232,8 @@ $_lang['goodnews.settings_cron_security_key']                       = 'Cron Secu
 $_lang['goodnews.settings_cron_security_key_desc']                  = 'Please enter a random (password-like) string which will be used for Cron CLI authentification. You need to configure your Cron-job with the additional CLI parameter <strong>sid=[your cron security key]</strong>. It is strongly recommended to add a key for security reasons. Leave this field empty, if you have no possibility to configure your Cron-job with an additional parameter.';
 $_lang['goodnews.settings_admin_groups']                            = 'GoodNews Administrator Groups';
 $_lang['goodnews.settings_admin_groups_desc']                       = 'Comma seperated list of MODx user-groups which have access to the GoodNews settings.';
+$_lang['goodnews.settings_auto_fix_imagesizes']                     = 'Automatically Adjust Image Sizes (pThumb extra required)';
+$_lang['goodnews.settings_auto_fix_imagesizes_desc']                = 'Wether or not images which are inserted with a WYSIWYG editor and are adjusted in its dimension, will be automatically converted to their appropriate dimension.';
 $_lang['goodnews.settings_auto_cleanup_subscriptions']              = 'Auto Cleanup Subscriptions';
 $_lang['goodnews.settings_auto_cleanup_subscriptions_desc']         = 'Wether or not never activated Subscriptions, including their corresponding MODX User-Accounts, will be removed automatically. This only concerns MODX User-Accounts which have GoodNews meta-data assigned! MODX User-Accounts which belongs to MODX User-Groups will stay untouched!.';
 $_lang['goodnews.settings_auto_cleanup_subscriptions_ttl']          = 'Time To Live Until Remove';
@@ -378,6 +381,8 @@ $_lang['setting_goodnews.worker_process_active']                    = 'Sending P
 $_lang['setting_goodnews.worker_process_active_desc']               = 'May the Cron-Job start the GoodNews sending process? This setting can be used to temporary disable the Cron trigger.';
 $_lang['setting_goodnews.admin_groups']                             = 'GoodNews Administrator Groups';
 $_lang['setting_goodnews.admin_groups_desc']                        = 'Comma seperated list of MODx user-groups which have access to the GoodNews settings.';
+$_lang['setting_goodnews.auto_fix_imagesizes']                      = 'Automatically Adjust Image Sizes (pThumb extra required)';
+$_lang['setting_goodnews.auto_fix_imagesizes_desc']                 = 'Wether or not images which are inserted with a WYSIWYG editor and are adjusted in its dimension, will be automatically converted to their appropriate dimension.';
 $_lang['setting_goodnews.auto_cleanup_subscriptions']               = 'Auto Cleanup Subscriptions';
 $_lang['setting_goodnews.auto_cleanup_subscriptions_desc']          = 'Wether or not inactive or never activated Subscriptions, including their corresponding MODX User-Accounts, will be removed automatically. This only concerns MODX User-Accounts which have GoodNews meta-data assigned! MODX User-Accounts which belongs to MODX User-Groups stay untouched!.';
 $_lang['setting_goodnews.auto_cleanup_subscriptions_ttl']           = 'Time To Live Until Remove';

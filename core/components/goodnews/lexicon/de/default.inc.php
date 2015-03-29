@@ -37,6 +37,7 @@ $_lang['goodnews.system_check_title']                               = 'Titel';
 $_lang['goodnews.system_check_value']                               = 'Wert (Status)';
 $_lang['goodnews.multi_processing_for_sending']                     = 'Multi Processing für Mailversand verfügbar';
 $_lang['goodnews.imap_extension_available']                         = 'IMAP Erweiterung verfügbar (Bounce Handling)';
+$_lang['goodnews.pthumb_addon_installed']                           = 'MODX Add-On: pThumb installiert (Auto-Fix Bildgrößen)';
 $_lang['goodnews.php_version_required']                             = 'PHP Version erforderlich: ';
 $_lang['goodnews.site_status']                                      = 'Website ist im Internet veröffentlicht';
 $_lang['goodnews.debug_mode']                                       = 'GoodNews Debug Modus';
@@ -123,7 +124,7 @@ $_lang['goodnews.newsletter_grid_autorefresh']                      = 'Auto-Refr
 $_lang['goodnews.newsletter_send_log_view']                         = 'Versand Protokoll öffnen';
 $_lang['goodnews.newsletter_send_log_window_title']                 = 'Versand Protokoll für Mailing ID: ';
 $_lang['goodnews.newsletter_send_log_close_button']                 = 'Schließen';
-$_lang['goodnews.newsletter_err_save_already_sending']              = 'Änderungen können nicht gespeichert werden, da der Mailversand bereits gestartet wurde.';
+$_lang['goodnews.newsletter_err_save_already_sending']              = 'Das Mailing kann nicht mehr geändert/bearbeitet werden nachdem der Mailversand gestartet wurde.';
 
 $_lang['goodnews.groups']                                           = 'Gruppen';
 $_lang['goodnews.groups_management_desc']                           = 'Verwalten Sie Ihre Abonnenten-Gruppen hier. Wird eine GoodNews Gruppe mit einer MODx Benutzergruppe verkn&uuml;pft (<span class="gon-modx-group-assigned">blau markiert</span>), erm&ouml;glicht dies den Versand eines Mailings an s&auml;mtliche Mitglieder dieser MODx Benutzergruppe. Bei Verkn&uuml;pfung mit einer MODx Benutzergruppe, kann diese GoodNews Gruppe <strong>nicht</strong> f&uuml;r die Verwaltung von Abonnenten verwendet werden.';
@@ -231,8 +232,10 @@ $_lang['goodnews.settings_cron_security_key']                       = 'Cron Sich
 $_lang['goodnews.settings_cron_security_key_desc']                  = 'Geben Sie eine zufällige (passwort-ähnliche) Zeichenkette ein, welche für die Cron CLI Authentifizierung verwendet wird. Sie müssen Ihren Cron-Job mit dem zusätzlichen CLI Parameter <strong>sid=[ihr cron sicherheits schlüssel]</strong> konfigurieren. Aus Sicherheitsgründen wird dringend empfohlen einen Schlüssen zu verwenden. Lassen Sie das Feld leer, wenn Sie keine Möglichkeit haben den Cron-Job mit einem zusätzlichen Parameter zu konfigurieren.';
 $_lang['goodnews.settings_admin_groups']                            = 'GoodNews Administrator Gruppen';
 $_lang['goodnews.settings_admin_groups_desc']                       = 'Komma separierte Liste von MODx Benutzer-Gruppen, die zur Bearbeitung der GoodNews Einstellungen berechtigt sind.';
+$_lang['goodnews.settings_auto_fix_imagesizes']                     = 'Automatische Anpassung von Bildabmessungen (erfordert pThumb Extra)';
+$_lang['goodnews.settings_auto_fix_imagesizes_desc']                = 'Wenn eingeschaltet, werden Bilder die mittels WYSIWYG Editor eingefügt und deren Abmessungen angepasst wurden, automatisch auf die entsprechende Größe umgerechnet.';
 $_lang['goodnews.settings_auto_cleanup_subscriptions']              = 'Abonnements automatisch aufräumen';
-$_lang['goodnews.settings_auto_cleanup_subscriptions_desc']         = 'Wenn eingeschaltet, werden nicht aktivierte Abonnements inklusive zugehöriger MODX Benutzerkonten automatisch entfernt. Dies betrifft nur MODX Benutzerkonten, die über GoodNews Metadaten verfügen! MODX Benutzerkonten, welche MODX Benutzergruppen zugeordnet sind, bleiben unberührt!';
+$_lang['goodnews.settings_auto_cleanup_subscriptions_desc']         = 'Wenn eingeschaltet, werden inaktive bzw. nicht aktivierte Abonnements inklusive zugehöriger MODX Benutzerkonten automatisch entfernt. Dies betrifft nur MODX Benutzerkonten, die mit GoodNews Metadaten verknüpft sind! MODX Benutzerkonten, welche MODX Benutzergruppen zugeordnet sind, bleiben unberührt!';
 $_lang['goodnews.settings_auto_cleanup_subscriptions_ttl']          = 'Zeitspanne für autom. Entfernen';
 $_lang['goodnews.settings_auto_cleanup_subscriptions_ttl_desc']     = 'Zeit in Minuten, nach der nicht aktivierte Abonnements automatisch entfernt werden (Standard: 360 Minuten).';
 
@@ -378,8 +381,10 @@ $_lang['setting_goodnews.worker_process_active']                    = 'Sendeproz
 $_lang['setting_goodnews.worker_process_active_desc']               = 'Darf der Cron Job den GoodNews Sendeprozess starten? Diese Einstellung kann verwendet werden, um den Cron Trigger temporär zu deaktivieren.';
 $_lang['setting_goodnews.admin_groups']                             = 'GoodNews Administrator Gruppen';
 $_lang['setting_goodnews.admin_groups_desc']                        = 'Komma separierte Liste von MODx Benutzer-Gruppen, die zur Bearbeitung der GoodNews Einstellungen berechtigt sind.';
+$_lang['setting_goodnews.auto_fix_imagesizes']                      = 'Automatische Anpassung von Bildabmessungen (erfordert pThumb Extra)';
+$_lang['setting_goodnews.auto_fix_imagesizes_desc']                 = 'Wenn eingeschaltet, werden Bilder die mittels WYSIWYG Editor eingefügt und deren Abmessungen angepasst wurden, automatisch auf die entsprechende Größe umgerechnet.';
 $_lang['setting_goodnews.auto_cleanup_subscriptions']               = 'Abonnements automatisch aufräumen';
-$_lang['setting_goodnews.auto_cleanup_subscriptions_desc']          = 'Wenn aktiviert, werden inaktive bzw. nicht aktivierte Abonnements inklusive zugehöriger MODX Benutzerkonten automatisch entfernt. Dies betrifft nur MODX Benutzerkonten, die mit GoodNews Metadaten verknüpft sind! MODX Benutzerkonten, welche MODX Benutzergruppen zugeordnet sind, bleiben unberührt!';
+$_lang['setting_goodnews.auto_cleanup_subscriptions_desc']          = 'Wenn eingeschaltet, werden inaktive bzw. nicht aktivierte Abonnements inklusive zugehöriger MODX Benutzerkonten automatisch entfernt. Dies betrifft nur MODX Benutzerkonten, die mit GoodNews Metadaten verknüpft sind! MODX Benutzerkonten, welche MODX Benutzergruppen zugeordnet sind, bleiben unberührt!';
 $_lang['setting_goodnews.auto_cleanup_subscriptions_ttl']           = 'Zeitspanne für autom. Entfernen';
 $_lang['setting_goodnews.auto_cleanup_subscriptions_ttl_desc']      = 'Zeit in Minuten, nach der nicht aktivierte Abonnements automatisch entfernt werden (Standard: 360 Minuten).';
 $_lang['setting_goodnews.cron_security_key']                        = 'Cron Sicherheits-Schlüssel';

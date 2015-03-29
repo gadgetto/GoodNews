@@ -14,13 +14,15 @@ GoodNewsResource.grid.CollectResources = function(config) {
     this.selectedRecords[this.key] = [];
     this.selectionRestoreFinished = false;
     
-    // Initially fill selectedRecords array with restored ids from database
-    // (converted to integer as the store holds its record ids as integers!)
-    var tmpArray = config.baseParams.collectionIds.split(',');
-    var len = tmpArray.length;
-    for (var i=0; i<len; ++i) {
-        var id = parseInt(tmpArray[i],10);
-        this.rememberRow(id);
+    // Initially fill selectedRecords array with restored ids from database (if any)
+    if (config.baseParams.collectionIds) {
+        var tmpArray = config.baseParams.collectionIds.split(',');
+        var len = tmpArray.length;
+        for (var i=0; i<len; ++i) {
+            // Convert to integer as the store holds its record ids as integers!
+            var id = parseInt(tmpArray[i],10);
+            this.rememberRow(id);
+        }
     }
     
     this.sm = new Ext.grid.CheckboxSelectionModel({

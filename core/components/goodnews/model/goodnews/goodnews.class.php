@@ -26,7 +26,7 @@
 
 class GoodNews {
 
-    const VERSION = '1.3.5';
+    const VERSION = '1.3.6';
     const RELEASE = 'pl';
     
     const MIN_PHP_VERSION = '5.3.0';
@@ -42,6 +42,9 @@ class GoodNews {
     
     /** @var boolean $imapExtension Is the php IMAP extension available? (required for automatic bounce handling) */
     public $imapExtension = false;
+    
+    /** @var boolean $pThumbAddOn Is the pThumb MODX Revo Add-On installed? (required for auto-fixing image sizes) */
+    public $pThumbAddOn = false;
     
     /** @var string $actualPhpVersion The current PHP version */
     public $actualPhpVersion = null;
@@ -111,6 +114,7 @@ class GoodNews {
             $this->debug              = $this->modx->getOption('goodnews.debug', null, false) ? true : false;
             $this->isMultiProcessing  = $this->_isMultiProcessing();
             $this->imapExtension      = $this->_imapExtension();
+            $this->pThumbAddOn        = $this->_isTransportPackageInstalled('pThumb');
             $this->actualPhpVersion   = phpversion();
             $this->requiredPhpVersion = self::MIN_PHP_VERSION;
             $this->phpVersionOK       = version_compare($this->actualPhpVersion, $this->requiredPhpVersion, '>=') ? true : false;
@@ -157,6 +161,7 @@ class GoodNews {
                 'mailingTemplate'    => $mailingTemplate,
                 'isMultiProcessing'  => $this->isMultiProcessing,
                 'imapExtension'      => $this->imapExtension,
+                'pThumbAddOn'        => $this->pThumbAddOn,
                 'actualPhpVersion'   => $this->actualPhpVersion,   
                 'requiredPhpVersion' => $this->requiredPhpVersion,   
                 'phpVersionOK'       => $this->phpVersionOK,   
@@ -234,6 +239,23 @@ class GoodNews {
      */    
     private function _imapExtension() {
         return function_exists('imap_open');
+    }
+    
+    /**
+     * Cecks if a MODX transport package is installed.
+     *
+     * @access private
+     * @param string $name Name of transport package
+     * @return boolean
+     */    
+    private function _isTransportPackageInstalled($tpname) {
+        $installed = false;
+        $package = $this->modx->getObject('transport.modTransportPackage', array(
+            'package_name' => $tpname,
+        ));
+        if (is_object($package)) { $installed = true; }
+        return $installed;
+
     }
     
     /**

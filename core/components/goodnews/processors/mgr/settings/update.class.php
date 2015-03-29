@@ -32,6 +32,7 @@ class SettingsUpdateProcessor extends modProcessor {
         $settings = array(
             'test_subject_prefix',
             'admin_groups',
+            'auto_fix_imagesizes',
             'auto_cleanup_subscriptions',
             'auto_cleanup_subscriptions_ttl',
             'mailing_bulk_size',

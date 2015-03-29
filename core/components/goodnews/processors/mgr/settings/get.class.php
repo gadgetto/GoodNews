@@ -34,6 +34,8 @@ class GetSettingsProcessor extends modProcessor {
             'test_subject_prefix'            => $this->modx->getOption('goodnews.test_subject_prefix'),
             'admin_groups'                   => $this->modx->getOption('goodnews.admin_groups'),
             // integer typecasting required to work with MODExt.xcheckbox field
+            'auto_fix_imagesizes'            => (int)$this->modx->getOption('goodnews.auto_fix_imagesizes'),
+            // integer typecasting required to work with MODExt.xcheckbox field
             'auto_cleanup_subscriptions'     => (int)$this->modx->getOption('goodnews.auto_cleanup_subscriptions'),
             'auto_cleanup_subscriptions_ttl' => (int)$this->modx->getOption('goodnews.auto_cleanup_subscriptions_ttl'),
             // integer typecasting required to work with ExtJS.SliderField

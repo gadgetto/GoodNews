@@ -36,6 +36,15 @@ $settings['goodnews.test_subject_prefix']->fromArray(array(
     'area'      => '',
 ), '', true, true);
 
+$settings['goodnews.auto_fix_imagesizes'] = $modx->newObject('modSystemSetting');
+$settings['goodnews.auto_fix_imagesizes']->fromArray(array(
+    'key'       => 'goodnews.auto_fix_imagesizes',
+    'value'     => '0',
+    'xtype'     => 'combo-boolean',
+    'namespace' => 'goodnews',
+    'area'      => '',
+), '', true, true);
+
 $settings['goodnews.auto_cleanup_subscriptions'] = $modx->newObject('modSystemSetting');
 $settings['goodnews.auto_cleanup_subscriptions']->fromArray(array(
     'key'       => 'goodnews.auto_cleanup_subscriptions',

@@ -217,6 +217,13 @@ class GoodNewsMailing {
 
         // Process full URLs
         $base = $this->modx->getOption('site_url');
+        
+        // AutoFixImageSizes if activated in settings
+        if ($this->modx->getOption('goodnews.auto_fix_imagesizes', null, true)) {
+            $html = $this->_autoFixImageSizes($base, $html);
+        }
+        
+        // Make full URLs
         $html = $this->_fullUrls($base, $html);
 
         return $html;
@@ -851,6 +858,109 @@ class GoodNewsMailing {
             $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsMailing::unlock - Mailing meta [id: '.$this->mailingid.'] - could not be unlocked (file operation failed).');
         }
         return $unlock;
+    }
+
+    /**
+     * Automatically fix image sizes based on scr or style attributes.
+     * (Uses pThumb extra)
+     *
+     * based on AutoFixImagesize Plugin by Gerrit van Aaken <gerrit@praegnanz.de>
+
+     * @param string $base
+     * @param string $html
+     * @return mixed $html The parsed string or false
+     */
+    private function _autoFixImageSizes($base, $html) {
+        
+        if (empty($html)) {
+            if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsMailing::_autoFixImageSizes - No HTML content provided for parsing.'); }
+            return false;
+        }
+
+        $images = array();
+        $phpthumb_nohotlink_enabled = $this->modx->getOption('phpthumb_nohotlink_enabled', null, true);
+        $phpthumb_nohotlink_valid_domains = $this->modx->getOption('phpthumb_nohotlink_valid_domains');
+                
+        // find all img elements with a src attribute
+        preg_match_all('|\<img.*?src=[",\'](.*?)[",\'].*?[^>]+\>|i', $html, $filenames);
+        
+        // loop through all found img elements
+        foreach($filenames[1] as $i => $filename) {
+        
+            $img_old = $filenames[0][$i];
+            $allowcaching = false;
+            
+            // is file already cached?
+            if (strpos($filename, '?') == false || strpos($filename, '/phpthumb') == false) {
+                
+                // check if external caching is allowed
+                if (substr($filename,0,7) == 'http://' || substr($filename, 0, 8) == 'https://') {
+                    $pre = '';
+                    if ($phpthumb_nohotlink_enabled) {
+                        foreach (explode(',', $phpthumb_nohotlink_valid_domains) as $alldomain) {
+                            if (strpos(strtolower($filename), strtolower(trim($alldomain))) != false) {
+                                $allowcaching = true;
+                            }
+                        } 
+                    } else {
+                        $allowcaching = true;
+                    }
+                } else {
+                    $pre = $base;
+                    $allowcaching = true;
+                }
+            }
+            
+            // do we have physical access to the file?
+            $mypath = $pre.str_replace('%20', ' ', $filename);
+            if ($allowcaching && $dimensions = @getimagesize($mypath, $info)) {
+                
+                // find width and height attribut and save value
+                preg_match_all('|width=[",\']([0-9]+?)[",\']|i', $filenames[0][$i], $widths);
+                if (isset($widths[1][0])) {
+                    $width = $widths[1][0];
+                } else {
+                    preg_match_all('|width:\s*([0-9]+?)px|i', $filenames[0][$i], $widths);
+                    if (isset($widths[1][0])) {
+                        $width = $widths[1][0];
+                    } else {
+                        $width = false;
+                    }
+                }
+                preg_match_all('|height=[",\']([0-9]+?)[",\']|i', $filenames[0][$i], $heights);
+                if (isset($heights[1][0])) {
+                    $height = $heights[1][0];
+                } else {
+                    preg_match_all('|height:\s*([0-9]+?)px|i', $filenames[0][$i], $heights);
+                    if (isset($heights[1][0])) {
+                        $height = $heights[1][0];
+                    } else {
+                        $height = false;
+                    }
+                }
+                
+                // if resizing needed...
+                if (($width && $width != $dimensions[0]) || ($height && $height != $dimensions[1])) {
+                
+                    // prepare resizing metadata
+                    $filetype = strtolower(substr($filename, strrpos($filename,".")+1));
+                    $image = array();
+                    $image['input'] = $filename;
+                    $image['options'] = 'f='.$filetype.'&h='.$height.'&w='.$width.'&iar=1'; 
+                    
+                    // perform physical resizing and caching via phpthumbof
+                    $cacheurl = $this->modx->runSnippet('phpthumbof', $image);
+                    
+                    // set freshly cached image file location into old src attribute
+                    $img_new = str_replace($filename, $cacheurl, $img_old);  
+                    
+                    // replace old image element with new one on whole page content
+                    $html = str_replace($img_old, $img_new, $html);  
+                }
+            }
+        } // end: foreach
+        
+        return $html;
     }
         
     /**

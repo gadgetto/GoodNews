@@ -45,13 +45,14 @@ $output = array();
 // Default properties
 $collectionId    = !empty($collectionId) ? $collectionId : 'collection1';
 $tpl             = !empty($tpl) ? $tpl : 'sample.GoodNewsContentCollectionRowTpl';
-$tplWrapper      = !empty($tplWrapper) ? $tpl : '';
+$tplWrapper      = !empty($tplWrapper) ? $tplWrapper : '';
 $sortby          = isset($sortby) ? $sortby : 'publishedon';
 $sortdir         = isset($sortdir) ? $sortdir : 'DESC';
 $includeContent  = !empty($includeContent) ? true : false;
 $outputSeparator = isset($outputSeparator) ? $outputSeparator : "\n";
 $toPlaceholder   = !empty($toPlaceholder) ? $toPlaceholder : '';
 $debug           = !empty($debug) ? true : false;
+
 
 $meta = $modx->getObject('GoodNewsMailingMeta', array('mailing_id' => $modx->resource->get('id')));
 if (!is_object($meta)) {
@@ -68,7 +69,7 @@ if (!is_array($collections)) {
 $collection = $collections[$collectionId];
 if (empty($collection)) {
     $modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] ContentCollection snippet - '.$collectionId.' is empty.');
-    return $collectionId.' is empty.';
+    return '';
 }
 
 // Query db
@@ -115,10 +116,11 @@ foreach ($resources as $resource) {
     }
 
 }
+// convert to HTML string
 $output = implode($outputSeparator, $output);
 
 if (!empty($tplWrapper) && !empty($output)) {
-    $output = parseTpl($tplWrapper, array('output' => $output));
+    $output = $goodnews->parseTpl($tplWrapper, array('output' => $output));
 }
 
 $toPlaceholder = $modx->getOption('toPlaceholder', $scriptProperties, false);

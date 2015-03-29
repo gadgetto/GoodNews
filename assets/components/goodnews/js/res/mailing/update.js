@@ -19,27 +19,37 @@ GoodNewsResource.page.UpdateGoodNewsResourceMailing = function(config) {
 Ext.extend(GoodNewsResource.page.UpdateGoodNewsResourceMailing,MODx.page.UpdateResource,{
     getButtons: function(cfg) {
         var btns = [];
-        if (cfg.canSave == 1) {
+        if (cfg.readOnly == 1) {
             btns.push({
-                process: MODx.config.connector_url ? 'resource/update' : 'update'
-                ,text: _('save')
-                ,method: 'remote'
-                ,checkDirty: cfg.richtext || MODx.request.activeSave == 1 ? false : true
-                ,id: 'modx-abtn-save'
-                ,keys: [{
-                    key: MODx.config.keymap_save || 's'
-                    ,ctrl: true
-                }]
-            });
-            btns.push('-');
-        } else if (cfg.locked) {
-            btns.push({
-                text: cfg.lockedText || _('locked')
+                text: _('goodnews.mailing_readonly')
                 ,handler: Ext.emptyFn
-                ,id: 'modx-abtn-locked'
+                ,id: 'gon-abtn-readonly'
                 ,disabled: true
             });
             btns.push('-');
+        } else {
+            if (cfg.canSave == 1) {
+                btns.push({
+                    process: MODx.config.connector_url ? 'resource/update' : 'update'
+                    ,text: _('save')
+                    ,method: 'remote'
+                    ,checkDirty: cfg.richtext || MODx.request.activeSave == 1 ? false : true
+                    ,id: 'modx-abtn-save'
+                    ,keys: [{
+                        key: MODx.config.keymap_save || 's'
+                        ,ctrl: true
+                    }]
+                });
+                btns.push('-');
+            } else if (cfg.locked) {
+                btns.push({
+                    text: cfg.lockedText || _('locked')
+                    ,handler: Ext.emptyFn
+                    ,id: 'modx-abtn-locked'
+                    ,disabled: true
+                });
+                btns.push('-');
+            }
         }
         btns.push({
             process: 'preview'
