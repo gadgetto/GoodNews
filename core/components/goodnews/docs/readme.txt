@@ -28,6 +28,7 @@ Reqirements:
 - PHP 5.3 or later
 - Cron
 - PHP Imap Extension (for automatic bounce handling)
+- pThumb add-on (for automatic image resizing)
 
 Feel free to suggest ideas/improvements/bugs on our website:
 
