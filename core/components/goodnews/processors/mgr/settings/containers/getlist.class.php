@@ -61,6 +61,8 @@ class ContainerSettingsGetListProcessor extends modObjectGetListProcessor {
 
         // get container setting (from Resource properties field)
         if (array_key_exists('goodnews', $properties)) {
+            
+            // General settings
             if (array_key_exists('editorGroups', $properties['goodnews'])) {
                 $resourceArray['editor_groups'] = $properties['goodnews']['editorGroups'];
             } else {
@@ -81,11 +83,75 @@ class ContainerSettingsGetListProcessor extends modObjectGetListProcessor {
             } else {
                 $resourceArray['mail_reply_to'] = '';
             }
+            if (array_key_exists('mailCharset', $properties['goodnews'])) {
+                $resourceArray['mail_charset'] = $properties['goodnews']['mailCharset'];
+            } else {
+                $resourceArray['mail_charset'] = 'UTF-8';
+            }
+            if (array_key_exists('mailEncoding', $properties['goodnews'])) {
+                $resourceArray['mail_encoding'] = $properties['goodnews']['mailEncoding'];
+            } else {
+                $resourceArray['mail_encoding'] = '8bit';
+            }
             if (array_key_exists('mailBounceHandling', $properties['goodnews'])) {
                 $resourceArray['mail_bouncehandling'] = $properties['goodnews']['mailBounceHandling'];
             } else {
                 $resourceArray['mail_bouncehandling'] = '0';
             }
+            
+            // SMTP settings
+            if (array_key_exists('mailUseSmtp', $properties['goodnews'])) {
+                $resourceArray['mail_use_smtp'] = $properties['goodnews']['mailUseSmtp'];
+            } else {
+                $resourceArray['mail_use_smtp'] = '0';
+            }
+            if (array_key_exists('mailSmtpAuth', $properties['goodnews'])) {
+                $resourceArray['mail_smtp_auth'] = $properties['goodnews']['mailSmtpAuth'];
+            } else {
+                $resourceArray['mail_smtp_auth'] = '0';
+            }
+            if (array_key_exists('mailSmtpUser', $properties['goodnews'])) {
+                $resourceArray['mail_smtp_user'] = $properties['goodnews']['mailSmtpUser'];
+            } else {
+                $resourceArray['mail_smtp_user'] = '';
+            }
+            if (array_key_exists('mailSmtpPass', $properties['goodnews'])) {
+                $resourceArray['mail_smtp_pass'] = $properties['goodnews']['mailSmtpPass'];
+            } else {
+                $resourceArray['mail_smtp_pass'] = '';
+            }
+            if (array_key_exists('mailSmtpHosts', $properties['goodnews'])) {
+                $resourceArray['mail_smtp_hosts'] = $properties['goodnews']['mailSmtpHosts'];
+            } else {
+                $resourceArray['mail_smtp_hosts'] = 'localhost:25';
+            }
+            if (array_key_exists('mailSmtpPrefix', $properties['goodnews'])) {
+                $resourceArray['mail_smtp_prefix'] = $properties['goodnews']['mailSmtpPrefix'];
+            } else {
+                $resourceArray['mail_smtp_prefix'] = '';
+            }
+            if (array_key_exists('mailSmtpKeepalive', $properties['goodnews'])) {
+                $resourceArray['mail_smtp_keepalive'] = $properties['goodnews']['mailSmtpKeepalive'];
+            } else {
+                $resourceArray['mail_smtp_keepalive'] = '0';
+            }
+            if (array_key_exists('mailSmtpTimeout', $properties['goodnews'])) {
+                $resourceArray['mail_smtp_timeout'] = $properties['goodnews']['mailSmtpTimeout'];
+            } else {
+                $resourceArray['mail_smtp_timeout'] = 10;
+            }
+            if (array_key_exists('mailSmtpSingleTo', $properties['goodnews'])) {
+                $resourceArray['mail_smtp_single_to'] = $properties['goodnews']['mailSmtpSingleTo'];
+            } else {
+                $resourceArray['mail_smtp_single_to'] = '0';
+            }
+            if (array_key_exists('mailSmtpHelo', $properties['goodnews'])) {
+                $resourceArray['mail_smtp_helo'] = $properties['goodnews']['mailSmtpHelo'];
+            } else {
+                $resourceArray['mail_smtp_helo'] = '';
+            }
+            
+            // Bounce Mailbox
             if (array_key_exists('mailService', $properties['goodnews'])) {
                 $resourceArray['mail_service'] = $properties['goodnews']['mailService'];
             } else {
@@ -122,7 +188,7 @@ class ContainerSettingsGetListProcessor extends modObjectGetListProcessor {
                 $resourceArray['mail_service_option'] = 'notls';
             }
             
-            // soft bounces handling
+            // Soft Bounces handling
             if (array_key_exists('mailSoftBouncedMessageAction', $properties['goodnews'])) {
                 $resourceArray['mail_softbounced_message_action'] = $properties['goodnews']['mailSoftBouncedMessageAction'];
             } else {
@@ -144,7 +210,7 @@ class ContainerSettingsGetListProcessor extends modObjectGetListProcessor {
                 $resourceArray['mail_max_softbounces_action'] = 'disable';
             }
 
-            // hard bounces handling            
+            // Hard bounces handling            
             if (array_key_exists('mailHardBouncedMessageAction', $properties['goodnews'])) {
                 $resourceArray['mail_hardbounced_message_action'] = $properties['goodnews']['mailHardBouncedMessageAction'];
             } else {
@@ -166,7 +232,7 @@ class ContainerSettingsGetListProcessor extends modObjectGetListProcessor {
                 $resourceArray['mail_max_hardbounces_action'] = 'delete';
             }
 
-            // not classified handling
+            // Unclassified handling
             if (array_key_exists('mailNotClassifiedMessageAction', $properties['goodnews'])) {
                 $resourceArray['mail_notclassified_message_action'] = $properties['goodnews']['mailNotClassifiedMessageAction'];
             } else {
@@ -178,7 +244,7 @@ class ContainerSettingsGetListProcessor extends modObjectGetListProcessor {
                 $resourceArray['mail_notclassified_mailbox'] = 'INBOX.NotClassified';
             }
             
-            // content collection handling
+            // Content Collection handling
             if (array_key_exists('collection1Name', $properties['goodnews'])) {
                 $resourceArray['collection1_name'] = $properties['goodnews']['collection1Name'];
             } else {

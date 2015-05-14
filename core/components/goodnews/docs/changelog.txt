@@ -1,5 +1,9 @@
 Changelog for GoodNews
 
+- added feature to let each container have it's own SMTP settings (overrides MODX system settings)
+- added feature to let each container have it's own mail charset and mail encoding settings (overrides MODX system settings)
+
+
 GoodNews 1.3.6-pl (2015-03-29)
 --------------------------------------------------
 - added French translation (thank's Julien Studer!)

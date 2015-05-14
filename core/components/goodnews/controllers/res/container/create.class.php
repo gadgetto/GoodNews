@@ -154,7 +154,19 @@ class GoodNewsResourceContainerCreateManagerController extends ResourceCreateMan
         }
         $this->resourceArray['setting_mailReplyTo'] = $mailReplyTo;
         
+        $this->resourceArray['setting_mailCharset']                     = 'UTF-8';
+        $this->resourceArray['setting_mailEncoding']                    = '8bit';
         $this->resourceArray['setting_mailBounceHandling']              = '0';
+        $this->resourceArray['setting_mailUseSmtp']                     = '0';
+        $this->resourceArray['setting_mailSmtpAuth']                    = '0';
+        $this->resourceArray['setting_mailSmtpUser']                    = '';
+        $this->resourceArray['setting_mailSmtpPass']                    = '';
+        $this->resourceArray['setting_mailSmtpHosts']                   = 'localhost:25';
+        $this->resourceArray['setting_mailSmtpPrefix']                  = '';
+        $this->resourceArray['setting_mailSmtpKeepalive']               = '0';
+        $this->resourceArray['setting_mailSmtpTimeout']                 = 10;
+        $this->resourceArray['setting_mailSmtpSingleTo']                = '0';
+        $this->resourceArray['setting_mailSmtpHelo']                    = '';
         $this->resourceArray['setting_mailService']                     = 'imap';
         $this->resourceArray['setting_mailMailHost']                    = '';
         $this->resourceArray['setting_mailMailboxUsername']             = '';

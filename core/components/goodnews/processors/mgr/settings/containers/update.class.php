@@ -63,10 +63,64 @@ class ContainerSettingsUpdateProcessor extends modObjectUpdateProcessor {
             $this->addFieldError('mail_reply_to', $this->modx->lexicon('goodnews.settings_container_err_ns_mail_reply_to'));
         }
         $this->object->setProperty('mailReplyTo', $mailReplyTo, 'goodnews');
-        
+
+        // make sure mail_charset was specified
+        $mailCharset = $this->getProperty('mail_charset');
+        if (empty($mailCharset)) {
+            $this->addFieldError('mail_charset', $this->modx->lexicon('goodnews.settings_container_err_ns_mail_charset'));
+        }
+        $this->object->setProperty('mailCharset', $mailCharset, 'goodnews');
+
+        // make sure mail_encoding was specified
+        $mailEncoding = $this->getProperty('mail_encoding');
+        if (empty($mailEncoding)) {
+            $this->addFieldError('mail_encoding', $this->modx->lexicon('goodnews.settings_container_err_ns_mail_encoding'));
+        }
+        $this->object->setProperty('mailEncoding', $mailEncoding, 'goodnews');
+
         // bouncehandling (boolean)
         $mailBounceHandling = $this->getProperty('mail_bouncehandling');
         $this->object->setProperty('mailBounceHandling', $mailBounceHandling, 'goodnews');
+
+        // use SMTP
+        $mailUseSmtp = $this->getProperty('mail_use_smtp');
+        $this->object->setProperty('mailUseSmtp', $mailUseSmtp, 'goodnews');
+
+        // SMTP authentification  (boolean)
+        $mailSmtpAuth = $this->getProperty('mail_smtp_auth');
+        $this->object->setProperty('mailSmtpAuth', $mailSmtpAuth, 'goodnews');
+
+        // SMTP user name
+        $mailSmtpUser = $this->getProperty('mail_smtp_user');
+        $this->object->setProperty('mailSmtpUser', $mailSmtpUser, 'goodnews');
+
+        // SMTP password
+        $mailSmtpPass = $this->getProperty('mail_smtp_pass');
+        $this->object->setProperty('mailSmtpPass', $mailSmtpPass, 'goodnews');
+        
+        // SMTP hosts + ports
+        $mailSmtpHosts = $this->getProperty('mail_smtp_hosts');
+        $this->object->setProperty('mailSmtpHosts', $mailSmtpHosts, 'goodnews');
+        
+        // SMTP prefix
+        $mailSmtpPrefix = $this->getProperty('mail_smtp_prefix');
+        $this->object->setProperty('mailSmtpPrefix', $mailSmtpPrefix, 'goodnews');
+        
+        // SMTP keep alive (boolean)
+        $mailSmtpKeepalive = $this->getProperty('mail_smtp_keepalive');
+        $this->object->setProperty('mailSmtpKeepalive', $mailSmtpKeepalive, 'goodnews');
+        
+        // SMTP timeout
+        $mailSmtpTimeout = $this->getProperty('mail_smtp_timeout');
+        $this->object->setProperty('mailSmtpTimeout', $mailSmtpTimeout, 'goodnews');
+        
+        // SMTP single TO (boolean)
+        $mailSmtpSingleTo = $this->getProperty('mail_smtp_single_to');
+        $this->object->setProperty('mailSmtpSingleTo', $mailSmtpSingleTo, 'goodnews');
+        
+        // SMTP helo
+        $mailSmtpHelo = $this->getProperty('mail_smtp_helo');
+        $this->object->setProperty('mailSmtpHelo', $mailSmtpHelo, 'goodnews');
 
         // service
         $mailService = $this->getProperty('mail_service');

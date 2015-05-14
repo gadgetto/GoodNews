@@ -32,7 +32,7 @@ if ($object->xpdo) {
     switch ($options[xPDOTransport::PACKAGE_ACTION]) {
         case xPDOTransport::ACTION_INSTALL:
 
-            // Set all properties for the "GoodNews" container resource
+            // Set all initial properties for the "GoodNews" container resource
             
             // Check if resource exists
             $resource = $modx->getObject('modResource', array('pagetitle' => 'GoodNews', 'class_key' => 'GoodNewsResourceContainer'));
@@ -74,20 +74,24 @@ if ($object->xpdo) {
                 $modx->log(modX::LOG_LEVEL_ERROR, 'Custom Resource Properties Resolver - could not set profileResource property for GoodNews container.');
             }
             
-            // Set default editor groups
             $properties['editorGroups'] = 'Administrator';
-
-            // Set default sender email address (this is also the mailbox for bounce messages)
-            $properties['mailFrom'] = $modx->getOption('emailsender', null, 'postmaster@mydomain.com');
-            
-            // Set default sender name
-            $properties['mailFromName'] = $modx->getOption('site_name', null, 'Sender Name');
-
-            // Set default reply-to email address
-            $properties['mailReplyTo'] = $modx->getOption('emailsender', null, 'replyto@mydomain.com');
-
-            // set default bounce-handling properties
+            // default sender email address (this is also the mailbox for bounce messages)
+            $properties['mailFrom']                        = $modx->getOption('emailsender', null, 'postmaster@mydomain.com');
+            $properties['mailFromName']                    = $modx->getOption('site_name',   null, 'Sender Name');
+            $properties['mailReplyTo']                     = $modx->getOption('emailsender', null, 'replyto@mydomain.com');
+            $properties['mailCharset']                     = 'UTF-8';
+            $properties['mailEncoding']                    = '8bit';
             $properties['mailBounceHandling']              = '0';
+            $properties['mailUseSmtp']                     = '0';
+            $properties['mailSmtpAuth']                    = '0';
+            $properties['mailSmtpUser']                    = '';
+            $properties['mailSmtpPass']                    = '';
+            $properties['mailSmtpHosts']                   = 'localhost:25';
+            $properties['mailSmtpPrefix']                  = '';
+            $properties['mailSmtpKeepalive']               = '0';
+            $properties['mailSmtpTimeout']                 = 10;
+            $properties['mailSmtpSingleTo']                = '0';
+            $properties['mailSmtpHelo']                    = '';
             $properties['mailService']                     = 'imap';
             $properties['mailMailHost']                    = '';
             $properties['mailMailboxUsername']             = '';
@@ -105,6 +109,12 @@ if ($object->xpdo) {
             $properties['mailMaxHardBouncesAction']        = 'disable';
             $properties['mailNotClassifiedMessageAction']  = 'move';
             $properties['mailNotClassifiedMailbox']        = 'INBOX.NotClassified';
+            $properties['collection1Name']                 = '';
+            $properties['collection1Parents']              = '';
+            $properties['collection2Name']                 = '';
+            $properties['collection2Parents']              = '';
+            $properties['collection3Name']                 = '';
+            $properties['collection3Parents']              = '';
 
             $resource->setProperties($properties, 'goodnews');
             if (!$resource->save()) {

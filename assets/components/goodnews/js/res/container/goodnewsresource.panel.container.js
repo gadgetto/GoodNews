@@ -128,7 +128,43 @@ Ext.extend(GoodNewsResource.panel.Container,MODx.panel.Resource,{
             ,name: 'setting_mailReplyTo'
         },{
             xtype: 'hidden'
+            ,name: 'setting_mailCharset'
+        },{
+            xtype: 'hidden'
+            ,name: 'setting_mailEncoding'
+        },{
+            xtype: 'hidden'
             ,name: 'setting_mailBounceHandling'
+        },{
+            xtype: 'hidden'
+            ,name: 'setting_mailUseSmtp'
+        },{
+            xtype: 'hidden'
+            ,name: 'setting_mailSmtpAuth'
+        },{
+            xtype: 'hidden'
+            ,name: 'setting_mailSmtpUser'
+        },{
+            xtype: 'hidden'
+            ,name: 'setting_mailSmtpPass'
+        },{
+            xtype: 'hidden'
+            ,name: 'setting_mailSmtpHosts'
+        },{
+            xtype: 'hidden'
+            ,name: 'setting_mailSmtpPrefix'
+        },{
+            xtype: 'hidden'
+            ,name: 'setting_mailSmtpKeepalive'
+        },{
+            xtype: 'hidden'
+            ,name: 'setting_mailSmtpTimeout'
+        },{
+            xtype: 'hidden'
+            ,name: 'setting_mailSmtpSingleTo'
+        },{
+            xtype: 'hidden'
+            ,name: 'setting_mailSmtpHelo'
         },{
             xtype: 'hidden'
             ,name: 'setting_mailService'
