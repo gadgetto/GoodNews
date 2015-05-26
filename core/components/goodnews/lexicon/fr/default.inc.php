@@ -261,6 +261,7 @@ $_lang['goodnews.settings_container_mail_bouncehandling_desc']      = 'Analyser 
 
 $_lang['goodnews.settings_container_smtp_use']                      = 'Utiliser un SMTP';
 $_lang['goodnews.settings_container_smtp_use_desc']                 = 'Si activé, MODX essaiera d\'utiliser le protocole SMTP pour l\'envoi des e-mails.';
+$_lang['goodnews.settings_container_smtp_mandrill_service']         = '#todo';
 $_lang['goodnews.settings_container_smtp_auth']                     = 'Authentification SMTP';
 $_lang['goodnews.settings_container_smtp_auth_desc']                = 'Défini l\'authentification SMTP. Utilise les options mail_smtp_user et mail_smtp_password.';
 $_lang['goodnews.settings_container_smtp_user']                     = 'Utilisateur SMTP';

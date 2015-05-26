@@ -345,7 +345,11 @@ GoodNews.window.UpdateContainerSettings = function(config) {
                             ,id: 'mail_use_smtp'
                             ,name: 'mail_use_smtp'
                             ,hiddenName: 'mail_use_smtp'
-                            ,store: [[0,_('no')],[1,_('yes')]]
+                            ,store: [
+                                [0,_('no')]
+                                ,[1,_('yes')]
+                                ,[2,_('goodnews.settings_container_smtp_mandrill_service')]
+                            ]
                             ,triggerAction: 'all'
                             ,editable: false
                             ,selectOnFocus: false
@@ -353,6 +357,14 @@ GoodNews.window.UpdateContainerSettings = function(config) {
                             ,forceSelection: true
                             ,enableKeyEvents: true
                             ,anchor: '100%'
+                            ,listeners: {
+                                'select': {
+                                    scope:this
+                                    ,fn:function(combo,record,index) {
+                                        this.presetMandrillSMTPSettings(combo.value);
+                                    }
+                                }
+                            }
                         },{
                             xtype: MODx.expandHelp ? 'label' : 'hidden'
                             ,forId: 'mail_use_smtp'
@@ -1069,6 +1081,17 @@ Ext.extend(GoodNews.window.UpdateContainerSettings,MODx.Window,{
         } else {
             msu.enable();
             msp.enable();
+        }
+    }
+    ,presetMandrillSMTPSettings: function(service) {
+        var msa = Ext.getCmp('mail_smtp_auth');
+        var msh = Ext.getCmp('mail_smtp_hosts');
+        var msp = Ext.getCmp('mail_smtp_prefix');
+        // preset Mandrill settings
+        if (service==2) {
+            msa.setValue(1);
+            msh.setValue('smtp.mandrillapp.com:587');
+            msp.setValue('');
         }
     }
     ,enableDisableBounceFields: function(service) {
