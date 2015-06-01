@@ -1,5 +1,6 @@
 Changelog for GoodNews
 
+- fixed a PHP warning in MODX error log
 - added preset for Mandrill SMTP service settings
 - added feature to let each container have it's own SMTP settings (overrides MODX system settings)
 - added feature to let each container have it's own mail charset and mail encoding settings (overrides MODX system settings)
