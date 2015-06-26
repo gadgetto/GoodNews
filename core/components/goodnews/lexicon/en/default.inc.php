@@ -277,7 +277,7 @@ $_lang['goodnews.settings_container_smtp_keepalive_desc']           = 'Prevents 
 $_lang['goodnews.settings_container_smtp_timeout']                  = 'SMTP Timeout';
 $_lang['goodnews.settings_container_smtp_timeout_desc']             = 'Sets the SMTP server timeout in seconds. This function will not work in win32 servers.';
 $_lang['goodnews.settings_container_smtp_single_to']                = 'SMTP Single To';
-$_lang['goodnews.settings_container_smtp_single_to_desc']           = 'If activated the TO: field will process individual emails.';
+$_lang['goodnews.settings_container_smtp_single_to_desc']           = 'If activated, the TO: field will process individual emails.';
 $_lang['goodnews.settings_container_smtp_helo']                     = 'SMTP Helo Message';
 $_lang['goodnews.settings_container_smtp_helo_desc']                = 'Sets the SMTP HELO message (defaults to the hostname of the SMTP server).';
 
