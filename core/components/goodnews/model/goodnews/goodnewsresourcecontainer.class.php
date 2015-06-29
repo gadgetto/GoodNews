@@ -157,6 +157,7 @@ class GoodNewsResourceContainer extends modResource {
         
 		// get default mailing template from container properties
 		$container = $this->xpdo->getObject('modResource', $this->id);
+        $template_id = 0;
 		if ($container) {
 			$props = $container->get('properties');
 			if ($props) {

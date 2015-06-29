@@ -96,18 +96,20 @@ class GoodNewsMailing {
         $this->_changeContext();
 
         $properties = array();
-        $properties['subject']      = $this->_getMailSubject();
-        $properties['ishtml']       = $this->mailing->get('richtext') ? true : false;
+        $properties['subject']       = $this->_getMailSubject();
+        $properties['ishtml']        = $this->mailing->get('richtext') ? true : false;
         if ($properties['ishtml']) {
-            $properties['body']     = $this->_getHTMLMailBody();
-            $properties['altbody']  = $this->_getPlainMailBody();
+            $properties['body']      = $this->_getHTMLMailBody();
+            $properties['altbody']   = $this->_getPlainMailBody();
         } else {
-            $properties['body']     = $this->_getPlainMailBody();
-            $properties['altbody']  = '';
+            $properties['body']      = $this->_getPlainMailBody();
+            $properties['altbody']   = '';
         }
-        $properties['mailFrom']     = $this->mailing->getProperty('mailFrom', 'goodnews', $this->modx->getOption('emailsender'));   
-        $properties['mailFromName'] = $this->mailing->getProperty('mailFromName', 'goodnews', $this->modx->getOption('site_name'));
-        $properties['mailReplyTo']  = $this->mailing->getProperty('mailReplyTo', 'goodnews', $this->modx->getOption('emailsender'));   
+        $properties['mailFrom']      = $this->mailing->getProperty('mailFrom',     'goodnews', $this->modx->getOption('emailsender'));   
+        $properties['mailFromName']  = $this->mailing->getProperty('mailFromName', 'goodnews', $this->modx->getOption('site_name'));
+        $properties['mailReplyTo']   = $this->mailing->getProperty('mailReplyTo',  'goodnews', $this->modx->getOption('emailsender'));   
+        $properties['mailCharset']   = $this->mailing->getProperty('mailCharset',  'goodnews', $this->modx->getOption('mail_charset',  null, 'UTF-8'));
+        $properties['mailEncoding']  = $this->mailing->getProperty('mailEncoding', 'goodnews', $this->modx->getOption('mail_encoding', null, '8bit'));
 
         return $properties;
     }
@@ -560,6 +562,24 @@ class GoodNewsMailing {
     public function sendEmail(array $mail, array $subscriber) {
 
         $this->modx->getService('mail', 'mail.modPHPMailer');
+
+        // Set SMTP params for modMail based on container settings
+        // (this enables each container to have it's own set of SMTP settings - overriding the MODX system settings)
+        if ($this->mailing->getProperty('mailUseSmtp', 'goodnews', $this->modx->getOption('mail_use_smtp', null, false))) {
+            $this->modx->mail->set(modMail::MAIL_ENGINE, 'smtp');
+            $this->modx->mail->set(modMail::MAIL_SMTP_AUTH,   $this->mailing->getProperty('mailSmtpAuth',   'goodnews', $this->modx->getOption('mail_smtp_auth',   null, false)));
+            $this->modx->mail->set(modMail::MAIL_SMTP_USER,   $this->mailing->getProperty('mailSmtpUser',   'goodnews', $this->modx->getOption('mail_smtp_user',   null, '')));
+            $this->modx->mail->set(modMail::MAIL_SMTP_PASS,   $this->mailing->getProperty('mailSmtpPass',   'goodnews', $this->modx->getOption('mail_smtp_pass',   null, '')));
+            $this->modx->mail->set(modMail::MAIL_SMTP_HOSTS,  $this->mailing->getProperty('mailSmtpHosts',  'goodnews', $this->modx->getOption('mail_smtp_hosts',  null, 'localhost:25')));
+            $this->modx->mail->set(modMail::MAIL_SMTP_PREFIX, $this->mailing->getProperty('mailSmtpPrefix', 'goodnews', $this->modx->getOption('mail_smtp_prefix', null, '')));
+            $helo = $this->mailing->getProperty('mailSmtpHelo', 'goodnews', $this->modx->getOption('mail_smtp_helo', null, ''));
+            if (!empty($helo)) {
+                $this->modx->mail->set(modMail::MAIL_SMTP_HELO, $helo);
+            }
+            $this->modx->mail->set(modMail::MAIL_SMTP_KEEPALIVE, $this->mailing->getProperty('mailSmtpKeepalive', 'goodnews', $this->modx->getOption('mail_smtp_keepalive', null, false)));
+            $this->modx->mail->set(modMail::MAIL_SMTP_SINGLE_TO, $this->mailing->getProperty('mailSmtpSingleTo',  'goodnews', $this->modx->getOption('mail_smtp_single_to', null, false)));
+            $this->modx->mail->set(modMail::MAIL_SMTP_TIMEOUT,   $this->mailing->getProperty('mailSmtpTimeout',   'goodnews', $this->modx->getOption('mail_smtp_timeout',   null, 10)));
+        }
         $this->modx->mail->header('X-goodnews-user-id: '.$subscriber['id']);
         $this->modx->mail->header('X-goodnews-mailing-id: '.$this->mailingid);
         $this->modx->mail->set(modMail::MAIL_BODY,      $mail['body']);
@@ -568,6 +588,9 @@ class GoodNewsMailing {
         $this->modx->mail->set(modMail::MAIL_FROM_NAME, $mail['mailFromName']);
         $this->modx->mail->set(modMail::MAIL_SENDER,    $mail['mailFrom']);
         $this->modx->mail->set(modMail::MAIL_SUBJECT,   $mail['subject']);
+        $this->modx->mail->set(modMail::MAIL_CHARSET,   $mail['mailCharset']);
+        $this->modx->mail->set(modMail::MAIL_ENCODING,  $mail['mailEncoding']);
+
         $this->modx->mail->address('reply-to',          $mail['mailReplyTo']);
         $this->modx->mail->address('to', $subscriber['email'], $subscriber['fullname']);
         $this->modx->mail->setHTML($mail['ishtml']);

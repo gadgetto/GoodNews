@@ -243,16 +243,44 @@ $_lang['goodnews.settings_containers_none']                         = 'No GoodNe
 $_lang['goodnews.settings_container_id']                            = 'ID';
 $_lang['goodnews.settings_container_context_key']                   = 'Context';
 $_lang['goodnews.settings_container_pagetitle']                     = 'Resource Container Name';
+
 $_lang['goodnews.settings_container_editor_groups']                 = 'Container Editor Groups';
 $_lang['goodnews.settings_container_editor_groups_desc']            = 'Comma seperated list of MODx user-groups which have access to this GoodNews container.';
 $_lang['goodnews.settings_container_mail_from']                     = 'Sender E-Mail Address (for Bounce Messages)';
-$_lang['goodnews.settings_container_mail_from_desc']                = 'The E-Mail Address used for sending mails from this container and for receiving bounce messages (Non Delivery Notifications).';
+$_lang['goodnews.settings_container_mail_from_desc']                = 'The E-Mail Address used for sending mails and for receiving bounce messages (Non Delivery Notifications).';
 $_lang['goodnews.settings_container_mail_from_name']                = 'Sender Name';
-$_lang['goodnews.settings_container_mail_from_name_desc']           = 'The Sender Name used for sending mails from this container.';
+$_lang['goodnews.settings_container_mail_from_name_desc']           = 'The Sender Name used for sending mails.';
 $_lang['goodnews.settings_container_mail_reply_to']                 = 'Reply-To E-Mail Address';
-$_lang['goodnews.settings_container_mail_reply_to_desc']            = 'The E-Mail Address used for receiving answers to mails sent from this container.';
+$_lang['goodnews.settings_container_mail_reply_to_desc']            = 'The E-Mail Address used for receiving answers to mails.';
+$_lang['goodnews.settings_container_mail_charset']                  = 'Mail Charset';
+$_lang['goodnews.settings_container_mail_charset_desc']             = 'Default charset for emails, e.g., \'iso-8859-1\' or \'utf-8\'';
+$_lang['goodnews.settings_container_mail_encoding']                 = 'Mail Encoding';
+$_lang['goodnews.settings_container_mail_encoding_desc']            = 'Encoding of the message. Options: "8bit", "7bit", "binary", "base64", and "quoted-printable".';
 $_lang['goodnews.settings_container_mail_bouncehandling']           = 'Automatic Bounce Handling';
 $_lang['goodnews.settings_container_mail_bouncehandling_desc']      = 'Wether to automatically analyze and handle bounce messages.';
+
+$_lang['goodnews.settings_container_smtp_use']                      = 'Use SMTP';
+$_lang['goodnews.settings_container_smtp_use_desc']                 = 'If true, MODX will attempt to use SMTP in mail functions.';
+$_lang['goodnews.settings_container_smtp_mandrill_service']         = 'Mandrill SMTP Service';
+$_lang['goodnews.settings_container_smtp_auth']                     = 'SMTP Authentication';
+$_lang['goodnews.settings_container_smtp_auth_desc']                = 'Sets SMTP authentication. Utilizes the mail_smtp_user and mail_smtp_pass settings.';
+$_lang['goodnews.settings_container_smtp_user']                     = 'SMTP User';
+$_lang['goodnews.settings_container_smtp_user_desc']                = 'The user to authenticate to SMTP against.';
+$_lang['goodnews.settings_container_smtp_pass']                     = 'SMTP Password';
+$_lang['goodnews.settings_container_smtp_pass_desc']                = 'The password to authenticate to SMTP against.';
+$_lang['goodnews.settings_container_smtp_hosts']                    = 'SMTP Hosts + Ports';
+$_lang['goodnews.settings_container_smtp_hosts_desc']               = 'Sets SMTP hosts and ports. Format: [hostname:port] (e.g., "smtp1.example.com:25;smtp2.example.com:465").';
+$_lang['goodnews.settings_container_smtp_prefix']                   = 'SMTP Connection Prefix';
+$_lang['goodnews.settings_container_smtp_prefix_desc']              = 'Sets connection prefix. Options are "", "ssl" or "tls".';
+$_lang['goodnews.settings_container_smtp_keepalive']                = 'SMTP Keep-Alive';
+$_lang['goodnews.settings_container_smtp_keepalive_desc']           = 'Prevents the SMTP connection from being closed after each mail sending. Not recommended.';
+$_lang['goodnews.settings_container_smtp_timeout']                  = 'SMTP Timeout';
+$_lang['goodnews.settings_container_smtp_timeout_desc']             = 'Sets the SMTP server timeout in seconds. This function will not work in win32 servers.';
+$_lang['goodnews.settings_container_smtp_single_to']                = 'SMTP Single To';
+$_lang['goodnews.settings_container_smtp_single_to_desc']           = 'If activated, the TO: field will process individual emails.';
+$_lang['goodnews.settings_container_smtp_helo']                     = 'SMTP Helo Message';
+$_lang['goodnews.settings_container_smtp_helo_desc']                = 'Sets the SMTP HELO message (defaults to the hostname of the SMTP server).';
+
 $_lang['goodnews.settings_container_mail_service']                  = 'Account Type';
 $_lang['goodnews.settings_container_mail_service_desc']             = 'The account type of the mailservice (imap or pop3).';
 $_lang['goodnews.settings_container_mail_mailhost']                 = 'Mailserver Name';
@@ -267,6 +295,7 @@ $_lang['goodnews.settings_container_mail_port']                     = 'Portnumbe
 $_lang['goodnews.settings_container_mail_port_desc']                = 'The portnumber for the mailbox access (Default: 143).';
 $_lang['goodnews.settings_container_mail_service_option']           = 'Service Option';
 $_lang['goodnews.settings_container_mail_service_option_desc']      = 'The service option for the mailbox access (Default: notls).';
+
 $_lang['goodnews.settings_container_softbounced_msg_action']        = 'Soft Bounce Messages Action';
 $_lang['goodnews.settings_container_softbounced_msg_action_desc']   = 'What to do with soft bounce messages after processing?';
 $_lang['goodnews.settings_container_softbounces_mailbox']           = 'Mailfolder for Soft Bounce Messages';
@@ -283,10 +312,12 @@ $_lang['goodnews.settings_container_max_hardbounces']               = 'Max. Coun
 $_lang['goodnews.settings_container_max_hardbounces_desc']          = 'Maximum count of hard bounce messages for a subscriber';
 $_lang['goodnews.settings_container_max_hardbounces_action']        = 'Action for Max. Count of Hard Bounces';
 $_lang['goodnews.settings_container_max_hardbounces_action_desc']   = 'What action to perform with subscribers if maximum count of hard bounces is reached?';
+
 $_lang['goodnews.settings_container_notclassified_msg_action']      = 'Unclassified Messages Action';
 $_lang['goodnews.settings_container_notclassified_msg_action_desc'] = 'What to do with unclassified messages?';
 $_lang['goodnews.settings_container_notclassified_mailbox']         = 'Mailfolder for Unclassified Messages';
 $_lang['goodnews.settings_container_notclassified_mailbox_desc']    = 'Name of the Mailfolder to move unclassified messages.';
+
 $_lang['goodnews.settings_container_collection1_fieldset']          = 'Collection 1';
 $_lang['goodnews.settings_container_collection2_fieldset']          = 'Collection 2';
 $_lang['goodnews.settings_container_collection3_fieldset']          = 'Collection 3';
@@ -314,6 +345,7 @@ $_lang['goodnews.settings_container_notclassified_msg_delete']      = 'Delete';
 
 $_lang['goodnews.settings_container_update']                        = 'Edit Container Settings';
 $_lang['goodnews.settings_container_tab_general']                   = 'General';
+$_lang['goodnews.settings_container_tab_smtp']                      = 'SMTP';
 $_lang['goodnews.settings_container_tab_bouncemailbox']             = 'Bounce Mailbox';
 $_lang['goodnews.settings_container_tab_bouncerules']               = 'Bounce Rules';
 $_lang['goodnews.settings_container_tab_unclassified_bounces']      = 'Unclassified Bounces';
@@ -322,6 +354,8 @@ $_lang['goodnews.settings_container_err_ns_editor_groups']          = 'Please sp
 $_lang['goodnews.settings_container_err_ns_mail_from']              = 'Please specify the sender email address (for Bounce Messages).';
 $_lang['goodnews.settings_container_err_ns_mail_from_name']         = 'Please specify the sender name.';
 $_lang['goodnews.settings_container_err_ns_mail_reply_to']          = 'Please specify the reply-to email address.';
+$_lang['goodnews.settings_container_err_ns_mail_charset']           = 'Please specify the mail charset.';
+$_lang['goodnews.settings_container_err_ns_mail_encoding']          = 'Please specify the mail encoding.';
 $_lang['goodnews.settings_container_err_mailbox_connection_failed'] = 'Could not connect to bounce mailbox! Please check settings.';
 
 $_lang['goodnews.import']                                           = 'GoodNews - Import';

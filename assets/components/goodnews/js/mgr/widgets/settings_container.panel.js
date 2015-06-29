@@ -39,7 +39,19 @@ GoodNews.grid.Containers = function(config) {
             ,'mail_from'
             ,'mail_from_name'
             ,'mail_reply_to'
+            ,'mail_charset'
+            ,'mail_encoding'
             ,'mail_bouncehandling'
+            ,'mail_use_smtp'
+            ,'mail_smtp_auth'
+            ,'mail_smtp_user'
+            ,'mail_smtp_pass'
+            ,'mail_smtp_hosts'
+            ,'mail_smtp_prefix'
+            ,'mail_smtp_keepalive'
+            ,'mail_smtp_timeout'
+            ,'mail_smtp_single_to'
+            ,'mail_smtp_helo'
             ,'mail_service'
             ,'mail_mailhost'
             ,'mail_mailbox_username'
@@ -49,10 +61,10 @@ GoodNews.grid.Containers = function(config) {
             ,'mail_service_option'
             ,'mail_softbounced_message_action'
             ,'mail_soft_mailbox'
-            ,'mail_hardbounced_message_action'
-            ,'mail_hard_mailbox'
             ,'mail_max_softbounces'
             ,'mail_max_softbounces_action'
+            ,'mail_hardbounced_message_action'
+            ,'mail_hard_mailbox'
             ,'mail_max_hardbounces'
             ,'mail_max_hardbounces_action'
             ,'mail_notclassified_message_action'
@@ -133,7 +145,8 @@ Ext.extend(GoodNews.grid.Containers,MODx.grid.Grid,{
             });
         }
         this.updateContainerSettingsWindow.setValues(this.menu.record);
-        this.updateContainerSettingsWindow.enableDisableFields(this.menu.record.mail_service);
+        this.updateContainerSettingsWindow.enableDisableSMTPAuthFields(this.menu.record.mail_smtp_auth);
+        this.updateContainerSettingsWindow.enableDisableBounceFields(this.menu.record.mail_service);
         this.updateContainerSettingsWindow.show(e.target);
     }
 });
@@ -149,7 +162,7 @@ GoodNews.window.UpdateContainerSettings = function(config) {
             action: 'mgr/settings/containers/update'
         }
         ,autoHeight: true
-        ,width: 680
+        ,width: 760
         ,closeAction: 'hide'
         ,fields: [{
             xtype: 'modx-tabs'
@@ -187,29 +200,49 @@ GoodNews.window.UpdateContainerSettings = function(config) {
                     ,html: _('goodnews.settings_container_editor_groups_desc')
                     ,cls: 'desc-under'
                 },{
-                    xtype: 'textfield'
-                    ,fieldLabel: _('goodnews.settings_container_mail_from')
-                    ,description: MODx.expandHelp ? '' : _('goodnews.settings_container_mail_from_desc')
-                    ,id: 'mail_from'
-                    ,name: 'mail_from'
+                    layout: 'column'
+                    ,cls: 'gon-x-panel-add-padding-top'
+                    ,border: false
                     ,anchor: '100%'
-                },{
-                    xtype: MODx.expandHelp ? 'label' : 'hidden'
-                    ,forId: 'mail_from'
-                    ,html: _('goodnews.settings_container_mail_from_desc')
-                    ,cls: 'desc-under'
-                },{
-                    xtype: 'textfield'
-                    ,fieldLabel: _('goodnews.settings_container_mail_from_name')
-                    ,description: MODx.expandHelp ? '' : _('goodnews.settings_container_mail_from_name_desc')
-                    ,id: 'mail_from_name'
-                    ,name: 'mail_from_name'
-                    ,anchor: '100%'
-                },{
-                    xtype: MODx.expandHelp ? 'label' : 'hidden'
-                    ,forId: 'mail_from_name'
-                    ,html: _('goodnews.settings_container_mail_from_name_desc')
-                    ,cls: 'desc-under'
+                    ,defaults: {
+                        labelAlign: 'top'
+                        ,border: false
+                        ,layout: 'form'
+                        ,msgTarget: 'under'
+                    }
+                    ,items: [{
+                        columnWidth: .5
+                        ,style: 'margin: 0 7px 0 0;'
+                        ,items: [{
+                            xtype: 'textfield'
+                            ,fieldLabel: _('goodnews.settings_container_mail_from')
+                            ,description: MODx.expandHelp ? '' : _('goodnews.settings_container_mail_from_desc')
+                            ,id: 'mail_from'
+                            ,name: 'mail_from'
+                            ,anchor: '100%'
+                        },{
+                            xtype: MODx.expandHelp ? 'label' : 'hidden'
+                            ,forId: 'mail_from'
+                            ,html: _('goodnews.settings_container_mail_from_desc')
+                            ,cls: 'desc-under'
+                        }]
+                    },{
+                        columnWidth: .5
+                        ,style: 'margin: 0 0 0 7px;'
+                        ,items: [{
+                            xtype: 'textfield'
+                            ,fieldLabel: _('goodnews.settings_container_mail_from_name')
+                            ,description: MODx.expandHelp ? '' : _('goodnews.settings_container_mail_from_name_desc')
+                            ,id: 'mail_from_name'
+                            ,name: 'mail_from_name'
+                            ,anchor: '100%'
+                        },{
+                            xtype: MODx.expandHelp ? 'label' : 'hidden'
+                            ,forId: 'mail_from_name'
+                            ,html: _('goodnews.settings_container_mail_from_name_desc')
+                            ,cls: 'desc-under'
+                        }]
+                    }]
                 },{
                     xtype: 'textfield'
                     ,fieldLabel: _('goodnews.settings_container_mail_reply_to')
@@ -223,14 +256,59 @@ GoodNews.window.UpdateContainerSettings = function(config) {
                     ,html: _('goodnews.settings_container_mail_reply_to_desc')
                     ,cls: 'desc-under'
                 },{
+                    layout: 'column'
+                    ,cls: 'gon-x-panel-add-padding-top'
+                    ,border: false
+                    ,anchor: '100%'
+                    ,defaults: {
+                        labelAlign: 'top'
+                        ,border: false
+                        ,layout: 'form'
+                        ,msgTarget: 'under'
+                    }
+                    ,items: [{
+                        columnWidth: .5
+                        ,style: 'margin: 0 7px 0 0;'
+                        ,items: [{
+                            xtype: 'modx-combo-charset'
+                            ,fieldLabel: _('goodnews.settings_container_mail_charset')
+                            ,description: MODx.expandHelp ? '' : _('goodnews.settings_container_mail_charset_desc')
+                            ,id: 'mail_charset'
+                            ,name: 'mail_charset'
+                            ,hiddenName: 'mail_charset'
+                            ,anchor: '100%'
+                            ,width: '100%'
+                        },{
+                            xtype: MODx.expandHelp ? 'label' : 'hidden'
+                            ,forId: 'mail_charset'
+                            ,html: _('goodnews.settings_container_mail_charset_desc')
+                            ,cls: 'desc-under'
+                        }]
+                    },{
+                        columnWidth: .5
+                        ,style: 'margin: 0 0 0 7px;'
+                        ,items: [{
+                            xtype: 'textfield'
+                            ,fieldLabel: _('goodnews.settings_container_mail_encoding')
+                            ,description: MODx.expandHelp ? '' : _('goodnews.settings_container_mail_encoding_desc')
+                            ,id: 'mail_encoding'
+                            ,name: 'mail_encoding'
+                            ,anchor: '100%'
+                        },{
+                            xtype: MODx.expandHelp ? 'label' : 'hidden'
+                            ,forId: 'mail_encoding'
+                            ,html: _('goodnews.settings_container_mail_encoding_desc')
+                            ,cls: 'desc-under'
+                        }]
+                    }]
+                },{
                     xtype: 'modx-combo'
                     ,fieldLabel: _('goodnews.settings_container_mail_bouncehandling')
                     ,description: MODx.expandHelp ? '' : _('goodnews.settings_container_mail_bouncehandling_desc')
                     ,id: 'mail_bouncehandling'
                     ,name: 'mail_bouncehandling'
                     ,hiddenName: 'mail_bouncehandling'
-                    ,store: [[1,_('enabled')],[0,_('disabled')]]
-                    ,value: 1
+                    ,store: [[0,_('no')],[1,_('yes')]]
                     ,triggerAction: 'all'
                     ,editable: false
                     ,selectOnFocus: false
@@ -243,6 +321,282 @@ GoodNews.window.UpdateContainerSettings = function(config) {
                     ,forId: 'mail_bouncehandling'
                     ,html: _('goodnews.settings_container_mail_bouncehandling_desc')
                     ,cls: 'desc-under'
+                }]
+            },{
+                title: _('goodnews.settings_container_tab_smtp')
+                ,layout: 'form'
+                ,items: [{
+                    layout: 'column'
+                    ,border: false
+                    ,anchor: '100%'
+                    ,defaults: {
+                        labelAlign: 'top'
+                        ,border: false
+                        ,layout: 'form'
+                        ,msgTarget: 'under'
+                    }
+                    ,items: [{
+                        columnWidth: .5
+                        ,style: 'margin: 0 7px 0 0;'
+                        ,items: [{
+                            xtype: 'modx-combo'
+                            ,fieldLabel: _('goodnews.settings_container_smtp_use')
+                            ,description: MODx.expandHelp ? '' : _('goodnews.settings_container_smtp_use_desc')
+                            ,id: 'mail_use_smtp'
+                            ,name: 'mail_use_smtp'
+                            ,hiddenName: 'mail_use_smtp'
+                            ,store: [
+                                [0,_('no')]
+                                ,[1,_('yes')]
+                                ,[2,_('goodnews.settings_container_smtp_mandrill_service')]
+                            ]
+                            ,triggerAction: 'all'
+                            ,editable: false
+                            ,selectOnFocus: false
+                            ,preventRender: true
+                            ,forceSelection: true
+                            ,enableKeyEvents: true
+                            ,anchor: '100%'
+                            ,listeners: {
+                                'select': {
+                                    scope:this
+                                    ,fn:function(combo,record,index) {
+                                        this.presetMandrillSMTPSettings(combo.value);
+                                    }
+                                }
+                            }
+                        },{
+                            xtype: MODx.expandHelp ? 'label' : 'hidden'
+                            ,forId: 'mail_use_smtp'
+                            ,html: _('goodnews.settings_container_smtp_use_desc')
+                            ,cls: 'desc-under'
+                        }]
+                    },{
+                        columnWidth: .5
+                        ,style: 'margin: 0 0 0 7px;'
+                        ,items: [{
+                            xtype: 'modx-combo'
+                            ,fieldLabel: _('goodnews.settings_container_smtp_auth')
+                            ,description: MODx.expandHelp ? '' : _('goodnews.settings_container_smtp_auth_desc')
+                            ,id: 'mail_smtp_auth'
+                            ,name: 'mail_smtp_auth'
+                            ,hiddenName: 'mail_smtp_auth'
+                            ,store: [[0,_('no')],[1,_('yes')]]
+                            ,triggerAction: 'all'
+                            ,editable: false
+                            ,selectOnFocus: false
+                            ,preventRender: true
+                            ,forceSelection: true
+                            ,enableKeyEvents: true
+                            ,anchor: '100%'
+                            ,listeners: {
+                                'select': {
+                                    scope:this
+                                    ,fn:function(combo,record,index) {
+                                        this.enableDisableSMTPAuthFields(combo.value);
+                                    }
+                                }
+                            }
+                        },{
+                            xtype: MODx.expandHelp ? 'label' : 'hidden'
+                            ,forId: 'mail_smtp_auth'
+                            ,html: _('goodnews.settings_container_smtp_auth_desc')
+                            ,cls: 'desc-under'
+                        }]
+                    }]
+                },{
+                    layout: 'column'
+                    ,cls: 'gon-x-panel-add-padding-top'
+                    ,border: false
+                    ,anchor: '100%'
+                    ,defaults: {
+                        labelAlign: 'top'
+                        ,border: false
+                        ,layout: 'form'
+                        ,msgTarget: 'under'
+                    }
+                    ,items: [{
+                        columnWidth: .5
+                        ,style: 'margin: 0 7px 0 0;'
+                        ,items: [{
+                            xtype: 'textfield'
+                            ,fieldLabel: _('goodnews.settings_container_smtp_user')
+                            ,description: MODx.expandHelp ? '' : _('goodnews.settings_container_smtp_user_desc')
+                            ,id: 'mail_smtp_user'
+                            ,name: 'mail_smtp_user'
+                            ,anchor: '100%'
+                        },{
+                            xtype: MODx.expandHelp ? 'label' : 'hidden'
+                            ,forId: 'mail_smtp_user'
+                            ,html: _('goodnews.settings_container_smtp_user_desc')
+                            ,cls: 'desc-under'
+                        }]
+                    },{
+                        columnWidth: .5
+                        ,style: 'margin: 0 0 0 7px;'
+                        ,items: [{
+                            xtype: 'textfield'
+                            ,inputType: 'password'
+                            ,fieldLabel: _('goodnews.settings_container_smtp_pass')
+                            ,description: MODx.expandHelp ? '' : _('goodnews.settings_container_smtp_pass_desc')
+                            ,id: 'mail_smtp_pass'
+                            ,name: 'mail_smtp_pass'
+                            ,anchor: '100%'
+                        },{
+                            xtype: MODx.expandHelp ? 'label' : 'hidden'
+                            ,forId: 'mail_smtp_pass'
+                            ,html: _('goodnews.settings_container_smtp_pass_desc')
+                            ,cls: 'desc-under'
+                        }]
+                    }]
+                },{
+                    layout: 'column'
+                    ,cls: 'gon-x-panel-add-padding-top'
+                    ,border: false
+                    ,anchor: '100%'
+                    ,defaults: {
+                        labelAlign: 'top'
+                        ,border: false
+                        ,layout: 'form'
+                        ,msgTarget: 'under'
+                    }
+                    ,items: [{
+                        columnWidth: .5
+                        ,style: 'margin: 0 7px 0 0;'
+                        ,items: [{
+                            xtype: 'textfield'
+                            ,fieldLabel: _('goodnews.settings_container_smtp_hosts')
+                            ,description: MODx.expandHelp ? '' : _('goodnews.settings_container_smtp_hosts_desc')
+                            ,id: 'mail_smtp_hosts'
+                            ,name: 'mail_smtp_hosts'
+                            ,anchor: '100%'
+                        },{
+                            xtype: MODx.expandHelp ? 'label' : 'hidden'
+                            ,forId: 'mail_smtp_hosts'
+                            ,html: _('goodnews.settings_container_smtp_hosts_desc')
+                            ,cls: 'desc-under'
+                        }]
+                    },{
+                        columnWidth: .5
+                        ,style: 'margin: 0 0 0 7px;'
+                        ,items: [{
+                            xtype: 'textfield'
+                            ,fieldLabel: _('goodnews.settings_container_smtp_prefix')
+                            ,description: MODx.expandHelp ? '' : _('goodnews.settings_container_smtp_prefix_desc')
+                            ,id: 'mail_smtp_prefix'
+                            ,name: 'mail_smtp_prefix'
+                            ,anchor: '100%'
+                        },{
+                            xtype: MODx.expandHelp ? 'label' : 'hidden'
+                            ,forId: 'mail_smtp_prefix'
+                            ,html: _('goodnews.settings_container_smtp_prefix_desc')
+                            ,cls: 'desc-under'
+                        }]
+                    }]
+                },{
+                    layout: 'column'
+                    ,cls: 'gon-x-panel-add-padding-top'
+                    ,border: false
+                    ,anchor: '100%'
+                    ,defaults: {
+                        labelAlign: 'top'
+                        ,border: false
+                        ,layout: 'form'
+                        ,msgTarget: 'under'
+                    }
+                    ,items: [{
+                        columnWidth: .5
+                        ,style: 'margin: 0 7px 0 0;'
+                        ,items: [{
+                            xtype: 'modx-combo'
+                            ,fieldLabel: _('goodnews.settings_container_smtp_keepalive')
+                            ,description: MODx.expandHelp ? '' : _('goodnews.settings_container_smtp_keepalive_desc')
+                            ,id: 'mail_smtp_keepalive'
+                            ,name: 'mail_smtp_keepalive'
+                            ,hiddenName: 'mail_smtp_keepalive'
+                            ,store: [[0,_('no')],[1,_('yes')]]
+                            ,triggerAction: 'all'
+                            ,editable: false
+                            ,selectOnFocus: false
+                            ,preventRender: true
+                            ,forceSelection: true
+                            ,enableKeyEvents: true
+                            ,anchor: '100%'
+                        },{
+                            xtype: MODx.expandHelp ? 'label' : 'hidden'
+                            ,forId: 'mail_smtp_keepalive'
+                            ,html: _('goodnews.settings_container_smtp_keepalive_desc')
+                            ,cls: 'desc-under'
+                        }]
+                    },{
+                        columnWidth: .5
+                        ,style: 'margin: 0 0 0 7px;'
+                        ,items: [{
+                            xtype: 'textfield'
+                            ,fieldLabel: _('goodnews.settings_container_smtp_timeout')
+                            ,description: MODx.expandHelp ? '' : _('goodnews.settings_container_smtp_timeout_desc')
+                            ,id: 'mail_smtp_timeout'
+                            ,name: 'mail_smtp_timeout'
+                            ,anchor: '100%'
+                        },{
+                            xtype: MODx.expandHelp ? 'label' : 'hidden'
+                            ,forId: 'mail_smtp_timeout'
+                            ,html: _('goodnews.settings_container_smtp_timeout_desc')
+                            ,cls: 'desc-under'
+                        }]
+                    }]
+                },{
+                    layout: 'column'
+                    ,cls: 'gon-x-panel-add-padding-top'
+                    ,border: false
+                    ,anchor: '100%'
+                    ,defaults: {
+                        labelAlign: 'top'
+                        ,border: false
+                        ,layout: 'form'
+                        ,msgTarget: 'under'
+                    }
+                    ,items: [{
+                        columnWidth: .5
+                        ,style: 'margin: 0 7px 0 0;'
+                        ,items: [{
+                            xtype: 'modx-combo'
+                            ,fieldLabel: _('goodnews.settings_container_smtp_single_to')
+                            ,description: MODx.expandHelp ? '' : _('goodnews.settings_container_smtp_single_to_desc')
+                            ,id: 'mail_smtp_single_to'
+                            ,name: 'mail_smtp_single_to'
+                            ,hiddenName: 'mail_smtp_single_to'
+                            ,store: [[0,_('no')],[1,_('yes')]]
+                            ,triggerAction: 'all'
+                            ,editable: false
+                            ,selectOnFocus: false
+                            ,preventRender: true
+                            ,forceSelection: true
+                            ,enableKeyEvents: true
+                            ,anchor: '100%'
+                        },{
+                            xtype: MODx.expandHelp ? 'label' : 'hidden'
+                            ,forId: 'mail_smtp_single_to'
+                            ,html: _('goodnews.settings_container_smtp_single_to_desc')
+                            ,cls: 'desc-under'
+                        }]
+                    },{
+                        columnWidth: .5
+                        ,style: 'margin: 0 0 0 7px;'
+                        ,items: [{
+                            xtype: 'textfield'
+                            ,fieldLabel: _('goodnews.settings_container_smtp_helo')
+                            ,description: MODx.expandHelp ? '' : _('goodnews.settings_container_smtp_helo_desc')
+                            ,id: 'mail_smtp_helo'
+                            ,name: 'mail_smtp_helo'
+                            ,anchor: '100%'
+                        },{
+                            xtype: MODx.expandHelp ? 'label' : 'hidden'
+                            ,forId: 'mail_smtp_helo'
+                            ,html: _('goodnews.settings_container_smtp_helo_desc')
+                            ,cls: 'desc-under'
+                        }]
+                    }]
                 }]
             },{
                 title: _('goodnews.settings_container_tab_bouncemailbox')
@@ -269,7 +623,7 @@ GoodNews.window.UpdateContainerSettings = function(config) {
                         'select': {
                             scope:this
                             ,fn:function(combo,record,index) {
-                                this.enableDisableFields(combo.value);
+                                this.enableDisableBounceFields(combo.value);
                             }
                         }
                     }
@@ -330,7 +684,7 @@ GoodNews.window.UpdateContainerSettings = function(config) {
                             ,anchor: '100%'
                         },{
                             xtype: MODx.expandHelp ? 'label' : 'hidden'
-                            ,forId: 'mail_boxname'
+                            ,forId: 'mail_mailbox_password'
                             ,html: _('goodnews.settings_container_mail_mailbox_password_desc')
                             ,cls: 'desc-under'
                         }]
@@ -717,7 +1071,30 @@ GoodNews.window.UpdateContainerSettings = function(config) {
     GoodNews.window.UpdateContainerSettings.superclass.constructor.call(this,config);
 };
 Ext.extend(GoodNews.window.UpdateContainerSettings,MODx.Window,{
-    enableDisableFields: function(service) {
+    enableDisableSMTPAuthFields: function(enabled) {
+        var msu = Ext.getCmp('mail_smtp_user');
+        var msp = Ext.getCmp('mail_smtp_pass');
+        // disable/enable fields related to smtp auth
+        if (enabled==false) {
+            msu.disable();
+            msp.disable();
+        } else {
+            msu.enable();
+            msp.enable();
+        }
+    }
+    ,presetMandrillSMTPSettings: function(service) {
+        var msa = Ext.getCmp('mail_smtp_auth');
+        var msh = Ext.getCmp('mail_smtp_hosts');
+        var msp = Ext.getCmp('mail_smtp_prefix');
+        // preset Mandrill settings
+        if (service==2) {
+            msa.setValue(1);
+            msh.setValue('smtp.mandrillapp.com:587');
+            msp.setValue('');
+        }
+    }
+    ,enableDisableBounceFields: function(service) {
         var sbma = Ext.getCmp('mail_softbounced_message_action');
         var hbma = Ext.getCmp('mail_hardbounced_message_action');
         var smb  = Ext.getCmp('mail_soft_mailbox');
