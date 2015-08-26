@@ -277,6 +277,7 @@ Ext.extend(GoodNewsResource.panel.Mailing,MODx.panel.Resource,{
             ,description: '<b>[[*introtext]]</b><br />'+_('goodnews.mail_summary_desc')
             ,name: 'introtext'
             ,id: 'modx-resource-introtext'
+            ,grow: true
             ,anchor: '100%'
             ,value: config.record.introtext || ''
         });
