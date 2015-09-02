@@ -183,7 +183,7 @@
 #goodnews-grid-newsletters .x-grid3-row-collapsed .x-grid3-row-expander::before {
     font-family: fontawesome;
     font-size: 14px;
-    content: "\f003";
+    content: "\f0e0";
     color: #53595f;
 }
 #goodnews-grid-newsletters .x-grid3-row-expanded .x-grid3-row-expander::before {
