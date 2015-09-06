@@ -1,5 +1,8 @@
 Changelog for GoodNews
 
+- reordered newsletter grid context menu (now it should be more logical)
+- removed/disabled Delete action (menu and button) from mailing when sending is in progress 
+- added action buttons to newsletters grid
 - fixed a problem with send counter when timed out mails are detected
 - the Mail Summary field is now able to grow in it's height when text is entered
 - small graphical fixes

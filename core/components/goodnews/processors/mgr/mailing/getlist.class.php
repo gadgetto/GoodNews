@@ -48,7 +48,15 @@ class NewsletterGetListProcessor extends modObjectGetListProcessor {
     /** @var GoodNewsResourceContainer $currentContainer */
     public $currentContainer = 0;
     
+    /** @var boolean $legacyMode */
+    public $legacyMode = false;
+    
     public function initialize() {
+        // Determine MODX Revo version and set legacy mode
+        $version = $this->modx->getVersionData();
+        $fullVersion = $version['full_version'];
+        $this->legacyMode = version_compare($fullVersion, '2.3.0-dev', '>=') ? false : true;
+        
         $this->currentContainer = $this->modx->goodnews->config['currentContainer'];
         return parent::initialize();
     }
@@ -219,6 +227,245 @@ class NewsletterGetListProcessor extends modObjectGetListProcessor {
     
             }
         
+        }
+
+        // Prepare action buttons
+        $resourceArray['actions'] = array();
+        
+        if (!empty($resourceArray['deleted'])) {
+
+            $resourceArray['actions'][] = array(
+                'className' => 'undelete',
+                'text'      => $this->modx->lexicon('undelete'),
+            );
+
+        } else {
+            
+            if ($resourceArray['status'] == self::GON_NEWSLETTER_STATUS_NOT_PUBLISHED) {
+                $resourceArray['actions'][] = array(
+                    'className' => 'start gon-ab-start',
+                    'text'      => $this->legacyMode ? $this->modx->lexicon('goodnews.start') : '',
+                    'disabled'  => ' disabled="disabled"',
+                );
+                $resourceArray['actions'][] = array(
+                    'className' => 'stop gon-ab-stop',
+                    'text'      => $this->legacyMode ? $this->modx->lexicon('goodnews.stop') : '',
+                    'disabled'  => ' disabled="disabled"',
+                );
+                $resourceArray['actions'][] = array(
+                    'className' => 'preview gon-ab-preview',
+                    'text'      => $this->modx->lexicon('view'),
+                );
+                $resourceArray['actions'][] = array(
+                    'className' => 'test gon-ab-test',
+                    'text'      => $this->modx->lexicon('goodnews.test'),
+                );
+                $resourceArray['actions'][] = array(
+                    'className' => 'edit gon-ab-edit',
+                    'text'      => $this->modx->lexicon('edit'),
+                );
+                $resourceArray['actions'][] = array(
+                    'className' => 'delete gon-ab-delete',
+                    'text'      => $this->modx->lexicon('delete'),
+                );
+                $resourceArray['actions'][] = array(
+                    'className' => 'publish orange gon-ab-publish',
+                    'text'      => $this->modx->lexicon('publish'),
+                );
+            } elseif ($resourceArray['status'] == self::GON_NEWSLETTER_STATUS_NOT_READY_TO_SEND) {
+                $resourceArray['actions'][] = array(
+                    'className' => 'start gon-ab-start',
+                    'text'      => $this->legacyMode ? $this->modx->lexicon('goodnews.start') : '',
+                    'disabled'  => ' disabled="disabled"',
+                );
+                $resourceArray['actions'][] = array(
+                    'className' => 'stop gon-ab-stop',
+                    'text'      => $this->legacyMode ? $this->modx->lexicon('goodnews.stop') : '',
+                    'disabled'  => ' disabled="disabled"',
+                );
+                $resourceArray['actions'][] = array(
+                    'className' => 'preview gon-ab-preview',
+                    'text'      => $this->modx->lexicon('view'),
+                );
+                $resourceArray['actions'][] = array(
+                    'className' => 'test gon-ab-test',
+                    'text'      => $this->modx->lexicon('goodnews.test'),
+                );
+                $resourceArray['actions'][] = array(
+                    'className' => 'edit gon-ab-edit',
+                    'text'      => $this->modx->lexicon('edit'),
+                );
+                $resourceArray['actions'][] = array(
+                    'className' => 'delete gon-ab-delete',
+                    'text'      => $this->modx->lexicon('delete'),
+                );
+                $resourceArray['actions'][] = array(
+                    'className' => 'unpublish gon-ab-unpublish',
+                    'text'      => $this->modx->lexicon('unpublish'),
+                );
+            } elseif ($resourceArray['status'] == self::GON_NEWSLETTER_STATUS_NOT_YET_SENT) {
+                $resourceArray['actions'][] = array(
+                    'className' => 'start gon-ab-start',
+                    'text'      => $this->legacyMode ? $this->modx->lexicon('goodnews.start') : '',
+                );
+                $resourceArray['actions'][] = array(
+                    'className' => 'stop gon-ab-stop',
+                    'text'      => $this->legacyMode ? $this->modx->lexicon('goodnews.stop') : '',
+                    'disabled'  => ' disabled="disabled"',
+                );
+                $resourceArray['actions'][] = array(
+                    'className' => 'preview gon-ab-preview',
+                    'text'      => $this->modx->lexicon('view'),
+                );
+                $resourceArray['actions'][] = array(
+                    'className' => 'test gon-ab-test',
+                    'text'      => $this->modx->lexicon('goodnews.test'),
+                );
+                $resourceArray['actions'][] = array(
+                    'className' => 'edit gon-ab-edit',
+                    'text'      => $this->modx->lexicon('edit'),
+                );
+                $resourceArray['actions'][] = array(
+                    'className' => 'delete gon-ab-delete',
+                    'text'      => $this->modx->lexicon('delete'),
+                );
+                $resourceArray['actions'][] = array(
+                    'className' => 'unpublish gon-ab-unpublish',
+                    'text'      => $this->modx->lexicon('unpublish'),
+                );
+            } elseif ($resourceArray['status'] == self::GON_NEWSLETTER_STATUS_STOPPED) {
+                $resourceArray['actions'][] = array(
+                    'className' => 'continue gon-ab-continue',
+                    'text'      => $this->legacyMode ? $this->modx->lexicon('goodnews.continue') : '',
+                );
+                $resourceArray['actions'][] = array(
+                    'className' => 'stop gon-ab-stop',
+                    'text'      => $this->legacyMode ? $this->modx->lexicon('goodnews.stop') : '',
+                    'disabled'  => ' disabled="disabled"',
+                );
+                $resourceArray['actions'][] = array(
+                    'className' => 'preview gon-ab-preview',
+                    'text'      => $this->modx->lexicon('view'),
+                );
+                $resourceArray['actions'][] = array(
+                    'className' => 'test gon-ab-test',
+                    'text'      => $this->modx->lexicon('goodnews.test'),
+                    'disabled'  => ' disabled="disabled"',
+                );
+                $resourceArray['actions'][] = array(
+                    'className' => 'edit gon-ab-edit',
+                    'text'      => $this->modx->lexicon('edit'),
+                    'disabled'  => ' disabled="disabled"',
+                );
+                $resourceArray['actions'][] = array(
+                    'className' => 'delete gon-ab-delete',
+                    'text'      => $this->modx->lexicon('delete'),
+                );
+                $resourceArray['actions'][] = array(
+                    'className' => 'unpublish gon-ab-unpublish',
+                    'text'      => $this->modx->lexicon('unpublish'),
+                    'disabled'  => ' disabled="disabled"',
+                );
+            } elseif ($resourceArray['status'] == self::GON_NEWSLETTER_STATUS_IN_PROGRESS) {
+                $resourceArray['actions'][] = array(
+                    'className' => 'start gon-ab-start',
+                    'text'      => $this->legacyMode ? $this->modx->lexicon('goodnews.start') : '',
+                    'disabled'  => ' disabled="disabled"',
+                );
+                $resourceArray['actions'][] = array(
+                    'className' => 'stop gon-ab-stop',
+                    'text'      => $this->legacyMode ? $this->modx->lexicon('goodnews.stop') : '',
+                );
+                $resourceArray['actions'][] = array(
+                    'className' => 'preview gon-ab-preview',
+                    'text'      => $this->modx->lexicon('view'),
+                );
+                $resourceArray['actions'][] = array(
+                    'className' => 'test gon-ab-test',
+                    'text'      => $this->modx->lexicon('goodnews.test'),
+                    'disabled'  => ' disabled="disabled"',
+                );
+                $resourceArray['actions'][] = array(
+                    'className' => 'edit gon-ab-edit',
+                    'text'      => $this->modx->lexicon('edit'),
+                    'disabled'  => ' disabled="disabled"',
+                );
+                $resourceArray['actions'][] = array(
+                    'className' => 'delete gon-ab-delete',
+                    'text'      => $this->modx->lexicon('delete'),
+                    'disabled'  => ' disabled="disabled"',
+                );
+                $resourceArray['actions'][] = array(
+                    'className' => 'unpublish gon-ab-unpublish',
+                    'text'      => $this->modx->lexicon('unpublish'),
+                    'disabled'  => ' disabled="disabled"',
+                );
+            } elseif ($resourceArray['status'] == self::GON_NEWSLETTER_STATUS_SENT) {
+                $resourceArray['actions'][] = array(
+                    'className' => 'start gon-ab-start',
+                    'text'      => $this->legacyMode ? $this->modx->lexicon('goodnews.start') : '',
+                    'disabled'  => ' disabled="disabled"',
+                );
+                $resourceArray['actions'][] = array(
+                    'className' => 'stop gon-ab-stop',
+                    'text'      => $this->legacyMode ? $this->modx->lexicon('goodnews.stop') : '',
+                    'disabled'  => ' disabled="disabled"',
+                );
+                $resourceArray['actions'][] = array(
+                    'className' => 'preview gon-ab-preview',
+                    'text'      => $this->modx->lexicon('view'),
+                );
+                $resourceArray['actions'][] = array(
+                    'className' => 'test gon-ab-test',
+                    'text'      => $this->modx->lexicon('goodnews.test'),
+                    'disabled'  => ' disabled="disabled"',
+                );
+                $resourceArray['actions'][] = array(
+                    'className' => 'edit gon-ab-edit',
+                    'text'      => $this->modx->lexicon('edit'),
+                    'disabled'  => ' disabled="disabled"',
+                );
+                $resourceArray['actions'][] = array(
+                    'className' => 'delete gon-ab-delete',
+                    'text'      => $this->modx->lexicon('delete'),
+                );
+                $resourceArray['actions'][] = array(
+                    'className' => 'unpublish gon-ab-unpublish',
+                    'text'      => $this->modx->lexicon('unpublish'),
+                );
+            } elseif ($resourceArray['status'] == self::GON_NEWSLETTER_STATUS_SCHEDULED) {
+                $resourceArray['actions'][] = array(
+                    'className' => 'start gon-ab-start',
+                    'text'      => $this->legacyMode ? $this->modx->lexicon('goodnews.start') : '',
+                    'disabled'  => ' disabled="disabled"',
+                );
+                $resourceArray['actions'][] = array(
+                    'className' => 'stop gon-ab-stop',
+                    'text'      => $this->legacyMode ? $this->modx->lexicon('goodnews.stop') : '',
+                    'disabled'  => ' disabled="disabled"',
+                );
+                $resourceArray['actions'][] = array(
+                    'className' => 'preview gon-ab-preview',
+                    'text'      => $this->modx->lexicon('view'),
+                );
+                $resourceArray['actions'][] = array(
+                    'className' => 'test gon-ab-test',
+                    'text'      => $this->modx->lexicon('goodnews.test'),
+                );
+                $resourceArray['actions'][] = array(
+                    'className' => 'edit gon-ab-edit',
+                    'text'      => $this->modx->lexicon('edit'),
+                );
+                $resourceArray['actions'][] = array(
+                    'className' => 'delete gon-ab-delete',
+                    'text'      => $this->modx->lexicon('delete'),
+                );
+                $resourceArray['actions'][] = array(
+                    'className' => 'publish orange gon-ab-publish',
+                    'text'      => $this->modx->lexicon('publish'),
+                );
+            }            
+            
         }
 
         $createdon = strtotime($resourceArray['createdon']);
