@@ -66,6 +66,11 @@ Ext.extend(GoodNews.HomePanel,MODx.Panel,{
     }
     ,getElements: function() {
         var elements = [];
+        // Plugin version
+        elements.push('-',{
+            xtype: 'tbtext'
+            ,html: '<i>'+GoodNews.config.componentVersion+'-'+GoodNews.config.componentRelease+'</i>'
+        },'-')
         // Dropdown for choosing a GoodNews container
         elements.push({
             xtype: 'modx-combo'
@@ -101,7 +106,7 @@ Ext.extend(GoodNews.HomePanel,MODx.Panel,{
         // Settings button
         if (GoodNews.config.isGoodNewsAdmin) {
             elements.push({
-                text: _('goodnews.button_settings')
+                text: GoodNews.config.legacyMode ? _('goodnews.button_settings') : '<i class="icon icon-cog icon-lg"></i>'
                 ,id: 'button-settings'
                 ,iconCls: GoodNews.config.legacyMode ? 'gon-icn-settings' : ''
                 ,handler: this.loadSettingsPanel
@@ -110,7 +115,7 @@ Ext.extend(GoodNews.HomePanel,MODx.Panel,{
         }
         // Help button
         elements.push({
-            text: _('help_ex')
+            text: (GoodNews.config.legacyMode ? '' : '<i class="icon icon-question-circle icon-lg"></i>&nbsp;') + _('help_ex')
             ,id: 'button-help'
             ,iconCls: GoodNews.config.legacyMode ? 'gon-icn-help' : ''
             ,handler: function(){
