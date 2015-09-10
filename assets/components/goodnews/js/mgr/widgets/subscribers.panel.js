@@ -129,7 +129,7 @@ GoodNews.grid.Subscribers = function(config){
             ,editor: { xtype: 'combo-boolean', renderer: 'boolean' }
             ,width: 60
         },{
-            header: _('goodnews.subscriber_subscribed_on')
+            header: _('goodnews.subscriber_created_on')
             ,dataIndex: 'createdon_formatted'
             ,sortable: true
             ,width: 80
