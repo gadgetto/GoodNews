@@ -9,6 +9,7 @@ Changelog for GoodNews
 - fixed a problem with send counter when timed out mails are detected
 - the Mail Summary field is now able to grow in it's height when text is entered
 - small graphical fixes
+- refined some lexicon strings
 
 
 GoodNews 1.3.7-pl (2015-06-29)

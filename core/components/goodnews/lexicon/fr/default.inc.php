@@ -29,7 +29,7 @@
 $_lang['goodnews']                                                  = 'GoodNews';
 $_lang['goodnews.desc']                                             = 'Un système intégré d\'envoi de newsletter et de groupes.';
 $_lang['goodnews.credits']                                          = 'Crédits';
-$_lang['goodnews.credits_modx_community']                           = 'Un grand merci à l\'étonnante communauté MODx pour leur aide infatigable!';
+$_lang['goodnews.credits_modx_community']                           = 'Un grand merci à l\'étonnante communauté MODX pour leur aide infatigable!';
 $_lang['goodnews.credits_bob_ray']                                  = 'Méthodes pour générer des URLs pleines et convertir les styles d\'image inline par Bob Ray- <a href="http://bobsguides.com">http://bobsguides.com</a>';
 $_lang['goodnews.credits_icons_by']                                 = 'Icones sous Revo 2.2.x par :FatCow Web Hosting - <a href="http://www.fatcow.com">http://www.fatcow.com</a>';
 $_lang['goodnews.system_checks']                                    = 'Contrôles du système';
@@ -131,22 +131,22 @@ $_lang['goodnews.newsletter_send_log_close_button']                 = 'Close';
 $_lang['goodnews.newsletter_err_save_already_sending']              = 'Les modifications ne peuvent pas être sauvegardées , car l\'envoi de ce mailing a déjà débuté.';
 
 $_lang['goodnews.groups']                                           = 'Groupes';
-$_lang['goodnews.groups_management_desc']                           = 'Gérez vos groupes d\'inscrits ici. Assigner un groupe GoodNews à un groupe d\'utilisateurs MODx (<span class="gon-modx-group-assigned">Marker bleu</span>), rend possible d\'envoyer des mailings à tous les membres de ce groupe d\'utilisateurs MODx. Si vous assignez un groupe d\'utilisateurs MODx, ce groupe GoodNews <strong>ne peut pas</strong> être utilisé pour gérer les inscrits.';
+$_lang['goodnews.groups_management_desc']                           = 'Gérez vos groupes d\'inscrits ici. Assigner un groupe GoodNews à un groupe d\'utilisateurs MODX (<span class="gon-modx-group-assigned">Marker bleu</span>), rend possible d\'envoyer des mailings à tous les membres de ce groupe d\'utilisateurs MODX. Si vous assignez un groupe d\'utilisateurs MODX, ce groupe GoodNews <strong>ne peut pas</strong> être utilisé pour gérer les inscrits.';
 $_lang['goodnews.group_create']                                     = 'Créer Groupe';
-$_lang['goodnews.modx_groups_edit']                                 = 'Editer les groupes d\'utilisateurs MODx';
+$_lang['goodnews.modx_groups_edit']                                 = 'Editer les groupes d\'utilisateurs MODX';
 $_lang['goodnews.group_name']                                       = 'Nom du groupe';
 $_lang['goodnews.group_description']                                = 'Description';
 $_lang['goodnews.group_membercount']                                = 'Inscrits';
-$_lang['goodnews.modx_usergroup']                                   = 'Groupe d\'utilisateurs MODx';
-$_lang['goodnews.group_belongs_to_modx_usergroup']                  = 'Assigné au groupe d\'utilisateurs MODx';
-$_lang['goodnews.choose_modx_user_group']                           = '(Choisir le groupe d\'utilisateurs MODx)';
+$_lang['goodnews.modx_usergroup']                                   = 'Groupe d\'utilisateurs MODX';
+$_lang['goodnews.group_belongs_to_modx_usergroup']                  = 'Assigné au groupe d\'utilisateurs MODX';
+$_lang['goodnews.choose_modx_user_group']                           = '(Choisir le groupe d\'utilisateurs MODX)';
 $_lang['goodnews.groups_none']                                      = 'Aucun groupe';
 $_lang['goodnews.group_remove']                                     = 'Supprimer le groupe';
 $_lang['goodnews.group_update']                                     = 'Editer le groupe';
 $_lang['goodnews.group_remove_confirm']                             = 'Etes-vous sûr de vouloir supprimer ce groupe?<br /><br />Supprimer un groupe supprime aussi toutes ses catégories relatives. De plus, cela désinscrit tous les inscrits de ce groupes et catégories relatives. <br /><br /><strong>Cela ne peut être annulé!</strong>';
 $_lang['goodnews.group_err_ns_name']                                = 'Merci de spécifier un nom pour ce ce groupe.';
 $_lang['goodnews.group_err_ae']                                     = 'Un groupe avec ce nom existe déjà.';
-$_lang['goodnews.group_modxgroup_err_ae']                           = 'Ce groupe d\'utilisateurs MODx est déjà assigné à un autre groupe.';
+$_lang['goodnews.group_modxgroup_err_ae']                           = 'Ce groupe d\'utilisateurs MODX est déjà assigné à un autre groupe.';
 $_lang['goodnews.group_err_nf']                                     = 'Groupe introuvable.';
 $_lang['goodnews.group_err_ns']                                     = 'Groupe non spécifié.';
 $_lang['goodnews.group_err_remove']                                 = 'Une erreur s\'est produite lors de la suppression du groupe.';
@@ -175,8 +175,8 @@ $_lang['goodnews.category_err_remove']                              = 'Une erreu
 $_lang['goodnews.category_err_save']                                = 'Une erreur s\'est produite lors de la sauvegarde de la catégorie.';
                                                             
 $_lang['goodnews.subscribers']                                      = 'Inscrits';
-$_lang['goodnews.subscribers_desc']                                 = 'Gérer vos inscrits ici. Les utilisateurs avec une adresse e-mail <span class="gon-no-subscriptions">grisée</span> n\'ont pas de meta-data GoodNews assignées ou aucune souscription activée. Les nouveaux inscrits sont créés à travers les inscriptions utilisateur, ou manuellement via la gestion utilisateur MODx ou encore par import.';
-$_lang['goodnews.modx_user_create']                                 = 'Créer un utilisateur MODx';
+$_lang['goodnews.subscribers_desc']                                 = 'Gérer vos inscrits ici. Les nouveaux inscrits sont créés à travers les inscriptions utilisateur, ou manuellement via la gestion utilisateur MODX ou encore par import.';
+$_lang['goodnews.modx_user_create']                                 = 'Créer un utilisateur MODX';
 $_lang['goodnews.subscribers_user_group']                           = 'Groupe d\'inscrits';
 $_lang['goodnews.subscribers_user_group_filter']                    = 'Filtrer par groupe...';
 $_lang['goodnews.subscribers_user_category_filter']                 = 'Filtrer par catégorie...';
@@ -209,7 +209,7 @@ $_lang['goodnews.subscriber_remove_meta_data']                      = 'Supprimer
 $_lang['goodnews.subscriber_remove_meta_data_confirm']              = 'Etes-vous sûr de vouloir supprimer toutes les Meta-Data GoodNews de cet utilisateur ?';
 $_lang['goodnews.subscriber_reset_bounce_counters']                 = 'Réinitialiser les compteurs de Rebond';
 $_lang['goodnews.subscriber_reset_bounce_counters_confirm']         = 'Etes-vous sûr de vouloir réinitialiser tous les compteurs de Rebond de cet utilisateur ?';
-$_lang['goodnews.user_update']                                      = 'Editer l\'utilisateur (Table Utilisateur MODx)';
+$_lang['goodnews.user_update']                                      = 'Editer l\'utilisateur (Table Utilisateur MODX)';
                                                             
 $_lang['goodnews.settings']                                         = 'GoodNews - Paramètres';
 $_lang['goodnews.settings_save_button']                             = 'Sauvegarder les Paramètres';
@@ -238,11 +238,11 @@ $_lang['goodnews.settings_worker_process_active_desc']              = 'ce param�
 $_lang['goodnews.settings_cron_security_key']                       = 'Clé de Sécurité Cron';
 $_lang['goodnews.settings_cron_security_key_desc']                  = 'S\'il vous plaît, entrez une chaîne (comme un mot de passe) aléatoire qui sera utilisée pour l\'authentification CLI Cron. Vous devez configurer votre tâche planifiée Cron  avec le paramètre CLI supplémentaires <strong> sid = [votre clé de sécurité cron] </ strong>. Il est fortement recommandé d\'ajouter une clé pour des raisons de sécurité. Laissez ce champ vide, si vous n\'avez aucune possibilité de configurer votre tâche Cron avec un paramètre supplémentaire.';
 $_lang['goodnews.settings_admin_groups']                            = 'Groupes Administrateur GoodNews';
-$_lang['goodnews.settings_admin_groups_desc']                       = 'Liste des groupes d\'utilisateurs MODx séparés par une virgule, qui ont accès aux paramètres GoodNews.';
+$_lang['goodnews.settings_admin_groups_desc']                       = 'Liste des groupes d\'utilisateurs MODX séparés par une virgule, qui ont accès aux paramètres GoodNews.';
 $_lang['goodnews.settings_auto_fix_imagesizes']                     = 'Ajuster automatiquement la taille des images (pThumb Extra nécessaire)';
 $_lang['goodnews.settings_auto_fix_imagesizes_desc']                = 'Convertir automatiquement aux dimensions appropriées ou non les images qui sont insérées avec un éditeur WYSIWYG et dont les dimensions sont ajustées.';
 $_lang['goodnews.settings_auto_cleanup_subscriptions']              = 'Autonettoyage des inscriptions';
-$_lang['goodnews.settings_auto_cleanup_subscriptions_desc']         = 'Si oui ou non supprimer automatiquement les souscriptions jamais activées, ainsi que leur compte utilisateur MODx associé. Cela ne concerne que les comptes utilisateur MODx qui ont des meta-data GoodNews associées! Les comptes utilisateur MODX qui appartiennent à des groupes d\'utilisateurs MODx ne seront pas touchés!';
+$_lang['goodnews.settings_auto_cleanup_subscriptions_desc']         = 'Si oui ou non supprimer automatiquement les souscriptions jamais activées, ainsi que leur compte utilisateur MODX associé. Cela ne concerne que les comptes utilisateur MODX qui ont des meta-data GoodNews associées! Les comptes utilisateur MODX qui appartiennent à des groupes d\'utilisateurs MODX ne seront pas touchés!';
 $_lang['goodnews.settings_auto_cleanup_subscriptions_ttl']          = 'Durée de vie jusqu\'à suppression';
 $_lang['goodnews.settings_auto_cleanup_subscriptions_ttl_desc']     = 'Nombre de minutes jusqu\'à ce que les souscriptions non-activées sont supprimées. (Défaut : 360 minutes).';
 
@@ -252,7 +252,7 @@ $_lang['goodnews.settings_container_context_key']                   = 'Contexte'
 $_lang['goodnews.settings_container_pagetitle']                     = 'Nom du Conteneur de Resource';
 
 $_lang['goodnews.settings_container_editor_groups']                 = 'Groupe Editeur du Conteneur';
-$_lang['goodnews.settings_container_editor_groups_desc']            = 'Liste des groupes d\'utilisateurs MODx séparés par une virgule, qui ont accès à ce conteneur GoodNews.';
+$_lang['goodnews.settings_container_editor_groups_desc']            = 'Liste des groupes d\'utilisateurs MODX séparés par une virgule, qui ont accès à ce conteneur GoodNews.';
 $_lang['goodnews.settings_container_mail_from']                     = 'Adresse E-Mail Expéditeur (pour emails de non-remise / Bounce)';
 $_lang['goodnews.settings_container_mail_from_desc']                = 'Adresse E-Mail utilisée pour envoyer des mails et pour recevoir les messages de non-remise (Bounce).';
 $_lang['goodnews.settings_container_mail_from_name']                = 'Nom de l\'expéditeur';
@@ -369,7 +369,7 @@ $_lang['goodnews.import']                                           = 'GoodNews 
 $_lang['goodnews.import_button']                                    = 'Import';
 $_lang['goodnews.import_close_button']                              = 'Fermer';
 $_lang['goodnews.import_subscribers_tab']                           = 'Inscrits';
-$_lang['goodnews.import_subscribers_tab_desc']                      = 'Importer des inscrits dans la base de données utilisateurs MODx. ATTENTION: Sauvegardez la base de données MODx avant de démarrer l\'import!';
+$_lang['goodnews.import_subscribers_tab_desc']                      = 'Importer des inscrits dans la base de données utilisateurs MODX. ATTENTION: Sauvegardez la base de données MODX avant de démarrer l\'import!';
 $_lang['goodnews.import_subscribers_csvfile']                       = 'Fichier CSV';
 $_lang['goodnews.import_subscribers_csvfile_desc']                  = 'Choisir un fichier CSV local qui contient les données à importer. Le fichier sera téléversé sur le serveur.<br><br><strong>Format CSV requis</strong>:<br>Pas de ligne d\'en-tête! | Premier champ= email, Deuxième champ = nom complet';
 $_lang['goodnews.import_subscribers_csvfile_button']                = 'Choisir le fichier';
@@ -421,11 +421,11 @@ $_lang['setting_goodnews.worker_process_limit_desc']                = 'Définit 
 $_lang['setting_goodnews.worker_process_active']                    = 'Processus d\'envoi activé';
 $_lang['setting_goodnews.worker_process_active_desc']               = 'La tâche Cron peut-elle démarrer le processus d\'envoi de GoodNews? Ce paramètre peut être utilisé  pour désactiver temporairement le déclencheur Cron.';
 $_lang['setting_goodnews.admin_groups']                             = 'Groupes Administrateur GoodNews';
-$_lang['setting_goodnews.admin_groups_desc']                        = 'Liste des groupes d\'utilisateurs MODx séparés par une virgule, qui ont accès aux paramètres GoodNews.';
+$_lang['setting_goodnews.admin_groups_desc']                        = 'Liste des groupes d\'utilisateurs MODX séparés par une virgule, qui ont accès aux paramètres GoodNews.';
 $_lang['setting_goodnews.auto_fix_imagesizes']                      = 'Ajuster automatiquement la taille des images (pThumb requis)';
 $_lang['setting_goodnews.auto_fix_imagesizes_desc']                 = 'Convertir automatiquement aux dimensions appropriées ou non les images qui sont insérées avec un éditeur WYSIWYG et dont les dimensions sont ajustées.';
 $_lang['setting_goodnews.auto_cleanup_subscriptions']               = 'Autonettoyage des inscriptions';
-$_lang['setting_goodnews.auto_cleanup_subscriptions_desc']          = 'Si oui ou non supprimer automatiquement les souscriptions jamais activées ou inactives, ainsi que leur compte utilisateur MODx associé. Cela ne concerne que les comptes utilisateur MODx qui ont des meta-data GoodNews associées! Les comptes utilisateur MODX qui appartiennent à des groupes d\'utilisateurs MODx ne seront pas touchés!';
+$_lang['setting_goodnews.auto_cleanup_subscriptions_desc']          = 'Si oui ou non supprimer automatiquement les souscriptions jamais activées ou inactives, ainsi que leur compte utilisateur MODX associé. Cela ne concerne que les comptes utilisateur MODX qui ont des meta-data GoodNews associées! Les comptes utilisateur MODX qui appartiennent à des groupes d\'utilisateurs MODX ne seront pas touchés!';
 $_lang['setting_goodnews.auto_cleanup_subscriptions_ttl']           = 'Durée de vie jusqu\'à suppression';
 $_lang['setting_goodnews.auto_cleanup_subscriptions_ttl_desc']      = 'Nombre de minutes jusqu\'à ce que les souscriptions non-activées sont supprimées. (Défaut : 360 minutes).';
 $_lang['setting_goodnews.cron_security_key']                        = 'Clé de sécurité Cron';
@@ -433,4 +433,4 @@ $_lang['setting_goodnews.cron_security_key_desc']                   = 'S\'il vou
 $_lang['setting_goodnews.default_container_template']               = 'Modèle par défaut pour les Conteneur GoodNews.';
 $_lang['setting_goodnews.default_container_template_desc']          = 'Modèle par défaut à utiliser quand un Conteneur GoodNews est créé.';
 $_lang['setting_goodnews.debug']                                    = 'GoodNews Debug Mode';
-$_lang['setting_goodnews.debug_desc']                               = 'Activer / désactiver le mode Debug pour GoodNews. Si activé, des informations additionnelles seront écrites dans le journal d\'erreurs de MODx.';
+$_lang['setting_goodnews.debug_desc']                               = 'Activer / désactiver le mode Debug pour GoodNews. Si activé, des informations additionnelles seront écrites dans le journal d\'erreurs de MODX.';
