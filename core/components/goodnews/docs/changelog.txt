@@ -1,12 +1,12 @@
 Changelog for GoodNews
 
-- added Category filter to Subscribers grid
+- [#34] added Category filter to Subscribers grid
 - added Activated filter to Subscribers grid
 - added plugin version and icons to action-toolbar
 - reordered newsletter grid context menu (now it should be more logical)
 - removed/disabled Delete action (menu and button) from mailing when sending is in progress 
 - added action buttons to newsletters grid
-- fixed a problem with send counter when timed out mails are detected
+- [#35] fixed a problem with send counter when timed out mails are detected
 - the Mail Summary field is now able to grow in it's height when text is entered
 - small graphical fixes
 - refined some lexicon strings
