@@ -1,5 +1,7 @@
 Changelog for GoodNews
 
+- added Category filter to Subscribers grid
+- added Activated filter to Subscribers grid
 - added plugin version and icons to action-toolbar
 - reordered newsletter grid context menu (now it should be more logical)
 - removed/disabled Delete action (menu and button) from mailing when sending is in progress 

@@ -35,7 +35,9 @@ class SubscribersGetListProcessor extends modObjectGetListProcessor {
         $this->setDefaultProperties(array(
             'query' => '',
             'groupfilter' => '',
+            'categoryfilter' => '',
             'testdummyfilter' => '',
+            'activefilter' => '',
         ));
 
         if ($this->getProperty('sort') == 'createdon_formatted') {
@@ -67,6 +69,16 @@ class SubscribersGetListProcessor extends modObjectGetListProcessor {
             }
         }
 
+        $categoryfilter = $this->getProperty('categoryfilter', '');
+        if (!empty($categoryfilter)) {
+            $c->leftJoin('GoodNewsCategoryMember', 'CategoryMember', 'modUser.id = CategoryMember.member_id');
+            if ($categoryfilter == 'nocategory') {
+                $c->where(array('CategoryMember.goodnewscategory_id' => NULL));
+            } else {
+                $c->where(array('CategoryMember.goodnewscategory_id' => $categoryfilter));
+            }
+        }
+
         $testdummyfilter = $this->getProperty('testdummyfilter', '');
         if (!empty($testdummyfilter)) {
             if ($testdummyfilter == 'isdummy') {
@@ -74,6 +86,16 @@ class SubscribersGetListProcessor extends modObjectGetListProcessor {
             } else {
                 $c->where(array('SubscriberMeta.testdummy' => '0'));
                 $c->orCondition(array('SubscriberMeta.testdummy' => NULL));
+            }
+        }
+
+        $activefilter = $this->getProperty('activefilter', '');
+        if (!empty($activefilter)) {
+            if ($activefilter == 'active') {
+                $c->where(array('modUser.active' => '1'));
+            } else {
+                $c->where(array('modUser.active' => '0'));
+                $c->orCondition(array('modUser.active' => NULL));
             }
         }
 
