@@ -202,7 +202,7 @@ GoodNews.grid.Subscribers = function(config){
                     ,scope: this
                     ,cls: 'primary-button'
                 },'-',{
-                    text: _('goodnews.import_button')
+                    text: (GoodNews.config.legacyMode ? '' : '<i class="icon icon-download icon-lg"></i>&nbsp;') + _('goodnews.import_button')
                     ,handler: this.importSubscribers
                     ,scope: this
                 },'->',{
