@@ -158,8 +158,8 @@ GoodNews.grid.Subscribers = function(config){
                     xtype: 'modx-combo'
                     ,id: 'goodnews-subscribers-group-filter'
                     ,emptyText: _('goodnews.subscribers_user_group_filter')
-                    ,width: 240
-                    ,listWidth: 240
+                    ,width: 265
+                    ,listWidth: 265
                     ,displayField: 'name'
                     ,valueField: 'id'
                     ,store: new Ext.data.JsonStore({
@@ -178,8 +178,8 @@ GoodNews.grid.Subscribers = function(config){
                     xtype: 'modx-combo'
                     ,id: 'goodnews-subscribers-category-filter'
                     ,emptyText: _('goodnews.subscribers_user_category_filter')
-                    ,width: 240
-                    ,listWidth: 240
+                    ,width: 265
+                    ,listWidth: 265
                     ,displayField: 'name'
                     ,valueField: 'id'
                     ,store: new Ext.data.JsonStore({
