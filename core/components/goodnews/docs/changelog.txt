@@ -1,5 +1,6 @@
 Changelog for GoodNews
 
+- fixed a bug in combining filters on Subscribers grid
 - [#34] added Category filter to Subscribers grid
 - added Activated filter to Subscribers grid
 - added plugin version and icons to action-toolbar

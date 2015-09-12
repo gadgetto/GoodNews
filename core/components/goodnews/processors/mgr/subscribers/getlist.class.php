@@ -85,7 +85,6 @@ class SubscribersGetListProcessor extends modObjectGetListProcessor {
                 $c->where(array('SubscriberMeta.testdummy' => '1'));
             } else {
                 $c->where(array('SubscriberMeta.testdummy' => '0'));
-                $c->orCondition(array('SubscriberMeta.testdummy' => NULL));
             }
         }
 
@@ -95,7 +94,6 @@ class SubscribersGetListProcessor extends modObjectGetListProcessor {
                 $c->where(array('modUser.active' => '1'));
             } else {
                 $c->where(array('modUser.active' => '0'));
-                $c->orCondition(array('modUser.active' => NULL));
             }
         }
 
