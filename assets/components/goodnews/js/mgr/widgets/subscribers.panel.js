@@ -129,7 +129,7 @@ GoodNews.grid.Subscribers = function(config){
             ,editor: { xtype: 'combo-boolean', renderer: 'boolean' }
             ,width: 60
         },{
-            header: _('goodnews.subscriber_subscribed_on')
+            header: _('goodnews.subscriber_created_on')
             ,dataIndex: 'createdon_formatted'
             ,sortable: true
             ,width: 80
@@ -146,81 +146,130 @@ GoodNews.grid.Subscribers = function(config){
             ,sortable: true
             ,width: 30
         }]
-        ,tbar:[{
-            text: _('goodnews.modx_user_create')
-            ,handler: this.createSubscriber
-            ,scope: this
-            ,cls: 'primary-button'
-        },'-',{
-            text: _('goodnews.import_button')
-            ,handler: this.importSubscribers
-            ,scope: this
-        },'->',{
-            xtype: 'modx-combo'
-            ,id: 'goodnews-subscribers-group-filter'
-            ,emptyText: _('goodnews.subscribers_user_group_filter')
-            ,width: 200
-            ,listWidth: 200
-            ,displayField: 'name'
-            ,valueField: 'id'
-            ,store: new Ext.data.JsonStore({
-                url: GoodNews.config.connectorUrl
-                ,baseParams: {
-                    action : 'mgr/groups/getGroupFilterList'
-                    ,addNoGroupOption: true
-                }
-                ,fields: ['id','name']
-                ,root: 'results'
-            })
-            ,listeners: {
-                'select': {fn: this.filterByUserGroup, scope: this}
+        ,tbar: {
+            xtype: 'container'
+            ,layout: 'anchor'
+            ,defaults: {
+                anchor: '0'
             }
-        },'-',{
-            xtype: 'modx-combo'
-            ,id: 'goodnews-subscribers-testdummy-filter'
-            ,emptyText: _('goodnews.subscriber_testdummy_filter')
-            ,width: 150
-            ,listWidth: 150
-            ,displayField: 'yesno'
-            ,valueField: 'id'
-            ,mode: 'local'
-            ,store: new Ext.data.ArrayStore({
-                fields: ['id','yesno']
-                //there is a problem using 0/1 or false/true combination for id field
-                ,data: [['nodummy',_('no')],['isdummy',_('yes')]]
-            })
-            ,listeners: {
-                'select': {fn:this.filterByTestDummy,scope:this}
-            }
-        },'-',{
-            xtype: 'textfield'
-            ,cls: 'x-form-filter'
-            ,id: 'goodnews-subscribers-search-filter'
-            ,emptyText: _('goodnews.input_search_filter')
-            ,listeners: {
-                'change': {fn:this.search,scope:this}
-                ,'render': {fn: function(cmp) {
-                    new Ext.KeyMap(cmp.getEl(), {
-                        key: Ext.EventObject.ENTER
-                        ,fn: function() {
-                            this.fireEvent('change',this);
-                            this.blur();
-                            return true;
+            ,defaultType: 'toolbar'
+            ,items: [{
+                items: ['->',{
+                    xtype: 'modx-combo'
+                    ,id: 'goodnews-subscribers-group-filter'
+                    ,emptyText: _('goodnews.subscribers_user_group_filter')
+                    ,width: 265
+                    ,listWidth: 265
+                    ,displayField: 'name'
+                    ,valueField: 'id'
+                    ,store: new Ext.data.JsonStore({
+                        url: GoodNews.config.connectorUrl
+                        ,baseParams: {
+                            action : 'mgr/groups/getGroupFilterList'
+                            ,addNoGroupOption: true
                         }
-                        ,scope: cmp
-                    });
-                }
-                ,scope: this}
-            }
-        },{
-            xtype: 'button'
-            ,cls: 'x-form-filter-clear'
-            ,id: 'goodnews-subscribers-filter-clear'
-            ,text: _('goodnews.button_filter_clear')
-            ,listeners: {
-                'click': {fn: this.clearFilter, scope: this}
-            }
-        }]
+                        ,fields: ['id','name']
+                        ,root: 'results'
+                    })
+                    ,listeners: {
+                        'select': {fn: this.filterByUserGroup, scope: this}
+                    }
+                },'-',{
+                    xtype: 'modx-combo'
+                    ,id: 'goodnews-subscribers-category-filter'
+                    ,emptyText: _('goodnews.subscribers_user_category_filter')
+                    ,width: 265
+                    ,listWidth: 265
+                    ,displayField: 'name'
+                    ,valueField: 'id'
+                    ,store: new Ext.data.JsonStore({
+                        url: GoodNews.config.connectorUrl
+                        ,baseParams: {
+                            action : 'mgr/category/getCategoryFilterList'
+                            ,addNoCategoryOption: true
+                        }
+                        ,fields: ['id','name']
+                        ,root: 'results'
+                    })
+                    ,listeners: {
+                        'select': {fn: this.filterByUserCategory, scope: this}
+                    }
+                }]
+            },{
+                items: [{
+                    text: _('goodnews.modx_user_create')
+                    ,handler: this.createSubscriber
+                    ,scope: this
+                    ,cls: 'primary-button'
+                },'-',{
+                    text: (GoodNews.config.legacyMode ? '' : '<i class="icon icon-download icon-lg"></i>&nbsp;') + _('goodnews.import_button')
+                    ,handler: this.importSubscribers
+                    ,scope: this
+                },'->',{
+                    xtype: 'modx-combo'
+                    ,id: 'goodnews-subscribers-testdummy-filter'
+                    ,emptyText: _('goodnews.subscriber_testdummy_filter')
+                    ,width: 150
+                    ,listWidth: 150
+                    ,displayField: 'yesno'
+                    ,valueField: 'id'
+                    ,mode: 'local'
+                    ,store: new Ext.data.ArrayStore({
+                        fields: ['id','yesno']
+                        //@todo: there is a problem using 0/1 or false/true combination for id field
+                        ,data: [['nodummy',_('no')],['isdummy',_('yes')]]
+                    })
+                    ,listeners: {
+                        'select': {fn:this.filterByTestDummy,scope:this}
+                    }
+                },'-',{
+                    xtype: 'modx-combo'
+                    ,id: 'goodnews-subscribers-active-filter'
+                    ,emptyText: _('goodnews.subscriber_active_filter')
+                    ,width: 150
+                    ,listWidth: 150
+                    ,displayField: 'yesno'
+                    ,valueField: 'id'
+                    ,mode: 'local'
+                    ,store: new Ext.data.ArrayStore({
+                        fields: ['id','yesno']
+                        //@todo: there is a problem using 0/1 or false/true combination for id field
+                        ,data: [['inactive',_('no')],['active',_('yes')]]
+                    })
+                    ,listeners: {
+                        'select': {fn:this.filterByActive,scope:this}
+                    }
+                },'-',{
+                    xtype: 'textfield'
+                    ,cls: 'x-form-filter'
+                    ,id: 'goodnews-subscribers-search-filter'
+                    ,emptyText: _('goodnews.input_search_filter')
+                    ,listeners: {
+                        'change': {fn:this.search,scope:this}
+                        ,'render': {fn: function(cmp) {
+                            new Ext.KeyMap(cmp.getEl(), {
+                                key: Ext.EventObject.ENTER
+                                ,fn: function() {
+                                    this.fireEvent('change',this);
+                                    this.blur();
+                                    return true;
+                                }
+                                ,scope: cmp
+                            });
+                        }
+                        ,scope: this}
+                    }
+                },{
+                    xtype: 'button'
+                    ,cls: 'x-form-filter-clear'
+                    ,id: 'goodnews-subscribers-filter-clear'
+                    ,text: _('goodnews.button_filter_clear')
+                    ,listeners: {
+                        'click': {fn: this.clearFilter, scope: this}
+                    }
+                }]
+            }]
+        }
     });
     GoodNews.grid.Subscribers.superclass.constructor.call(this,config);
 };
@@ -310,13 +359,31 @@ Ext.extend(GoodNews.grid.Subscribers,MODx.grid.Grid,{
     }
     ,filterByUserGroup: function(combo) {
         var s = this.getStore();
+        // reset the category filter
+        Ext.getCmp('goodnews-subscribers-category-filter').reset();
+        s.baseParams.categoryfilter = '';
         s.baseParams.groupfilter = combo.getValue();
+        this.getBottomToolbar().changePage(1);
+        this.refresh();
+    }
+    ,filterByUserCategory: function(combo) {
+        var s = this.getStore();
+        // reset the group filter
+        Ext.getCmp('goodnews-subscribers-group-filter').reset();
+        s.baseParams.groupfilter = '';
+        s.baseParams.categoryfilter = combo.getValue();
         this.getBottomToolbar().changePage(1);
         this.refresh();
     }
     ,filterByTestDummy: function(combo) {
         var s = this.getStore();
         s.baseParams.testdummyfilter = combo.getValue();
+        this.getBottomToolbar().changePage(1);
+        this.refresh();
+    }
+    ,filterByActive: function(combo) {
+        var s = this.getStore();
+        s.baseParams.activefilter = combo.getValue();
         this.getBottomToolbar().changePage(1);
         this.refresh();
     }
@@ -331,7 +398,9 @@ Ext.extend(GoodNews.grid.Subscribers,MODx.grid.Grid,{
             action: 'mgr/subscribers/getList'
     	};
         Ext.getCmp('goodnews-subscribers-group-filter').reset();
+        Ext.getCmp('goodnews-subscribers-category-filter').reset();
         Ext.getCmp('goodnews-subscribers-testdummy-filter').reset();
+        Ext.getCmp('goodnews-subscribers-active-filter').reset();
         Ext.getCmp('goodnews-subscribers-search-filter').reset();
     	this.getBottomToolbar().changePage(1);
     }

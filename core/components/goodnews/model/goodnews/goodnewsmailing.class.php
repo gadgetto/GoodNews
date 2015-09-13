@@ -290,8 +290,9 @@ class GoodNewsMailing {
         $this->_lock();
 
         // Look if we find a timed out recipient for cleanup!
-        $timeoutRecipientId = $this->goodnewsrecipienthandler->cleanupRecipientTimeout($this->mailingid);
+        $timeoutRecipientId = $this->goodnewsrecipienthandler->getRecipientTimeout($this->mailingid);
         if ($timeoutRecipientId) {
+            $this->updateRecipientStatus($timeoutRecipientId, GoodNewsRecipientHandler::GON_USER_SEND_ERROR);
             if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsMailing::getNextRecipient - Sending for recipient [id: '.$timeoutRecipientId.'] timed out.'); }
         }
         

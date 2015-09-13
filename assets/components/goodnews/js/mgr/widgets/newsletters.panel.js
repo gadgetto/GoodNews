@@ -23,6 +23,7 @@ GoodNews.panel.Newsletters = function(config) {
         },{
             xtype: 'goodnews-grid-newsletters'
             ,cls: 'main-wrapper'
+            ,bodyCssClass: 'grid-with-buttons'
             ,preventRender: true
         }]
     });
@@ -97,10 +98,19 @@ GoodNews.grid.Newsletters = function(config) {
         ,enableCaching: false
     });
 
+    // Newsletter title and action buttons renderer
     var editPage = MODx.action ? MODx.action['resource/update'] : 'resource/update';
+    
     this.tplPageTitle = new Ext.XTemplate(
         '<tpl for=".">'
             +'<h3 class="gon-newsletter-title"><a href="?a='+editPage+'&id={id}" title="'+_('goodnews.newsletter_update')+'" class="x-grid-link">{pagetitle}</a></h3>'
+            +'<tpl if="actions !== null">'
+                +'<ul class="actions">'
+                    +'<tpl for="actions">'
+                        +'<li><button type="button" class="controlBtn {className}"{disabled}>{text}</button></li>'
+                    +'</tpl>'
+                +'</ul>'
+            +'</tpl>'
         +'</tpl>'
     ,{compiled: true});
 
@@ -139,6 +149,7 @@ GoodNews.grid.Newsletters = function(config) {
             ,'status'
             ,'statusmessage'
             ,'menu'
+            ,'actions'
         ]
         ,emptyText: _('goodnews.newsletters_none')
         ,paging: true
@@ -150,6 +161,7 @@ GoodNews.grid.Newsletters = function(config) {
         this.nlexpander
         ,{
             header: _('goodnews.newsletter_title')
+            ,id: 'main' //needed for styling purposes
             ,dataIndex: 'pagetitle'
             ,sortable: false
             ,width: 200
@@ -297,6 +309,7 @@ GoodNews.grid.Newsletters = function(config) {
         }]
     });
     GoodNews.grid.Newsletters.superclass.constructor.call(this,config);
+    this.on('click',this.handleActionButtons,this);
 };
 Ext.extend(GoodNews.grid.Newsletters,MODx.grid.Grid,{
     getMenu: function() {
@@ -320,14 +333,14 @@ Ext.extend(GoodNews.grid.Newsletters,MODx.grid.Grid,{
                         text: _('goodnews.newsletter_test_send')
                         ,handler: this.testSendNewsletter
                     },'-',{
-                        text: _('goodnews.newsletter_publish')
-                        ,handler: this.publishNewsletter
-                    },{
                         text: _('goodnews.newsletter_update')
                         ,handler: this.updateNewsletter
                     },{
                         text: _('goodnews.newsletter_remove')
                         ,handler: this.removeNewsletter
+                    },{
+                        text: _('goodnews.newsletter_publish')
+                        ,handler: this.publishNewsletter
                     }];
                     break;
                 case GON_NEWSLETTER_STATUS_NOT_READY_TO_SEND:
@@ -338,44 +351,44 @@ Ext.extend(GoodNews.grid.Newsletters,MODx.grid.Grid,{
                         text: _('goodnews.newsletter_test_send')
                         ,handler: this.testSendNewsletter
                     },'-',{
-                        text: _('goodnews.newsletter_unpublish')
-                        ,handler: this.unpublishNewsletter
-                    },{
                         text: _('goodnews.newsletter_update')
                         ,handler: this.updateNewsletter
                     },{
                         text: _('goodnews.newsletter_remove')
                         ,handler: this.removeNewsletter
+                    },{
+                        text: _('goodnews.newsletter_unpublish')
+                        ,handler: this.unpublishNewsletter
                     }];
                     break;
                 case GON_NEWSLETTER_STATUS_NOT_YET_SENT:
                     return [{
+                        text: _('goodnews.newsletter_start_sending')
+                        ,handler: this.startSendNewsletter
+                    },'-',{
                         text: _('goodnews.newsletter_preview')
                         ,handler: this.previewNewsletter
                     },'-',{
                         text: _('goodnews.newsletter_test_send')
                         ,handler: this.testSendNewsletter
                     },'-',{
-                        text: _('goodnews.newsletter_start_sending')
-                        ,handler: this.startSendNewsletter
-                    },'-',{
-                        text: _('goodnews.newsletter_unpublish')
-                        ,handler: this.unpublishNewsletter
-                    },{
                         text: _('goodnews.newsletter_update')
                         ,handler: this.updateNewsletter
                     },{
                         text: _('goodnews.newsletter_remove')
                         ,handler: this.removeNewsletter
+                    },{
+                        text: _('goodnews.newsletter_unpublish')
+                        ,handler: this.unpublishNewsletter
                     }];
                     break;
                 case GON_NEWSLETTER_STATUS_STOPPED:
                     return [{
-                        text: _('goodnews.newsletter_view')
-                        ,handler: this.previewNewsletter
-                    },'-',{
                         text: _('goodnews.newsletter_continue_sending')
                         ,handler: this.continueSendNewsletter
+                    },'-',{
+                        text: _('goodnews.newsletter_view')
+                        ,handler: this.previewNewsletter
                     },'-',{
                         text: _('goodnews.newsletter_remove')
                         ,handler: this.removeNewsletter
@@ -383,14 +396,11 @@ Ext.extend(GoodNews.grid.Newsletters,MODx.grid.Grid,{
                     break;
                 case GON_NEWSLETTER_STATUS_IN_PROGRESS:
                     return [{
-                        text: _('goodnews.newsletter_view')
-                        ,handler: this.previewNewsletter
-                    },'-',{
                         text: _('goodnews.newsletter_stop_sending')
                         ,handler: this.stopSendNewsletter
                     },'-',{
-                        text: _('goodnews.newsletter_remove')
-                        ,handler: this.removeNewsletter
+                        text: _('goodnews.newsletter_view')
+                        ,handler: this.previewNewsletter
                     }];
                     break;
                 case GON_NEWSLETTER_STATUS_SENT:
@@ -400,6 +410,9 @@ Ext.extend(GoodNews.grid.Newsletters,MODx.grid.Grid,{
                     },'-',{
                         text: _('goodnews.newsletter_remove')
                         ,handler: this.removeNewsletter
+                    },{
+                        text: _('goodnews.newsletter_unpublish')
+                        ,handler: this.unpublishNewsletter
                     }];
                     break;
                 case GON_NEWSLETTER_STATUS_SCHEDULED:
@@ -410,19 +423,62 @@ Ext.extend(GoodNews.grid.Newsletters,MODx.grid.Grid,{
                         text: _('goodnews.newsletter_test_send')
                         ,handler: this.testSendNewsletter
                     },'-',{
-                        text: _('goodnews.newsletter_publish')
-                        ,handler: this.publishNewsletter
-                    },{
                         text: _('goodnews.newsletter_update')
                         ,handler: this.updateNewsletter
                     },{
                         text: _('goodnews.newsletter_remove')
                         ,handler: this.removeNewsletter
+                    },{
+                        text: _('goodnews.newsletter_publish')
+                        ,handler: this.publishNewsletter
                     }];
                     break;
             }
         }
     }
+	,handleActionButtons: function(e) {
+		var t = e.getTarget();
+		var elm = t.className.split(' ')[0];
+		if(elm == 'controlBtn') {
+			var action = t.className.split(' ')[1];
+			var record = this.getSelectionModel().getSelected();
+            this.menu.record = record.data;
+			switch (action) {
+                case 'start':
+                    this.startSendNewsletter();
+                    break;
+                case 'stop':
+                    this.stopSendNewsletter();
+                    break;
+                case 'continue':
+                    this.continueSendNewsletter();
+                    break;
+                case 'test':
+                    this.testSendNewsletter();
+                    break;
+                case 'delete':
+                    this.removeNewsletter();
+                    break;
+                case 'undelete':
+                    this.undeleteNewsletter();
+                    break;
+                case 'edit':
+					this.updateNewsletter();
+                    break;
+				case 'publish':
+					this.publishNewsletter();
+					break;
+				case 'unpublish':
+					this.unpublishNewsletter();
+					break;
+				case 'preview':
+					this.previewNewsletter();
+					break;
+				default:
+					break;
+            }
+		}
+	}	
     ,newsletterFilter: function(cb,nv,ov) {
         this.getStore().baseParams.filter = Ext.isEmpty(nv) || Ext.isObject(nv) ? cb.getValue() : nv;
         this.getBottomToolbar().changePage(1);

@@ -26,7 +26,7 @@
 
 class GoodNews {
 
-    const VERSION = '1.3.7';
+    const VERSION = '1.3.8';
     const RELEASE = 'pl';
     
     const MIN_PHP_VERSION = '5.3.0';

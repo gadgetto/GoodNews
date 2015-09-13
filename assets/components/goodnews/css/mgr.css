@@ -58,7 +58,6 @@
 /* Pagetitle column in newsletters grid */
 .gon-newsletter-title {
     margin: 0;
-    font-size: 15px;
     color: #575651;
 }
 .x-grid3-row-selected .gon-newsletter-title {
@@ -75,9 +74,6 @@
 }
 
 /* Expanded rows in grids */
-.x-grid3-row-body {
-    padding: 0 !important;
-}
 .x-grid3-row-body .gon-expinfos {
     overflow: hidden;
     color: #9c9c9c;
@@ -94,6 +90,15 @@
     text-align: left;
     padding: 4px 22px 4px 6px;
     line-height: 20px;
+}
+
+/* Start / Stop / Continue action buttons */
+button:disabled[class*="gon-ab-"] {
+    cursor: default;
+    color: #ccc;
+}
+button:hover:disabled[class*="gon-ab-"] {
+    background-color: #fff;
 }
 
 /* Status tag in newsletters grid */

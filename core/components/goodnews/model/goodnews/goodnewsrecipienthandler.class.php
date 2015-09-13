@@ -249,14 +249,11 @@ class GoodNewsRecipientHandler {
      * check if reservation timestamp is too old, which means a task could not 
      * send within 90 seconds.
      *
-     * - remove recipient entry and 
-     * - write back "send error" to subscriber_log
-     * 
      * @access public
      * @param integer $mailingId
      * @return mixed integer recipient_id || false
      */
-    public function cleanupRecipientTimeout($mailingId) {
+    public function getRecipientTimeout($mailingId) {
 
         $recipient = $this->modx->getObject('GoodNewsRecipient', array(
             'mailing_id' => $mailingId,
@@ -271,13 +268,7 @@ class GoodNewsRecipientHandler {
         
         // Check if reservation timestamp is too old
         if ($statusTime < ($currentTime - self::PROCESS_TIMEOUT)) {
-            
-            if ($recipient->remove()) {
-                unset ($recipient);
-                if ($this->_updateSubscriberLog($recipientId, $mailingId, $currentTime, self::GON_USER_SEND_ERROR)) {
-                    return $recipientId;
-                }
-            }
+            return $recipientId;
         }
         return false;
     }

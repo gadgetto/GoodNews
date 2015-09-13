@@ -75,23 +75,31 @@ Ext.extend(GoodNews.SettingsPanel,MODx.FormPanel,{
     }
     ,getButtons: function() {
         var buttons = [];
+        // Plugin version
+        buttons.push('-',{
+            xtype: 'tbtext'
+            ,html: '<i>'+GoodNews.config.componentVersion+'-'+GoodNews.config.componentRelease+'</i>'
+        },'-')
+        // Save Settings button <i class="fa fa-check-circle"></i>
         buttons.push({
-            text: _('goodnews.settings_save_button')
+            text: (GoodNews.config.legacyMode ? '' : '<i class="icon icon-check-circle icon-lg"></i>&nbsp;') + _('goodnews.settings_save_button')
             ,id: 'button-settings-save'
             ,iconCls: GoodNews.config.legacyMode ? 'gon-icn-save' : ''
             ,handler: this.updateSettings
             ,scope: this
             ,cls: 'primary-button'
-        })
+        },'-')
+        // Close Settings button
         buttons.push({
-            text: _('goodnews.settings_close_button')
+            text: (GoodNews.config.legacyMode ? '' : '<i class="icon icon-arrow-circle-left icon-lg"></i>&nbsp;') + _('goodnews.settings_close_button')
             ,id: 'button-settings-close'
             ,iconCls: GoodNews.config.legacyMode ? 'gon-icn-close' : ''
             ,handler: this.closeSettings
             ,scope: this
         },'-')
+        // Help button
         buttons.push({
-            text: _('help_ex')
+            text: (GoodNews.config.legacyMode ? '' : '<i class="icon icon-question-circle icon-lg"></i>&nbsp;') + _('help_ex')
             ,id: 'button-help'
             ,iconCls: GoodNews.config.legacyMode ? 'gon-icn-help' : ''
             ,handler: function(){
