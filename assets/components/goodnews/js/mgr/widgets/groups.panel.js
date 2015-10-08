@@ -57,6 +57,7 @@ GoodNews.grid.Groups = function(config) {
             'id'
             ,'name'
             ,'description'
+            ,'public'
             ,'modxusergroup'
             ,'modxusergroup_name'
             ,'membercount'
@@ -104,6 +105,17 @@ GoodNews.grid.Groups = function(config) {
             ,sortable: false
             ,width: 250
             ,editor: { xtype: 'textfield' }
+        },{
+            header: _('goodnews.group_public')
+            ,dataIndex: 'public'
+            ,align: 'center'
+            ,sortable: false
+            ,width: 80
+            ,editable: true
+            ,editor: { 
+                xtype: 'combo-boolean'
+                ,renderer: 'boolean'
+            }
         },{
             header: _('goodnews.modx_usergroup')
             ,dataIndex: 'modxusergroup_name'
@@ -268,6 +280,12 @@ GoodNews.window.Group = function(config) {
             ,anchor: '100%'
             ,lazyRender: true
             ,itemId: 'usergroup'
+        },{
+            xtype: 'xcheckbox'
+            ,name: 'public'
+            ,hideLabel: true
+            ,boxLabel: _('goodnews.group_public')
+            ,anchor: '100%'
         }]
     });
     GoodNews.window.Group.superclass.constructor.call(this,config);

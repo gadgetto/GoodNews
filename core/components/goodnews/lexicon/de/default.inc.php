@@ -140,6 +140,7 @@ $_lang['goodnews.group_membercount']                                = 'Abonnente
 $_lang['goodnews.modx_usergroup']                                   = 'MODX Benutzer-Gruppe';
 $_lang['goodnews.group_belongs_to_modx_usergroup']                  = 'Zugeordnet zu MODX Benutzer Gruppe';
 $_lang['goodnews.choose_modx_user_group']                           = '(MODX Benutzer Gruppe wählen)';
+$_lang['goodnews.group_public']                                     = '&Ouml;ffentlich';
 $_lang['goodnews.groups_none']                                      = 'Keine Gruppen';
 $_lang['goodnews.group_remove']                                     = 'Gruppe entfernen';
 $_lang['goodnews.group_update']                                     = 'Gruppe bearbeiten';

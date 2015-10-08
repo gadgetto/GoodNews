@@ -1,5 +1,8 @@
 Changelog for GoodNews
 
+- added "public" field to Groups (same behaviour as in Categories)
+- changed behaviour of "public" field for Categories and makes it possible to send newsletters to non-public Categories
+
 GoodNews 1.3.8-pl (2015-09-13)
 --------------------------------------------------
 - fixed a bug in combining filters on Subscribers grid

@@ -57,10 +57,10 @@ GoodNews.grid.Categories = function(config) {
             'id'
             ,'name'
             ,'description'
+            ,'public'
             ,'goodnewsgroup_id'
             ,'goodnewsgroup_name'
             ,'membercount'
-            ,'public'
             ,'menu'
         ]
         ,grouping: true
@@ -97,13 +97,6 @@ GoodNews.grid.Categories = function(config) {
             ,editable: true
             ,editor: { xtype: 'textfield' }
         },{
-            header: _('goodnews.category_usergroup')
-            ,dataIndex: 'goodnewsgroup_name'
-            ,sortable: true
-            ,hidden: true
-            ,width: 100
-            ,editable: false
-        },{
             header: _('goodnews.category_public')
             ,dataIndex: 'public'
             ,align: 'center'
@@ -114,6 +107,13 @@ GoodNews.grid.Categories = function(config) {
                 xtype: 'combo-boolean'
                 ,renderer: 'boolean'
             }
+        },{
+            header: _('goodnews.category_usergroup')
+            ,dataIndex: 'goodnewsgroup_name'
+            ,sortable: true
+            ,hidden: true
+            ,width: 100
+            ,editable: false
         },{
             header: _('goodnews.category_membercount')
             ,dataIndex: 'membercount'

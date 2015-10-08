@@ -11,6 +11,7 @@ $xpdo_meta_map['GoodNewsGroup']= array (
   array (
     'name' => '',
     'description' => '',
+    'public' => 1,
     'modxusergroup' => 0,
     'createdon' => NULL,
     'createdby' => 0,
@@ -33,6 +34,15 @@ $xpdo_meta_map['GoodNewsGroup']= array (
       'phptype' => 'string',
       'null' => false,
       'default' => '',
+    ),
+    'public' => 
+    array (
+      'dbtype' => 'int',
+      'precision' => '1',
+      'attributes' => 'unsigned',
+      'phptype' => 'boolean',
+      'null' => false,
+      'default' => 1,
     ),
     'modxusergroup' => 
     array (

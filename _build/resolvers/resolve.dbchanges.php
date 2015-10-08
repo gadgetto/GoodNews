@@ -55,7 +55,10 @@ if ($object->xpdo) {
             //GoodNewsMailingMeta - recipients_list field deprecated since 1.2.0-pl+
 
             // 1.3.0-pl+
-            $manager->addField('GoodNewsMailingMeta', 'collections', array('after' => 'categories'));            
+            $manager->addField('GoodNewsMailingMeta', 'collections', array('after' => 'categories'));
+            
+            // 1.3.9-pl+
+            $manager->addField('GoodNewsGroup', 'public', array('after' => 'description'));
             
             // Set bakck log-level to previous level
             $modx->setLogLevel($oldLogLevel);

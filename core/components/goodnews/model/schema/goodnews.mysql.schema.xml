@@ -88,6 +88,7 @@
     <object class="GoodNewsGroup" table="goodnews_groups" extends="xPDOSimpleObject">
         <field key="name" dbtype="varchar" precision="255" phptype="string" null="false" default="" />
         <field key="description" dbtype="text" phptype="string" null="false" default="" />
+        <field key="public" dbtype="int" precision="1" attributes="unsigned" phptype="boolean" null="false" default="1" />
         <field key="modxusergroup" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="false" default="0" />
         <field key="createdon" dbtype="datetime" phptype="datetime" null="true" />
         <field key="createdby" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="false" default="0" />
