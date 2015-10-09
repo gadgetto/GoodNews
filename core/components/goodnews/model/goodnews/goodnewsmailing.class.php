@@ -498,8 +498,8 @@ class GoodNewsMailing {
                 $this->setIPCstop($this->mailingid, true);
                 if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsMailing::processMailing - Mailing [id: '.$this->mailingid.'] finished.'); }
  
-                // @todo: send status report to sender of mailing!
-                //
+                // @todo: Send status report to MODX user who started the mail-sending
+                //$this->sendStatusReport();
                 
                 break;
             }            
