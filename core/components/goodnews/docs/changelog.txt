@@ -1,5 +1,6 @@
 Changelog for GoodNews
 
+- fixed error messages in GoodNews installer while updating database schema (...field allready exists)
 - added "public" field to Groups (same behaviour as in Categories)
 - changed behaviour of "public" field for Categories and makes it possible to send newsletters to non-public Categories
 
