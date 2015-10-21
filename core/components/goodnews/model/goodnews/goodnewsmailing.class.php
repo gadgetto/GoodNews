@@ -286,13 +286,6 @@ class GoodNewsMailing {
 
         $this->_lock();
 
-        // Look if we find a timed out recipient for cleanup!
-        $timeoutRecipientId = $this->goodnewsrecipienthandler->getRecipientTimeout($this->mailingid);
-        if ($timeoutRecipientId) {
-            $this->updateRecipientStatus($timeoutRecipientId, GoodNewsRecipientHandler::GON_USER_SEND_ERROR);
-            if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsMailing::getNextRecipient - Sending for recipient [id: '.$timeoutRecipientId.'] timed out.'); }
-        }
-        
         // Find next unsent recipient
         $recipientId = $this->goodnewsrecipienthandler->getRecipientUnsent($this->mailingid);
 
@@ -487,17 +480,25 @@ class GoodNewsMailing {
             
             // There are no more recipients -> mailing has finished!
             if (!$recipientId) {
-                // Stop this process!
-                $this->goodnewsprocesshandler->setPid(getmypid());
-                $this->goodnewsprocesshandler->deleteProcessStatus();
                 
-                // Also we set the mailing to finished (= IPCstatus "stopped")
-                $this->setIPCstop($this->mailingid, true);
-                if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsMailing::processMailing - Mailing [id: '.$this->mailingid.'] finished.'); }
- 
-                // @todo: Send status report to MODX user who started the mail-sending
-                //$this->sendStatusReport();
-                
+                if ($this->goodnewsrecipienthandler->getRecipientReserved($this->mailingid)) {
+                    // Before we stop, cleanup all timed out recipients!
+                    while ($timeoutRecipientId = $this->goodnewsrecipienthandler->getRecipientTimeout($this->mailingid)) {
+                        $this->updateRecipientStatus($timeoutRecipientId, GoodNewsRecipientHandler::GON_USER_SEND_ERROR);
+                        if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsMailing::processMailing - Sending for recipient [id: '.$timeoutRecipientId.'] timed out.'); }
+                    }
+                } else {
+                    // Stop this process!
+                    $this->goodnewsprocesshandler->setPid(getmypid());
+                    $this->goodnewsprocesshandler->deleteProcessStatus();
+                    
+                    // Also we set the mailing to finished (= IPCstatus "stopped")
+                    $this->setIPCstop($this->mailingid, true);
+                    if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsMailing::processMailing - Mailing [id: '.$this->mailingid.'] finished.'); }
+     
+                    // @todo: Send status report to MODX user who started the mail-sending
+                    //$this->sendStatusReport();
+                }
                 break;
             }            
 
@@ -517,7 +518,7 @@ class GoodNewsMailing {
                 $status = GoodNewsRecipientHandler::GON_USER_SEND_ERROR; // @todo: other status required eg. GON_USER_NOT_FOUND
             }
             
-            $this->updateRecipientStatus($recipientId, $status);
+            $this->updateRecipientStatus($recipientId, $status);            
         }
 
         return true;
