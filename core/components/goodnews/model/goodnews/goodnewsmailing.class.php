@@ -149,9 +149,6 @@ class GoodNewsMailing {
         if ($this->testMailing) {
             $subject = $this->modx->getOption('goodnews.test_subject_prefix').$subject;
         }
-        if ($this->debug) {
-            $subject = '[pid: '.getmypid().'] '.$subject;
-        }
         return $subject;
     }
     
