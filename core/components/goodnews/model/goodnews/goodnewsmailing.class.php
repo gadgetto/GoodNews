@@ -840,12 +840,12 @@ class GoodNewsMailing {
         $tempfile = $this->lockDir.$this->mailingid.'.temp';
         $lockfile = $this->lockDir.$this->mailingid.'.'.getmypid();
         
-        while (true) {
+        while (!file_exists($lockfile)) {
             while (!file_exists($tempfile)) {
                 if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsMailing::lock - waiting (mailing currently locked).'); }
                 usleep(rand(20000, 100000)); // 20 to 100 millisec
             }
-            // Atomic method to use the file for locking purposes
+            // Atomic method to use the file for locking purposes (@ is required here!)
             $lock = @rename($tempfile, $lockfile); 
             if ($lock) {
                 if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsMailing::lock - Mailing meta [id: '.$this->mailingid.'] - locked.'); }
