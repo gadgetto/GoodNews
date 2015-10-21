@@ -767,21 +767,22 @@ class GoodNewsMailing {
      * @todo: move all lockfile related methods to a separate lockfilehandler class!
      *
      * @access private
-     * @return boolean
+     * @return boolean (true -> if directory already exists or is created successfully)
      */
     private function _createLockFileDir() {
         $this->lockDir = $this->modx->getOption('core_path', null, MODX_CORE_PATH).'cache/goodnews/locks/';
         $dir = false;
-        
-        if (!is_dir($this->lockDir)) {
-            $dir = @mkdir($this->lockDir, 0777, true);
+
+        if (is_dir($this->lockDir)) {
+            $dir = true;
+        } else {
+            $dir = mkdir($this->lockDir, 0777, true);
             if ($dir) {
+                chmod($this->lockDir, 0777);
                 if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsMailing::_createLockFileDir - lockfile directory created.'); }
             } else {
                 if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_ERROR, '[GoodNews] [pid: '.getmypid().'] GoodNewsMailing::_createLockFileDir - could not create lockfile directory (file operation failed).'); }
             }
-        } else {
-            if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsMailing::_createLockFileDir - lockfile directory already exists.'); }
         }
         return $dir;
     }
