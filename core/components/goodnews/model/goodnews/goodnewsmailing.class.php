@@ -603,10 +603,10 @@ class GoodNewsMailing {
         $this->modx->mail->reset();
 
         if (!$sent) {
-            if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsMailing::sendEmail - Could not send mail to recipient [id: '.$subscriber['id'].'] ('.$subscriber['email'].').'); }
-            $this->modx->log(modX::LOG_LEVEL_ERROR, '[GoodNews] An error occurred while trying to send email. Mailer error: '.$this->modx->mail->mailer->ErrorInfo);
+            $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] Email could not be sent to '.$subscriber['email'].' ('.$subscriber['id'].').');
+            if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_ERROR, '[GoodNews] Mailer error: '.$this->modx->mail->mailer->ErrorInfo); }
         } else {
-            if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsMailing::sendEmail - Mail sent to recipient [id: '.$subscriber['id'].'] ('.$subscriber['email'].').'); }
+            if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsMailing::sendEmail - Email sent to '.$subscriber['email'].' ('.$subscriber['id'].').'); }
         }
         return $sent;
     }
