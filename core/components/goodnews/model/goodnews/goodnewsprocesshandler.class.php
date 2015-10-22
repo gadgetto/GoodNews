@@ -43,7 +43,10 @@ class GoodNewsProcessHandler {
 
     /** @var string $lockDir The path to the goodnews/locks/ directory in MODX cache folder */
     public $lockDir;
-    
+
+    /** @var boolean $debug Debug mode on/off */
+    public $debug = false;
+
     /**
      * Constructor for GoodNewsProcessHandler object.
      *
@@ -53,6 +56,7 @@ class GoodNewsProcessHandler {
     public function __construct(modX &$modx) {
         $this->modx         = &$modx;
         $this->_currentTime = time();
+        $this->debug        = $this->modx->getOption('goodnews.debug', null, false) ? true : false;
         $this->lockDir      = $this->modx->getOption('core_path', null, MODX_CORE_PATH).'cache/goodnews/locks/';
     }
 
@@ -236,22 +240,6 @@ class GoodNewsProcessHandler {
     }
 
     /**
-     * Removes a temporary lock file if process status is removed.
-     * 
-     * @todo: move all lockfile related methods to a separate lockfilehandler class!
-     *
-     * @access private
-     * @return void
-     */
-    private function _removeLockFile() {
-        $lockfilepattern = $this->lockDir.'*.'.$this->_pid;
-        foreach (glob($lockfilepattern) as $filename) {
-            @unlink($filename);
-        }
-        
-    }
-    
-    /**
      * Counts the temporary entries from the process status table.
      *
      * @access public
@@ -306,4 +294,131 @@ class GoodNewsProcessHandler {
         return $processes;
     }
 
+    /**
+     * Creates the directory for the temporary lock files.
+     *
+     * @access public
+     * @return boolean (true -> if directory already exists or is created successfully)
+     */
+    public function createLockFileDir() {
+        $dir = false;
+
+        if (is_dir($this->lockDir)) {
+            $dir = true;
+        } else {
+            $dir = mkdir($this->lockDir, 0777, true);
+            if ($dir) {
+                @chmod($this->lockDir, 0777);
+                if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsProcessHandler::createLockFileDir - lockfile directory created.'); }
+            } else {
+                if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_ERROR, '[GoodNews] [pid: '.getmypid().'] GoodNewsProcessHandler::createLockFileDir - could not create lockfile directory.'); }
+            }
+        }
+        return $dir;
+    }
+
+    /**
+     * Creates a temporary lock file for a specific mailing.
+     *
+     * @access public
+     * @param integer $mailingId
+     * @return boolean (true -> if file already exists or is created successfully)
+     */
+    public function createLockFile($mailingId) {
+        $tempfile = $this->lockDir.$mailingId.'.temp';
+        $lockfilepattern = $this->lockDir.$mailingId.'.*';
+        $file = false;
+        
+        $ary = glob($lockfilepattern);
+        if (!empty($ary)) {
+            $file = true;
+        } else {
+            $file = file_put_contents($tempfile, $mailingId, LOCK_EX);
+            if ($file) {
+                @chmod($tempfile, 0777);
+                if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsProcessHandler::createLockFile - Mailing meta [id: '.$mailingId.'] - lockfile created.'); }
+            } else {
+                if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_ERROR, '[GoodNews] [pid: '.getmypid().'] GoodNewsProcessHandler::createLockFile - Mailing meta [id: '.$mailingId.'] - could not create lockfile.'); }
+            }
+        }
+        return $file;
+    }
+
+    /**
+     * Set lock on db entry.
+     *
+     * @access public
+     * @param integer $mailingId
+     * @return boolean
+     */
+    public function lock($mailingId) {
+        $tempfile = $this->lockDir.$mailingId.'.temp';
+        $lockfile = $this->lockDir.$mailingId.'.'.getmypid();
+        
+        while (!file_exists($lockfile)) {
+            while (!file_exists($tempfile)) {
+                if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsProcessHandler::lock - waiting (mailing currently locked).'); }
+                usleep(rand(20000, 100000)); // 20 to 100 millisec
+            }
+            // Atomic method to use the file for locking purposes (@ is required here!)
+            $lock = @rename($tempfile, $lockfile); 
+            if ($lock) {
+                if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsProcessHandler::lock - Mailing meta [id: '.$mailingId.'] - locked.'); }
+            } else {
+                if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_ERROR, '[GoodNews] [pid: '.getmypid().'] GoodNewsProcessHandler::lock - Mailing meta [id: '.$mailingId.'] - could not be locked (file operation failed).'); }
+            }
+            // Catch race conditions! 
+            if (file_exists($lockfile)) {
+                return $lock;
+            } else {
+                if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_ERROR, '[GoodNews] [pid: '.getmypid().'] GoodNewsProcessHandler::lock - Mailing meta [id: '.$mailingId.'] - race condition!'); }
+            }
+        }
+    }
+
+    /**
+     * Remove lock from db entry.
+     *
+     * @access public
+     * @param integer $mailingId
+     * @return boolean
+     */
+    public function unlock($mailingId) {
+        $tempfile = $this->lockDir.$mailingId.'.temp';
+        $lockfile = $this->lockDir.$mailingId.'.'.getmypid();
+        // Atomic method to use the file for locking purposes
+        $unlock = @rename($lockfile, $tempfile); 
+        if ($unlock) {
+            if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsProcessHandler::unlock - Mailing meta [id: '.$mailingId.'] - unlocked.'); }
+        } else {
+            $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsProcessHandler::unlock - Mailing meta [id: '.$mailingId.'] - could not be unlocked (file operation failed).');
+        }
+        return $unlock;
+    }
+
+    /**
+     * Removes a lock file for a specific process.
+     *
+     * @access private
+     * @return void
+     */
+    private function _removeLockFile() {
+        $lockfilepattern = $this->lockDir.'*.'.$this->_pid;
+        foreach (glob($lockfilepattern) as $filename) {
+            @unlink($filename);
+        }
+        
+    }
+
+    /**
+     * Removes a temporary lock file for a specific mailing.
+     *
+     * @access public
+     * @param integer $mailingId
+     * @return void
+     */
+    public function removeTempLockFile($mailingId) {
+        $tempfile = $this->lockDir.$mailingId.'.temp';
+        @unlink($tempfile);
+    }
 }

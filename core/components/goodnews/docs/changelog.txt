@@ -1,5 +1,6 @@
 Changelog for GoodNews
 
+- improved robustness of mail processing
 - fixed a problem with lockfile handling + recipient status update
 - fixed error messages in GoodNews installer while updating database schema (...field allready exists)
 - added "public" field to Groups (same behaviour as in Categories)
