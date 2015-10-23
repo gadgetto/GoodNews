@@ -49,9 +49,6 @@ class GoodNewsMailing {
     /** @var int $bulksize The maximum value of mails to send by one task */
     public $bulksize = 30;
     
-    /** @var string $lockDir The path to the goodnews/locks/ directory in MODX cache folder */
-    public $lockDir;
-
     /** @var boolean $testMailing Is this a test mailing? */
     public $testMailing = false;
 
@@ -67,18 +64,22 @@ class GoodNewsMailing {
         $this->modx      = &$modx;
         $this->debug     = $this->modx->getOption('goodnews.debug', null, false) ? true : false;
         $this->bulksize  = $this->modx->getOption('goodnews.mailing_bulk_size', null, 30);
-        $this->_createLockFileDir();
         
         $corePath = $this->modx->getOption('goodnews.core_path', null, $this->modx->getOption('core_path').'components/goodnews/');
 
         if (!$this->modx->loadClass('GoodNewsProcessHandler', $corePath.'model/goodnews/', true, true)) {
-            $this->modx->log(modX::LOG_LEVEL_ERROR,'[GoodNews] Could not load GoodNewsProcessHandler class.');
+            $this->modx->log(modX::LOG_LEVEL_ERROR,'[GoodNews] Could not load GoodNewsProcessHandler class. Processing aborted.');
             exit();
         }
         $this->goodnewsprocesshandler = new GoodNewsProcessHandler($this->modx);
+        
+        if (!$this->goodnewsprocesshandler->createLockFileDir()) {
+            $this->modx->log(modX::LOG_LEVEL_ERROR,'[GoodNews] Lockfile directory missing! Processing aborted.');
+            exit();
+        }
 
         if (!$this->modx->loadClass('GoodNewsRecipientHandler', $corePath.'model/goodnews/', true, true)) {
-            $this->modx->log(modX::LOG_LEVEL_ERROR,'[GoodNews] Could not load GoodNewsRecipientHandler class.');
+            $this->modx->log(modX::LOG_LEVEL_ERROR,'[GoodNews] Could not load GoodNewsRecipientHandler class. Processing aborted.');
             exit();
         }
         $this->goodnewsrecipienthandler = new GoodNewsRecipientHandler($this->modx);
@@ -148,9 +149,6 @@ class GoodNewsMailing {
         $subject = $this->mailing->get('pagetitle');
         if ($this->testMailing) {
             $subject = $this->modx->getOption('goodnews.test_subject_prefix').$subject;
-        }
-        if ($this->debug) {
-            $subject = '[pid: '.getmypid().'] '.$subject;
         }
         return $subject;
     }
@@ -287,28 +285,21 @@ class GoodNewsMailing {
             $tstart = $mtime;
         }
 
-        $this->_lock();
+        $this->goodnewsprocesshandler->lock($this->mailingid);
 
-        // Look if we find a timed out recipient for cleanup!
-        $timeoutRecipientId = $this->goodnewsrecipienthandler->getRecipientTimeout($this->mailingid);
-        if ($timeoutRecipientId) {
-            $this->updateRecipientStatus($timeoutRecipientId, GoodNewsRecipientHandler::GON_USER_SEND_ERROR);
-            if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsMailing::getNextRecipient - Sending for recipient [id: '.$timeoutRecipientId.'] timed out.'); }
-        }
-        
         // Find next unsent recipient
         $recipientId = $this->goodnewsrecipienthandler->getRecipientUnsent($this->mailingid);
 
         // No more recipients (or list is empty which shouldn't happen here)
         if (!$recipientId) {
             if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsMailing::getNextRecipient - No unsent recipients found.'); }
-            $this->_unlock();
+            $this->goodnewsprocesshandler->lock($this->mailingid);
             return false;
         }
         // Habemus recipient!
         if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsMailing::getNextRecipient - Unsent recipient [id: '.$recipientId.'] found.'); }
         
-        $this->_unlock();
+        $this->goodnewsprocesshandler->lock($this->mailingid);
         
         if ($this->debug) {
             $mtime = microtime();
@@ -339,11 +330,11 @@ class GoodNewsMailing {
             $tstart = $mtime;
         }
         
-        $this->_lock();
+        $this->goodnewsprocesshandler->lock($this->mailingid);
 
         if (!$this->goodnewsrecipienthandler->cleanupRecipient($recipientId, $this->mailingid, $status)) {
             if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsMailing::updateRecipientStatus - Status for recipient [id: '.$recipientId.'] could not be updated to: '.$status); }
-            $this->_unlock();
+            $this->goodnewsprocesshandler->lock($this->mailingid);
             return false;
         }
 
@@ -362,7 +353,7 @@ class GoodNewsMailing {
         $meta->save();
         unset($meta);
         
-        $this->_unlock();
+        $this->goodnewsprocesshandler->lock($this->mailingid);
         
         if ($this->debug) {
             $mtime = microtime();
@@ -479,7 +470,10 @@ class GoodNewsMailing {
         $this->mailing   = $this->_getMailingObject();
         if (!$this->mailing) { return false; }
 
-        $this->_createLockFile();
+        if (!$this->goodnewsprocesshandler->createLockFile($this->mailingid)) {
+            $this->modx->log(modX::LOG_LEVEL_ERROR,'[GoodNews] Lockfile missing! Processing aborted.');
+            exit();
+        }
         
         $mail = $this->_getMailProperties();
         
@@ -490,17 +484,26 @@ class GoodNewsMailing {
             
             // There are no more recipients -> mailing has finished!
             if (!$recipientId) {
-                // Stop this process!
-                $this->goodnewsprocesshandler->setPid(getmypid());
-                $this->goodnewsprocesshandler->deleteProcessStatus();
                 
-                // Also we set the mailing to finished (= IPCstatus "stopped")
-                $this->setIPCstop($this->mailingid, true);
-                if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsMailing::processMailing - Mailing [id: '.$this->mailingid.'] finished.'); }
- 
-                // @todo: send status report to sender of mailing!
-                //
-                
+                if ($this->goodnewsrecipienthandler->getRecipientReserved($this->mailingid)) {
+                    // Before we stop, cleanup all timed out recipients!
+                    while ($timeoutRecipientId = $this->goodnewsrecipienthandler->getRecipientTimeout($this->mailingid)) {
+                        $this->updateRecipientStatus($timeoutRecipientId, GoodNewsRecipientHandler::GON_USER_SEND_ERROR);
+                        if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsMailing::processMailing - Sending for recipient [id: '.$timeoutRecipientId.'] timed out.'); }
+                    }
+                } else {
+                    // Stop this process and remove temp lockfile!
+                    $this->goodnewsprocesshandler->setPid(getmypid());
+                    $this->goodnewsprocesshandler->deleteProcessStatus();
+                    $this->goodnewsprocesshandler->removeTempLockFile($this->mailingid);
+                    
+                    // Also we set the mailing to finished (= IPCstatus "stopped")
+                    $this->setIPCstop($this->mailingid, true);
+                    if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsMailing::processMailing - Mailing [id: '.$this->mailingid.'] finished.'); }
+     
+                    // @todo: Send status report to MODX user who started the mail-sending
+                    //$this->sendStatusReport();
+                }
                 break;
             }            
 
@@ -520,7 +523,7 @@ class GoodNewsMailing {
                 $status = GoodNewsRecipientHandler::GON_USER_SEND_ERROR; // @todo: other status required eg. GON_USER_NOT_FOUND
             }
             
-            $this->updateRecipientStatus($recipientId, $status);
+            $this->updateRecipientStatus($recipientId, $status);            
         }
 
         return true;
@@ -600,10 +603,10 @@ class GoodNewsMailing {
         $this->modx->mail->reset();
 
         if (!$sent) {
-            if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsMailing::sendEmail - Could not send mail to recipient [id: '.$subscriber['id'].'] ('.$subscriber['email'].').'); }
-            $this->modx->log(modX::LOG_LEVEL_ERROR, '[GoodNews] An error occurred while trying to send email. Mailer error: '.$this->modx->mail->mailer->ErrorInfo);
+            $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] Email could not be sent to '.$subscriber['email'].' ('.$subscriber['id'].').');
+            if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_ERROR, '[GoodNews] Mailer error: '.$this->modx->mail->mailer->ErrorInfo); }
         } else {
-            if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsMailing::sendEmail - Mail sent to recipient [id: '.$subscriber['id'].'] ('.$subscriber['email'].').'); }
+            if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsMailing::sendEmail - Email sent to '.$subscriber['email'].' ('.$subscriber['id'].').'); }
         }
         return $sent;
     }
@@ -761,127 +764,6 @@ class GoodNewsMailing {
         } else {
             return false;
         }
-    }
-
-
-    /**
-     * Creates the directory for the temporary lock files.
-     * 
-     * @todo: move all lockfile related methods to a separate lockfilehandler class!
-     *
-     * @access private
-     * @return boolean
-     */
-    private function _createLockFileDir() {
-        $this->lockDir = $this->modx->getOption('core_path', null, MODX_CORE_PATH).'cache/goodnews/locks/';
-        $dir = false;
-        
-        if (!is_dir($this->lockDir)) {
-            $dir = @mkdir($this->lockDir, 0777, true);
-            if ($dir) {
-                if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsMailing::_createLockFileDir - lockfile directory created.'); }
-            } else {
-                if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_ERROR, '[GoodNews] [pid: '.getmypid().'] GoodNewsMailing::_createLockFileDir - could not create lockfile directory (file operation failed).'); }
-            }
-        } else {
-            if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsMailing::_createLockFileDir - lockfile directory already exists.'); }
-        }
-        return $dir;
-    }
-
-    /**
-     * Creates a temporary lock file for a specific mailing.
-     * 
-     * @todo: move all lockfile related methods to a separate lockfilehandler class!
-     *
-     * @access private
-     * @return boolean
-     */
-    private function _createLockFile() {
-        $tempfile = $this->lockDir.$this->mailingid.'.temp';
-        $lockfilepattern = $this->lockDir.$this->mailingid.'.*';
-        $file = false;
-        
-        $ary = glob($lockfilepattern);
-        if (empty($ary)) {
-            $file = file_put_contents($tempfile, $this->mailingid, LOCK_EX);
-            @chmod($tempfile, 0777);
-            if ($file) {
-                if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsMailing::_createLockFile - Mailing meta [id: '.$this->mailingid.'] - lockfile created.'); }
-            } else {
-                if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_ERROR, '[GoodNews] [pid: '.getmypid().'] GoodNewsMailing::_createLockFile - Mailing meta [id: '.$this->mailingid.'] - could not create lockfile (file operation failed).'); }
-            }
-        } else {
-            if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsMailing::_createLockFile - Mailing meta [id: '.$this->mailingid.'] - lockfile already exists.'); }
-        }
-        return $file;
-    }
-
-    /**
-     * Removes a temporary lock file.
-     * 
-     * @todo: move all lockfile related methods to a separate lockfilehandler class!
-     *
-     * @access private
-     * @return void
-     */
-    private function _removeLockFile() {
-        $tempfile = $this->lockDir.$this->mailingid.'.temp';
-        @unlink($tempfile);
-    }
-
-    /**
-     * Set lock on db entry.
-     *
-     * @todo: move all lockfile related methods to a separate lockfilehandler class!
-     *
-     * @access private
-     * @return boolean
-     */
-    private function _lock() {
-        $tempfile = $this->lockDir.$this->mailingid.'.temp';
-        $lockfile = $this->lockDir.$this->mailingid.'.'.getmypid();
-        
-        while (true) {
-            while (!file_exists($tempfile)) {
-                if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsMailing::lock - waiting (mailing currently locked).'); }
-                usleep(rand(20000, 100000)); // 20 to 100 millisec
-            }
-            // Atomic method to use the file for locking purposes
-            $lock = @rename($tempfile, $lockfile); 
-            if ($lock) {
-                if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsMailing::lock - Mailing meta [id: '.$this->mailingid.'] - locked.'); }
-            } else {
-                if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_ERROR, '[GoodNews] [pid: '.getmypid().'] GoodNewsMailing::lock - Mailing meta [id: '.$this->mailingid.'] - could not be locked (file operation failed).'); }
-            }
-            // Catch race conditions! 
-            if (file_exists($lockfile)) {
-                return $lock;
-            } else {
-                if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_ERROR, '[GoodNews] [pid: '.getmypid().'] GoodNewsMailing::lock - Mailing meta [id: '.$this->mailingid.'] - race condition!'); }
-            }
-        }
-    }
-
-    /**
-     * Remove lock from db entry.
-     *
-     * @todo: move all lockfile related methods to a separate lockfilehandler class!
-     *
-     * @access private
-     * @return boolean
-     */
-    private function _unlock() {
-        $tempfile = $this->lockDir.$this->mailingid.'.temp';
-        $lockfile = $this->lockDir.$this->mailingid.'.'.getmypid();
-        // Atomic method to use the file for locking purposes
-        $unlock = @rename($lockfile, $tempfile); 
-        if ($unlock) {
-            if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsMailing::unlock - Mailing meta [id: '.$this->mailingid.'] - unlocked.'); }
-        } else {
-            $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsMailing::unlock - Mailing meta [id: '.$this->mailingid.'] - could not be unlocked (file operation failed).');
-        }
-        return $unlock;
     }
 
     /**

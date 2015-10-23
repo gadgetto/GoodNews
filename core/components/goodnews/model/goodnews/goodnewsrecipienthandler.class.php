@@ -274,6 +274,28 @@ class GoodNewsRecipientHandler {
     }
 
     /**
+     * Get the next recipient with status "reserved" from database.
+     *
+     * @access public
+     * @param integer $mailingId
+     * @return mixed integer recipient_id || false
+     */
+    public function getRecipientReserved($mailingId) {
+
+        $recipient = $this->modx->getObject('GoodNewsRecipient', array(
+            'mailing_id' => $mailingId,
+            'status'     => self::GON_USER_RESERVED,
+        ));
+        if (!is_object($recipient)) {
+            return false;
+        }
+        $recipientId = $recipient->get('recipient_id');
+        unset($recipient);
+        
+        return $recipientId;
+    }
+
+    /**
      * Cleanup a recipient.
      * 
      * - remove recipient entry and 
@@ -288,6 +310,7 @@ class GoodNewsRecipientHandler {
     public function cleanupRecipient($recipientId, $mailingId, $status) {
 
         $recipient = $this->modx->getObject('GoodNewsRecipient', array(
+            'mailing_id'   => $mailingId,
             'recipient_id' => $recipientId,
         ));
         if (!is_object($recipient)) {

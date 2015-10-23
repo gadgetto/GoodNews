@@ -165,7 +165,6 @@ class GroupCategoryGetNodesProcessor extends modProcessor {
         $data = array();
         $c = $this->modx->newQuery('GoodNewsCategory');
         $c->where(array(
-			'public' => 1,
 			'goodnewsgroup_id' => $this->gonGroup->get('id'),
         ));
         $data['total'] = $this->modx->getCount('GoodNewsCategory', $c);

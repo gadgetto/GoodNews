@@ -310,6 +310,7 @@ abstract class GoodNewsSubscriptionController {
         }
         
         $query->where(array('modxusergroup' => 0));
+        $query->where(array('public' => 1));
         $query->sortby($sort, $dir);
         $this->goodnewsGroups = $this->modx->getCollection('GoodNewsGroup', $query);
         if (empty($this->goodnewsGroups)) {
