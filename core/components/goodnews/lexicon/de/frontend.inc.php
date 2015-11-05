@@ -40,6 +40,7 @@ $_lang['goodnews.email_not_sent']                 = 'Beim Senden der E-Mail auf 
 $_lang['goodnews.validator_form_error']           = 'Bei der Formularvalidierung ist eine Fehler aufgetreten. Bitte überprüfen Sie die eingegebenen Daten.';
 $_lang['goodnews.validator_field_required']       = 'Dieses Feld ist erforderlich.';
 $_lang['goodnews.validator_field_not_empty']      = 'Dieses Feld muss leer sein.';
+$_lang['goodnews.validator_email_multiple']       = 'Diese E-Mail Adresse wird mehrfach verwendet. Wenn Sie der Inhaber dieser E-Mail Adresse sind, kontaktieren Sie bitte den Site Administrator.';
 $_lang['goodnews.validator_email_taken']          = 'Die E-Mail Adresse wird bereits verwendet. Geben Sie bitte eine andere E-Mail Adresse an.';
 $_lang['goodnews.validator_email_invalid']        = 'Bitte geben Sie eine gültige E-Mail Adresse ein.';
 $_lang['goodnews.validator_email_invalid_domain'] = 'Ihre E-Mail Adresse enthält keinen gültigen Domainnamen.';
@@ -51,6 +52,7 @@ $_lang['goodnews.spam_marked']                    = ' - als Spam markiert.';
 
 $_lang['goodnews.activation_email_subject']       = 'Vielen Dank für Ihr Interesse an unsererm Newsletterservice. Bitte bestätigen Sie die Aktivierung!';
 $_lang['goodnews.subscription_email_subject']     = 'Vielen Dank für Ihr Interesse an unsererm Newsletterservice. Ihr Abonnement war erfolgreich!';
+$_lang['goodnews.resubscription_email_subject']   = 'Erneuerung Ihres Newsletter-Abonnements!';
 $_lang['goodnews.requestlinks_email_subject']     = 'Ihre angeforderten Links zur Aktualisierung oder Kündigung Ihres Abonnements.';
 
 $_lang['goodnews.requestlinks_success']           = 'Die angeforderten Links wurden an die angegebene Email Adresse gesendet.';

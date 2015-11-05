@@ -6,7 +6,7 @@
     <meta name="viewport" content="initial-scale=1.0" />    <!-- Mobile webkit will display zoomed in -->
     <meta name="format-detection" content="telephone=no" /> <!-- Disable auto phone number linking in iOS -->
     
-    <title>Request Subscription Links</title>
+    <title>Newsletter Subscription Renewal</title>
     <style type="text/css">
     
         /* Force Hotmail to display emails at full width */
@@ -77,7 +77,7 @@
                     <tr>
                         <td class="header-padding" bgcolor="#9ec41a" align="center" style="background-color: #9ec41a; text-align: center; padding-left: 30px; padding-right: 30px; font-weight: bold; font-size: 24px; line-height: 28px; font-family: Helvetica, sans-serif; color: #ffffff;">
                             <br>
-                            Links to Your Profile<br>
+                            Subscription Renewal<br>
                             <br>
                         </td>
                     </tr>
@@ -96,7 +96,8 @@
                     <tr>
                         <td class="container-padding" bgcolor="#ffffff" style="background-color: #ffffff; padding-left: 30px; padding-right: 30px; font-size: 16px; line-height: 22px; font-family: Helvetica, sans-serif; color: #333;">
                             <p>
-                                here are your requested secure links to edit or cancel your subscription:
+                                we found an existing subscription profile for your email address! To update your 
+                                profile or to renew your subscriptions please click the following link:
                             </p>
                             <br>
                             <table border="0" cellpadding="0" cellspacing="0">
@@ -105,7 +106,7 @@
                                         <table border="0" cellpadding="0" cellspacing="0" style="background-color:#9ec41a; border:1px solid #9ec41a; border-radius:5px;">
                                             <tr>
                                                 <td align="center" valign="middle" style="color:#FFFFFF; font-family:Helvetica, sans-serif; font-size:16px; font-weight:bold; line-height:150%; padding-top:10px; padding-right:25px; padding-bottom:10px; padding-left:25px;">
-                                                    <a href="[[+updateProfileUrl]]" target="_blank" style="color:#FFFFFF; text-decoration:none;">Edit your profile</a>
+                                                    <a href="[[+updateProfileUrl]]" target="_blank" style="color:#FFFFFF; text-decoration:none;">Renew subscription</a>
                                                 </td>
                                             </tr>
                                         </table>
@@ -116,8 +117,7 @@
                             <br>
                             <br>
                             <p>
-                                If you did not request the links, someone else entered your email address on our website. 
-                                Please feel free to contact our support!
+                                If you did not request this message, please ignore/delete it!
                             </p>
                             <p>
                                 <em>Best wishes,<br>

@@ -26,8 +26,20 @@
  */
 
 class GoodNewsSubscriptionRequestLinksProcessor extends GoodNewsSubscriptionProcessor {
+    /** @var modUser $user */
+    public $user;
+    
+    /** @var modUserProfile $profile */
+    public $profile;
+    
     /** @var GoodNewsSubscriberMeta $subscribermeta */
     public $subscribermeta;
+    
+    /** @var GoodNewsSubscriberMeta.sid $sid */
+    public $sid;
+
+    /** @var string $email */
+    public $email;
 
     /**
      * @return mixed
@@ -36,26 +48,34 @@ class GoodNewsSubscriptionRequestLinksProcessor extends GoodNewsSubscriptionProc
         $unsubscribeResourceId = $this->controller->getProperty('unsubscribeResourceId', '');
         $profileResourceId     = $this->controller->getProperty('profileResourceId', '');
         if (empty($unsubscribeResourceId)) {
-            $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] GoodNewsSubscriptionRequestLinksProcessor - snippet parameter unsubscribeResourceId not set.');
+            $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] GoodNewsRequestLinks - snippet parameter unsubscribeResourceId not set.');
             return false;
         }
         if (empty($profileResourceId)) {
-            $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] GoodNewsSubscriptionRequestLinksProcessor - snippet parameter profileResourceId not set.');
+            $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] GoodNewsRequestLinks - snippet parameter profileResourceId not set.');
             return false;
         }
 
         $this->cleanseFields();
-        if (!$this->verifyUser()) {
-            return $this->modx->lexicon('goodnews.user_err_nf_email');
+        
+        // If we can't find an appropriate subscriber in database,
+        // we return true here but no requestlinks email is sent!
+        // (This is for security an privacy reasons!)
+        if (!$this->authenticateSubscriberByEmail()) {
+            sleep(2); // this is for simulating delay which is normally caused by sending an email!
+            return true;
         }
-
+        
         // Send request links email
-        $sent = $this->sendRequestLinksEmail();
-        if (!$sent) {
+        $subscriberProperties = array_merge(
+            $this->user->toArray(),
+            $this->profile->toArray(),
+            $this->subscribermeta->toArray()
+        );
+        if (!$this->sendRequestLinksEmail($subscriberProperties)) {
             return $this->modx->lexicon('goodnews.email_not_sent');
         }
         $this->checkForRedirect();
-
         return true;
     }
 
@@ -73,14 +93,13 @@ class GoodNewsSubscriptionRequestLinksProcessor extends GoodNewsSubscriptionProc
     }
 
     /**
-     * Verify the user by it's email address; otherwise redirect or return false.
-     * (Verification means we have extracted a valid sid from SubscriberMeta - we dont need real MODx login)
-     *
-     * we also set: $this->sid and $this->email
+     * Authenticate the subscriber by email address submitted via form
+     * and load modUser, modUserProfile and GoodNewsSusbcriberMeta objects.
+     * (Verification means we have extracted a valid sid from SubscriberMeta - we dont need real MODX login!)
      *
      * @return boolean
      */
-    public function verifyUser() {
+    public function authenticateSubscriberByEmail() {
         $emailField = $this->controller->getProperty('emailField', 'email');
         $this->email = $this->dictionary->get($emailField);
         
@@ -99,8 +118,8 @@ class GoodNewsSubscriptionRequestLinksProcessor extends GoodNewsSubscriptionProc
             if ($active) {
                 
                 // get subscriber meta by user
-                $id = $this->user->get('id');
-                $this->subscribermeta = $this->modx->getObject('GoodNewsSubscriberMeta', array('subscriber_id' => $id));
+                $userid = $this->user->get('id');
+                $this->subscribermeta = $this->modx->getObject('GoodNewsSubscriberMeta', array('subscriber_id' => $userid));
                 if (is_object($this->subscribermeta)) {
                     $this->sid = $this->subscribermeta->get('sid');
                     $verified = true;
@@ -121,30 +140,19 @@ class GoodNewsSubscriptionRequestLinksProcessor extends GoodNewsSubscriptionProc
      *
      * @return boolean
      */
-    public function sendRequestLinksEmail() {
-        $emailProperties = $this->gatherRequestLinksEmailProperties();
-        $subject = $this->controller->getProperty('requestLinksEmailSubject', $this->modx->lexicon('goodnews.requestlinks_email_subject'));
+    public function sendRequestLinksEmail($emailProperties) {
         
-        return $this->goodnewssubscription->sendEmail($this->email, $subject, $emailProperties);
-    }
-
-    /**
-     * Get the properties for the activation email
-     *
-     * @return array
-     */
-    public function gatherRequestLinksEmailProperties() {
+        // Additional required properties
+        $emailTpl = $this->controller->getProperty('requestLinksEmailTpl', 'sample.GoodNewsRequestLinksEmailTpl');
+        $emailTplAlt = $this->controller->getProperty('requestLinksEmailTplAlt', '');
+        $emailTplType = $this->controller->getProperty('requestLinksEmailTplType', 'modChunk');
+        
         $params = array(
             'sid' => $this->sid,
         );
         // Generate secure links urls
         $updateProfileUrl = $this->modx->makeUrl($this->controller->getProperty('profileResourceId'), '', $params, 'full');
         $unsubscribeUrl   = $this->modx->makeUrl($this->controller->getProperty('unsubscribeResourceId'), '', $params, 'full');
-
-        // Set email properties
-        $emailTpl = $this->controller->getProperty('requestLinksEmailTpl', 'sample.GoodNewsRequestLinksEmailTpl');
-        $emailTplAlt = $this->controller->getProperty('requestLinksEmailTplAlt', '');
-        $emailTplType = $this->controller->getProperty('requestLinksEmailTplType', 'modChunk');
         
         $emailProperties['updateProfileUrl'] = $updateProfileUrl;
         $emailProperties['unsubscribeUrl']   = $unsubscribeUrl;
@@ -152,7 +160,9 @@ class GoodNewsSubscriptionRequestLinksProcessor extends GoodNewsSubscriptionProc
         $emailProperties['tplAlt']           = $emailTplAlt;
         $emailProperties['tplType']          = $emailTplType;
 
-        return $emailProperties;
+        $subject = $this->controller->getProperty('requestLinksEmailSubject', $this->modx->lexicon('goodnews.requestlinks_email_subject'));
+        
+        return $this->goodnewssubscription->sendEmail($this->email, $subject, $emailProperties);
     }
 
     /**

@@ -29,50 +29,46 @@
  */
 
 class GoodNewsSubscriptionUpdateProfileProcessor extends GoodNewsSubscriptionProcessor {
+    /** @var modUser $user */
+    public $user;
+    
     /** @var modUserProfile $profile */
     public $profile;
     
     /** @var GoodNewsSubscriberMeta $subscribermeta */
     public $subscribermeta;
     
-    /** @var GoodNewsSubscriptionUpdateProfileController $controller */
-    public $controller;
-
     /**
      * @return boolean|string
      */
     public function process() {
-        $this->getProfile();
-        if (empty($this->profile)) {
-            $this->modx->log(modX::LOG_LEVEL_ERROR, '[GoodNews] Could not find user profile - '.$this->controller->user->get('id').' with username: '.$this->controller->user->get('username'));
-            return $this->modx->lexicon('goodnews.profile_err_nf');
-        }
+        $this->user           = $this->controller->user;
+        $this->profile        = $this->controller->profile;
+        $this->subscribermeta = $this->controller->subscribermeta;
         
         $this->cleanseFields();
 
-        // debug
         //$dic = $this->controller->dictionary->toArray();
         //$this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] dictionary: '.$this->modx->toJson($dic));
-        // end debug
 
         $this->setExtended();
         
         // Save user changes
         $this->setUserFields();
         if (!$this->save()) {
-            $this->modx->log(modX::LOG_LEVEL_ERROR, '[GoodNews] Could not save changed subscriber user data - '.$this->controller->user->get('id').' with username: '.$this->controller->user->get('username'));
+            $this->modx->log(modX::LOG_LEVEL_ERROR, '[GoodNews] Could not save changed subscriber user data - '.$this->user->get('id').' with username: '.$this->user->get('username'));
             return $this->modx->lexicon('goodnews.profile_err_save');
         }
 
         // Update goodnews group member
         if (!$this->updateGroupMember()) {
-            $this->modx->log(modX::LOG_LEVEL_ERROR, '[GoodNews] Could not save changed subscriber group member data - '.$this->controller->user->get('id').' with username: '.$this->controller->user->get('username'));
+            $this->modx->log(modX::LOG_LEVEL_ERROR, '[GoodNews] Could not save changed subscriber group member data - '.$this->user->get('id').' with username: '.$this->user->get('username'));
             return $this->modx->lexicon('goodnews.user_err_save');
         }
 
         // Update goodnews category member
         if (!$this->updateCategoryMember()) {
-            $this->modx->log(modX::LOG_LEVEL_ERROR, '[GoodNews] Could not save changed subscriber category member data - '.$this->controller->user->get('id').' with username: '.$this->controller->user->get('username'));
+            $this->modx->log(modX::LOG_LEVEL_ERROR, '[GoodNews] Could not save changed subscriber category member data - '.$this->user->get('id').' with username: '.$this->user->get('username'));
             return $this->modx->lexicon('goodnews.user_err_save');
         }
 
@@ -89,19 +85,9 @@ class GoodNewsSubscriptionUpdateProfileProcessor extends GoodNewsSubscriptionPro
     public function cleanseFields() {
         $submitVar = $this->controller->getProperty('submitVar', 'goodnews-updateprofile-btn');
         
-        $this->controller->dictionary->remove('nospam');
-        $this->controller->dictionary->remove('blank');
-        if (!empty($submitVar)) { $this->controller->dictionary->remove($submitVar); }
-    }
-
-    /**
-     * Get the user's profile object.
-     *
-     * @return modUserProfile
-     */
-    public function getProfile() {
-        $this->profile = $this->controller->user->getOne('Profile');
-        return $this->profile;
+        $this->dictionary->remove('nospam');
+        $this->dictionary->remove('blank');
+        if (!empty($submitVar)) { $this->dictionary->remove($submitVar); }
     }
 
     /**
@@ -110,7 +96,7 @@ class GoodNewsSubscriptionUpdateProfileProcessor extends GoodNewsSubscriptionPro
      * @return void
      */
     public function setUserFields() {
-        $fields = $this->controller->dictionary->toArray();
+        $fields = $this->dictionary->toArray();
         foreach ($fields as $key => $value) {
             $this->profile->set($key, $value);
         }
@@ -122,12 +108,12 @@ class GoodNewsSubscriptionUpdateProfileProcessor extends GoodNewsSubscriptionPro
      * @return boolean
      */
     public function updateGroupMember() {
-        $userid = $this->controller->user->get('id');
+        $userid = $this->user->get('id');
         
         // First remove all previously stored group member entries
         $this->modx->removeCollection('GoodNewsGroupMember', array('member_id' => $userid));        
         
-        $selectedGroups = $this->controller->dictionary->get('gongroups');
+        $selectedGroups = $this->dictionary->get('gongroups');
         
         $success = true;
         foreach ($selectedGroups as $grpid) {
@@ -147,12 +133,12 @@ class GoodNewsSubscriptionUpdateProfileProcessor extends GoodNewsSubscriptionPro
      * @return boolean
      */
     public function updateCategoryMember() {
-        $userid = $this->controller->user->get('id');
+        $userid = $this->user->get('id');
 
         // First remove all previously stored category member entries
         $this->modx->removeCollection('GoodNewsCategoryMember', array('member_id' => $userid));
 
-        $selectedCategories = $this->controller->dictionary->get('goncategories');
+        $selectedCategories = $this->dictionary->get('goncategories');
 
         $success = true;
         foreach ($selectedCategories as $catid) {
@@ -180,10 +166,10 @@ class GoodNewsSubscriptionUpdateProfileProcessor extends GoodNewsSubscriptionPro
             $excludeExtended = explode(',', $excludeExtended);
 
             $profileFields = $this->profile->toArray();
-            $userFields = $this->controller->user->toArray();
+            $userFields = $this->user->toArray();
             
             $newExtended = array();
-            $fields = $this->controller->dictionary->toArray();
+            $fields = $this->dictionary->toArray();
             
             foreach ($fields as $field => $value) {
                 $isValidExtended = true;

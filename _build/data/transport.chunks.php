@@ -127,6 +127,14 @@ $chunks[$i]->fromArray(array(
 $chunks[++$i] = $modx->newObject('modChunk');
 $chunks[$i]->fromArray(array(
     'id'          => $i,
+    'name'        => 'sample.GoodNewsReSubscriptionEmailTpl',
+    'description' => 'The HTML content of the GoodNews renewal email body. Duplicate this to override it.',
+    'snippet'     => file_get_contents($sources['chunks'].'sample.goodnewsresubscriptionemail.chunk.tpl'),
+), '', true, true);
+
+$chunks[++$i] = $modx->newObject('modChunk');
+$chunks[$i]->fromArray(array(
+    'id'          => $i,
     'name'        => 'sample.GoodNewsRequestLinksEmailTpl',
     'description' => 'The HTML content of the GoodNews request links email body. Duplicate this to override it.',
     'snippet'     => file_get_contents($sources['chunks'].'sample.goodnewsrequestlinksemail.chunk.tpl'),

@@ -33,6 +33,7 @@ class GoodNewsSubscriptionUpdateProfileController extends GoodNewsSubscriptionCo
     /**
      * Load default properties for this controller.
      *
+     * @access public
      * @return void
      */
     public function initialize() {
@@ -70,6 +71,7 @@ class GoodNewsSubscriptionUpdateProfileController extends GoodNewsSubscriptionCo
     /**
      * Handle the GoodNewsUpdateProfile snippet business logic.
      *
+     * @access public
      * @return string
      */
     public function process() {
@@ -78,8 +80,8 @@ class GoodNewsSubscriptionUpdateProfileController extends GoodNewsSubscriptionCo
         $successKey        = $this->getProperty('successKey', 'updsuccess');
         $groupsOnly        = $this->getProperty('groupsOnly', false, 'isset');
         
-        // Verifies a subscriber by its sid and loads user + profile + meta
-        if (!$this->verifyAuthentication()) {
+        // Verifies a subscriber by its sid and loads user + profile object
+        if (!$this->authenticateSubscriberBySid()) {
             // this is only executed if sendUnauthorizedPage property is set to false
             $this->modx->setPlaceholder($placeholderPrefix.'authorization_failed', true);
             return '';
@@ -88,18 +90,25 @@ class GoodNewsSubscriptionUpdateProfileController extends GoodNewsSubscriptionCo
             $this->modx->setPlaceholder($placeholderPrefix.'authorization_success', true);
         }
 
-        $memberGroups = $this->collectGoodNewsGroupMembers($this->user->get('id'));
-        $memberCategories = $this->collectGoodNewsCategoryMembers($this->user->get('id'));
+        // Groups and/or categories are submitted via URL string (used for re-subscription part!)
+        if (isset($_GET['gg']) && isset($_GET['gc'])) {
+            $memberGroups = $this->goodnewssubscription->decodeParams($_GET['gg']);
+            $memberCategories = $this->goodnewssubscription->decodeParams($_GET['gc']);
+            
+        // or use saved groups and/or categories from subscribers profile
+        } else {
+            $memberGroups = $this->collectGoodNewsGroupMembers($this->user->get('id'));
+            $memberCategories = $this->collectGoodNewsCategoryMembers($this->user->get('id'));
+        }
         $this->generateGrpCatFields($memberGroups, $memberCategories);
-
+        
         $this->checkForSuccessMessage();
                 
         if ($this->hasPost()) {
             
             $this->loadDictionary();
             
-            // Synchronize categories with groups
-            // (A category cant be selected without its parent group!)
+            // Synchronize categories with groups (a category can't be selected without its parent group!)
             if (!$groupsOnly) { $this->selectParentGroupsByCategories(); }
             
             if ($this->validate()) {
@@ -122,15 +131,14 @@ class GoodNewsSubscriptionUpdateProfileController extends GoodNewsSubscriptionCo
                 }
             }
         }
-        
         $this->setFieldPlaceholders();
-
         return '';
     }
 
     /**
      * Read the subscribers data from db an set as placeholders.
      *
+     * @access public
      * @return void
      */
     public function setFieldPlaceholders() {
@@ -151,6 +159,7 @@ class GoodNewsSubscriptionUpdateProfileController extends GoodNewsSubscriptionCo
     /**
      * Look for a success message by the previous reload.
      *
+     * @access public
      * @return void
      */
     public function checkForSuccessMessage() {
@@ -197,6 +206,8 @@ class GoodNewsSubscriptionUpdateProfileController extends GoodNewsSubscriptionCo
 
     /**
      * Remove the submitVar from the field list.
+     *
+     * @access public
      * @return void
      */
     public function removeSubmitVar() {
@@ -210,6 +221,7 @@ class GoodNewsSubscriptionUpdateProfileController extends GoodNewsSubscriptionCo
      * Prevent duplicate emails.
      * MODx allow_multiple_emails setting is ignored -> we never let subscribe an email address more then once!
      *
+     * @access public
      * @return void
      */
     public function preventDuplicateEmails() {
@@ -229,6 +241,8 @@ class GoodNewsSubscriptionUpdateProfileController extends GoodNewsSubscriptionCo
 
     /**
      * Run any preHooks for this snippet, that allow it to stop the form as submitted.
+     *
+     * @access public
      * @return boolean
      */
     public function runPreHooks() {

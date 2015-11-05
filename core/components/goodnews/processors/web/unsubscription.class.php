@@ -26,11 +26,14 @@
  */
 
 class GoodNewsSubscriptionUnSubscriptionProcessor extends GoodNewsSubscriptionProcessor {
+    /** @var modUser $user */
+    public $user;
+    
     /** @var modUserProfile $profile */
     public $profile;
     
-    /** @var GoodNewsSubscriptionUpdateProfileController $controller */
-    public $controller;
+    /** @var GoodNewsSubscriberMeta $subscribermeta */
+    public $subscribermeta;
 
     /** @var integer $userid */
     public $userid;
@@ -39,26 +42,20 @@ class GoodNewsSubscriptionUnSubscriptionProcessor extends GoodNewsSubscriptionPr
      * @return boolean|string
      */
     public function process() {
-        $removeUserData    = $this->controller->getProperty('removeUserData', false);
+        $this->user           = $this->controller->user;
+        $this->profile        = $this->controller->profile;
+        $this->subscribermeta = $this->controller->subscribermeta;
         
-        $this->userid = $this->controller->user->get('id');
+        $this->userid = $this->user->get('id');
 
-        // Do not remove or deactivate MODx users with active MODx groups assigned or sudo!
-        // Those user will only have related GoodNews data removed.
-        if ($this->isModxGroupMember()) {
-            $this->removeGoodNewsData();
-        } else {
-            if (!$removeUserData) {
-                // Only deactivate user (do not delete user specific data)
-                if (!$this->deactivateUser()) {
-                    return $this->modx->lexicon('goodnews.profile_err_unsubscribe');
-                }
-            } else {        
-                // Completely remove user and related GoodNews data    
-                if (!$this->removeUser()) {
-                    return $this->modx->lexicon('goodnews.profile_err_unsubscribe');
-                }
+        $removeUserData = $this->controller->getProperty('removeUserData', false, 'isset');
+        if ($removeUserData) {
+            // Completely remove user and related GoodNews data    
+            if (!$this->removeUser()) {
+                return $this->modx->lexicon('goodnews.profile_err_unsubscribe');
             }
+        } else {        
+            $this->removeSubscriptions();
         }
         
         $this->runPostHooks();
@@ -73,43 +70,10 @@ class GoodNewsSubscriptionUnSubscriptionProcessor extends GoodNewsSubscriptionPr
      */
     public function isModxGroupMember() {
         $ismember = false;
-        $groups = $this->controller->user->getUserGroups();
+        $groups = $this->user->getUserGroups();
         if ($groups) { $ismember = true; }
-        if ($this->controller->user->get('sudo') == true) { $ismember = true; }
+        if ($this->user->get('sudo') == true) { $ismember = true; }
         return $ismember;
-    }
-
-    /**
-     * Deactivate a user in MODx user table.
-     * 
-     * @access public
-     * @return boolean
-     */
-    public function deactivateUser() {
-        $deactivated = true;
-        $this->controller->user->set('active', false);
-        if (!$this->controller->user->save()) {
-            $this->modx->log(modX::LOG_LEVEL_ERROR, '[GoodNews] Could not deactivate subscriber - '.$this->userid.' with username: '.$this->controller->user->get('username'));
-            $deactivated = false;
-        }
-        return $deactivated;
-    }
-
-
-    /**
-     * Only remove GoodNews related data.
-     * 
-     * @access public
-     * @return void
-     */
-    public function removeGoodNewsData() {
-        // Delete category and group member entries
-        $result = $this->modx->removeCollection('GoodNewsCategoryMember', array('member_id' => $this->userid));
-        $result = $this->modx->removeCollection('GoodNewsGroupMember', array('member_id' => $this->userid));
-        
-        // Delete subscriber meta entry
-        $subscribermeta = $this->modx->getObject('GoodNewsSubscriberMeta', array('subscriber_id' => $this->userid));
-        if ($subscribermeta) { $subscribermeta->remove(); }        
     }
 
     /**
@@ -122,13 +86,44 @@ class GoodNewsSubscriptionUnSubscriptionProcessor extends GoodNewsSubscriptionPr
         $removed = true;
         
         $this->removeGoodNewsData();
-
-        // Delete user object
-        if (!$this->controller->user->remove()) {
-            $this->modx->log(modX::LOG_LEVEL_ERROR, '[GoodNews] Could not delete user object of subscriber - '.$this->userid.' with username: '.$this->controller->user->get('username'));
-            $removed = false;
+        
+        // Do not remove or deactivate MODx users with MODX groups assigned or sudo!
+        // Those user will only have related GoodNews data removed.
+        if (!$this->isModxGroupMember()) {
+            
+            // Delete user object
+            if (!$this->user->remove()) {
+                $this->modx->log(modX::LOG_LEVEL_ERROR, '[GoodNews] Could not delete user object of subscriber - '.$this->userid.' with username: '.$this->user->get('username'));
+                $removed = false;
+            }
         }
         return $removed;
+    }
+
+    /**
+     * Remove all GoodNews data (meta + subscriptions).
+     * 
+     * @access public
+     * @return void
+     */
+    public function removeGoodNewsData() {
+        $this->removeSubscriptions();
+        if (is_object($this->subscribermeta)) { $this->subscribermeta->remove(); }        
+    }
+    
+    /**
+     * Remove all GoodNews subscriptions.
+     * 
+     * @access public
+     * @return void
+     */
+    public function removeSubscriptions() {
+        $result = $this->modx->removeCollection('GoodNewsCategoryMember', array('member_id' => $this->userid));
+        $result = $this->modx->removeCollection('GoodNewsGroupMember', array('member_id' => $this->userid));
+        
+        // Change sid to invalidate all secure links
+        $this->subscribermeta->set('sid', md5(time().$this->userid));
+        $this->subscribermeta->save();
     }
 
     /**
@@ -141,7 +136,7 @@ class GoodNewsSubscriptionUnSubscriptionProcessor extends GoodNewsSubscriptionPr
         $this->controller->loadHooks('postHooks');
         
         $fields = array();
-        $fields['goodnewssubscription.user'] = &$this->controller->user;
+        $fields['goodnewssubscription.user'] = &$this->user;
         $fields['goodnewssubscription.profile'] = &$this->profile;
         
         $this->controller->postHooks->loadMultiple($postHooks, $fields);

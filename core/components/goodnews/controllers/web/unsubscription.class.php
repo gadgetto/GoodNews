@@ -30,6 +30,7 @@ class GoodNewsSubscriptionUnSubscriptionController extends GoodNewsSubscriptionC
     /**
      * Load default properties for this controller.
      *
+     * @access public
      * @return void
      */
     public function initialize() {
@@ -49,6 +50,7 @@ class GoodNewsSubscriptionUnSubscriptionController extends GoodNewsSubscriptionC
     /**
      * Handle the GoodNewsSubscriptionUnSubscription snippet business logic.
      *
+     * @access public
      * @return string
      */
     public function process() {
@@ -62,7 +64,7 @@ class GoodNewsSubscriptionUnSubscriptionController extends GoodNewsSubscriptionC
         }
         
         // Verifies a subscriber by its sid and loads user + profile object
-        if (!$this->verifyAuthentication()) {
+        if (!$this->authenticateSubscriberBySid()) {
             // this is only executed if sendUnauthorizedPage property is set to false
             $this->modx->setPlaceholder($placeholderPrefix.'authorization_failed', true);
             return '';
@@ -96,6 +98,8 @@ class GoodNewsSubscriptionUnSubscriptionController extends GoodNewsSubscriptionC
 
     /**
      * Run any preHooks for this snippet, that allow it to stop the form as submitted.
+     *
+     * @access public
      * @return boolean
      */
     public function runPreHooks() {
@@ -134,6 +138,7 @@ class GoodNewsSubscriptionUnSubscriptionController extends GoodNewsSubscriptionC
     /**
      * Look for a success key by the previous reload.
      *
+     * @access public
      * @return boolean
      */
     public function checkForSuccessKey() {

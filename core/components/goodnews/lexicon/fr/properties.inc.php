@@ -37,10 +37,16 @@ $_lang['prop_goodnewssubscription.activationemailtpltype_desc']     = 'Type de m
 $_lang['prop_goodnewssubscription.activationresourceid_desc']       = 'ID de la Ressource où se trouve le snippet d\'activation GoodNewsConfirmSubscription.';
 $_lang['prop_goodnewssubscription.submittedresourceid_desc']        = 'Redirige après l\'envoi du formulaire vers la Ressource dont l\'ID est spécifiée ici.';
 $_lang['prop_goodnewssubscription.sendsubscriptionemail_desc']      = 'Envoyer ou non un email à l\'inscrit après une activation réussie.';
+$_lang['prop_goodnewssubscription.unsubscriberesourceid_desc']      = 'ID de la ressource pour annuler la souscription.';
+$_lang['prop_goodnewssubscription.profileresourceid_desc']          = 'ID de la ressource pour éditer le profil de souscription.';
 $_lang['prop_goodnewssubscription.subscriptionemailsubject_desc']   = 'Sujet de l\'email de réussite.';
 $_lang['prop_goodnewssubscription.subscriptionemailtpl_desc']       = 'Modèle de l\'email de réussite.';
 $_lang['prop_goodnewssubscription.subscriptionemailtplalt_desc']    = 'Alternative texte brut au modèle de l\'email de réussite.';
 $_lang['prop_goodnewssubscription.subscriptionemailtpltype_desc']   = 'Type de modèle de l\'email de réussite.';
+$_lang['prop_goodnewssubscription.resubscriptionemailsubject_desc'] = 'The subject of the renewal email.';
+$_lang['prop_goodnewssubscription.resubscriptionemailtpl_desc']     = 'The renewal email template.';
+$_lang['prop_goodnewssubscription.resubscriptionemailtplalt_desc']  = 'Plain-text alternative for the renewal email template.';
+$_lang['prop_goodnewssubscription.resubscriptionemailtpltype_desc'] = 'The template-type for the renewal email.';
 $_lang['prop_goodnewssubscription.errtpl_desc']                     = 'Modèle pour la sortie du message d\'erreur dans les champs.';
 $_lang['prop_goodnewssubscription.useextended_desc']                = 'Définir les champs additionnels du formulaire pour étendre les champs du profil utilisateur MODx. Utile pour stocker des données supplémentaires.';
 $_lang['prop_goodnewssubscription.excludeextended_desc']            = 'Liste de champs séparés par une virgule à exclure des champs additionnels.';
@@ -69,9 +75,17 @@ $_lang['prop_goodnewssubscription.sort_desc']                       = 'Nom du ch
 $_lang['prop_goodnewssubscription.dir_desc']                        = 'Direction du tri des champs des groupes et catégories GoodNews.';
 $_lang['prop_goodnewssubscription.grpcatplaceholder_desc']          = 'Nom du placeholder qui contient tous les champs de formulaire des groupes et catégories GoodNews.';
 $_lang['prop_goodnewssubscription.placeholderprefix_desc']          = 'Préfixe à utiliser pour tous les placeholders définis par ce snippet.';
+$_lang['prop_goodnewssubscription.errorpage_desc']                  = 'Si défini, cela redirigera l\'utilisateur vers une page d\'erreur personnalisée.';
 
 // GoodNewsConfirmSubscription snippet
-$_lang['prop_goodnewsconfirmsubscription.errorpage_desc']           = 'Si défini, cela redirigera l\'utilisateur vers une page d\'erreur personnalisée s\'ils essaient d\'accéder à cette page après avoir activé leur compte.';
+$_lang['prop_goodnewsconfirmsubscription.sendsubscriptionemail_desc']      = 'Envoyer ou non un email à l\'inscrit après une activation réussie.';
+$_lang['prop_goodnewsconfirmsubscription.unsubscriberesourceid_desc']      = 'ID de la ressource pour annuler la souscription.';
+$_lang['prop_goodnewsconfirmsubscription.profileresourceid_desc']          = 'ID de la ressource pour éditer le profil de souscription.';
+$_lang['prop_goodnewsconfirmsubscription.subscriptionemailsubject_desc']   = 'Sujet de l\'email de réussite.';
+$_lang['prop_goodnewsconfirmsubscription.subscriptionemailtpl_desc']       = 'Modèle de l\'email de réussite.';
+$_lang['prop_goodnewsconfirmsubscription.subscriptionemailtplalt_desc']    = 'Alternative texte brut au modèle de l\'email de réussite.';
+$_lang['prop_goodnewsconfirmsubscription.subscriptionemailtpltype_desc']   = 'Type de modèle de l\'email de réussite.';
+$_lang['prop_goodnewsconfirmsubscription.errorpage_desc']                  = 'Si défini, cela redirigera l\'utilisateur vers une page d\'erreur personnalisée s\'ils essaient d\'accéder à cette page après avoir activé leur compte.';
 
 // GoodNewsUpdateProfile snippet
 $_lang['prop_goodnewsupdateprofile.errtpl_desc']                    = 'Modèle pour l\'affichage de message d\'erreur dans les champs.';
