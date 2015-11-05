@@ -29,6 +29,13 @@
  * @var GoodNewsSubscription $goodnewssubscription
  * @var array $scriptProperties
  *
+ * @property boolean $sendSubscriptionEmail Wether or not to send user an email after successful subscription.
+ * @property string $unsubscribeResourceId The ID of the resource for one-click unsubscription. (default: '')
+ * @property string $profileResourceId The ID of the resource for editing the mailing profile. (default: '')
+ * @property string $subscriptionEmailSubject The subject of the subscription email. (default: a lexicon string)
+ * @property string $subscriptionEmailTpl The template for the subscription email. (default: sample.GoodNewsSubscriptionEmailTpl)
+ * @property string $subscriptionEmailTplAlt If set, will use this template instead of $subscriptionEmailTpl (e.g. for plaintext mails). (default: '')
+ * @property string $subscriptionEmailTplType The type of tpl provided for the subscription email. (default: modChunk)
  * @property string $errorPage ID of the error page resource. If set, subscriber will be redirected to the resource with this ID if confirmation failed.
  *
  * @package goodnews

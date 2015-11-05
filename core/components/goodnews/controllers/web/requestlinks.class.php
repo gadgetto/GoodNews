@@ -76,14 +76,12 @@ class GoodNewsSubscriptionRequestLinksController extends GoodNewsSubscriptionCon
         $this->dictionary->reset();
         $this->dictionary->fromArray($fields);
         
-        // Email is entered by subscriber
         $this->validateEmail();
 
         if ($this->validator->hasErrors()) {
             $this->modx->toPlaceholders($this->validator->getErrors(), $placeholderPrefix.'error');
             $this->modx->setPlaceholder($placeholderPrefix.'validation_error', true);
         } else {
-            // If everything is ok, go ahead and execute the processor
             $result = $this->runProcessor('RequestLinks');
             if ($result !== true) {
                 $this->modx->setPlaceholder($placeholderPrefix.'error.message', $result);

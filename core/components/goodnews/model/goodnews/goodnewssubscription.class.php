@@ -136,27 +136,6 @@ class GoodNewsSubscription {
     }
 
     /**
-     * Generates a random password.
-     *
-     * @access public
-     * @param integer $length The length of the generated password.
-     * @return string The newly-generated password.
-     */
-    public function generatePassword($length = 8) {
-        $pword = '';
-        $charmap = '0123456789bcdfghjkmnpqrstvwxyz';
-        $i = 0;
-        while ($i < $length) {
-            $char = substr($charmap, rand(0, strlen($charmap) - 1), 1);
-            if (!strstr($pword, $char)) {
-                $pword .= $char;
-                $i++;
-            }
-        }
-        return $pword;
-    }
-
-    /**
      * Helper function to get a chunk or tpl by different methods.
      *
      * @access public
@@ -222,6 +201,7 @@ class GoodNewsSubscription {
     /**
      * Encodes an array/string of params for URL transmission
      *
+     * @access public
      * @param array|string $params
      * @return string
      */
@@ -231,22 +211,46 @@ class GoodNewsSubscription {
         } else {
             $params = serialize(array($params));
         }
-        return strtr(base64_encode($params), '+/=', '-_,');
+        return $this->base64url_encode($params);
     }
 
     /**
-     * Decode a serialized, encoded param string
+     * Decode a serialized, encoded URL param string
      * 
+     * @access public
      * @param string $params
      * @return array
      */
     public function decodeParams($params) {
-        return unserialize(base64_decode(strtr($params, '-_,', '+/=')));
+        return unserialize($this->base64url_decode($params));
     }
+
+    /**
+     * Encodes a string for URL safe transmission
+     *
+     * @access public
+     * @param string $str
+     * @return string
+     */
+    public function base64url_encode($str) { 
+        return rtrim(strtr(base64_encode($str), '+/', '-_'), '='); 
+    } 
     
     /**
-     * Process MODx event results
+     * Decodes an URL safe encoded string
      *
+     * @access public
+     * @param string $str
+     * @return string
+     */
+    public function base64url_decode($str) { 
+        return base64_decode(str_pad(strtr($str, '-_', '+/'), strlen($str) % 4, '=', STR_PAD_RIGHT)); 
+    }
+
+    /**
+     * Process MODX event results
+     *
+     * @access public
      * @param array $rs
      * @return string
      */
@@ -262,5 +266,19 @@ class GoodNewsSubscription {
             $success = $rs;
         }
         return $success;
+    }
+    
+    /**
+     * Helper method to empty users cachepwd field.
+     *
+     * @access public
+     * @param integer $userID
+     * @return void
+     */
+    public function emptyCachePwd($userID) {
+        $table = $this->modx->getTableName('modUser');
+        $sql = "UPDATE {$table} SET `cachepwd`='' WHERE id=".$userID;
+        $stmt = $this->modx->prepare($sql);
+        $stmt->execute();
     }
 }

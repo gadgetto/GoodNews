@@ -40,6 +40,7 @@ $_lang['goodnews.email_not_sent']                 = 'Une erreur inconnue s\'est 
 $_lang['goodnews.validator_form_error']           = 'Une erreur de validation du formulaire s\'est produite. Merci de contrôler les valeurs saisies.';
 $_lang['goodnews.validator_field_required']       = 'Ce champ est requis.';
 $_lang['goodnews.validator_field_not_empty']      = 'Ce champ doit être vide.';
+$_lang['goodnews.validator_email_multiple']       = 'This email address is in use multiple times. If you are the owner of this email adress, please contact the site adminsitrator.';
 $_lang['goodnews.validator_email_taken']          = 'Cette adresse email est déjà utilisée. Merci d\'en introduire une autre.';
 $_lang['goodnews.validator_email_invalid']        = 'Merci de saisir une adresse email valide.';
 $_lang['goodnews.validator_email_invalid_domain'] = 'Votre adresse email n\'a pas un nom de domaine valide.';
@@ -50,7 +51,8 @@ $_lang['goodnews.spam_blocked']                   = 'Votre inscription a été b
 $_lang['goodnews.spam_marked']                    = ' - marqué comme spam.';
 
 $_lang['goodnews.activation_email_subject']       = 'Merci de votre intérêt pour notre Newsletter. Merci d\'activer votre inscription!';
-$_lang['goodnews.subscription_email_subject']     = 'Merci de votre intérêt pour notre Newsletter. Votre inscription s\'est déroulée avec succès !';
+$_lang['goodnews.subscription_email_subject']     = 'Merci de votre intérêt pour notre Newsletter. Votre inscription s\'est déroulée avec succès!';
+$_lang['goodnews.resubscription_email_subject']   = 'Renewal of your newsletter subscription!';
 $_lang['goodnews.requestlinks_email_subject']     = 'Les liens demandés pour mettre à jour ou annuler votre souscription.';
 
 $_lang['goodnews.requestlinks_success']           = 'Les liens demandés ont été envoyés à l\'adresse email indiquée.';

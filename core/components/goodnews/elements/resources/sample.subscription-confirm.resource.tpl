@@ -1,4 +1,9 @@
-[[!GoodNewsConfirmSubscription]]
+[[!GoodNewsConfirmSubscription?
+    &sendSubscriptionEmail=`1`
+    &unsubscribeResourceId=`[[!GoodNewsGetResourceID? &pagetitle=`Unsubscribe`]]`
+    &profileResourceId=`[[!GoodNewsGetResourceID? &pagetitle=`Subscription Update`]]`
+    &subscriptionEmailSubject=`Your subscription to our newsletter service at [[++site_name]] was successful!`
+]]
 
 <div class="container">
     <div class="header">

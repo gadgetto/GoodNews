@@ -29,15 +29,21 @@
  */
 
 class GoodNewsSubscriptionConfirmController extends GoodNewsSubscriptionController {
+    /** @var modUser $user */
+    public $user;
+    
+    /** @var modUserProfile $profile */
+    public $profile;
+    
+    /** @var GoodNewsSubscriberMeta $subscribermeta */
+    public $subscribermeta;
+
     /** @var string $username */
     public $username;
     
     /** @var string $password */
     public $password;
     
-    /** @var modUser $user */
-    public $user;
-
     /**
      * initialize function.
      * 
@@ -46,7 +52,14 @@ class GoodNewsSubscriptionConfirmController extends GoodNewsSubscriptionControll
      */
     public function initialize() {
         $this->setDefaultProperties(array(
-            'errorPage' => false,
+            'sendSubscriptionEmail'    => false,
+            'unsubscribeResourceId'    => '',
+            'profileResourceId'        => '',
+            'subscriptionEmailSubject' => $this->modx->lexicon('goodnews.subscription_email_subject'),
+            'subscriptionEmailTpl'     => 'sample.GoodNewsSubscriptionEmailTpl',
+            'subscriptionEmailTplAlt'  => '',
+            'subscriptionEmailTplType' => 'modChunk',
+            'errorPage'                => false,
         ));
     }
 
@@ -58,29 +71,18 @@ class GoodNewsSubscriptionConfirmController extends GoodNewsSubscriptionControll
      */
     public function process() {
         $this->verifyManifest();
-        $this->getUser();
+        $this->getSubscriber();
         $this->validatePassword();
-        $this->onBeforeUserActivate();
-
-        $this->user->set('active', 1);        
-        $this->user->set('cachepwd', '');
         
-        if (!$this->user->save()) {
-            $this->modx->log(modX::LOG_LEVEL_ERROR,'[GoodNews] Could not save activated user: '.$this->user->get('username'));
-            $this->redirectAfterFailure();
-        }
+        $result = $this->runProcessor('ConfirmSubscription');
         
-        /* invoke OnUserActivate event */
-        $this->modx->invokeEvent('OnUserActivate', array(
-            'user' => &$this->user,
-        ));
-
         return '';
     }
 
     /**
      * Verify that the username/password hashes were correctly sent (base64 encoded in URL) to prevent middle-man attacks.
      *
+     * @access public
      * @return boolean
      */
     public function verifyManifest() {
@@ -88,30 +90,42 @@ class GoodNewsSubscriptionConfirmController extends GoodNewsSubscriptionControll
         if (empty($_REQUEST['lp']) || empty($_REQUEST['lu'])) {
             $this->redirectAfterFailure();
         } else {
-            /* get user from query params */
-            $this->username = base64_decode(urldecode(rawurldecode($_REQUEST['lu'])));
-            $this->password = base64_decode(urldecode(rawurldecode($_REQUEST['lp'])));
+            // get username and password from query params
+            $this->username = $this->goodnewssubscription->base64url_decode($_REQUEST['lu']);
+            $this->password = $this->goodnewssubscription->base64url_decode($_REQUEST['lp']);
             $verified = true;
         }
         return $verified;
     }
 
     /**
-     * Validate we have correct user.
+     * Load complete subscriber object (modUser + modUserProfile + GoodNewsSubscriberMeta).
      *
-     * @return modUser
+     * @access public
+     * @return void
      */
-    public function getUser() {
+    public function getSubscriber() {
         $this->user = $this->modx->getObject('modUser', array('username' => $this->username));
-        if ($this->user == null || $this->user->get('active')) {
+        if (!is_object($this->user) || $this->user->get('active')) {
             $this->redirectAfterFailure();
         }
-        return $this->user;
+        $userID = $this->user->get('id');
+        
+        $this->profile = $this->modx->getObject('modUserProfile', array('internalKey' => $userID));
+        if (!is_object($this->profile)) {
+            $this->redirectAfterFailure();
+        }
+        
+        $this->subscribermeta = $this->modx->getObject('GoodNewsSubscriberMeta', array('subscriber_id' => $userID));
+        if (!is_object($this->subscribermeta)) {
+            $this->redirectAfterFailure();
+        }
     }
 
     /**
      * Validate password to prevent middleman attacks.
      *
+     * @access public
      * @return boolean
      */
     public function validatePassword() {
@@ -131,40 +145,6 @@ class GoodNewsSubscriptionConfirmController extends GoodNewsSubscriptionControll
             $this->redirectAfterFailure();
         }
         return $found;
-    }
-
-    /**
-     * Invoke OnBeforeUserActivateEvent, if result returns anything, do not proceed
-     * @return boolean
-     */
-    public function onBeforeUserActivate() {
-        $success = true;
-        $result = $this->modx->invokeEvent('OnBeforeUserActivate',array(
-            'user' => &$this->user,
-        ));
-        $preventActivation = $this->goodnewssubscription->getEventResult($result);
-        if (!empty($preventActivation)) {
-            $success = false;
-            $this->modx->log(modX::LOG_LEVEL_ERROR,'[GoodNews] OnBeforeUserActivate event prevented activation for "'.$this->user->get('username').'" by returning false: '.$preventActivation);
-            $this->redirectAfterFailure();
-        }
-        return $success;
-    }
-
-    /**
-     * Handle the redirection after a failed verification.
-     *
-     * @return void
-     */
-    public function redirectAfterFailure() {
-        $errorPage = $this->getProperty('errorPage', false, 'isset');
-        if (!empty($errorPage)) {
-            $url = $this->modx->makeUrl($errorPage, '', '', 'full');
-            $this->modx->sendRedirect($url);
-        } else {
-            // send to the default MODX error page
-            $this->modx->sendErrorPage();
-        }
     }
 }
 return 'GoodNewsSubscriptionConfirmController';

@@ -40,6 +40,7 @@ $_lang['goodnews.email_not_sent']                 = 'An error occurred while sen
 $_lang['goodnews.validator_form_error']           = 'A form validation error occurred. Please check the values you have entered.';
 $_lang['goodnews.validator_field_required']       = 'This field is required.';
 $_lang['goodnews.validator_field_not_empty']      = 'This field must be empty.';
+$_lang['goodnews.validator_email_multiple']       = 'This email address is in use multiple times. If you are the owner of this email adress, please contact the site administrator.';
 $_lang['goodnews.validator_email_taken']          = 'This email address is already in use. Please specify another email address.';
 $_lang['goodnews.validator_email_invalid']        = 'Please enter a valid email address.';
 $_lang['goodnews.validator_email_invalid_domain'] = 'Your email address does not have a valid domain name.';
@@ -51,6 +52,7 @@ $_lang['goodnews.spam_marked']                    = ' - marked as spam.';
 
 $_lang['goodnews.activation_email_subject']       = 'Thanks for your interest in our newsletter service. Please activate your subscription!';
 $_lang['goodnews.subscription_email_subject']     = 'Thanks for your interest in our newsletter service. Your subscription was successful!';
+$_lang['goodnews.resubscription_email_subject']   = 'Renewal of your newsletter subscription!';
 $_lang['goodnews.requestlinks_email_subject']     = 'Your requested links to update or cancel your subscription.';
 
 $_lang['goodnews.requestlinks_success']           = 'The requested links were sent to the submitted email address.';

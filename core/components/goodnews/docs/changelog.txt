@@ -1,5 +1,15 @@
 Changelog for GoodNews
 
+GoodNews 1.4.0-pl (2015-11-05)
+--------------------------------------------------
+- completely revised the Subscriber registration system (front-end)
+- new professional system mail templates (activation, success, request links, etc.)
+- fixed a few nasty bugs in Susbcriber registration
+- [#22] enable subscription of users which already have an account in the MODX instance
+- [#21] enable re-subscription of users with cancelled or forgotten subscriptions
+- fixed security/privacy problems (now front-end forms will never tell if email addresses already exists)
+
+
 GoodNews 1.3.9-pl (2015-10-23)
 --------------------------------------------------
 - improved robustness of mail processing

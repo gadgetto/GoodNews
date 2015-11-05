@@ -3,6 +3,11 @@
     &activationResourceId=`[[!GoodNewsGetResourceID? &pagetitle=`Subscription Confirm`]]`
     &activationEmailTpl=`sample.GoodNewsActivationEmailTpl`
     &activationEmailSubject=`Thank you for joining our newsletter service at [[++site_name]]`
+    &sendSubscriptionEmail=`1`
+    &unsubscribeResourceId=`[[!GoodNewsGetResourceID? &pagetitle=`Unsubscribe`]]`
+    &profileResourceId=`[[!GoodNewsGetResourceID? &pagetitle=`Subscription Update`]]`
+    &subscriptionEmailSubject=`Your subscription to our newsletter service at [[++site_name]] was successful!`
+    &reSubscriptionEmailSubject=`Renewal of your newsletter subscription at [[++site_name]]!`
     &validate=`
         email:email:required,
         gongroups:required,
@@ -15,7 +20,6 @@
     (Please read the documentation for a full list of parameters)
     
     &activation=`0`
-    &sendSubscriptionEmail=`1`
     &submittedResourceId=`[[!GoodNewsGetResourceID? &pagetitle=`Subscription Success`]]`
     
     &defaultGroups=`1`

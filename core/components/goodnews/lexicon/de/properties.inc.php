@@ -37,10 +37,16 @@ $_lang['prop_goodnewssubscription.activationemailtpltype_desc']     = 'Der Templ
 $_lang['prop_goodnewssubscription.activationresourceid_desc']       = 'Die ID jener Ressource, in der das GoodNewsConfirmSubscription Snippet für die Aktivierung verwendet wird.';
 $_lang['prop_goodnewssubscription.submittedresourceid_desc']        = 'Weiterleiten des Abonnenten zur Ressource mit dieser ID nach dem Absenden des Formulars.';
 $_lang['prop_goodnewssubscription.sendsubscriptionemail_desc']      = 'Legt fest ob dem Abonnenten nach erfolgreicher Aktivierung ein Email gesendet werden soll.';
+$_lang['prop_goodnewssubscription.unsubscriberesourceid_desc']      = 'Die ID der Resource zur Auflösung von Abonnements.';
+$_lang['prop_goodnewssubscription.profileresourceid_desc']          = 'Die ID der Resource zur Bearbeitung von Abo-Profilen.';
 $_lang['prop_goodnewssubscription.subscriptionemailsubject_desc']   = 'Der Betreff des Emails nach erfolgreicher Aktivierung.';
 $_lang['prop_goodnewssubscription.subscriptionemailtpl_desc']       = 'Das Template des Emails nach erfolgreicher Aktivierung.';
 $_lang['prop_goodnewssubscription.subscriptionemailtplalt_desc']    = 'Plain-Text Alternative für das Template des Emails nach erfolgreicher Aktivierung.';
 $_lang['prop_goodnewssubscription.subscriptionemailtpltype_desc']   = 'Der Templatetyp des Emails nach erfolgreicher Aktivierung.';
+$_lang['prop_goodnewssubscription.resubscriptionemailsubject_desc'] = 'Der Betreff des Emails zur Erneuerung des Abonnements.';
+$_lang['prop_goodnewssubscription.resubscriptionemailtpl_desc']     = 'Das Template des Emails zur Erneuerung des Abonnements.';
+$_lang['prop_goodnewssubscription.resubscriptionemailtplalt_desc']  = 'Plain-Text Alternative für das Template des Emails zur Erneuerung des Abonnements.';
+$_lang['prop_goodnewssubscription.resubscriptionemailtpltype_desc'] = 'Der Templatetyp des Emails zur Erneuerung des Abonnements.';
 $_lang['prop_goodnewssubscription.errtpl_desc']                     = 'Das Template zur Fehlerausgabe in Feldern.';
 $_lang['prop_goodnewssubscription.useextended_desc']                = 'Übertrage alle Nicht-Profil Felder des Formulars in erweiterte Felder des MODX Benutzer-Profils. Dies kann für die Speicherung erweiterter Benutzerdaten verwendet werden.';
 $_lang['prop_goodnewssubscription.excludeextended_desc']            = 'Eine kommaseparierte Liste von Feldern, die nicht als erweiterte Felder gespeichert werden sollen.';
@@ -69,9 +75,17 @@ $_lang['prop_goodnewssubscription.sort_desc']                       = 'Name des 
 $_lang['prop_goodnewssubscription.dir_desc']                        = 'Richtung nach der die Mailing-Gruppen und Kategorien sortiert werden sollen.';
 $_lang['prop_goodnewssubscription.grpcatplaceholder_desc']          = 'Name des Platzhalters welcher alle GoodNews Gruppen und Kategorien Formular-Felder enthält.';
 $_lang['prop_goodnewssubscription.placeholderprefix_desc']          = 'Ein Prefix, welches für alle Platzhalter des Snippets verwendet werden soll.';
+$_lang['prop_goodnewssubscription.errorpage_desc']                  = 'Wenn gesetzt, wird der Nutzer zu einer definierten Fehlerseite geleitet.';
 
 // GoodNewsConfirmSubscription snippet
-$_lang['prop_goodnewsconfirmsubscription.errorpage_desc']           = 'Wenn gesetzt, wird der Nutzer zu einer definierten Fehlerseite geleitet, wenn dieser versucht nach der Aktivierung diese Seite erneut aufzurufen.';
+$_lang['prop_goodnewsconfirmsubscription.sendsubscriptionemail_desc']      = 'Legt fest ob dem Abonnenten nach erfolgreicher Aktivierung ein Email gesendet werden soll.';
+$_lang['prop_goodnewsconfirmsubscription.unsubscriberesourceid_desc']      = 'Die ID der Resource zur Auflösung von Abonnements.';
+$_lang['prop_goodnewsconfirmsubscription.profileresourceid_desc']          = 'Die ID der Resource zur Bearbeitung von Abo-Profilen.';
+$_lang['prop_goodnewsconfirmsubscription.subscriptionemailsubject_desc']   = 'Der Betreff des Emails nach erfolgreicher Aktivierung.';
+$_lang['prop_goodnewsconfirmsubscription.subscriptionemailtpl_desc']       = 'Das Template des Emails nach erfolgreicher Aktivierung.';
+$_lang['prop_goodnewsconfirmsubscription.subscriptionemailtplalt_desc']    = 'Plain-Text Alternative für das Template des Emails nach erfolgreicher Aktivierung.';
+$_lang['prop_goodnewsconfirmsubscription.subscriptionemailtpltype_desc']   = 'Der Templatetyp des Emails nach erfolgreicher Aktivierung.';
+$_lang['prop_goodnewsconfirmsubscription.errorpage_desc']                  = 'Wenn gesetzt, wird der Nutzer zu einer definierten Fehlerseite geleitet, wenn dieser versucht nach der Aktivierung diese Seite erneut aufzurufen.';
 
 // GoodNewsUpdateProfile snippet
 $_lang['prop_goodnewsupdateprofile.errtpl_desc']                    = 'Das Template zur Fehlerausgabe in Feldern.';

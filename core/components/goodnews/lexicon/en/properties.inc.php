@@ -37,10 +37,16 @@ $_lang['prop_goodnewssubscription.activationemailtpltype_desc']     = 'The templ
 $_lang['prop_goodnewssubscription.activationresourceid_desc']       = 'The ID of the Resource where the GoodNewsConfirmSubscription snippet for activation is located.';
 $_lang['prop_goodnewssubscription.submittedresourceid_desc']        = 'Redirect to the Resource with the specified ID after the subscriber submits the form.';
 $_lang['prop_goodnewssubscription.sendsubscriptionemail_desc']      = 'Wether to send the subscriber an email after successful activation.';
+$_lang['prop_goodnewssubscription.unsubscriberesourceid_desc']      = 'The ID of the Resource to cancel subscriptions.';
+$_lang['prop_goodnewssubscription.profileresourceid_desc']          = 'The ID of the Resource to edit subscription profiles.';
 $_lang['prop_goodnewssubscription.subscriptionemailsubject_desc']   = 'The subject of the success email.';
 $_lang['prop_goodnewssubscription.subscriptionemailtpl_desc']       = 'The success email template.';
 $_lang['prop_goodnewssubscription.subscriptionemailtplalt_desc']    = 'Plain-text alternative for the success email template.';
 $_lang['prop_goodnewssubscription.subscriptionemailtpltype_desc']   = 'The template-type for the success email.';
+$_lang['prop_goodnewssubscription.resubscriptionemailsubject_desc'] = 'The subject of the renewal email.';
+$_lang['prop_goodnewssubscription.resubscriptionemailtpl_desc']     = 'The renewal email template.';
+$_lang['prop_goodnewssubscription.resubscriptionemailtplalt_desc']  = 'Plain-text alternative for the renewal email template.';
+$_lang['prop_goodnewssubscription.resubscriptionemailtpltype_desc'] = 'The template-type for the renewal email.';
 $_lang['prop_goodnewssubscription.errtpl_desc']                     = 'The template for error message output in fields.';
 $_lang['prop_goodnewssubscription.useextended_desc']                = 'Set any non-profile fields in the form to extended fields of the MODX user profile. This can be useful for storing extra data.';
 $_lang['prop_goodnewssubscription.excludeextended_desc']            = 'A comma-separated list of fields to exclude from setting as extended fields.';
@@ -69,9 +75,17 @@ $_lang['prop_goodnewssubscription.sort_desc']                       = 'Name of t
 $_lang['prop_goodnewssubscription.dir_desc']                        = 'Direction to sort GoodNews group and category fields by.';
 $_lang['prop_goodnewssubscription.grpcatplaceholder_desc']          = 'Name of the placeholder which holds all the the GoodNews group and category form fields.';
 $_lang['prop_goodnewssubscription.placeholderprefix_desc']          = 'The prefix to use for all placeholders set by this snippet.';
+$_lang['prop_goodnewssubscription.errorpage_desc']                  = 'If set, will redirect user to a custom error page.';
 
 // GoodNewsConfirmSubscription snippet
-$_lang['prop_goodnewsconfirmsubscription.errorpage_desc']           = 'If set, will redirect user to a custom error page if they try to access this page after activating their account.';
+$_lang['prop_goodnewsconfirmsubscription.sendsubscriptionemail_desc']      = 'Wether to send the subscriber an email after successful activation.';
+$_lang['prop_goodnewsconfirmsubscription.unsubscriberesourceid_desc']      = 'The ID of the Resource to cancel subscriptions.';
+$_lang['prop_goodnewsconfirmsubscription.profileresourceid_desc']          = 'The ID of the Resource to edit subscription profiles.';
+$_lang['prop_goodnewsconfirmsubscription.subscriptionemailsubject_desc']   = 'The subject of the success email.';
+$_lang['prop_goodnewsconfirmsubscription.subscriptionemailtpl_desc']       = 'The success email template.';
+$_lang['prop_goodnewsconfirmsubscription.subscriptionemailtplalt_desc']    = 'Plain-text alternative for the success email template.';
+$_lang['prop_goodnewsconfirmsubscription.subscriptionemailtpltype_desc']   = 'The template-type for the success email.';
+$_lang['prop_goodnewsconfirmsubscription.errorpage_desc']                  = 'If set, will redirect user to a custom error page if they try to access this page after activating their account.';
 
 // GoodNewsUpdateProfile snippet
 $_lang['prop_goodnewsupdateprofile.errtpl_desc']                    = 'The template for error message output in fields.';

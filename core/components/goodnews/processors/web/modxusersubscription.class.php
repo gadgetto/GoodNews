@@ -3,9 +3,6 @@
  * GoodNews
  *
  * Copyright 2012 by bitego <office@bitego.com>
- * Based on code from Login add-on
- * Copyright 2012 by Jason Coward <jason@modx.com> and Shaun McCormick <shaun@modx.com>
- * Modified by bitego - 10/2013
  *
  * GoodNews is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
@@ -22,13 +19,16 @@
  */
 
 /**
- * Processor class which creates subscriber.
+ * Processor class which handles subscription forms when subscriber already has a MODX user account (w/o GoodNews meta data)
+ *  - no new MODX user is created
+ *  - a Subscription profile is created
+ *  - a subscription success mail is sent (if enabled)
  *
  * @package goodnews
  * @subpackage processors
  */
 
-class GoodNewsSubscriptionSubscriptionProcessor extends GoodNewsSubscriptionProcessor {
+class GoodNewsSubscriptionModxUserSubscriptionProcessor extends GoodNewsSubscriptionProcessor {
     /** @var modUser $user */
     public $user;
     
@@ -49,19 +49,19 @@ class GoodNewsSubscriptionSubscriptionProcessor extends GoodNewsSubscriptionProc
      * @return mixed
      */
     public function process() {
-        $this->user           = $this->modx->newObject('modUser');
-        $this->profile        = $this->modx->newObject('modUserProfile');
+        $this->user           = $this->controller->user;
+        $this->profile        = $this->controller->profile;
         $this->subscribermeta = $this->modx->newObject('GoodNewsSubscriberMeta');
-            
+        
         $this->cleanseFields();
         
         //$dic = $this->dictionary->toArray();
         //$this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] dictionary: '.$this->modx->toJson($dic));
 
-        // Save user
-        $this->setUserFields();
-        if (!$this->user->save()) {
-            $this->modx->log(modX::LOG_LEVEL_ERROR, '[GoodNews] Could not save new subscriber user data - '.$this->user->get('id').' with username: '.$this->user->get('username'));
+        // Save user profile
+        $this->setProfileFields();
+        if (!$this->profile->save()) {
+            $this->modx->log(modX::LOG_LEVEL_ERROR, '[GoodNews] Could not update subscriber user profile - '.$this->user->get('id').' with username: '.$this->user->get('username'));
             return $this->modx->lexicon('goodnews.user_err_save');
         }
 
@@ -86,54 +86,27 @@ class GoodNewsSubscriptionSubscriptionProcessor extends GoodNewsSubscriptionProc
 
         $this->preparePersistentParameters();
 
-        // Send activation email (if property set)
-        $email = $this->profile->get('email');
-        $activation = $this->controller->getProperty('activation', true, 'isset');
-        $activationResourceId = $this->controller->getProperty('activationResourceId', '', 'isset');
-        
-        if ($activation && !empty($email) && !empty($activationResourceId)) {
-            $this->sendActivationEmail();
-        
-        // Activate Subscriber without double opt-in
-        } else {
-            $unsubscribeResourceId = $this->controller->getProperty('unsubscribeResourceId', '');
-            $profileResourceId     = $this->controller->getProperty('profileResourceId', '');
-            if (empty($unsubscribeResourceId)) {
-                $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] GoodNewsSubscription - snippet parameter unsubscribeResourceId not set.');
-                return false;
-            }
-            if (empty($profileResourceId)) {
-                $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] GoodNewsSubscription - snippet parameter profileResourceId not set.');
-                return false;
-            }
-    
-            $this->onBeforeUserActivate();
+        // Activate Subscriber without double opt-in as the MODX user is alread registered
+        $unsubscribeResourceId = $this->controller->getProperty('unsubscribeResourceId', '');
+        $profileResourceId     = $this->controller->getProperty('profileResourceId', '');
+        if (empty($unsubscribeResourceId)) {
+            $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] GoodNewsSubscription - snippet parameter unsubscribeResourceId not set.');
+            return false;
+        }
+        if (empty($profileResourceId)) {
+            $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] GoodNewsSubscription - snippet parameter profileResourceId not set.');
+            return false;
+        }
 
-            $this->user->set('active', 1);
-            
-            if (!$this->user->save()) {
-                $this->modx->log(modX::LOG_LEVEL_ERROR,'[GoodNews] Could not save activated user: '.$this->user->get('username'));
-                $this->controller->redirectAfterFailure();
-            }
-
-            // Clear the cachepwd field
-            $this->goodnewssubscription->emptyCachePwd($this->user->get('id'));
-            
-            // Invoke OnUserActivate event
-            $this->modx->invokeEvent('OnUserActivate', array(
-                'user' => &$this->user,
-            ));
-
-            // Send a subscription success email including the secure links to edit subscription profile (if property set)
-            $sendSubscriptionEmail = $this->controller->getProperty('sendSubscriptionEmail', false, 'isset');
-            if ($sendSubscriptionEmail) {
-                $subscriberProperties = array_merge(
-                    $this->user->toArray(),
-                    $this->profile->toArray(),
-                    $this->subscribermeta->toArray()
-                );
-                $this->controller->sendSubscriptionEmail($subscriberProperties);
-            }
+        // Send a subscription success email including the secure links to edit subscription profile (if property set)
+        $sendSubscriptionEmail = $this->controller->getProperty('sendSubscriptionEmail', false, 'isset');
+        if ($sendSubscriptionEmail) {
+            $subscriberProperties = array_merge(
+                $this->user->toArray(),
+                $this->profile->toArray(),
+                $this->subscribermeta->toArray()
+            );
+            $this->controller->sendSubscriptionEmail($subscriberProperties);
         }
         
         $this->runPostHooks();
@@ -160,40 +133,22 @@ class GoodNewsSubscriptionSubscriptionProcessor extends GoodNewsSubscriptionProc
     }
 
     /**
-     * Set the user data and create the user/profile objects.
+     * Set the profile data using the existing profile object.
      *
      * @access public
      * @return void
      */
-    public function setUserFields() {
+    public function setProfileFields() {
         $emailField      = $this->controller->getProperty('emailField', 'email');
         $useExtended     = $this->controller->getProperty('useExtended', false, 'isset');
         $usergroupsField = $this->controller->getProperty('usergroupsField', 'usergroups');
         
         $fields = $this->dictionary->toArray();
-        
-        // Allow overriding of class key
-        if (empty($fields['class_key'])) $fields['class_key'] = 'modUser';
-
-        // Set user data
-        $this->user->fromArray($fields);
-        $this->user->set('username', $fields['username']);
-        $this->user->set('active', 0);
-        
-        $version = $this->modx->getVersionData();
-        // MODX 2.1.x +
-        if (version_compare($version['full_version'], '2.1.0-rc1') >= 0) {
-            $this->user->set('password', $fields['password']);
-        // MODX 2.0.x
-        } else {
-            $this->user->set('password', md5($fields['password']));
-        }
 
         // Set profile data
         $this->profile->fromArray($fields);
         $this->profile->set('email', $this->dictionary->get($emailField));
         if ($useExtended) { $this->setExtended(); }
-        $this->user->addOne($this->profile, 'Profile');
 
         // Add modx user groups, if set
         $userGroups = !empty($usergroupsField) && array_key_exists($usergroupsField, $fields) ? $fields[$usergroupsField] : array();
@@ -345,90 +300,6 @@ class GoodNewsSubscriptionSubscriptionProcessor extends GoodNewsSubscriptionProc
     }
 
     /**
-     * Send an activation email to the user with an encrypted username and password hash, to allow for secure
-     * activation processes that are not vulnerable to middle-man attacks.
-     *
-     * @access public
-     * @return boolean
-     */
-    public function sendActivationEmail() {
-        $emailProperties = $this->gatherActivationEmailProperties();
-
-        // Send either to user's email or a specified activation email
-        $activationEmail = $this->controller->getProperty('activationEmail', $this->user->get('email'));
-        $subject = $this->controller->getProperty('activationEmailSubject', $this->modx->lexicon('goodnews.activation_email_subject'));
-        
-        return $this->goodnewssubscription->sendEmail($activationEmail, $subject, $emailProperties);
-    }
-
-    /**
-     * Get the properties for the activation email
-     *
-     * @access public
-     * @return array
-     */
-    public function gatherActivationEmailProperties() {
-        // Generate a password and encode it and the username into the url
-        $pword = $this->user->generatePassword();
-        $confirmParams['lp'] = $this->goodnewssubscription->base64url_encode($pword);
-        $confirmParams['lu'] = $this->goodnewssubscription->base64url_encode($this->user->get('username'));
-        $confirmParams = array_merge($this->persistParams, $confirmParams);
-
-        // If using redirectBack param, set here to allow dynamic redirection handling from other forms
-        $redirectBack = $this->modx->getOption('redirectBack', $_REQUEST, $this->controller->getProperty('redirectBack', ''));
-        if (!empty($redirectBack)) {
-            $confirmParams['redirectBack'] = $redirectBack;
-        }
-        $redirectBackParams = $this->modx->getOption('redirectBackParams', $_REQUEST, $this->controller->getProperty('redirectBackParams', ''));
-        if (!empty($redirectBackParams)) {
-            $confirmParams['redirectBackParams'] = $redirectBackParams;
-        }
-
-        // Generate confirmation url
-        $confirmUrl = $this->modx->makeUrl($this->controller->getProperty('activationResourceId', 1), '', $confirmParams, 'full');
-
-        // Set confirmation email properties
-        $emailTpl = $this->controller->getProperty('activationEmailTpl', 'sample.GoodNewsActivationEmailTpl');
-        $emailTplAlt = $this->controller->getProperty('activationEmailTplAlt', '');
-        $emailTplType = $this->controller->getProperty('activationEmailTplType', 'modChunk');
-        
-        $emailProperties = $this->user->toArray();
-        $emailProperties['confirmUrl'] = $confirmUrl;
-        $emailProperties['tpl'] = $emailTpl;
-        $emailProperties['tplAlt'] = $emailTplAlt;
-        $emailProperties['tplType'] = $emailTplType;
-
-        $this->setCachePassword($pword);
-        return $emailProperties;
-    }
-
-    /**
-     * setCachePassword function.
-     * 
-     * @access public
-     * @param mixed $password
-     * @return bool $success
-     */
-    public function setCachePassword($password) {
-        // Now set new password to registry to prevent middleman attacks.
-        // Will read from the registry on the confirmation page.
-        $this->modx->getService('registry', 'registry.modRegistry');
-        $this->modx->registry->addRegister('goodnewssubscription', 'registry.modFileRegister');
-        $this->modx->registry->goodnewssubscription->connect();
-        $this->modx->registry->goodnewssubscription->subscribe('/useractivation/');
-        $this->modx->registry->goodnewssubscription->send('/useractivation/', array($this->user->get('username') => $password), array(
-            'ttl' => ($this->controller->getProperty('activationttl', 180) * 60),
-        ));
-        // Set cachepwd here to prevent re-registration of inactive users
-        $this->user->set('cachepwd', md5($password));
-        $success = $this->user->save();
-        if (!$success) {
-            $this->modx->log(modX::LOG_LEVEL_ERROR, '[GoodNews] Could not update cachepwd for activation for user: '.$this->user->get('username'));
-        }
-        return $success;
-    }
-
-    /**
      * Run any post-subscription hooks.
      *
      * @access public
@@ -477,25 +348,5 @@ class GoodNewsSubscriptionSubscriptionProcessor extends GoodNewsSubscriptionProc
         }
         return false;
     }
-
-    /**
-     * Invoke OnBeforeUserActivateEvent, if result returns anything, do not proceed
-     *
-     * @access public
-     * @return boolean
-     */
-    public function onBeforeUserActivate() {
-        $success = true;
-        $result = $this->modx->invokeEvent('OnBeforeUserActivate',array(
-            'user' => &$this->user,
-        ));
-        $preventActivation = $this->goodnewssubscription->getEventResult($result);
-        if (!empty($preventActivation)) {
-            $success = false;
-            $this->modx->log(modX::LOG_LEVEL_ERROR,'[GoodNews] OnBeforeUserActivate event prevented activation for "'.$this->user->get('username').'" by returning false: '.$preventActivation);
-            $this->controller->redirectAfterFailure();
-        }
-        return $success;
-    }
 }
-return 'GoodNewsSubscriptionSubscriptionProcessor';
+return 'GoodNewsSubscriptionModxUserSubscriptionProcessor';
