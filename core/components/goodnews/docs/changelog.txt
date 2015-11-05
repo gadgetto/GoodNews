@@ -1,5 +1,7 @@
 Changelog for GoodNews
 
+GoodNews 1.4.0-pl (2015-11-05)
+--------------------------------------------------
 - completely revised the Subscriber registration system (front-end)
 - new professional system mail templates (activation, success, request links, etc.)
 - fixed a few nasty bugs in Susbcriber registration
