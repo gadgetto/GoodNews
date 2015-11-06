@@ -37,15 +37,15 @@
  * @property string $activationEmailTplType The type of tpl provided for the activation email. (default: modChunk)
  * @property string $activationResourceId The Resource ID where the GoodNewsConfirmSubscription snippet is located. (default: '')
  * @property string $submittedResourceId If set, will redirect to the specified resource after the user submits the subscription form. (default: '')
- * @property boolean $sendSubscriptionEmail Wether or not to send user an email after successful subscription.
  * @property string $unsubscribeResourceId The ID of the resource for one-click unsubscription. (default: '')
  * @property string $profileResourceId The ID of the resource for editing the mailing profile. (default: '')
+ * @property boolean $sendSubscriptionEmail Wether or not to send user an email after successful subscription.
  * @property string $subscriptionEmailSubject The subject of the subscription email. (default: a lexicon string)
  * @property string $subscriptionEmailTpl The template for the subscription email. (default: sample.GoodNewsSubscriptionEmailTpl)
  * @property string $subscriptionEmailTplAlt If set, will use this template instead of $subscriptionEmailTpl (e.g. for plaintext mails). (default: '')
  * @property string $subscriptionEmailTplType The type of tpl provided for the subscription email. (default: modChunk)
  * @property string $reSubscriptionEmailSubject The subject of the renewal email. (default: a lexicon string)
- * @property string $reSubscriptionEmailTpl The template for the renewal email. (default: sample.GoodNewsSubscriptionEmailTpl)
+ * @property string $reSubscriptionEmailTpl The template for the renewal email. (default: sample.GoodNewsReSubscriptionEmailTpl)
  * @property string $reSubscriptionEmailTplAlt If set, will use this template instead of $reSubscriptionEmailTpl (e.g. for plaintext mails). (default: '')
  * @property string $reSubscriptionEmailTplType The type of tpl provided for the renewal email. (default: modChunk)
  * @property string $errTpl Chunk for error output. (default: <span class="error">[[+error]]</span>)
