@@ -1,5 +1,8 @@
 Changelog for GoodNews
 
+- [#38] fixed a php warning in processhandler class
+
+ 
 GoodNews 1.4.0-pl (2015-11-05)
 --------------------------------------------------
 - completely revised the Subscriber registration system (front-end)
