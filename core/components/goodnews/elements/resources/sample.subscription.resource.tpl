@@ -1,11 +1,11 @@
 [[!GoodNewsSubscription?
-    &submittedResourceId=`[[!GoodNewsGetResourceID? &pagetitle=`Subscription Mail Sent`]]`
-    &activationResourceId=`[[!GoodNewsGetResourceID? &pagetitle=`Subscription Confirm`]]`
+    &submittedResourceId=`[[!GoodNewsGetResourceID? &pagetitle=`GoodNews Subscription Mail Sent`]]`
+    &activationResourceId=`[[!GoodNewsGetResourceID? &pagetitle=`GoodNews Subscription Confirm`]]`
     &activationEmailTpl=`sample.GoodNewsActivationEmailTpl`
     &activationEmailSubject=`Thank you for joining our newsletter service at [[++site_name]]`
     &sendSubscriptionEmail=`1`
-    &unsubscribeResourceId=`[[!GoodNewsGetResourceID? &pagetitle=`Unsubscribe`]]`
-    &profileResourceId=`[[!GoodNewsGetResourceID? &pagetitle=`Subscription Update`]]`
+    &unsubscribeResourceId=`[[!GoodNewsGetResourceID? &pagetitle=`GoodNews Unsubscribe`]]`
+    &profileResourceId=`[[!GoodNewsGetResourceID? &pagetitle=`GoodNews Subscription Update`]]`
     &subscriptionEmailSubject=`Your subscription to our newsletter service at [[++site_name]] was successful!`
     &reSubscriptionEmailSubject=`Renewal of your newsletter subscription at [[++site_name]]!`
     &validate=`
@@ -20,7 +20,7 @@
     (Please read the documentation for a full list of parameters)
     
     &activation=`0`
-    &submittedResourceId=`[[!GoodNewsGetResourceID? &pagetitle=`Subscription Success`]]`
+    &submittedResourceId=`[[!GoodNewsGetResourceID? &pagetitle=`GoodNews Subscription Success`]]`
     
     &defaultGroups=`1`
     &includeGroups=`4,6`

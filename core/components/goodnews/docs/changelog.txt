@@ -1,5 +1,7 @@
 Changelog for GoodNews
 
+- renamed preinstalled Resource domcuments to prevent overwriting of existing
+- preinstalled Resource documents aren't moved to tree root on package update (Installer)
 - [#38] fixed a php warning in processhandler class
 
  
