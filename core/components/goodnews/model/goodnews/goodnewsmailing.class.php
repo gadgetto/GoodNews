@@ -30,6 +30,9 @@ class GoodNewsMailing {
     
     const GON_IPC_STATUS_STOPPED  = 0;
     const GON_IPC_STATUS_STARTED  = 1;
+    
+    const GON_STATUS_REPORT_MAILING_STOPPED  = 1;
+    const GON_STATUS_REPORT_MAILING_FINISHED = 2;
 
     /** @var modX $modx A reference to the modX object */
     public $modx = null;
@@ -500,9 +503,6 @@ class GoodNewsMailing {
                     // Also we set the mailing to finished (= IPCstatus "stopped")
                     $this->setIPCstop($this->mailingid, true);
                     if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsMailing::processMailing - Mailing [id: '.$this->mailingid.'] finished.'); }
-     
-                    // @todo: Send status report to MODX user who started the mail-sending
-                    //$this->sendStatusReport();
                 }
                 break;
             }            
@@ -655,115 +655,6 @@ class GoodNewsMailing {
         $key = $this->mailing->get('context_key');
         $this->modx->switchContext($key);
         return true;
-    }
-
-    /**
-     * Auto start scheduled mailings.
-     * (Check for mailing resources with pub_date reached and set them to published
-     * + GON_IPC_STATUS_STARTED in mailing meta table so they can be sent automatically)
-     *
-     * @access private
-     * @return int $publishingResults The number of mailings affected by the sql statement.
-     */
-    private function _startScheduledMailings() {
-        $tblResource = $this->modx->getTableName('modResource');
-        $tblMailingMeta = $this->modx->getTableName('GoodNewsMailingMeta');
-        $timeNow = time();
-        $ipcStatus = self::GON_IPC_STATUS_STARTED;
-        
-        $sql = "UPDATE {$tblResource}, {$tblMailingMeta} 
-                SET {$tblMailingMeta}.senton = {$timeNow},
-                    {$tblMailingMeta}.sentby = {$tblResource}.createdby,
-                    {$tblMailingMeta}.ipc_status = {$ipcStatus},
-                    {$tblMailingMeta}.scheduled = 1,
-                    {$tblResource}.published = 1,
-                    {$tblResource}.publishedon = {$tblResource}.pub_date,
-                    {$tblResource}.publishedby = {$tblResource}.createdby,
-                    {$tblResource}.pub_date = 0 
-                WHERE {$tblMailingMeta}.mailing_id = {$tblResource}.id 
-                AND {$tblResource}.class_key = 'GoodNewsResourceMailing' 
-                AND {$tblResource}.pub_date IS NOT NULL 
-                AND {$tblResource}.pub_date < {$timeNow} 
-                AND {$tblResource}.pub_date > 0
-                AND {$tblMailingMeta}.recipients_total > 0";
-
-        $publishingResults = $this->modx->exec($sql);
-        if ($this->debug) {
-            if ($publishingResults) {
-                $mailings = $publishingResults / 2; // we always have two rows affected!
-                $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsMailing::autoPublish - autopublished mailings: '.$mailings);
-            }
-        }
-        return $publishingResults;
-    }
-
-    /**
-     * Sets the IPC status of a mailing to "start".
-     *
-     * @access public
-     * @param integer $id The ID of the resource
-     * @return boolean
-     */
-    public function setIPCstart($id) {
-        // Get resource mailing meta object
-        $meta = $this->modx->getObject('GoodNewsMailingMeta', array('mailing_id' => $id));
-        if (!is_object($meta)) { return false; }
-
-        $currentUser = $this->modx->user->get('id');
-        
-        // set mailing sender and send date
-        $meta->set('senton', time());
-        $meta->set('sentby', $currentUser);
-        $meta->set('ipc_status', self::GON_IPC_STATUS_STARTED);
-        if ($meta->save()) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    /**
-     * Sets the IPC status of a mailing to "stopped".
-     *
-     * @access public
-     * @param integer $id The ID of the resource
-     * @param bool $finished
-     * @return boolean
-     */
-    public function setIPCstop($id, $finished = false) {
-        // Get resource mailing meta object
-        $meta = $this->modx->getObject('GoodNewsMailingMeta', array('mailing_id' => $id));
-        if (!is_object($meta)) { return false; }
-
-        if ($finished) {
-            $meta->set('finishedon', time());
-        }
-        $meta->set('ipc_status', self::GON_IPC_STATUS_STOPPED);
-        if ($meta->save()) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-    
-    /**
-     * Sets the IPC status of a mailing to "started".
-     *
-     * @access public
-     * @param integer $id The ID of the resource
-     * @return boolean
-     */
-    public function setIPCcontinue($id) {
-        // Get resource mailing meta object
-        $meta = $this->modx->getObject('GoodNewsMailingMeta', array('mailing_id' => $id));
-        if (!is_object($meta)) { return false; }
-
-        $meta->set('ipc_status', self::GON_IPC_STATUS_STARTED);
-        if ($meta->save()) {
-            return true;
-        } else {
-            return false;
-        }
     }
 
     /**
@@ -984,5 +875,258 @@ class GoodNewsMailing {
      */
     private function _strReplaceAssoc(array $replace, $subject) {
         return str_replace(array_keys($replace), array_values($replace), $subject);
+    }
+
+    /**
+     * Auto start scheduled mailings.
+     * (Check for mailing resources with pub_date reached and set them to published
+     * + GON_IPC_STATUS_STARTED in mailing meta table so they can be sent automatically)
+     *
+     * @access private
+     * @return int $publishingResults The number of mailings affected by the sql statement.
+     */
+    private function _startScheduledMailings() {
+        $tblResource = $this->modx->getTableName('modResource');
+        $tblMailingMeta = $this->modx->getTableName('GoodNewsMailingMeta');
+        $timeNow = time();
+        $ipcStatus = self::GON_IPC_STATUS_STARTED;
+        
+        $sql = "UPDATE {$tblResource}, {$tblMailingMeta} 
+                SET {$tblMailingMeta}.senton = {$timeNow},
+                    {$tblMailingMeta}.sentby = {$tblResource}.createdby,
+                    {$tblMailingMeta}.ipc_status = {$ipcStatus},
+                    {$tblMailingMeta}.scheduled = 1,
+                    {$tblResource}.published = 1,
+                    {$tblResource}.publishedon = {$tblResource}.pub_date,
+                    {$tblResource}.publishedby = {$tblResource}.createdby,
+                    {$tblResource}.pub_date = 0 
+                WHERE {$tblMailingMeta}.mailing_id = {$tblResource}.id 
+                AND {$tblResource}.class_key = 'GoodNewsResourceMailing' 
+                AND {$tblResource}.pub_date IS NOT NULL 
+                AND {$tblResource}.pub_date < {$timeNow} 
+                AND {$tblResource}.pub_date > 0
+                AND {$tblMailingMeta}.recipients_total > 0";
+
+        $publishingResults = $this->modx->exec($sql);
+        if ($this->debug) {
+            if ($publishingResults) {
+                $mailings = $publishingResults / 2; // we always have two rows affected!
+                $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsMailing::autoPublish - autopublished mailings: '.$mailings);
+            }
+        }
+        return $publishingResults;
+    }
+
+    /**
+     * Sets the IPC status of a mailing to "start".
+     *
+     * @access public
+     * @param integer $id The ID of the resource
+     * @return boolean
+     */
+    public function setIPCstart($id) {
+        // Get resource mailing meta object
+        $meta = $this->modx->getObject('GoodNewsMailingMeta', array('mailing_id' => $id));
+        if (!is_object($meta)) { return false; }
+
+        $currentUser = $this->modx->user->get('id');
+        
+        // set mailing sender and send date
+        $meta->set('senton', time());
+        $meta->set('sentby', $currentUser);
+        $meta->set('ipc_status', self::GON_IPC_STATUS_STARTED);
+        if ($meta->save()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Sets the IPC status of a mailing to "stopped".
+     *
+     * @access public
+     * @param integer $id The ID of the resource
+     * @param bool $finished
+     * @return boolean
+     */
+    public function setIPCstop($id, $finished = false) {
+        // Get resource mailing meta object
+        $meta = $this->modx->getObject('GoodNewsMailingMeta', array('mailing_id' => $id));
+        if (!is_object($meta)) { return false; }
+
+        if ($finished) {
+            $meta->set('finishedon', time());
+            $status = self::GON_STATUS_REPORT_MAILING_FINISHED;
+        } else {
+            $status = self::GON_STATUS_REPORT_MAILING_STOPPED;
+        }
+        $meta->set('ipc_status', self::GON_IPC_STATUS_STOPPED);
+        if ($meta->save()) {
+            // Send status report to MODX user who initiated (sent) the mailing if enabled
+            $statusemail = $this->modx->getOption('goodnews.statusemail_enabled', null, 1);
+            if ($statusemail) {
+                $this->_statusReport($id, $status);
+            }
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+    /**
+     * Sets the IPC status of a mailing to "started".
+     *
+     * @access public
+     * @param integer $id The ID of the resource
+     * @return boolean
+     */
+    public function setIPCcontinue($id) {
+        // Get resource mailing meta object
+        $meta = $this->modx->getObject('GoodNewsMailingMeta', array('mailing_id' => $id));
+        if (!is_object($meta)) { return false; }
+
+        $meta->set('ipc_status', self::GON_IPC_STATUS_STARTED);
+        if ($meta->save()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Generates a status report to be sent via mail.
+     *
+     * @access private
+     * @param integer $id The id of the mailing Resource document
+     * @param integer $status The status of the mailing to report (default: self::GON_STATUS_REPORT_MAILING_FINISHED)
+     * @return array
+     */
+    private function _statusReport($id, $status = self::GON_STATUS_REPORT_MAILING_FINISHED) {
+        $mailing = $this->modx->getObject('GoodNewsResourceMailing', $id);
+        if (!is_object($mailing)) { return false; }
+
+        $meta = $mailing->getOne('MailingMeta');
+        if (!is_object($meta)) { return false; }
+        
+        $profile = $this->modx->getObject('modUserProfile',  array('internalKey'=>$meta->get('sentby')));
+        if (!is_object($profile)) { return false; }
+
+        $user = $profile->getOne('User');
+        
+        $properties = array();
+        
+        // Properties for sending email
+        $properties['email']    = $profile->get('email');
+        $properties['name']     = $profile->get('fullname');
+        $properties['subject']  = $this->modx->lexicon('goodnews.newsletter_statusemail_subject_prefix').$mailing->get('pagetitle');
+        $properties['from']     = $this->modx->getOption('emailsender');
+        $properties['fromname'] = $this->modx->getOption('goodnews.statusemail_fromname');
+
+        $tpl     = $this->modx->getOption('goodnews.statusemail_chunk');    
+        $tplAlt  = '';         // @todo: alternative plaintext template
+        $tplType = 'modChunk'; // @todo: the type of tpl/chunk can be file
+
+        // Email body placeholders
+        $properties['mailing_title']    = $mailing->get('pagetitle');
+        $properties['recipients_total'] = $meta->get('recipients_total');
+        $properties['recipients_sent']  = $meta->get('recipients_sent');
+        $properties['recipients_error'] = $meta->get('recipients_error');
+        $properties['senton']           = $meta->get('senton');
+        $properties['finishedon']       = $meta->get('finishedon');
+        $properties['sentby']           = $user->get('username');
+        
+        switch ($status) {
+            
+            case self::GON_STATUS_REPORT_MAILING_STOPPED;
+                $properties['mailingstatus'] = $this->modx->lexicon('goodnews.newsletter_status_stopped');
+                break;
+                
+            case self::GON_STATUS_REPORT_MAILING_FINISHED;
+                $properties['mailingstatus'] = $this->modx->lexicon('goodnews.newsletter_status_finished');
+                break;
+        }
+
+        // Parsed email body
+        $properties['msg']      = $this->_getChunk($tpl, $properties, $tplType);
+        $properties['msgAlt']   = (!empty($tplAlt)) ? $this->_getChunk($tplAlt, $properties, $tplType) : '';
+
+        $this->_sendStatusEmail($properties);
+    }
+
+    /**
+     * Sends a newsletter status email based on the specified information and templates.
+     *
+     * @access private
+     * @param array $properties A collection of mail properties.
+     * @return boolean
+     */
+    private function _sendStatusEmail($properties = array()) {
+        if (empty($properties['email']) || empty($properties['subject']) || empty($properties['msg']) || empty($properties['from'])) {
+            return false;
+        }
+        $email    = $properties['email'];
+        $name     = (!empty($properties['name'])) ? $properties['name'] : $properties['email'];
+        $subject  = $properties['subject'];
+        $from     = $properties['from'];
+        $fromName = $properties['fromname'];
+        $sender   = $properties['from'];
+        $replyTo  = $properties['from'];
+        $msg      = $properties['msg'];
+        $msgAlt   = $properties['msgAlt'];
+
+        $this->modx->getService('statusmail', 'mail.modPHPMailer');
+        $this->modx->statusmail->set(modMail::MAIL_BODY, $msg);
+        if (!empty($msgAlt)) {
+            $this->modx->statusmail->set(modMail::MAIL_BODY_TEXT, $msgAlt);
+        }
+        $this->modx->statusmail->set(modMail::MAIL_FROM, $from);
+        $this->modx->statusmail->set(modMail::MAIL_FROM_NAME, $fromName);
+        $this->modx->statusmail->set(modMail::MAIL_SENDER, $sender);
+        $this->modx->statusmail->set(modMail::MAIL_SUBJECT, $subject);
+        $this->modx->statusmail->address('reply-to', $replyTo);
+        $this->modx->statusmail->address('to', $email, $name);
+        $this->modx->statusmail->setHTML(true);
+        
+        $sent = $this->modx->statusmail->send();
+        $this->modx->statusmail->reset();
+        
+        if (!$sent) {
+            if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_ERROR, '[GoodNews] GoodNewsMailing::_sendStatusEmail - Mailer error: '.$this->modx->statusmail->mailer->ErrorInfo); }
+        }
+        return $sent;
+    }
+    
+    /**
+     * Helper function to get a chunk or tpl by different methods.
+     *
+     * @access private
+     * @param string $name The name of the tpl/chunk.
+     * @param array $properties The properties to use for the tpl/chunk.
+     * @param string $type The type of tpl/chunk. Can be modChunk or file. Defaults to modChunk.
+     * @return string The processed tpl/chunk.
+     */
+    private function _getChunk($name, $properties, $type = 'modChunk') {
+        $output = '';
+        switch ($type) {
+            case 'modChunk':
+                $output .= $this->modx->getChunk($name, $properties);
+                break;
+                
+            case 'file':
+                $name = str_replace(array(
+                    '{base_path}',
+                    '{assets_path}',
+                    '{core_path}',
+                ),array(
+                    $this->modx->getOption('base_path'),
+                    $this->modx->getOption('assets_path'),
+                    $this->modx->getOption('core_path'),
+                ), $name);
+                $output .= file_get_contents($name);
+                $this->modx->setPlaceholders($properties);
+                break;
+        }
+        return $output;
     }
 }

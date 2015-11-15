@@ -31,6 +31,9 @@ class SettingsUpdateProcessor extends modProcessor {
 
         $settings = array(
             'test_subject_prefix',
+            'statusemail_enabled',
+            'statusemail_fromname',
+            'statusemail_chunk',
             'admin_groups',
             'auto_fix_imagesizes',
             'auto_cleanup_subscriptions',

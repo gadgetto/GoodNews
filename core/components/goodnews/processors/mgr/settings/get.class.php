@@ -32,6 +32,9 @@ class GetSettingsProcessor extends modProcessor {
         // get cached versions of system settings
         $settings = array(
             'test_subject_prefix'            => $this->modx->getOption('goodnews.test_subject_prefix'),
+            'statusemail_enabled'            => (int)$this->modx->getOption('goodnews.statusemail_enabled'),
+            'statusemail_fromname'           => $this->modx->getOption('goodnews.statusemail_fromname'),
+            'statusemail_chunk'              => $this->modx->getOption('goodnews.statusemail_chunk'),
             'admin_groups'                   => $this->modx->getOption('goodnews.admin_groups'),
             // integer typecasting required to work with MODExt.xcheckbox field
             'auto_fix_imagesizes'            => (int)$this->modx->getOption('goodnews.auto_fix_imagesizes'),

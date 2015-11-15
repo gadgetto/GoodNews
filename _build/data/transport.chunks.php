@@ -140,4 +140,12 @@ $chunks[$i]->fromArray(array(
     'snippet'     => file_get_contents($sources['chunks'].'sample.goodnewsrequestlinksemail.chunk.tpl'),
 ), '', true, true);
 
+$chunks[++$i] = $modx->newObject('modChunk');
+$chunks[$i]->fromArray(array(
+    'id'          => $i,
+    'name'        => 'sample.GoodNewsStatusEmailTpl',
+    'description' => 'The HTML content of the GoodNews status email body. Duplicate this to override it.',
+    'snippet'     => file_get_contents($sources['chunks'].'sample.goodnewsstatusemail.chunk.tpl'),
+), '', true, true);
+
 return $chunks;

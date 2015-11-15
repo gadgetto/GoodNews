@@ -36,6 +36,33 @@ $settings['goodnews.test_subject_prefix']->fromArray(array(
     'area'      => '',
 ), '', true, true);
 
+$settings['goodnews.statusemail_enabled'] = $modx->newObject('modSystemSetting');
+$settings['goodnews.statusemail_enabled']->fromArray(array(
+    'key'       => 'goodnews.statusemail_enabled',
+    'value'     => '1',
+    'xtype'     => 'combo-boolean',
+    'namespace' => 'goodnews',
+    'area'      => '',
+), '', true, true);
+
+$settings['goodnews.statusemail_fromname'] = $modx->newObject('modSystemSetting');
+$settings['goodnews.statusemail_fromname']->fromArray(array(
+    'key'       => 'goodnews.statusemail_fromname',
+    'value'     => 'GoodNews Reporter',
+    'xtype'     => 'textfield',
+    'namespace' => 'goodnews',
+    'area'      => '',
+), '', true, true);
+
+$settings['goodnews.statusemail_chunk'] = $modx->newObject('modSystemSetting');
+$settings['goodnews.statusemail_chunk']->fromArray(array(
+    'key'       => 'goodnews.statusemail_chunk',
+    'value'     => 'sample.GoodNewsStatusEmailTpl',
+    'xtype'     => 'textfield',
+    'namespace' => 'goodnews',
+    'area'      => '',
+), '', true, true);
+
 $settings['goodnews.auto_fix_imagesizes'] = $modx->newObject('modSystemSetting');
 $settings['goodnews.auto_fix_imagesizes']->fromArray(array(
     'key'       => 'goodnews.auto_fix_imagesizes',
