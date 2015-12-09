@@ -1,5 +1,6 @@
 Changelog for GoodNews
 
+- fixed a bug with tvs_below_content setting in Mailing editor
 - [#3] send a status email to newsletter sender if mailing status changes
 - renamed preinstalled Resource domcuments to prevent overwriting of existing
 - preinstalled Resource documents aren't moved to tree root on package update (Installer)
