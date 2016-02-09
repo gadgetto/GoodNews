@@ -57,6 +57,9 @@ class GoodNewsMailing {
 
     /** @var boolean $debug Debug mode on/off */
     public $debug = false;
+    
+    /** @var array $subscriberFields The object fields of modUser + modUserProfile + GoodNewsSubscriberMeta */
+    public $subscriberFields = array();
 
     /**
      * Constructor for GoodNewsMailing object
@@ -88,6 +91,13 @@ class GoodNewsMailing {
         $this->goodnewsrecipienthandler = new GoodNewsRecipientHandler($this->modx);
 
         $this->modx->lexicon->load('goodnews:default');
+        
+        // Get the default fields for a subscriber (for later use as placeholders)
+        $this->subscriberFields = array_merge(
+            $this->modx->getFields('GoodNewsSubscriberMeta'),
+            $this->modx->getFields('modUserProfile')
+        );
+        $this->subscriberFields = $this->_cleanupKeys($this->subscriberFields);
     }
 
     /**
@@ -123,22 +133,68 @@ class GoodNewsMailing {
      * 
      * @access private
      * @param integer $subscriberId The ID of the subscriber
-     * @return array $properties The collection of properties || false
+     * @return mixed $properties The collection of properties || false
      */
     private function _getSubscriberProperties($subscriberId) {
-        $subscribermeta = $this->modx->getObject('GoodNewsSubscriberMeta', array('subscriber_id'=>$subscriberId));
-        if (!is_object($subscribermeta)) {
-            if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsMailing::_getSubscriberProperties - Recipient [id: '.$subscriberId.'] not found.'); }
-            return false;
+        $meta = $this->modx->getObject('GoodNewsSubscriberMeta', array('subscriber_id' => $subscriberId));
+        if (!$meta) { return ''; }
+        $profile = $this->modx->getObject('modUserProfile', array('internalKey' => $subscriberId));
+        if (!$profile) { return ''; }
+                
+        // Flatten extended fields:
+        // extended.field1
+        // extended.container1.field2
+        // ...
+        $extended = $profile->get('extended') ? $profile->get('extended') : array();
+        if (!empty($extended)) {
+            $extended = $this->_flattenExtended($extended, 'extended.');
         }
-        $subscriberprofile = $this->modx->getObject('modUserProfile', array('internalKey'=>$subscriberId));
-        $properties['id']        = $subscriberId;
-        $properties['email']     = $subscriberprofile->get('email');
-        $properties['fullname']  = $subscriberprofile->get('fullname');
-        $properties['sid']       = $subscribermeta->get('sid');
-        if (empty($properties['fullname'])) { $properties['fullname'] = $properties['email']; }
-
+        $properties = array_merge(
+            $meta->toArray(),
+            $profile->toArray(),
+            $extended
+        );
+        $properties = $this->_cleanupKeys($properties);
         return $properties;
+    }
+
+    /**
+     * Manipulate/add/remove fields from array.
+     *
+     * @access private
+     * @param array $properties
+     * @return array $properties
+     */
+    private function _cleanupKeys(array $properties = array()) {
+        $properties['subscribedon'] = $properties['createdon'];  // @todo: change DB field name
+        unset(
+            $properties['id'],          // multiple occurrence; not needed
+            $properties['internalKey'], // not needed
+            $properties['createdon'],   // conflicting with createdon field of resource
+            $properties['sessionid'],   // security!
+            $properties['extended']     // not needed as its already flattened
+        );    
+        return $properties;
+    }
+
+    /**
+     * Helper function to recursively flatten an array.
+     * 
+     * @access private
+     * @param array $array The array to be flattened.
+     * @param string $prefix The prefix for each new array key.
+     * @return array $result The flattened and prefixed array.
+     */
+    private function _flattenExtended($array, $prefix = '') {
+        $result = array();
+        foreach($array as $key => $value) {
+            if (is_array($value)) {
+                $result = $result + $this->_flattenExtended($value, $prefix.$key.'.');
+            } else {
+                $result[$prefix.$key] = $value;
+            }
+        }
+        return $result;
     }
 
     /**
@@ -185,15 +241,22 @@ class GoodNewsMailing {
          
         if (!$this->modx->parser) { $this->modx->getParser(); }
 
-        // Preserve GoodNews placeholders
-        $phsArray = array('EMAIL','FULLNAME','SID');
+        // Preserve GoodNews subscriber fields placeholders
+        $phsArray = $this->subscriberFields;
         $search = array();
         $replace = array();
-        foreach ($phsArray as $phs) {
+        
+        foreach ($phsArray as $phs => $values) {
             $search[] = '[[+'.$phs;
             $replace[] = '&#91;&#91;+'.$phs;
         }
-        $html = str_replace($search, $replace, $html);
+        $html = str_ireplace($search, $replace, $html);
+        
+        foreach ($phsArray as $phs => $values) {
+            $search[] = '[[+extended';
+            $replace[] = '&#91;&#91;+extended';
+        }
+        $html = str_ireplace($search, $replace, $html);
 
         // Process the non-cacheable content of the Resource, but leave any unprocessed tags alone
         $this->modx->parser->processElementTags('', $html, true, false, '[[', ']]', array(), $maxIterations);
@@ -201,14 +264,21 @@ class GoodNewsMailing {
         // Process the non-cacheable content of the Resource, this time removing the unprocessed tags
         $this->modx->parser->processElementTags('', $html, true, true, '[[', ']]', array(), $maxIterations);
 
-        // Set back GoodNews placeholders
+        // Set back GoodNews subscriber fields placeholders
         $search = array();
         $replace = array();
-        foreach ($phsArray as $phs) {
+        
+        foreach ($phsArray as $phs => $value) {
             $search[] = '&#91;&#91;+'.$phs;
             $replace[] = '[[+'.$phs;
         }
-        $html = str_replace($search, $replace, $html);
+        $html = str_ireplace($search, $replace, $html);
+        
+        foreach ($phsArray as $phs => $value) {
+            $search[] = '&#91;&#91;+extended';
+            $replace[] = '[[+extended';
+        }
+        $html = str_ireplace($search, $replace, $html);
 
         // Restore original values
         $this->modx->elementCache       = $currentElementCache;
@@ -250,27 +320,22 @@ class GoodNewsMailing {
     }
 
     /**
-     * Replace GoodNews placeholders
-     * (currently "hardcoded" - todo: rewrite for universal usage)
+     * Replace GoodNews Subscriber placeholders in preparsed newsletter template.
      *
+     * @access private
      * @param string $html
-     * @param $sid
-     * @param $fullname
-     * @param $email
-     * @return string $html || false
+     * @param array $subscriberProperties The placeholders.
+     * @return string $output
      */
-    private function _gonPlaceholders($html, $sid, $fullname, $email) {
-        if (empty($html)) {
-            if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsMailing::_gonPlaceholders - No HTML content provided for parsing.'); }
-            return false;
-        }        
-        $placeholders = array(
-            '[[+EMAIL]]'    => $email,
-            '[[+FULLNAME]]' => $fullname,
-            '[[+SID]]'      => $sid,
-        );
-        $html = $this->_strReplaceAssoc($placeholders, $html);
-        return $html;
+    private function _processSubscriberPlaceholders($html, array $subscriberProperties = array()) {
+        if (empty($html)) { return false; }
+        $chunk = $this->modx->newObject('modChunk');
+        $chunk->setContent($html);
+        $chunk->setCacheable(false);
+        $chunk->_processed = false;
+        $output = $chunk->process($subscriberProperties);
+        $this->modx->parser->processElementTags('', $output, true, true);
+        return $output;
     }
 
     /**
@@ -510,7 +575,7 @@ class GoodNewsMailing {
             $subscriber = $this->_getSubscriberProperties($recipientId);
             if ($subscriber) {
                 $temp_mail = $mail;
-                $temp_mail['body'] = $this->_gonPlaceholders($temp_mail['body'], $subscriber['sid'], $subscriber['fullname'], $subscriber['email']);            
+                $temp_mail['body'] = $this->_processSubscriberPlaceholders($temp_mail['body'], $subscriber);            
  
                 if ($this->sendEmail($temp_mail, $subscriber)) {
                     $status = GoodNewsRecipientHandler::GON_USER_SENT;
@@ -549,7 +614,7 @@ class GoodNewsMailing {
         foreach ($recipients as $recipientId) {
             $subscriber = $this->_getSubscriberProperties($recipientId);
             $temp_mail = $mail;
-            $temp_mail['body'] = $this->_gonPlaceholders($temp_mail['body'], $subscriber['sid'], $subscriber['fullname'], $subscriber['email']);
+            $temp_mail['body'] = $this->_processSubscriberPlaceholders($temp_mail['body'], $subscriber);
             $sent = $this->sendEmail($temp_mail, $subscriber);            
         }
         return true;
@@ -584,7 +649,7 @@ class GoodNewsMailing {
             $this->modx->mail->set(modMail::MAIL_SMTP_SINGLE_TO, $this->mailing->getProperty('mailSmtpSingleTo',  'goodnews', $this->modx->getOption('mail_smtp_single_to', null, false)));
             $this->modx->mail->set(modMail::MAIL_SMTP_TIMEOUT,   $this->mailing->getProperty('mailSmtpTimeout',   'goodnews', $this->modx->getOption('mail_smtp_timeout',   null, 10)));
         }
-        $this->modx->mail->header('X-goodnews-user-id: '.$subscriber['id']);
+        $this->modx->mail->header('X-goodnews-user-id: '.$subscriber['subscriber_id']);
         $this->modx->mail->header('X-goodnews-mailing-id: '.$this->mailingid);
         $this->modx->mail->set(modMail::MAIL_BODY,      $mail['body']);
         $this->modx->mail->set(modMail::MAIL_BODY_TEXT, $mail['altbody']);
@@ -596,6 +661,7 @@ class GoodNewsMailing {
         $this->modx->mail->set(modMail::MAIL_ENCODING,  $mail['mailEncoding']);
 
         $this->modx->mail->address('reply-to',          $mail['mailReplyTo']);
+        if (empty($subscriber['fullname'])) { $subscriber['fullname'] = $subscriber['email']; }
         $this->modx->mail->address('to', $subscriber['email'], $subscriber['fullname']);
         $this->modx->mail->setHTML($mail['ishtml']);
                 
@@ -603,10 +669,10 @@ class GoodNewsMailing {
         $this->modx->mail->reset();
 
         if (!$sent) {
-            $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] Email could not be sent to '.$subscriber['email'].' ('.$subscriber['id'].').');
+            $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] Email could not be sent to '.$subscriber['email'].' ('.$subscriber['subscriber_id'].').');
             if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_ERROR, '[GoodNews] Mailer error: '.$this->modx->mail->mailer->ErrorInfo); }
         } else {
-            if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsMailing::sendEmail - Email sent to '.$subscriber['email'].' ('.$subscriber['id'].').'); }
+            if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsMailing::sendEmail - Email sent to '.$subscriber['email'].' ('.$subscriber['subscriber_id'].').'); }
         }
         return $sent;
     }
@@ -863,18 +929,6 @@ class GoodNewsMailing {
         ); 
         $text = preg_replace($search, '', $html); 
         return $text; 
-    }
-    
-    /**
-     * Helper method to replace values in an array.
-     *
-     * @access private
-     * @param array $replace
-     * @param string $subject
-     * @return array or string
-     */
-    private function _strReplaceAssoc(array $replace, $subject) {
-        return str_replace(array_keys($replace), array_values($replace), $subject);
     }
 
     /**

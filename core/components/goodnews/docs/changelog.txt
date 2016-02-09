@@ -1,5 +1,6 @@
 Changelog for GoodNews
 
+- [#40] newsletter templates now have full access to all modUserProfile and GoodNewsSubscriberMeta fields as placeholders
 - fixed a bug with tvs_below_content setting in Mailing editor
 - [#3] send a status email to newsletter sender if mailing status changes
 - renamed preinstalled Resource domcuments to prevent overwriting of existing
