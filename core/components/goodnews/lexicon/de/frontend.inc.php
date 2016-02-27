@@ -44,6 +44,7 @@ $_lang['goodnews.validator_email_multiple']       = 'Diese E-Mail Adresse wird m
 $_lang['goodnews.validator_email_taken']          = 'Die E-Mail Adresse wird bereits verwendet. Geben Sie bitte eine andere E-Mail Adresse an.';
 $_lang['goodnews.validator_email_invalid']        = 'Bitte geben Sie eine gültige E-Mail Adresse ein.';
 $_lang['goodnews.validator_email_invalid_domain'] = 'Ihre E-Mail Adresse enthält keinen gültigen Domainnamen.';
+$_lang['goodnews.validator_username_taken']       = 'Der Benutzername wird bereits verwendet. Geben Sie bitte eine anderen Benutzernamen an.';
 $_lang['goodnews.validator_min_length']           = 'Dieses Feld darf nicht weniger als [[+length]] Zeichen enthalten.';
 $_lang['goodnews.validator_max_length']           = 'Dieses Feld darf nicht mehr als [[+length]] Zeichen enthalten.';
 
