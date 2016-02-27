@@ -75,6 +75,10 @@ if ($object->xpdo) {
                 'template'  => 'sample.GoodNewsProfileTemplate',
             );
             $resourcesAttributes[++$i] = array(
+                'pagetitle' => 'GoodNews Registration',
+                'template'  => 'sample.GoodNewsProfileTemplate',
+            );
+            $resourcesAttributes[++$i] = array(
                 'pagetitle' => 'GoodNews',
                 'template'  => 'sample.GoodNewsContainerTemplate',
             );
