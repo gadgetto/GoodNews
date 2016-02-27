@@ -1,8 +1,8 @@
 [[!GoodNewsSubscription?
-    &submittedResourceId=`[[!GoodNewsGetResourceID? &pagetitle=`GoodNews Subscription Mail Sent`]]`
-    &activationResourceId=`[[!GoodNewsGetResourceID? &pagetitle=`GoodNews Subscription Confirm`]]`
-    &activationEmailTpl=`sample.GoodNewsActivationEmailTpl`
-    &activationEmailSubject=`Thank you for joining our newsletter service at [[++site_name]]`
+    &submittedResourceId=`[[!GoodNewsGetResourceID? &pagetitle=`GoodNews Registration Mail Sent`]]`
+    &activationResourceId=`[[!GoodNewsGetResourceID? &pagetitle=`GoodNews Registration Confirm`]]`
+    &activationEmailTpl=`sample.GoodNewsActivationRegEmailTpl`
+    &activationEmailSubject=`Thank you for registering at [[++site_name]]`
     &sendSubscriptionEmail=`1`
     &unsubscribeResourceId=`[[!GoodNewsGetResourceID? &pagetitle=`GoodNews Unsubscribe`]]`
     &profileResourceId=`[[!GoodNewsGetResourceID? &pagetitle=`GoodNews Subscription Update`]]`
@@ -12,6 +12,8 @@
     &validate=`
         email:email:required,
         username:required,
+        password:required:minLength=^8^,
+        password_confirm:password_confirm=^password^,
         nospam:blank`
     &groupsOnly=`1`
 ]]
@@ -54,7 +56,21 @@
                         Username
                         [[!+error.username]]
                     </label>
-                    <input type="text" name="username" id="username" value="[[!+username]]" placeholder="Please enter a username" required>
+                    <input type="text" name="username" id="username" value="[[!+username]]" placeholder="Please enter a password" required>
+                </p>
+                <p class="fieldbg[[!+error.password:notempty=` fielderror`]]">
+                    <label for="password">
+                        Password
+                        [[!+error.password]]
+                    </label>
+                    <input type="password" name="password" id="password" value="[[!+password]]" placeholder="Please enter a username" required>
+                </p>
+                <p class="fieldbg[[!+error.password_confirm:notempty=` fielderror`]]">
+                    <label for="password_confirm">
+                        Retype Password
+                        [[!+error.password_confirm]]
+                    </label>
+                    <input type="password" name="password_confirm" id="password_confirm" value="[[!+password_confirm]]" placeholder="Please retype the password" required>
                 </p>
                 <p class="fieldbg[[!+error.fullname:notempty=` fielderror`]]">
                     <label for="fullname">
