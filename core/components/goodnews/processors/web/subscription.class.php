@@ -195,7 +195,7 @@ class GoodNewsSubscriptionSubscriptionProcessor extends GoodNewsSubscriptionProc
         if ($useExtended) { $this->setExtended(); }
         $this->user->addOne($this->profile, 'Profile');
 
-        // Add modx user groups, if set
+        // Add MODX user groups, if set
         $userGroups = !empty($usergroupsField) && array_key_exists($usergroupsField, $fields) ? $fields[$usergroupsField] : array();
         $this->setUserGroups($userGroups);
     }
