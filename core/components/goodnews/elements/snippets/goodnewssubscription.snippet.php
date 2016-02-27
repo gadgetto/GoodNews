@@ -52,6 +52,8 @@
  * @property boolean $useExtended Whether or not to set any extra fields in the form to the users extended field. (default: 0 = false)
  * @property string $excludeExtended A comma-separated list of fields to exclude from setting as extended fields. (default: '')
  * @property string $emailField The name of the field to use for the new User's email address. (default: email)
+ * @property string $usernameField The name of the field to use for the new User's username. (default: username)
+ * @property string $passwordField The name of the field to use for the new User's password. (default: password)
  * @property string $persistParams A JSON object of parameters to persist across the register process. (default: '')
  * @property string $preHooks A comma-separated list of 'hooks' (snippets), that will be executed before the user is subscribed but after validation. (default: '')
  * @property string $postHooks A comma-separated list of 'hooks' (snippets), that will be executed after the user is subscribed. (default: '')

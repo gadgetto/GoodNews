@@ -26,6 +26,10 @@
  */
 
 class GoodNewsSubscriptionSubscriptionController extends GoodNewsSubscriptionController {
+    
+    const SEARCH_BY_USERNAME = 'username';
+    const SEARCH_BY_EMAIL    = 'email';
+    
     /** @var boolean $success */
     public $success = false;
     
@@ -61,6 +65,8 @@ class GoodNewsSubscriptionSubscriptionController extends GoodNewsSubscriptionCon
             'useExtended'                => false,
             'excludeExtended'            => '',
             'emailField'                 => 'email',
+            'usernameField'              => 'username',
+            'passwordField'              => 'password',
             'persistParams'              => '',
             'preHooks'                   => '',
             'postHooks'                  => '',
@@ -105,9 +111,7 @@ class GoodNewsSubscriptionSubscriptionController extends GoodNewsSubscriptionCon
         }
 
         if (!$this->loadDictionary()) { return ''; }
-        
         $fields = $this->validateFields();
-        
         $this->dictionary->reset();
         $this->dictionary->fromArray($fields);
         
@@ -186,8 +190,8 @@ class GoodNewsSubscriptionSubscriptionController extends GoodNewsSubscriptionCon
                 // A new Subscriber
                 } else {
                     
-                    $this->generateUsername();
-                    $this->generatePassword();
+                    $this->_setUsername();
+                    $this->_setPassword();
 
                     // Execute the Subscription processor:
                     //  - a new MODX user is created
@@ -216,33 +220,10 @@ class GoodNewsSubscriptionSubscriptionController extends GoodNewsSubscriptionCon
     }
 
     /**
-     * Load any pre-subscription hooks.
-     *
-     * @return void
-     */
-    public function loadPreHooks() {
-        $preHooks  = $this->getProperty('preHooks', '');
-        $submitVar = $this->getProperty('submitVar', 'goodnews-subscription-btn');
-        
-        $this->loadHooks('preHooks');
-        
-        if (!empty($preHooks)) {
-            $fields = $this->dictionary->toArray();
-            // Do pre-register hooks
-            $this->preHooks->loadMultiple($preHooks, $fields, array(
-                'submitVar' => $submitVar,
-            ));
-            $values = $this->preHooks->getValues();
-            if (!empty($values)) {
-                $this->dictionary->fromArray($values);
-            }
-        }
-    }
-
-    /**
      * Validate the form fields.
      *
-     * @return array
+     * @access public
+     * @return array $fields
      */
     public function validateFields() {
         $this->loadValidator();
@@ -268,6 +249,110 @@ class GoodNewsSubscriptionSubscriptionController extends GoodNewsSubscriptionCon
             $success = false;
         }
         return $success;
+    }
+
+    /**
+     * Check if username is submitted via form or needs to be auto-generated.
+     *  - if submitted via form - check if already exists
+     *  - cleanup expired activations
+     * 
+     * @access private
+     * @return boolean $success
+     */
+    private function _setUsername() {
+        $usernameField = $this->getProperty('usernameField', 'username');
+        $username = $this->dictionary->get($usernameField);
+        
+        $success = false;
+        
+        if (empty($username) && !$this->validator->hasErrorsInField($usernameField)) {
+            $this->generateUsername();
+            $success = true;
+        } else {
+            if ($this->usernameExists($username)) {
+                $this->validator->addError($usernameField, $this->modx->lexicon('goodnews.validator_username_taken'));
+                $success = false;
+            }
+        }
+        return $success;
+    }
+
+    /**
+     * Generate a new unique username based on email address.
+     * 
+     * @access public
+     * @return string $newusername
+     */
+    public function generateUsername() {
+        // Username is generated from userid part of email address
+        $emailField = $this->getProperty('emailField', 'email');
+        $email = $this->dictionary->get($emailField);
+        $parts = explode('@', $email);
+        $usernamepart = $parts[0];
+
+        // Add counter (john.doe_1, martin_2, ...) if username already exists
+        $counter = 0;
+        $newusername = $usernamepart;
+        while ($this->usernameExists($newusername)) {
+            $newusername = $usernamepart.'_'.$counter;
+            $counter++;
+        }
+        $this->dictionary->set('username', $newusername);
+        return $newusername;
+    }
+
+    /**
+     * Check if a user(name) already exists.
+     * 
+     * @access public
+     * @param string $username
+     * @return boolean $exists
+     */
+    public function usernameExists($username) {
+        $exists = false;
+        
+        $this->removeExpired($username, self::SEARCH_BY_USERNAME);
+        
+        $user = $this->modx->getObject('modUser', array('username' => $username));
+		if (is_object($user)) {
+    		$exists = true;
+        }
+        return $exists;
+    }
+
+    /**
+     * Check if password is submitted via form or needs to be auto-generated.
+     *
+     * @access private
+     * @return boolean $success
+     */
+    private function _setPassword() {
+        $passwordField = $this->getProperty('passwordField', 'password');
+        $password = $this->dictionary->get($passwordField);
+        
+        $success = false;
+        
+        if (empty($password) && !$this->validator->hasErrorsInField($passwordField)) {
+            $this->_generatePassword();
+            $success = true;
+        }
+        return $success;
+    }
+
+    /**
+     * Automatically generate a password for the user.
+     *
+     * @access private
+     * @return string $password
+     */
+    private function _generatePassword() {
+        $classKey = $this->dictionary->get('class_key');
+        if (empty($classKey)) { $classKey = 'modUser'; }
+        
+        $user = $this->modx->newObject($classKey);
+        $password = $user->generatePassword();
+        $this->dictionary->set('password', $password);
+        return $password;
     }
 
     /**
@@ -303,10 +388,11 @@ class GoodNewsSubscriptionSubscriptionController extends GoodNewsSubscriptionCon
      * Check if an email address belongs to a user object with an expired activation and if so -> remove!
      * 
      * @access public
-     * @param string $email
+     * @param string $search
+     * @param string $searchMode (default=self::SEARCH_BY_EMAIL)
      * @return void
      */
-    public function removeExpired($email) {
+    public function removeExpired($search, $searchMode = self::SEARCH_BY_EMAIL) {
         $activationttl = $this->getProperty('activationttl', 180);
         // convert UNIX timestamp value to ISO date (as "SubscriberMeta.createdon" is a date field)
         $expDate = date('Y-m-d H:i:s', time() - ($activationttl * 60));
@@ -315,12 +401,21 @@ class GoodNewsSubscriptionSubscriptionController extends GoodNewsSubscriptionCon
         $c->leftJoin('modUserProfile', 'Profile');
         $c->leftJoin('GoodNewsSubscriberMeta', 'SubscriberMeta', 'modUser.id = SubscriberMeta.subscriber_id');
         
-        // modUser must:
+        switch ($searchMode) {
+            default:
+            case self::SEARCH_BY_EMAIL:
+                $c->where(array('modUser.username' => $search));
+                break;
+            case self::SEARCH_BY_USERNAME:
+                $c->where(array('Profile.email' => $search));
+                break;
+        }
+
+        // in addition modUser must:
         // - be inactive
         // - have a cachepwd (this means it's an unactivated account)
         // - have SubscriberMeta.createdon date < expiration date (GoodNews setting)
         $c->where(array(
-            'Profile.email' => $email,
             'active' => false,
             'cachepwd:!=' => '', 
             'SubscriberMeta.createdon:<' => $expDate,
@@ -330,63 +425,6 @@ class GoodNewsSubscriptionSubscriptionController extends GoodNewsSubscriptionCon
         foreach ($users as $idx => $user) {
             $user->remove();
         }
-    }
-
-    /**
-     * Generate a new unique username based on email address.
-     * 
-     * @access public
-     * @return string $newusername
-     */
-    public function generateUsername() {
-        // Username is generated from userid part of email address
-        $emailField = $this->getProperty('emailField', 'email');
-        $email = $this->dictionary->get($emailField);
-        $parts = explode('@', $email);
-        $usernamepart = $parts[0];
-
-        // Add counter (john.doe_1, martin_2, ...) if username already exists
-        $counter = 0;
-        $newusername = $usernamepart;
-        while ($this->usernameExists($newusername)) {
-            $newusername = $usernamepart.'_'.$counter;
-            $counter++;
-        }
-        $this->dictionary->set('username', $newusername);
-        return $newusername;
-    }
-
-    /**
-     * Check if a user(name) already exists.
-     * 
-     * @access public
-     * @param string $username
-     * @return boolean
-     */
-    public function usernameExists($username) {
-        
-        $usernameExists = false;
-        
-        $user = $this->modx->getObject('modUser', array('username' => $username));
-		if (is_object($user)) {
-    		$usernameExists = true;
-        }
-        return $usernameExists;
-    }
-
-    /**
-     * Automatically generate a password for the user.
-     *
-     * @return string $password
-     */
-    public function generatePassword() {
-        $classKey = $this->dictionary->get('class_key');
-        if (empty($classKey)) $classKey = 'modUser';
-        
-        $user = $this->modx->newObject($classKey);
-        $password = $user->generatePassword();
-        $this->dictionary->set('password', $password);
-        return $password;
     }
 
     /**
@@ -424,5 +462,27 @@ class GoodNewsSubscriptionSubscriptionController extends GoodNewsSubscriptionCon
         return $ip;
     }
 
+    /**
+     * Load any pre-subscription hooks.
+     *
+     * @return void
+     */
+    public function loadPreHooks() {
+        $preHooks = $this->getProperty('preHooks','');
+        $this->loadHooks('preHooks');
+        
+        if (!empty($preHooks)) {
+            $fields = $this->dictionary->toArray();
+            // pre-register hooks
+            $this->preHooks->loadMultiple($preHooks, $fields, array(
+                'submitVar' => $this->getProperty('submitVar'),
+                'usernameField' => $this->getProperty('usernameField', 'username'),
+            ));
+            $values = $this->preHooks->getValues();
+            if (!empty($values)) {
+                $this->dictionary->fromArray($values);
+            }
+        }
+    }
 }
 return 'GoodNewsSubscriptionSubscriptionController';
