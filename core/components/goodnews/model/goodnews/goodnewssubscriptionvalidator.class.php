@@ -374,6 +374,28 @@ class GoodNewsSubscriptionValidator {
     }
 
     /**
+     * Checks to see if passwords match.
+     *
+     * @access public
+     * @param string $key The name of the field
+     * @param string $value The value of the field
+     * @param string $param The parameter passed into the validator that contains the field to check the password against
+     * @return boolean
+     */
+    public function password_confirm($key, $value, $param = 'password_confirm') {
+        if (empty($value)) return $this->modx->lexicon('goodnews.validator_password_not_confirmed');
+        $confirm = !empty($this->fields[$param]) ? $this->fields[$param] : '';
+        if ($confirm != $value) {
+            return $this->_getErrorMessage($key, 'vTextPasswordConfirm', 'goodnews.validator_password_dont_match', array(
+                'field' => $key,
+                'password' => $value,
+                'password_confirm' => $confirm,
+            ));
+        }
+        return true;
+    }
+
+    /**
      * Checks to see if field value is an actual email address.
      *
      * @param string $key The name of the field
@@ -472,6 +494,66 @@ class GoodNewsSubscriptionValidator {
     }
 
     /**
+     * Checks to see if field value is less than $param.
+     *
+     * @access public
+     * @param string $key The name of the field
+     * @param string $value The value of the field
+     * @param int $param The minimum value the field can be
+     * @return boolean
+     */
+    public function minValue($key, $value, $param = 0) {
+        if ((float)$value < (float)$param) {
+            return $this->_getErrorMessage($key, 'vTextMinValue', 'goodnews.validator_min_value', array(
+                'field'       => $key,
+                'passedValue' => $value,
+                'value'       => $param,
+            ));
+        }
+        return true;
+    }
+
+    /**
+     * Checks to see if field value is greater than $param.
+     *
+     * @access public
+     * @param string $key The name of the field
+     * @param string $value The value of the field
+     * @param int $param The maximum value the field can be
+     * @return boolean
+     */
+    public function maxValue($key, $value, $param = 0) {
+        if ((float)$value > (float)$param) {
+            return $this->_getErrorMessage($key, 'vTextMaxValue', 'goodnews.validator_max_value', array(
+                'field'       => $key,
+                'passedValue' => $value,
+                'value'       => $param,
+            ));
+        }
+        return true;
+    }
+
+    /**
+     * See if field contains a certain value.
+     *
+     * @access public
+     * @param string $key The name of the field
+     * @param string $value The value of the field
+     * @param string $expr The regular expression to check against the field
+     * @return boolean
+     */
+    public function contains($key, $value, $expr = '') {
+        if (!preg_match('/'.$expr.'/i', $value)) {
+            return $this->_getErrorMessage($key, 'vTextContains', 'goodnews.validator_contains', array(
+                'field'       => $key,
+                'passedValue' => $value,
+                'value'       => $expr,
+            ));
+        }
+        return true;
+    }
+
+    /**
      * Strip a string from the value.
      *
      * @param string $key The name of the field
@@ -508,6 +590,126 @@ class GoodNewsSubscriptionValidator {
         if (empty($allowedTags)) return true;
         $this->fields[$key] = strip_tags($value, $allowedTags);
         return true;
+    }
+
+    /**
+     * Validates value between a range, specified by min-max.
+     *
+     * @access public
+     * @param string $key The name of the field
+     * @param string $value The value of the field
+     * @param string $ranges The range the value should reside in
+     * @return boolean
+     */
+    public function range($key, $value, $ranges = '0-1') {
+        $range = explode('-', $ranges);
+        if (count($range) < 2) return $this->modx->lexicon('goodnews.validator_range_invalid');
+
+        if ($value < $range[0] || $value > $range[1]) {
+            return $this->_getErrorMessage($key, 'vTextRange', 'goodnews.validator_range', array(
+                'min'    => $range[0],
+                'max'    => $range[1],
+                'field'  => $key,
+                'value'  => $value,
+                'ranges' => $ranges,
+            ));
+        }
+        return true;
+    }
+
+    /**
+     * Checks to see if the field is a number.
+     *
+     * @access public
+     * @param string $key The name of the field
+     * @param string $value The value of the field
+     * @return boolean
+     */
+     public function isNumber($key, $value) {
+         if (!is_numeric(trim($value))) {
+             return $this->_getErrorMessage($key, 'vTextIsNumber', 'goodnews.validator_not_number', array(
+                'field' => $key,
+                'value' => $value,
+             ));
+         }
+         return true;
+     }
+
+    /**
+     * Checks to see if the field is a valid date. Allows for date formatting as well.
+     *
+     * @access public
+     * @param string $key The name of the field
+     * @param string $value The value of the field
+     * @param string $format The format of the date (default: ISO date)
+     * @return boolean
+     */
+    public function isDate($key, $value, $format = '%Y-%m-%d') {
+        $ts = false;
+        if (!empty($value)) {
+            $ts = strtotime($value);
+        }
+        if ($ts === false || empty($value)) {
+            return $this->_getErrorMessage($key, 'vTextIsDate', 'goodnews.validator_not_date', array(
+                'format' => $format,
+                'field'  => $key,
+                'value'  => $value,
+            ));
+        }
+        if (!empty($format)) {
+            $this->fields[$key] = strftime($format, $ts);
+        }
+        return true;
+    }
+
+    /**
+     * Checks to see if a string is all lowercase.
+     *
+     * @access public
+     * @param string $key The name of the field
+     * @param string $value The value of the field
+     * @return boolean
+     */
+    public function islowercase($key, $value) {
+        $v = $this->config['use_multibyte'] ? mb_strtolower($value, $this->config['encoding']) : strtolower($value);
+        return strcmp($v, $value) == 0 ? true : $this->_getErrorMessage($key, 'vTextIsLowerCase', 'goodnews.validator_not_lowercase', array(
+            'field' => $key,
+            'value' => $value,
+        ));
+    }
+
+    /**
+     * Checks to see if a string is all uppercase.
+     *
+     * @access public
+     * @param string $key The name of the field
+     * @param string $value The value of the field
+     * @return boolean
+     */
+    public function isuppercase($key, $value) {
+        $v = $this->config['use_multibyte'] ? mb_strtoupper($value, $this->config['encoding']) : strtoupper($value);
+        return strcmp($v, $value) == 0 ? true : $this->_getErrorMessage($key, 'vTextIsUpperCase', 'goodnews.validator_not_uppercase', array(
+            'field' => $key,
+            'value' => $value,
+        ));
+    }
+
+    /**
+     * Checks a string for regular expression.
+     *
+     * @access public
+     * @param string $key The name of the field
+     * @param string $value The value of the field
+     * @param string $expression The regexp to use
+     * @return boolean
+     */
+    public function regexp($key, $value, $expression) {
+        preg_match($expression, $value, $matches);
+        return !empty($matches) && !empty($matches[0]) == true ? true : $this->_getErrorMessage($key, 'vTextRegexp', 'goodnews.validator_not_regexp', array(
+            'field'  => $key,
+            'value'  => $value,
+            'regexp' => $expression,
+        ));
     }
 
     /**
