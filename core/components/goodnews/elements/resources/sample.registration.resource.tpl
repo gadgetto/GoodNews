@@ -7,7 +7,8 @@
     &unsubscribeResourceId=`[[!GoodNewsGetResourceID? &pagetitle=`GoodNews Unsubscribe`]]`
     &profileResourceId=`[[!GoodNewsGetResourceID? &pagetitle=`GoodNews Subscription Update`]]`
     &subscriptionEmailSubject=`Your subscription to our newsletter service at [[++site_name]] was successful!`
-    &reSubscriptionEmailSubject=`Renewal of your newsletter subscription at [[++site_name]]!`
+    &reSubscriptionEmailSubject=`Existing user profile or newsletter subscription found!`
+    &reSubscriptionEmailTpl=`sample.GoodNewsReRegistrationEmailTpl`
     &usergroups=`10`
     &validate=`
         email:email:required,
