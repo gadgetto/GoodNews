@@ -1,5 +1,9 @@
 Changelog for GoodNews
 
+- Added all missing custom validators from Login extra
+- Added snippets, resources and chunks to allow full MODX user registration including newsletter subscription on a single page
+- Even more refined subscription process
+- Missing snippet params dont break Subscription, RequestLinks and ConfirmSubscription snippets any longer
 - [#40] newsletter templates now have full access to all modUserProfile and GoodNewsSubscriberMeta fields as placeholders
 - fixed a bug with tvs_below_content setting in Mailing editor
 - [#3] send a status email to newsletter sender if mailing status changes
