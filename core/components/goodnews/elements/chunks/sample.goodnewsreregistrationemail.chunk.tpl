@@ -106,6 +106,7 @@
                                 If you have forgotten your password, you can reset it by visiting our login area at <a href="[[++site_url]]" target="_blank" style="text-decoration:none;">[[++site_url]]</a>.
                             </p>
                             <p>
+                                For security reasons we didn't change any subscription settings for your account!
                                 To renew/edit your newsletter subscriptions please click the following link:
                             </p>
                             <br>

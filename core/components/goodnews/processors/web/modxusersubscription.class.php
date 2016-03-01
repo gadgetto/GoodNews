@@ -19,10 +19,11 @@
  */
 
 /**
- * Processor class which handles subscription forms when subscriber already has a MODX user account (w/o GoodNews meta data)
+ * Processor class which handles subscription forms when subscriber already has a MODX user account but no GoodNews meta data:
  *  - no new MODX user is created
- *  - a Subscription profile is created
- *  - a subscription success mail is sent (if enabled)
+ *  - a Subscription profile is created (SubscriberMeta)
+ *  - no Group and/or Category selections are created!
+ *  - a subscription success mail is sent (including the secure links to edit/cancel subscription)
  *
  * @package goodnews
  * @subpackage processors
@@ -38,9 +39,6 @@ class GoodNewsSubscriptionModxUserSubscriptionProcessor extends GoodNewsSubscrip
     /** @var GoodNewsSubscriberMeta $subscribermeta */
     public $subscribermeta;
     
-    /** @var array $userGroups */
-    public $userGroups = array();
-
     /** @var array $persistParams */
     public $persistParams = array();
     
@@ -55,16 +53,6 @@ class GoodNewsSubscriptionModxUserSubscriptionProcessor extends GoodNewsSubscrip
         
         $this->cleanseFields();
         
-        //$dic = $this->dictionary->toArray();
-        //$this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] dictionary: '.$this->modx->toJson($dic));
-
-        // Save user profile
-        $this->setProfileFields();
-        if (!$this->profile->save()) {
-            $this->modx->log(modX::LOG_LEVEL_ERROR, '[GoodNews] Could not update subscriber user profile - '.$this->user->get('id').' with username: '.$this->user->get('username'));
-            return $this->modx->lexicon('goodnews.user_err_save');
-        }
-
         // Save subscriber meta
         $this->setSubscriberMeta();
         if (!$this->subscribermeta->save()) {
@@ -72,50 +60,25 @@ class GoodNewsSubscriptionModxUserSubscriptionProcessor extends GoodNewsSubscrip
             return $this->modx->lexicon('goodnews.user_err_save');
         }
 
-        // Save goodnews group member
-        if (!$this->saveGroupMember()) {
-            $this->modx->log(modX::LOG_LEVEL_ERROR, '[GoodNews] Could not save new subscriber group member data - '.$this->user->get('id').' with username: '.$this->user->get('username'));
-            return $this->modx->lexicon('goodnews.user_err_save');
-        }
-
-        // Save goodnews category member
-        if (!$this->saveCategoryMember()) {
-            $this->modx->log(modX::LOG_LEVEL_ERROR, '[GoodNews] Could not save new subscriber category member data - '.$this->user->get('id').' with username: '.$this->user->get('username'));
-            return $this->modx->lexicon('goodnews.user_err_save');
-        }
-
         $this->preparePersistentParameters();
-
-        // Activate Subscriber without double opt-in as the MODX user is alread registered
-        $unsubscribeResourceId = $this->controller->getProperty('unsubscribeResourceId', '');
-        $profileResourceId     = $this->controller->getProperty('profileResourceId', '');
-        if (empty($unsubscribeResourceId)) {
-            $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] GoodNewsSubscription - snippet parameter unsubscribeResourceId not set.');
-            return false;
-        }
-        if (empty($profileResourceId)) {
-            $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] GoodNewsSubscription - snippet parameter profileResourceId not set.');
-            return false;
-        }
-
-        // Send a subscription success email including the secure links to edit subscription profile (if property set)
-        $sendSubscriptionEmail = $this->controller->getProperty('sendSubscriptionEmail', false, 'isset');
-        if ($sendSubscriptionEmail) {
+        
+        // Send a subscription renewal email including the secure links to edit subscription profile
+        if ($this->controller->getProperty('sendSubscriptionEmail', true, 'isset')) {
             $subscriberProperties = array_merge(
                 $this->user->toArray(),
                 $this->profile->toArray(),
                 $this->subscribermeta->toArray()
             );
-            $this->controller->sendSubscriptionEmail($subscriberProperties);
+            $this->controller->sendReSubscriptionEmail($subscriberProperties);
         }
-        
+
         $this->runPostHooks();
         $this->checkForRedirect();
-
+        
         $successMsg = $this->controller->getProperty('successMsg', '');
         $placeholderPrefix = $this->controller->getProperty('placeholderPrefix', '');
         $this->modx->toPlaceholder($placeholderPrefix.'success.message', $successMsg);
-        
+
         return true;
     }
 
@@ -133,29 +96,6 @@ class GoodNewsSubscriptionModxUserSubscriptionProcessor extends GoodNewsSubscrip
     }
 
     /**
-     * Set the profile data using the existing profile object.
-     *
-     * @access public
-     * @return void
-     */
-    public function setProfileFields() {
-        $emailField      = $this->controller->getProperty('emailField', 'email');
-        $useExtended     = $this->controller->getProperty('useExtended', false, 'isset');
-        $usergroupsField = $this->controller->getProperty('usergroupsField', 'usergroups');
-        
-        $fields = $this->dictionary->toArray();
-
-        // Set profile data
-        $this->profile->fromArray($fields);
-        $this->profile->set('email', $this->dictionary->get($emailField));
-        if ($useExtended) { $this->setExtended(); }
-
-        // Add modx user groups, if set
-        $userGroups = !empty($usergroupsField) && array_key_exists($usergroupsField, $fields) ? $fields[$usergroupsField] : array();
-        $this->setUserGroups($userGroups);
-    }
-
-    /**
      * Set the subscriber meta data.
      *
      * @access public
@@ -170,122 +110,7 @@ class GoodNewsSubscriptionModxUserSubscriptionProcessor extends GoodNewsSubscrip
         $this->subscribermeta->set('testdummy', 0);
         $this->subscribermeta->set('ip', $this->dictionary->get('ip'));
     }
-
-    /**
-     * Set and save the group member data.
-     *
-     * @access public
-     * @return void
-     */
-    public function saveGroupMember() {
-        $userid = $this->user->get('id');
-        $selectedGroups = $this->dictionary->get('gongroups');
-        
-        $success = true;
-        foreach ($selectedGroups as $grpid) {
-            $groupmember = $this->modx->newObject('GoodNewsGroupMember');
-            $groupmember->set('goodnewsgroup_id', $grpid);
-            $groupmember->set('member_id', $userid);
-            if (!$groupmember->save()) {
-                $success = false;
-            }
-        }
-        return $success;
-    }
     
-    /**
-     * Set and save the category member data.
-     *
-     * @access public
-     * @return void
-     */
-    public function saveCategoryMember() {
-        $userid = $this->user->get('id');
-        $selectedCategories = $this->dictionary->get('goncategories');
-
-        $success = true;
-        foreach ($selectedCategories as $catid) {
-            $categorymember = $this->modx->newObject('GoodNewsCategoryMember');
-            $categorymember->set('goodnewscategory_id', $catid);
-            $categorymember->set('member_id', $userid);
-            if (!$categorymember->save()) {
-                $success = false;
-            }
-        }
-        return $success;
-    }
-    
-    /**
-     * If activated, set extra values in the form to profile extended field.
-     *
-     * @access public
-     * @return void
-     */
-    public function setExtended() {
-        $excludeExtended = $this->controller->getProperty('excludeExtended', '');
-        $usergroupsField = $this->controller->getProperty('usergroupsField', 'usergroups');
-        
-        $excludeExtended = explode(',', $excludeExtended);
-        
-        $userFields = $this->user->toArray();
-        $profileFields = $this->profile->toArray();
-        
-        $extended = array();
-        $fields = $this->dictionary->toArray();
-        
-        foreach ($fields as $field => $value) {
-            if (!isset($profileFields[$field]) && !isset($userFields[$field]) && $field != $usergroupsField && $field != 'gongroups' && $field != 'goncategories' && !in_array($field, $excludeExtended)) {
-                $extended[$field] = $value;
-            }
-        }
-        // set extended data
-        $this->profile->set('extended', $extended);
-    }
-
-    /**
-     * If user groups were passed, set them here.
-     *
-     * @access public
-     * @param string $userGroups Comma separated string of MODX user groups.
-     * @return array
-     */
-    public function setUserGroups($userGroups) {
-        $added = array();
-        // If $userGroups set in form, override here; otherwise use snippet property
-        $this->userGroups = !empty($userGroups) ? $userGroups : $this->controller->getProperty('usergroups', '');
-        if (!empty($this->userGroups)) {
-            $this->userGroups = is_array($this->userGroups) ? $this->userGroups : explode(',', $this->userGroups);
-
-            foreach ($this->userGroups as $userGroupMeta) {
-                $userGroupMeta = explode(':', $userGroupMeta);
-                if (empty($userGroupMeta[0])) continue;
-
-                // Get usergroup
-                $pk = array();
-                $pk[intval($userGroupMeta[0]) > 0 ? 'id' : 'name'] = trim($userGroupMeta[0]);
-                $userGroup = $this->modx->getObject('modUserGroup', $pk);
-                if (!$userGroup) continue;
-
-                // Get role
-                $rolePk = !empty($userGroupMeta[1]) ? $userGroupMeta[1] : 'Member';
-                $role = $this->modx->getObject('modUserGroupRole', array('name' => $rolePk));
-
-                // Create membership
-                $member = $this->modx->newObject('modUserGroupMember');
-                $member->set('member', 0);
-                $member->set('user_group',$userGroup->get('id'));
-                if (!empty($role)) {
-                    $member->set('role', $role->get('id'));
-                } else {
-                    $member->set('role', 1);
-                }
-                $this->user->addMany($member, 'UserGroupMembers');
-                $added[] = $userGroup->get('name');
-            }
-        }
-        return $added;
-    }
-
     /**
      * Setup persistent parameters to go through the request cycle.
      *
@@ -310,9 +135,8 @@ class GoodNewsSubscriptionModxUserSubscriptionProcessor extends GoodNewsSubscrip
         $this->controller->loadHooks('postHooks');
         
         $fields = $this->dictionary->toArray();
-        $fields['goodnewssubscription.user'] =& $this->user;
-        $fields['goodnewssubscription.profile'] =& $this->profile;
-        $fields['goodnewssubscription.usergroups'] = $this->userGroups;
+        $fields['goodnewssubscription.user'] = &$this->user;
+        $fields['goodnewssubscription.profile'] = &$this->profile;
         
         $this->controller->postHooks->loadMultiple($postHooks, $fields);
         if ($this->controller->postHooks->hasErrors()) {

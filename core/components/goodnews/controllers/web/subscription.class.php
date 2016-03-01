@@ -50,7 +50,7 @@ class GoodNewsSubscriptionSubscriptionController extends GoodNewsSubscriptionCon
             'activationEmailTplType'     => 'modChunk',
             'activationResourceId'       => '',
             'submittedResourceId'        => '',
-            'sendSubscriptionEmail'      => false,
+            'sendSubscriptionEmail'      => true,
             'unsubscribeResourceId'      => '',
             'profileResourceId'          => '',
             'subscriptionEmailSubject'   => $this->modx->lexicon('goodnews.subscription_email_subject'),
@@ -182,8 +182,9 @@ class GoodNewsSubscriptionSubscriptionController extends GoodNewsSubscriptionCon
                         // Execute the ModxUserSubscription processor
                         // An existing MODX user gets the same front-end reaction as a new Subscriber (Privacy!) but:
                         //  - no new MODX user is created
-                        //  - a Subscription profile is created
-                        //  - a subscription success mail is sent (if enabled)
+                        //  - a Subscription profile is created (SubscriberMeta)
+                        //  - no Group and/or Category selections are created!
+                        //  - a subscription success mail is sent (including the secure links to edit/cancel subscription)
                         $result = $this->runProcessor('ModxUserSubscription');
                     }
                 
@@ -195,7 +196,8 @@ class GoodNewsSubscriptionSubscriptionController extends GoodNewsSubscriptionCon
 
                     // Execute the Subscription processor:
                     //  - a new MODX user is created
-                    //  - a Subscription profile is created
+                    //  - a Subscription profile is created (SubscriberMeta)
+                    //  - Group and/or Category selections are created!
                     //  - an activation mail is sent (if double opt-in is enabled)
                     //  - a subscription success mail is sent (if enabled)
                     $result = $this->runProcessor('Subscription');
