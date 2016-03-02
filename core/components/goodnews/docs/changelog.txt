@@ -1,5 +1,7 @@
 Changelog for GoodNews
 
+GoodNews 1.4.1-pl (2016-03-02)
+--------------------------------------------------
 - Added all missing custom validators from Login extra
 - Added snippets, resources and chunks to allow full MODX user registration including newsletter subscription on a single page
 - Even more refined subscription process
