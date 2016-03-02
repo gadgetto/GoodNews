@@ -697,15 +697,63 @@ abstract class GoodNewsSubscriptionController {
         $params = array(
             'sid' => $emailProperties['sid'],
         );
-        $updateProfileUrl = $this->modx->makeUrl($this->getProperty('profileResourceId'), '', $params, 'full');
-        $unsubscribeUrl   = $this->modx->makeUrl($this->getProperty('unsubscribeResourceId'), '', $params, 'full');
 
-        $emailProperties['updateProfileUrl'] = $updateProfileUrl;
-        $emailProperties['unsubscribeUrl']   = $unsubscribeUrl;
+        $profileResourceId = $this->getProperty('profileResourceId', '');
+        if (empty($profileResourceId)) {
+            $this->modx->log(modX::LOG_LEVEL_WANR, '[GoodNews] GoodNewsSubscription - snippet parameter profileResourceId not set.');
+        } else {
+            $emailProperties['updateProfileUrl'] = $this->modx->makeUrl($profileResourceId, '', $params, 'full');
+        }
+
+        $unsubscribeResourceId = $this->getProperty('unsubscribeResourceId', '');
+        if (empty($unsubscribeResourceId)) {
+            $this->modx->log(modX::LOG_LEVEL_WARN, '[GoodNews] GoodNewsSubscription - snippet parameter unsubscribeResourceId not set.');
+        } else {
+            $emailProperties['unsubscribeUrl'] = $this->modx->makeUrl($unsubscribeResourceId, '', $params, 'full');
+        }
 
         $email = $emailProperties['email'];
         $subject = $this->getProperty('subscriptionEmailSubject', $this->modx->lexicon('goodnews.subscription_email_subject'));
 
+        return $this->goodnewssubscription->sendEmail($email, $subject, $emailProperties);
+    }
+
+    /**
+     * Send an email to the user containing secure links to update or cancel subscriptions.
+     *
+     * @access public
+     * @param array $emailProperties
+     * @return boolean
+     */
+    public function sendReSubscriptionEmail($emailProperties) {
+        // Additional required properties
+        $emailProperties['tpl']     = $this->getProperty('reSubscriptionEmailTpl', 'sample.GoodNewsReSubscriptionEmailTpl');
+        $emailProperties['tplAlt']  = $this->getProperty('reSubscriptionEmailTplAlt', '');
+        $emailProperties['tplType'] = $this->getProperty('reSubscriptionEmailTplType', 'modChunk');
+
+        // Generate secure links urls
+        $params = array(
+            'sid' => $emailProperties['sid'],
+            'gg'  => $this->goodnewssubscription->encodeParams($this->dictionary->get('gongroups')),
+            'gc'  => $this->goodnewssubscription->encodeParams($this->dictionary->get('goncategories')),
+        );
+        
+        $profileResourceId = $this->getProperty('profileResourceId', '');
+        if (empty($profileResourceId)) {
+            $this->modx->log(modX::LOG_LEVEL_WANR, '[GoodNews] GoodNewsSubscription - snippet parameter profileResourceId not set.');
+        } else {
+            $emailProperties['updateProfileUrl'] = $this->modx->makeUrl($profileResourceId, '', $params, 'full');
+        }
+
+        $unsubscribeResourceId = $this->getProperty('unsubscribeResourceId', '');
+        if (empty($unsubscribeResourceId)) {
+            $this->modx->log(modX::LOG_LEVEL_WARN, '[GoodNews] GoodNewsSubscription - snippet parameter unsubscribeResourceId not set.');
+        } else {
+            $emailProperties['unsubscribeUrl'] = $this->modx->makeUrl($unsubscribeResourceId, '', $params, 'full');
+        }
+
+        $email = $emailProperties['email'];
+        $subject = $this->getProperty('reSubscriptionEmailSubject', $this->modx->lexicon('goodnews.resubscription_email_subject'));
         return $this->goodnewssubscription->sendEmail($email, $subject, $emailProperties);
     }
 

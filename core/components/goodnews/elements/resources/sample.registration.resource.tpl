@@ -1,30 +1,32 @@
 [[!GoodNewsSubscription?
-    &submittedResourceId=`[[!GoodNewsGetResourceID? &pagetitle=`GoodNews Subscription Mail Sent`]]`
-    &activationResourceId=`[[!GoodNewsGetResourceID? &pagetitle=`GoodNews Subscription Confirm`]]`
-    &activationEmailTpl=`sample.GoodNewsActivationEmailTpl`
-    &activationEmailSubject=`Thank you for joining our newsletter service at [[++site_name]]`
+    &submittedResourceId=`[[!GoodNewsGetResourceID? &pagetitle=`GoodNews Registration Mail Sent`]]`
+    &activationResourceId=`[[!GoodNewsGetResourceID? &pagetitle=`GoodNews Registration Confirm`]]`
+    &activationEmailTpl=`sample.GoodNewsActivationRegEmailTpl`
+    &activationEmailSubject=`Thank you for registering at [[++site_name]]`
     &sendSubscriptionEmail=`1`
     &unsubscribeResourceId=`[[!GoodNewsGetResourceID? &pagetitle=`GoodNews Unsubscribe`]]`
     &profileResourceId=`[[!GoodNewsGetResourceID? &pagetitle=`GoodNews Subscription Update`]]`
     &subscriptionEmailSubject=`Your subscription to our newsletter service at [[++site_name]] was successful!`
-    &reSubscriptionEmailSubject=`Renewal of your newsletter subscription at [[++site_name]]!`
+    &reSubscriptionEmailSubject=`Existing user profile or newsletter subscription found!`
+    &reSubscriptionEmailTpl=`sample.GoodNewsReRegistrationEmailTpl`
+    &usergroups=`10`
     &validate=`
         email:email:required,
-        gongroups:required,
+        username:required,
+        password:required:minLength=^8^,
+        password_confirm:password_confirm=^password^,
         nospam:blank`
     &groupsOnly=`1`
-    &gongroups.vTextRequired=`Please choose at least one mailing group.`
 ]]
 <!--
     Samples of other available configuration parameters:
     (Please read the documentation for a full list of parameters)
     
-    &activation=`0`
-    &submittedResourceId=`[[!GoodNewsGetResourceID? &pagetitle=`GoodNews Subscription Success`]]`
-    
+    &activation=`0`    
     &defaultGroups=`1`
     &includeGroups=`4,6`
     &defaultCategories=`3,36,40,48`
+    &gongroups.vTextRequired=`Please choose at least one mailing group.`
     &goncategories.vTextRequired=`Please choose at least one category of your interest.`
 -->
 
@@ -33,12 +35,7 @@
         <h1>[[++site_name]]</h1>
     </div>
     <div class="main">
-        <h2>Subscribe to our newsletter</h2>
-        <p>
-            Sign up for our occasional newsletter and get news and updates 
-            delivered to your inbox. And don't worry, you can unsubscribe instantly 
-            or change your preferences at any time.
-        </p>
+        <h2>Register for our website</h2>
         <form id="profileform" class="gon-form" action="[[~[[*id]]]]" method="post">
             <input type="hidden" name="nospam" value="[[!+nospam]]">
             [[!+error.message:notempty=`
@@ -53,6 +50,27 @@
                     </label>
                     <input type="email" name="email" id="email" value="[[!+email]]" placeholder="Please enter your e-mail address" required>
                 </p>
+                <p class="fieldbg[[!+error.username:notempty=` fielderror`]]">
+                    <label for="username">
+                        Username
+                        [[!+error.username]]
+                    </label>
+                    <input type="text" name="username" id="username" value="[[!+username]]" placeholder="Please enter a password" required>
+                </p>
+                <p class="fieldbg[[!+error.password:notempty=` fielderror`]]">
+                    <label for="password">
+                        Password
+                        [[!+error.password]]
+                    </label>
+                    <input type="password" name="password" id="password" value="[[!+password]]" placeholder="Please enter a username" required>
+                </p>
+                <p class="fieldbg[[!+error.password_confirm:notempty=` fielderror`]]">
+                    <label for="password_confirm">
+                        Retype Password
+                        [[!+error.password_confirm]]
+                    </label>
+                    <input type="password" name="password_confirm" id="password_confirm" value="[[!+password_confirm]]" placeholder="Please retype the password" required>
+                </p>
                 <p class="fieldbg[[!+error.fullname:notempty=` fielderror`]]">
                     <label for="fullname">
                         First and Last Name (optional)
@@ -63,10 +81,15 @@
             </fieldset>
             [[!+fields_hidden:is=`1`:then=`[[!+grpcatfieldsets]]`:else=`
                 <fieldset>
-                    <legend>Newsletter Topics</legend>
+                    <legend>Newsletter</legend>
+                    <p class="intro">
+                        Do you want to sign up for our occasional newsletter and get news and updates 
+                        delivered to your inbox? And don't worry, you can unsubscribe instantly 
+                        or change your preferences at any time.
+                    </p>
                     <p class="fieldbg">
                         <label class="singlelabel">
-                            Please choose the newsletter topics you are interested in.
+                            Please choose newsletter topics you are interested in (optional)
                             [[!+error.gongroups]]
                             [[!+error.goncategories]]
                         </label>
@@ -82,7 +105,7 @@
             </p>
             `]]
             <p>
-                <button type="submit" role="button" name="goodnews-subscription-btn" value="Subscribe" class="button green">Subscribe now</button>
+                <button type="submit" role="button" name="goodnews-subscription-btn" value="Subscribe" class="button green">Register now</button>
             </p>
         </form>
     </div>

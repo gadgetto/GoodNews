@@ -52,7 +52,7 @@ class GoodNewsSubscriptionConfirmController extends GoodNewsSubscriptionControll
      */
     public function initialize() {
         $this->setDefaultProperties(array(
-            'sendSubscriptionEmail'    => false,
+            'sendSubscriptionEmail'    => true,
             'unsubscribeResourceId'    => '',
             'profileResourceId'        => '',
             'subscriptionEmailSubject' => $this->modx->lexicon('goodnews.subscription_email_subject'),

@@ -36,47 +36,50 @@ if ($object->xpdo) {
     
     switch ($options[xPDOTransport::PACKAGE_ACTION]) {
         case xPDOTransport::ACTION_INSTALL:
-        case xPDOTransport::ACTION_UPGRADE:
  
             $i = 0;
             $resourcesAttributes[++$i] = array(
-                'pagetitle' => 'Subscription Confirm',
-                'parent'    => '',
+                'pagetitle' => 'GoodNews Subscription Confirm',
                 'template'  => 'sample.GoodNewsProfileTemplate',
             );
             $resourcesAttributes[++$i] = array(
-                'pagetitle' => 'Subscription Mail Sent',
-                'parent'    => '',
+                'pagetitle' => 'GoodNews Subscription Mail Sent',
                 'template'  => 'sample.GoodNewsProfileTemplate',
             );
             $resourcesAttributes[++$i] = array(
-                'pagetitle' => 'Subscription Success',
-                'parent'    => '',
+                'pagetitle' => 'GoodNews Subscription Success',
                 'template'  => 'sample.GoodNewsProfileTemplate',
             );
             $resourcesAttributes[++$i] = array(
-                'pagetitle' => 'Subscription Update',
-                'parent'    => '',
+                'pagetitle' => 'GoodNews Subscription Update',
                 'template'  => 'sample.GoodNewsProfileTemplate',
             );
             $resourcesAttributes[++$i] = array(
-                'pagetitle' => 'Subscription',
-                'parent'    => '',
+                'pagetitle' => 'GoodNews Subscription',
                 'template'  => 'sample.GoodNewsProfileTemplate',
             );
             $resourcesAttributes[++$i] = array(
-                'pagetitle' => 'Unsubscribe',
-                'parent'    => '',
+                'pagetitle' => 'GoodNews Unsubscribe',
                 'template'  => 'sample.GoodNewsProfileTemplate',
             );
             $resourcesAttributes[++$i] = array(
-                'pagetitle' => 'Request Links',
-                'parent'    => '',
+                'pagetitle' => 'GoodNews Request Links',
+                'template'  => 'sample.GoodNewsProfileTemplate',
+            );
+            $resourcesAttributes[++$i] = array(
+                'pagetitle' => 'GoodNews Registration Confirm',
+                'template'  => 'sample.GoodNewsProfileTemplate',
+            );
+            $resourcesAttributes[++$i] = array(
+                'pagetitle' => 'GoodNews Registration Mail Sent',
+                'template'  => 'sample.GoodNewsProfileTemplate',
+            );
+            $resourcesAttributes[++$i] = array(
+                'pagetitle' => 'GoodNews Registration',
                 'template'  => 'sample.GoodNewsProfileTemplate',
             );
             $resourcesAttributes[++$i] = array(
                 'pagetitle' => 'GoodNews',
-                'parent'    => '',
                 'template'  => 'sample.GoodNewsContainerTemplate',
             );
             /*
@@ -143,6 +146,7 @@ if ($object->xpdo) {
             }
             break;
  
+        case xPDOTransport::ACTION_UPGRADE:
         case xPDOTransport::ACTION_UNINSTALL:
             break;
     }

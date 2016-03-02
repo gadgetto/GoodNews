@@ -19,7 +19,7 @@
  */
 
 /**
- * Processor class which handles subscription forms when Subscriber already has GoodNews meta data available
+ * Processor class which handles subscription forms when Subscriber already has GoodNews meta data available:
  *  - no new MODX user is created
  *  - a re-subscription mail is sent (including the secure links to edit/cancel subscription)
  *
@@ -54,14 +54,21 @@ class GoodNewsSubscriptionReSubscriptionProcessor extends GoodNewsSubscriptionPr
         $this->preparePersistentParameters();
 
         // Send a subscription renewal email including the secure links to edit subscription profile
-        $subscriberProperties = array_merge(
-            $this->user->toArray(),
-            $this->profile->toArray(),
-            $this->subscribermeta->toArray()
-        );
-        $this->sendReSubscriptionEmail($subscriberProperties);
-
+        if ($this->controller->getProperty('sendSubscriptionEmail', true, 'isset')) {
+            $subscriberProperties = array_merge(
+                $this->user->toArray(),
+                $this->profile->toArray(),
+                $this->subscribermeta->toArray()
+            );
+            $this->controller->sendReSubscriptionEmail($subscriberProperties);
+        }
+        
+        $this->runPostHooks();
         $this->checkForRedirect();
+        
+        $successMsg = $this->controller->getProperty('successMsg', '');
+        $placeholderPrefix = $this->controller->getProperty('placeholderPrefix', '');
+        $this->modx->toPlaceholder($placeholderPrefix.'success.message', $successMsg);
 
         return true;
     }
@@ -93,33 +100,32 @@ class GoodNewsSubscriptionReSubscriptionProcessor extends GoodNewsSubscriptionPr
     }
 
     /**
-     * Send an email to the user containing secure links to update or cancel subscriptions.
+     * Run any post-subscription hooks.
      *
      * @access public
-     * @param array $emailProperties
-     * @return boolean
+     * @return void
      */
-    public function sendReSubscriptionEmail($emailProperties) {
-        // Additional required properties
-        $emailProperties['tpl']     = $this->controller->getProperty('reSubscriptionEmailTpl', 'sample.GoodNewsReSubscriptionEmailTpl');
-        $emailProperties['tplAlt']  = $this->controller->getProperty('reSubscriptionEmailTplAlt', '');
-        $emailProperties['tplType'] = $this->controller->getProperty('reSubscriptionEmailTplType', 'modChunk');
+    public function runPostHooks() {
+        $postHooks = $this->controller->getProperty('postHooks', '');
+        $this->controller->loadHooks('postHooks');
+        
+        $fields = $this->dictionary->toArray();
+        $fields['goodnewssubscription.user'] = &$this->user;
+        $fields['goodnewssubscription.profile'] = &$this->profile;
+        
+        $this->controller->postHooks->loadMultiple($postHooks, $fields);
+        if ($this->controller->postHooks->hasErrors()) {
+            $errors = array();
+            $hookErrors = $this->controller->postHooks->getErrors();
+            foreach ($hookErrors as $key => $error) {
+                $errors[$key] = str_replace('[[+error]]', $error, $this->controller->getProperty('errTpl'));
+            }
+            $placeholderPrefix = $this->controller->getProperty('placeholderPrefix', '');
+            $this->modx->toPlaceholders($errors, $placeholderPrefix.'error');
 
-        // Generate secure links urls
-        $params = array(
-            'sid' => $this->subscribermeta->get('sid'),
-            'gg'  => $this->goodnewssubscription->encodeParams($this->dictionary->get('gongroups')),
-            'gc'  => $this->goodnewssubscription->encodeParams($this->dictionary->get('goncategories')),
-        );
-        $updateProfileUrl = $this->modx->makeUrl($this->controller->getProperty('profileResourceId'), '', $params, 'full');
-        $unsubscribeUrl   = $this->modx->makeUrl($this->controller->getProperty('unsubscribeResourceId'), '', $params, 'full');
-
-        $emailProperties['updateProfileUrl'] = $updateProfileUrl;
-        $emailProperties['unsubscribeUrl']   = $unsubscribeUrl;
-
-        $email = $this->profile->get('email');
-        $subject = $this->controller->getProperty('reSubscriptionEmailSubject', $this->modx->lexicon('goodnews.resubscription_email_subject'));
-        return $this->goodnewssubscription->sendEmail($email, $subject, $emailProperties);
+            $errorMsg = $this->controller->postHooks->getErrorMessage();
+            $this->modx->toPlaceholder('message', $errorMsg, $placeholderPrefix.'error');
+        }
     }
 
     /**

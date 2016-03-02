@@ -30,6 +30,9 @@ class GoodNewsMailing {
     
     const GON_IPC_STATUS_STOPPED  = 0;
     const GON_IPC_STATUS_STARTED  = 1;
+    
+    const GON_STATUS_REPORT_MAILING_STOPPED  = 1;
+    const GON_STATUS_REPORT_MAILING_FINISHED = 2;
 
     /** @var modX $modx A reference to the modX object */
     public $modx = null;
@@ -54,6 +57,9 @@ class GoodNewsMailing {
 
     /** @var boolean $debug Debug mode on/off */
     public $debug = false;
+    
+    /** @var array $subscriberFields The object fields of modUser + modUserProfile + GoodNewsSubscriberMeta */
+    public $subscriberFields = array();
 
     /**
      * Constructor for GoodNewsMailing object
@@ -85,6 +91,13 @@ class GoodNewsMailing {
         $this->goodnewsrecipienthandler = new GoodNewsRecipientHandler($this->modx);
 
         $this->modx->lexicon->load('goodnews:default');
+        
+        // Get the default fields for a subscriber (for later use as placeholders)
+        $this->subscriberFields = array_merge(
+            $this->modx->getFields('GoodNewsSubscriberMeta'),
+            $this->modx->getFields('modUserProfile')
+        );
+        $this->subscriberFields = $this->_cleanupKeys($this->subscriberFields);
     }
 
     /**
@@ -120,22 +133,68 @@ class GoodNewsMailing {
      * 
      * @access private
      * @param integer $subscriberId The ID of the subscriber
-     * @return array $properties The collection of properties || false
+     * @return mixed $properties The collection of properties || false
      */
     private function _getSubscriberProperties($subscriberId) {
-        $subscribermeta = $this->modx->getObject('GoodNewsSubscriberMeta', array('subscriber_id'=>$subscriberId));
-        if (!is_object($subscribermeta)) {
-            if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsMailing::_getSubscriberProperties - Recipient [id: '.$subscriberId.'] not found.'); }
-            return false;
+        $meta = $this->modx->getObject('GoodNewsSubscriberMeta', array('subscriber_id' => $subscriberId));
+        if (!$meta) { return ''; }
+        $profile = $this->modx->getObject('modUserProfile', array('internalKey' => $subscriberId));
+        if (!$profile) { return ''; }
+                
+        // Flatten extended fields:
+        // extended.field1
+        // extended.container1.field2
+        // ...
+        $extended = $profile->get('extended') ? $profile->get('extended') : array();
+        if (!empty($extended)) {
+            $extended = $this->_flattenExtended($extended, 'extended.');
         }
-        $subscriberprofile = $this->modx->getObject('modUserProfile', array('internalKey'=>$subscriberId));
-        $properties['id']        = $subscriberId;
-        $properties['email']     = $subscriberprofile->get('email');
-        $properties['fullname']  = $subscriberprofile->get('fullname');
-        $properties['sid']       = $subscribermeta->get('sid');
-        if (empty($properties['fullname'])) { $properties['fullname'] = $properties['email']; }
-
+        $properties = array_merge(
+            $meta->toArray(),
+            $profile->toArray(),
+            $extended
+        );
+        $properties = $this->_cleanupKeys($properties);
         return $properties;
+    }
+
+    /**
+     * Manipulate/add/remove fields from array.
+     *
+     * @access private
+     * @param array $properties
+     * @return array $properties
+     */
+    private function _cleanupKeys(array $properties = array()) {
+        $properties['subscribedon'] = $properties['createdon'];  // @todo: change DB field name
+        unset(
+            $properties['id'],          // multiple occurrence; not needed
+            $properties['internalKey'], // not needed
+            $properties['createdon'],   // conflicting with createdon field of resource
+            $properties['sessionid'],   // security!
+            $properties['extended']     // not needed as its already flattened
+        );    
+        return $properties;
+    }
+
+    /**
+     * Helper function to recursively flatten an array.
+     * 
+     * @access private
+     * @param array $array The array to be flattened.
+     * @param string $prefix The prefix for each new array key.
+     * @return array $result The flattened and prefixed array.
+     */
+    private function _flattenExtended($array, $prefix = '') {
+        $result = array();
+        foreach($array as $key => $value) {
+            if (is_array($value)) {
+                $result = $result + $this->_flattenExtended($value, $prefix.$key.'.');
+            } else {
+                $result[$prefix.$key] = $value;
+            }
+        }
+        return $result;
     }
 
     /**
@@ -182,15 +241,22 @@ class GoodNewsMailing {
          
         if (!$this->modx->parser) { $this->modx->getParser(); }
 
-        // Preserve GoodNews placeholders
-        $phsArray = array('EMAIL','FULLNAME','SID');
+        // Preserve GoodNews subscriber fields placeholders
+        $phsArray = $this->subscriberFields;
         $search = array();
         $replace = array();
-        foreach ($phsArray as $phs) {
+        
+        foreach ($phsArray as $phs => $values) {
             $search[] = '[[+'.$phs;
             $replace[] = '&#91;&#91;+'.$phs;
         }
-        $html = str_replace($search, $replace, $html);
+        $html = str_ireplace($search, $replace, $html);
+        
+        foreach ($phsArray as $phs => $values) {
+            $search[] = '[[+extended';
+            $replace[] = '&#91;&#91;+extended';
+        }
+        $html = str_ireplace($search, $replace, $html);
 
         // Process the non-cacheable content of the Resource, but leave any unprocessed tags alone
         $this->modx->parser->processElementTags('', $html, true, false, '[[', ']]', array(), $maxIterations);
@@ -198,14 +264,21 @@ class GoodNewsMailing {
         // Process the non-cacheable content of the Resource, this time removing the unprocessed tags
         $this->modx->parser->processElementTags('', $html, true, true, '[[', ']]', array(), $maxIterations);
 
-        // Set back GoodNews placeholders
+        // Set back GoodNews subscriber fields placeholders
         $search = array();
         $replace = array();
-        foreach ($phsArray as $phs) {
+        
+        foreach ($phsArray as $phs => $value) {
             $search[] = '&#91;&#91;+'.$phs;
             $replace[] = '[[+'.$phs;
         }
-        $html = str_replace($search, $replace, $html);
+        $html = str_ireplace($search, $replace, $html);
+        
+        foreach ($phsArray as $phs => $value) {
+            $search[] = '&#91;&#91;+extended';
+            $replace[] = '[[+extended';
+        }
+        $html = str_ireplace($search, $replace, $html);
 
         // Restore original values
         $this->modx->elementCache       = $currentElementCache;
@@ -247,27 +320,22 @@ class GoodNewsMailing {
     }
 
     /**
-     * Replace GoodNews placeholders
-     * (currently "hardcoded" - todo: rewrite for universal usage)
+     * Replace GoodNews Subscriber placeholders in preparsed newsletter template.
      *
+     * @access private
      * @param string $html
-     * @param $sid
-     * @param $fullname
-     * @param $email
-     * @return string $html || false
+     * @param array $subscriberProperties The placeholders.
+     * @return string $output
      */
-    private function _gonPlaceholders($html, $sid, $fullname, $email) {
-        if (empty($html)) {
-            if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsMailing::_gonPlaceholders - No HTML content provided for parsing.'); }
-            return false;
-        }        
-        $placeholders = array(
-            '[[+EMAIL]]'    => $email,
-            '[[+FULLNAME]]' => $fullname,
-            '[[+SID]]'      => $sid,
-        );
-        $html = $this->_strReplaceAssoc($placeholders, $html);
-        return $html;
+    private function _processSubscriberPlaceholders($html, array $subscriberProperties = array()) {
+        if (empty($html)) { return false; }
+        $chunk = $this->modx->newObject('modChunk');
+        $chunk->setContent($html);
+        $chunk->setCacheable(false);
+        $chunk->_processed = false;
+        $output = $chunk->process($subscriberProperties);
+        $this->modx->parser->processElementTags('', $output, true, true);
+        return $output;
     }
 
     /**
@@ -500,9 +568,6 @@ class GoodNewsMailing {
                     // Also we set the mailing to finished (= IPCstatus "stopped")
                     $this->setIPCstop($this->mailingid, true);
                     if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsMailing::processMailing - Mailing [id: '.$this->mailingid.'] finished.'); }
-     
-                    // @todo: Send status report to MODX user who started the mail-sending
-                    //$this->sendStatusReport();
                 }
                 break;
             }            
@@ -510,7 +575,7 @@ class GoodNewsMailing {
             $subscriber = $this->_getSubscriberProperties($recipientId);
             if ($subscriber) {
                 $temp_mail = $mail;
-                $temp_mail['body'] = $this->_gonPlaceholders($temp_mail['body'], $subscriber['sid'], $subscriber['fullname'], $subscriber['email']);            
+                $temp_mail['body'] = $this->_processSubscriberPlaceholders($temp_mail['body'], $subscriber);            
  
                 if ($this->sendEmail($temp_mail, $subscriber)) {
                     $status = GoodNewsRecipientHandler::GON_USER_SENT;
@@ -549,7 +614,7 @@ class GoodNewsMailing {
         foreach ($recipients as $recipientId) {
             $subscriber = $this->_getSubscriberProperties($recipientId);
             $temp_mail = $mail;
-            $temp_mail['body'] = $this->_gonPlaceholders($temp_mail['body'], $subscriber['sid'], $subscriber['fullname'], $subscriber['email']);
+            $temp_mail['body'] = $this->_processSubscriberPlaceholders($temp_mail['body'], $subscriber);
             $sent = $this->sendEmail($temp_mail, $subscriber);            
         }
         return true;
@@ -584,7 +649,7 @@ class GoodNewsMailing {
             $this->modx->mail->set(modMail::MAIL_SMTP_SINGLE_TO, $this->mailing->getProperty('mailSmtpSingleTo',  'goodnews', $this->modx->getOption('mail_smtp_single_to', null, false)));
             $this->modx->mail->set(modMail::MAIL_SMTP_TIMEOUT,   $this->mailing->getProperty('mailSmtpTimeout',   'goodnews', $this->modx->getOption('mail_smtp_timeout',   null, 10)));
         }
-        $this->modx->mail->header('X-goodnews-user-id: '.$subscriber['id']);
+        $this->modx->mail->header('X-goodnews-user-id: '.$subscriber['subscriber_id']);
         $this->modx->mail->header('X-goodnews-mailing-id: '.$this->mailingid);
         $this->modx->mail->set(modMail::MAIL_BODY,      $mail['body']);
         $this->modx->mail->set(modMail::MAIL_BODY_TEXT, $mail['altbody']);
@@ -596,6 +661,7 @@ class GoodNewsMailing {
         $this->modx->mail->set(modMail::MAIL_ENCODING,  $mail['mailEncoding']);
 
         $this->modx->mail->address('reply-to',          $mail['mailReplyTo']);
+        if (empty($subscriber['fullname'])) { $subscriber['fullname'] = $subscriber['email']; }
         $this->modx->mail->address('to', $subscriber['email'], $subscriber['fullname']);
         $this->modx->mail->setHTML($mail['ishtml']);
                 
@@ -603,10 +669,10 @@ class GoodNewsMailing {
         $this->modx->mail->reset();
 
         if (!$sent) {
-            $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] Email could not be sent to '.$subscriber['email'].' ('.$subscriber['id'].').');
+            $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] Email could not be sent to '.$subscriber['email'].' ('.$subscriber['subscriber_id'].').');
             if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_ERROR, '[GoodNews] Mailer error: '.$this->modx->mail->mailer->ErrorInfo); }
         } else {
-            if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsMailing::sendEmail - Email sent to '.$subscriber['email'].' ('.$subscriber['id'].').'); }
+            if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsMailing::sendEmail - Email sent to '.$subscriber['email'].' ('.$subscriber['subscriber_id'].').'); }
         }
         return $sent;
     }
@@ -655,115 +721,6 @@ class GoodNewsMailing {
         $key = $this->mailing->get('context_key');
         $this->modx->switchContext($key);
         return true;
-    }
-
-    /**
-     * Auto start scheduled mailings.
-     * (Check for mailing resources with pub_date reached and set them to published
-     * + GON_IPC_STATUS_STARTED in mailing meta table so they can be sent automatically)
-     *
-     * @access private
-     * @return int $publishingResults The number of mailings affected by the sql statement.
-     */
-    private function _startScheduledMailings() {
-        $tblResource = $this->modx->getTableName('modResource');
-        $tblMailingMeta = $this->modx->getTableName('GoodNewsMailingMeta');
-        $timeNow = time();
-        $ipcStatus = self::GON_IPC_STATUS_STARTED;
-        
-        $sql = "UPDATE {$tblResource}, {$tblMailingMeta} 
-                SET {$tblMailingMeta}.senton = {$timeNow},
-                    {$tblMailingMeta}.sentby = {$tblResource}.createdby,
-                    {$tblMailingMeta}.ipc_status = {$ipcStatus},
-                    {$tblMailingMeta}.scheduled = 1,
-                    {$tblResource}.published = 1,
-                    {$tblResource}.publishedon = {$tblResource}.pub_date,
-                    {$tblResource}.publishedby = {$tblResource}.createdby,
-                    {$tblResource}.pub_date = 0 
-                WHERE {$tblMailingMeta}.mailing_id = {$tblResource}.id 
-                AND {$tblResource}.class_key = 'GoodNewsResourceMailing' 
-                AND {$tblResource}.pub_date IS NOT NULL 
-                AND {$tblResource}.pub_date < {$timeNow} 
-                AND {$tblResource}.pub_date > 0
-                AND {$tblMailingMeta}.recipients_total > 0";
-
-        $publishingResults = $this->modx->exec($sql);
-        if ($this->debug) {
-            if ($publishingResults) {
-                $mailings = $publishingResults / 2; // we always have two rows affected!
-                $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsMailing::autoPublish - autopublished mailings: '.$mailings);
-            }
-        }
-        return $publishingResults;
-    }
-
-    /**
-     * Sets the IPC status of a mailing to "start".
-     *
-     * @access public
-     * @param integer $id The ID of the resource
-     * @return boolean
-     */
-    public function setIPCstart($id) {
-        // Get resource mailing meta object
-        $meta = $this->modx->getObject('GoodNewsMailingMeta', array('mailing_id' => $id));
-        if (!is_object($meta)) { return false; }
-
-        $currentUser = $this->modx->user->get('id');
-        
-        // set mailing sender and send date
-        $meta->set('senton', time());
-        $meta->set('sentby', $currentUser);
-        $meta->set('ipc_status', self::GON_IPC_STATUS_STARTED);
-        if ($meta->save()) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    /**
-     * Sets the IPC status of a mailing to "stopped".
-     *
-     * @access public
-     * @param integer $id The ID of the resource
-     * @param bool $finished
-     * @return boolean
-     */
-    public function setIPCstop($id, $finished = false) {
-        // Get resource mailing meta object
-        $meta = $this->modx->getObject('GoodNewsMailingMeta', array('mailing_id' => $id));
-        if (!is_object($meta)) { return false; }
-
-        if ($finished) {
-            $meta->set('finishedon', time());
-        }
-        $meta->set('ipc_status', self::GON_IPC_STATUS_STOPPED);
-        if ($meta->save()) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-    
-    /**
-     * Sets the IPC status of a mailing to "started".
-     *
-     * @access public
-     * @param integer $id The ID of the resource
-     * @return boolean
-     */
-    public function setIPCcontinue($id) {
-        // Get resource mailing meta object
-        $meta = $this->modx->getObject('GoodNewsMailingMeta', array('mailing_id' => $id));
-        if (!is_object($meta)) { return false; }
-
-        $meta->set('ipc_status', self::GON_IPC_STATUS_STARTED);
-        if ($meta->save()) {
-            return true;
-        } else {
-            return false;
-        }
     }
 
     /**
@@ -973,16 +930,257 @@ class GoodNewsMailing {
         $text = preg_replace($search, '', $html); 
         return $text; 
     }
-    
+
     /**
-     * Helper method to replace values in an array.
+     * Auto start scheduled mailings.
+     * (Check for mailing resources with pub_date reached and set them to published
+     * + GON_IPC_STATUS_STARTED in mailing meta table so they can be sent automatically)
      *
      * @access private
-     * @param array $replace
-     * @param string $subject
-     * @return array or string
+     * @return int $publishingResults The number of mailings affected by the sql statement.
      */
-    private function _strReplaceAssoc(array $replace, $subject) {
-        return str_replace(array_keys($replace), array_values($replace), $subject);
+    private function _startScheduledMailings() {
+        $tblResource = $this->modx->getTableName('modResource');
+        $tblMailingMeta = $this->modx->getTableName('GoodNewsMailingMeta');
+        $timeNow = time();
+        $ipcStatus = self::GON_IPC_STATUS_STARTED;
+        
+        $sql = "UPDATE {$tblResource}, {$tblMailingMeta} 
+                SET {$tblMailingMeta}.senton = {$timeNow},
+                    {$tblMailingMeta}.sentby = {$tblResource}.createdby,
+                    {$tblMailingMeta}.ipc_status = {$ipcStatus},
+                    {$tblMailingMeta}.scheduled = 1,
+                    {$tblResource}.published = 1,
+                    {$tblResource}.publishedon = {$tblResource}.pub_date,
+                    {$tblResource}.publishedby = {$tblResource}.createdby,
+                    {$tblResource}.pub_date = 0 
+                WHERE {$tblMailingMeta}.mailing_id = {$tblResource}.id 
+                AND {$tblResource}.class_key = 'GoodNewsResourceMailing' 
+                AND {$tblResource}.pub_date IS NOT NULL 
+                AND {$tblResource}.pub_date < {$timeNow} 
+                AND {$tblResource}.pub_date > 0
+                AND {$tblMailingMeta}.recipients_total > 0";
+
+        $publishingResults = $this->modx->exec($sql);
+        if ($this->debug) {
+            if ($publishingResults) {
+                $mailings = $publishingResults / 2; // we always have two rows affected!
+                $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsMailing::autoPublish - autopublished mailings: '.$mailings);
+            }
+        }
+        return $publishingResults;
+    }
+
+    /**
+     * Sets the IPC status of a mailing to "start".
+     *
+     * @access public
+     * @param integer $id The ID of the resource
+     * @return boolean
+     */
+    public function setIPCstart($id) {
+        // Get resource mailing meta object
+        $meta = $this->modx->getObject('GoodNewsMailingMeta', array('mailing_id' => $id));
+        if (!is_object($meta)) { return false; }
+
+        $currentUser = $this->modx->user->get('id');
+        
+        // set mailing sender and send date
+        $meta->set('senton', time());
+        $meta->set('sentby', $currentUser);
+        $meta->set('ipc_status', self::GON_IPC_STATUS_STARTED);
+        if ($meta->save()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Sets the IPC status of a mailing to "stopped".
+     *
+     * @access public
+     * @param integer $id The ID of the resource
+     * @param bool $finished
+     * @return boolean
+     */
+    public function setIPCstop($id, $finished = false) {
+        // Get resource mailing meta object
+        $meta = $this->modx->getObject('GoodNewsMailingMeta', array('mailing_id' => $id));
+        if (!is_object($meta)) { return false; }
+
+        if ($finished) {
+            $meta->set('finishedon', time());
+            $status = self::GON_STATUS_REPORT_MAILING_FINISHED;
+        } else {
+            $status = self::GON_STATUS_REPORT_MAILING_STOPPED;
+        }
+        $meta->set('ipc_status', self::GON_IPC_STATUS_STOPPED);
+        if ($meta->save()) {
+            // Send status report to MODX user who initiated (sent) the mailing if enabled
+            $statusemail = $this->modx->getOption('goodnews.statusemail_enabled', null, 1);
+            if ($statusemail) {
+                $this->_statusReport($id, $status);
+            }
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+    /**
+     * Sets the IPC status of a mailing to "started".
+     *
+     * @access public
+     * @param integer $id The ID of the resource
+     * @return boolean
+     */
+    public function setIPCcontinue($id) {
+        // Get resource mailing meta object
+        $meta = $this->modx->getObject('GoodNewsMailingMeta', array('mailing_id' => $id));
+        if (!is_object($meta)) { return false; }
+
+        $meta->set('ipc_status', self::GON_IPC_STATUS_STARTED);
+        if ($meta->save()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Generates a status report to be sent via mail.
+     *
+     * @access private
+     * @param integer $id The id of the mailing Resource document
+     * @param integer $status The status of the mailing to report (default: self::GON_STATUS_REPORT_MAILING_FINISHED)
+     * @return array
+     */
+    private function _statusReport($id, $status = self::GON_STATUS_REPORT_MAILING_FINISHED) {
+        $mailing = $this->modx->getObject('GoodNewsResourceMailing', $id);
+        if (!is_object($mailing)) { return false; }
+
+        $meta = $mailing->getOne('MailingMeta');
+        if (!is_object($meta)) { return false; }
+        
+        $profile = $this->modx->getObject('modUserProfile',  array('internalKey'=>$meta->get('sentby')));
+        if (!is_object($profile)) { return false; }
+
+        $user = $profile->getOne('User');
+        
+        $properties = array();
+        
+        // Properties for sending email
+        $properties['email']    = $profile->get('email');
+        $properties['name']     = $profile->get('fullname');
+        $properties['subject']  = $this->modx->lexicon('goodnews.newsletter_statusemail_subject_prefix').$mailing->get('pagetitle');
+        $properties['from']     = $this->modx->getOption('emailsender');
+        $properties['fromname'] = $this->modx->getOption('goodnews.statusemail_fromname');
+
+        $tpl     = $this->modx->getOption('goodnews.statusemail_chunk');    
+        $tplAlt  = '';         // @todo: alternative plaintext template
+        $tplType = 'modChunk'; // @todo: the type of tpl/chunk can be file
+
+        // Email body placeholders
+        $properties['mailing_title']    = $mailing->get('pagetitle');
+        $properties['recipients_total'] = $meta->get('recipients_total');
+        $properties['recipients_sent']  = $meta->get('recipients_sent');
+        $properties['recipients_error'] = $meta->get('recipients_error');
+        $properties['senton']           = $meta->get('senton');
+        $properties['finishedon']       = $meta->get('finishedon');
+        $properties['sentby']           = $user->get('username');
+        
+        switch ($status) {
+            
+            case self::GON_STATUS_REPORT_MAILING_STOPPED;
+                $properties['mailingstatus'] = $this->modx->lexicon('goodnews.newsletter_status_stopped');
+                break;
+                
+            case self::GON_STATUS_REPORT_MAILING_FINISHED;
+                $properties['mailingstatus'] = $this->modx->lexicon('goodnews.newsletter_status_finished');
+                break;
+        }
+
+        // Parsed email body
+        $properties['msg']      = $this->_getChunk($tpl, $properties, $tplType);
+        $properties['msgAlt']   = (!empty($tplAlt)) ? $this->_getChunk($tplAlt, $properties, $tplType) : '';
+
+        $this->_sendStatusEmail($properties);
+    }
+
+    /**
+     * Sends a newsletter status email based on the specified information and templates.
+     *
+     * @access private
+     * @param array $properties A collection of mail properties.
+     * @return boolean
+     */
+    private function _sendStatusEmail($properties = array()) {
+        if (empty($properties['email']) || empty($properties['subject']) || empty($properties['msg']) || empty($properties['from'])) {
+            return false;
+        }
+        $email    = $properties['email'];
+        $name     = (!empty($properties['name'])) ? $properties['name'] : $properties['email'];
+        $subject  = $properties['subject'];
+        $from     = $properties['from'];
+        $fromName = $properties['fromname'];
+        $sender   = $properties['from'];
+        $replyTo  = $properties['from'];
+        $msg      = $properties['msg'];
+        $msgAlt   = $properties['msgAlt'];
+
+        $this->modx->getService('statusmail', 'mail.modPHPMailer');
+        $this->modx->statusmail->set(modMail::MAIL_BODY, $msg);
+        if (!empty($msgAlt)) {
+            $this->modx->statusmail->set(modMail::MAIL_BODY_TEXT, $msgAlt);
+        }
+        $this->modx->statusmail->set(modMail::MAIL_FROM, $from);
+        $this->modx->statusmail->set(modMail::MAIL_FROM_NAME, $fromName);
+        $this->modx->statusmail->set(modMail::MAIL_SENDER, $sender);
+        $this->modx->statusmail->set(modMail::MAIL_SUBJECT, $subject);
+        $this->modx->statusmail->address('reply-to', $replyTo);
+        $this->modx->statusmail->address('to', $email, $name);
+        $this->modx->statusmail->setHTML(true);
+        
+        $sent = $this->modx->statusmail->send();
+        $this->modx->statusmail->reset();
+        
+        if (!$sent) {
+            if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_ERROR, '[GoodNews] GoodNewsMailing::_sendStatusEmail - Mailer error: '.$this->modx->statusmail->mailer->ErrorInfo); }
+        }
+        return $sent;
+    }
+    
+    /**
+     * Helper function to get a chunk or tpl by different methods.
+     *
+     * @access private
+     * @param string $name The name of the tpl/chunk.
+     * @param array $properties The properties to use for the tpl/chunk.
+     * @param string $type The type of tpl/chunk. Can be modChunk or file. Defaults to modChunk.
+     * @return string The processed tpl/chunk.
+     */
+    private function _getChunk($name, $properties, $type = 'modChunk') {
+        $output = '';
+        switch ($type) {
+            case 'modChunk':
+                $output .= $this->modx->getChunk($name, $properties);
+                break;
+                
+            case 'file':
+                $name = str_replace(array(
+                    '{base_path}',
+                    '{assets_path}',
+                    '{core_path}',
+                ),array(
+                    $this->modx->getOption('base_path'),
+                    $this->modx->getOption('assets_path'),
+                    $this->modx->getOption('core_path'),
+                ), $name);
+                $output .= file_get_contents($name);
+                $this->modx->setPlaceholders($properties);
+                break;
+        }
+        return $output;
     }
 }

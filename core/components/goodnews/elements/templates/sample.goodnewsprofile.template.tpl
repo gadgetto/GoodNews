@@ -105,6 +105,7 @@
         .gon-form fieldset fieldset { margin: 10px; }
         .gon-form legend { font-size: 24px; font-weight: normal; color: #9ec41a; margin: 0; padding: 0 0 10px 0; }
         .gon-form p { margin: 0; }
+        .gon-form p.intro { margin-bottom: 20px; }
         .gon-form p.fieldbg {
             margin-bottom: 10px;
             padding: 10px;
@@ -150,6 +151,7 @@
         }
         .gon-form input[type="text"],
         .gon-form input[type="email"],
+        .gon-form input[type="password"],
         .gon-form textarea {
             width: 100%;
             font-size: 17px;

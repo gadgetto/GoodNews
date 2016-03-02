@@ -45,17 +45,6 @@ class GoodNewsSubscriptionRequestLinksProcessor extends GoodNewsSubscriptionProc
      * @return mixed
      */
     public function process() {
-        $unsubscribeResourceId = $this->controller->getProperty('unsubscribeResourceId', '');
-        $profileResourceId     = $this->controller->getProperty('profileResourceId', '');
-        if (empty($unsubscribeResourceId)) {
-            $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] GoodNewsRequestLinks - snippet parameter unsubscribeResourceId not set.');
-            return false;
-        }
-        if (empty($profileResourceId)) {
-            $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] GoodNewsRequestLinks - snippet parameter profileResourceId not set.');
-            return false;
-        }
-
         $this->cleanseFields();
         
         // If we can't find an appropriate subscriber in database,
@@ -150,15 +139,24 @@ class GoodNewsSubscriptionRequestLinksProcessor extends GoodNewsSubscriptionProc
         $params = array(
             'sid' => $this->sid,
         );
-        // Generate secure links urls
-        $updateProfileUrl = $this->modx->makeUrl($this->controller->getProperty('profileResourceId'), '', $params, 'full');
-        $unsubscribeUrl   = $this->modx->makeUrl($this->controller->getProperty('unsubscribeResourceId'), '', $params, 'full');
         
-        $emailProperties['updateProfileUrl'] = $updateProfileUrl;
-        $emailProperties['unsubscribeUrl']   = $unsubscribeUrl;
-        $emailProperties['tpl']              = $emailTpl;
-        $emailProperties['tplAlt']           = $emailTplAlt;
-        $emailProperties['tplType']          = $emailTplType;
+        $profileResourceId = $this->controller->getProperty('profileResourceId', '');
+        if (empty($profileResourceId)) {
+            $this->modx->log(modX::LOG_LEVEL_WANR, '[GoodNews] GoodNewsRequestLinks - snippet parameter profileResourceId not set.');
+        } else {
+            $emailProperties['updateProfileUrl'] = $this->modx->makeUrl($profileResourceId, '', $params, 'full');
+        }
+
+        $unsubscribeResourceId = $this->controller->getProperty('unsubscribeResourceId', '');
+        if (empty($unsubscribeResourceId)) {
+            $this->modx->log(modX::LOG_LEVEL_WARN, '[GoodNews] GoodNewsRequestLinks - snippet parameter unsubscribeResourceId not set.');
+        } else {
+            $emailProperties['unsubscribeUrl'] = $this->modx->makeUrl($unsubscribeResourceId, '', $params, 'full');
+        }
+        
+        $emailProperties['tpl']     = $emailTpl;
+        $emailProperties['tplAlt']  = $emailTplAlt;
+        $emailProperties['tplType'] = $emailTplType;
 
         $subject = $this->controller->getProperty('requestLinksEmailSubject', $this->modx->lexicon('goodnews.requestlinks_email_subject'));
         

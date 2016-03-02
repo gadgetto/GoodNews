@@ -234,6 +234,22 @@ $properties = array(
         'lexicon' => 'goodnews:properties',
     ),
     array(
+        'name'    => 'usernameField',
+        'desc'    => 'prop_goodnewssubscription.usernamefield_desc',
+        'type'    => 'textfield',
+        'options' => '',
+        'value'   => 'username',
+        'lexicon' => 'goodnews:properties',
+    ),
+    array(
+        'name'    => 'passwordField',
+        'desc'    => 'prop_goodnewssubscription.passwordfield_desc',
+        'type'    => 'textfield',
+        'options' => '',
+        'value'   => 'password',
+        'lexicon' => 'goodnews:properties',
+    ),
+    array(
         'name'    => 'persistParams',
         'desc'    => 'prop_goodnewssubscription.persistparams_desc',
         'type'    => 'textfield',

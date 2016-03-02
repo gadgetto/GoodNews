@@ -1,6 +1,6 @@
 [[!GoodNewsRequestLinks?
-    &unsubscribeResourceId=`[[!GoodNewsGetResourceID? &pagetitle=`Unsubscribe`]]`
-    &profileResourceId=`[[!GoodNewsGetResourceID? &pagetitle=`Subscription Update`]]`
+    &unsubscribeResourceId=`[[!GoodNewsGetResourceID? &pagetitle=`GoodNews Unsubscribe`]]`
+    &profileResourceId=`[[!GoodNewsGetResourceID? &pagetitle=`GoodNews Subscription Update`]]`
     &requestLinksEmailTpl=`sample.GoodNewsRequestLinksEmailTpl`
     &requestLinksEmailSubject=`Your requested links to update or cancel your subscription at [[++site_name]]`
     &validate=`
@@ -11,7 +11,7 @@
     Samples of other available configuration parameters:
     (Please read the documentation for a full list of parameters)
     
-    &submittedResourceId=`[[!GoodNewsGetResourceID? &pagetitle=`Request Links Success`]]`
+    &submittedResourceId=`[[!GoodNewsGetResourceID? &pagetitle=`GoodNews Request Links Success`]]`
 -->
 
 <div class="container">

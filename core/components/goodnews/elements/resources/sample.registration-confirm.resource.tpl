@@ -2,7 +2,7 @@
     &sendSubscriptionEmail=`1`
     &unsubscribeResourceId=`[[!GoodNewsGetResourceID? &pagetitle=`GoodNews Unsubscribe`]]`
     &profileResourceId=`[[!GoodNewsGetResourceID? &pagetitle=`GoodNews Subscription Update`]]`
-    &subscriptionEmailSubject=`Your subscription to our newsletter service at [[++site_name]] was successful!`
+    &subscriptionEmailSubject=`Your registration to our website at [[++site_name]] was successful!`
 ]]
 
 <div class="container">
@@ -10,9 +10,11 @@
         <h1>[[++site_name]]</h1>
     </div>
     <div class="main">
-        <p class="successMsg">You successfully finished your subscription to our newsletter service!</p>
+        <p class="successMsg">You successfully finished your registration to our website!</p>
+        <p>Please login with the credentials you submitted via registration form.</p>
         <p>
-            <strong>Please note:</strong> Each newsletter will contain links to immediately cancel or edit your newsletter profile.
+            <strong>Please note:</strong> If you registered for our newsletter service,
+            each mail will contain links to immediately cancel or edit your newsletter profile.
         </p>
         <p>
             <em>Best wishes,<br>

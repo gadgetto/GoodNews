@@ -404,10 +404,12 @@ class GoodNewsProcessHandler {
      */
     private function _removeLockFile() {
         $lockfilepattern = $this->lockDir.'*.'.$this->_pid;
-        foreach (glob($lockfilepattern) as $filename) {
-            @unlink($filename);
+        $files = glob($lockfilepattern);
+        if (is_array($files) && count($files) > 0) {
+            foreach ($files as $filename) {
+                @unlink($filename);
+            }
         }
-        
     }
 
     /**

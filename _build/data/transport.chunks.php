@@ -28,11 +28,13 @@
 $chunks = array();
 $i = 0;
 
+// For GoodNews subscriptions 
+
 $chunks[++$i] = $modx->newObject('modChunk');
 $chunks[$i]->fromArray(array(
     'id'          => $i,
     'name'        => 'sample.GoodNewsActivationEmailTpl',
-    'description' => 'The HTML content of the GoodNews activation email body. Duplicate this to override it.',
+    'description' => 'The HTML content of the email body for activating GoodNews subscriptions. Duplicate this to override it.',
     'snippet'     => file_get_contents($sources['chunks'].'sample.goodnewsactivationemail.chunk.tpl'),
 ), '', true, true);
 
@@ -139,5 +141,33 @@ $chunks[$i]->fromArray(array(
     'description' => 'The HTML content of the GoodNews request links email body. Duplicate this to override it.',
     'snippet'     => file_get_contents($sources['chunks'].'sample.goodnewsrequestlinksemail.chunk.tpl'),
 ), '', true, true);
+
+$chunks[++$i] = $modx->newObject('modChunk');
+$chunks[$i]->fromArray(array(
+    'id'          => $i,
+    'name'        => 'sample.GoodNewsStatusEmailTpl',
+    'description' => 'The HTML content of the GoodNews status email body. Duplicate this to override it.',
+    'snippet'     => file_get_contents($sources['chunks'].'sample.goodnewsstatusemail.chunk.tpl'),
+), '', true, true);
+
+
+// For GoodNews registrations 
+
+$chunks[++$i] = $modx->newObject('modChunk');
+$chunks[$i]->fromArray(array(
+    'id'          => $i,
+    'name'        => 'sample.GoodNewsActivationRegEmailTpl',
+    'description' => 'The HTML content of the email body for activating GoodNews registrations including newsletter subscriptions. Duplicate this to override it.',
+    'snippet'     => file_get_contents($sources['chunks'].'sample.goodnewsactivationregemail.chunk.tpl'),
+), '', true, true);
+
+$chunks[++$i] = $modx->newObject('modChunk');
+$chunks[$i]->fromArray(array(
+    'id'          => $i,
+    'name'        => 'sample.GoodNewsReRegistrationEmailTpl',
+    'description' => 'The HTML content of the GoodNews registration/subscription renewal email body. Duplicate this to override it.',
+    'snippet'     => file_get_contents($sources['chunks'].'sample.goodnewsreregistrationemail.chunk.tpl'),
+), '', true, true);
+
 
 return $chunks;

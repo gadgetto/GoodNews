@@ -22,7 +22,12 @@
  */
 
 /**
- * Processor class which creates subscriber.
+ * Processor class which creates a subscriber:
+ *  - a new MODX user is created
+ *  - a Subscription profile is created (SubscriberMeta)
+ *  - Group and/or Category selections are created!
+ *  - an activation mail is sent (if double opt-in is enabled)
+ *  - a subscription success mail is sent (if enabled)
  *
  * @package goodnews
  * @subpackage processors
@@ -96,21 +101,8 @@ class GoodNewsSubscriptionSubscriptionProcessor extends GoodNewsSubscriptionProc
         
         // Activate Subscriber without double opt-in
         } else {
-            $unsubscribeResourceId = $this->controller->getProperty('unsubscribeResourceId', '');
-            $profileResourceId     = $this->controller->getProperty('profileResourceId', '');
-            if (empty($unsubscribeResourceId)) {
-                $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] GoodNewsSubscription - snippet parameter unsubscribeResourceId not set.');
-                return false;
-            }
-            if (empty($profileResourceId)) {
-                $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] GoodNewsSubscription - snippet parameter profileResourceId not set.');
-                return false;
-            }
-    
             $this->onBeforeUserActivate();
-
             $this->user->set('active', 1);
-            
             if (!$this->user->save()) {
                 $this->modx->log(modX::LOG_LEVEL_ERROR,'[GoodNews] Could not save activated user: '.$this->user->get('username'));
                 $this->controller->redirectAfterFailure();
@@ -124,8 +116,8 @@ class GoodNewsSubscriptionSubscriptionProcessor extends GoodNewsSubscriptionProc
                 'user' => &$this->user,
             ));
 
-            // Send a subscription success email including the secure links to edit subscription profile (if property set)
-            $sendSubscriptionEmail = $this->controller->getProperty('sendSubscriptionEmail', false, 'isset');
+            // Send a subscription success email including the secure links to edit subscription profile
+            $sendSubscriptionEmail = $this->controller->getProperty('sendSubscriptionEmail', true, 'isset');
             if ($sendSubscriptionEmail) {
                 $subscriberProperties = array_merge(
                     $this->user->toArray(),
@@ -195,7 +187,7 @@ class GoodNewsSubscriptionSubscriptionProcessor extends GoodNewsSubscriptionProc
         if ($useExtended) { $this->setExtended(); }
         $this->user->addOne($this->profile, 'Profile');
 
-        // Add modx user groups, if set
+        // Add MODX user groups, if set
         $userGroups = !empty($usergroupsField) && array_key_exists($usergroupsField, $fields) ? $fields[$usergroupsField] : array();
         $this->setUserGroups($userGroups);
     }

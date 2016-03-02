@@ -44,21 +44,8 @@ class GoodNewsSubscriptionConfirmSubscriptionProcessor extends GoodNewsSubscript
         $this->profile        = $this->controller->profile;
         $this->subscribermeta = $this->controller->subscribermeta;
         
-        $unsubscribeResourceId = $this->controller->getProperty('unsubscribeResourceId', '');
-        $profileResourceId     = $this->controller->getProperty('profileResourceId', '');
-        if (empty($unsubscribeResourceId)) {
-            $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] GoodNewsConfirmSubscription - snippet parameter unsubscribeResourceId not set.');
-            return false;
-        }
-        if (empty($profileResourceId)) {
-            $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] GoodNewsConfirmSubscription - snippet parameter profileResourceId not set.');
-            return false;
-        }
-
         $this->onBeforeUserActivate();
-
         $this->user->set('active', 1);
-
         if (!$this->user->save()) {
             $this->modx->log(modX::LOG_LEVEL_ERROR,'[GoodNews] Could not save activated user: '.$this->user->get('username'));
             $this->controller->redirectAfterFailure();
