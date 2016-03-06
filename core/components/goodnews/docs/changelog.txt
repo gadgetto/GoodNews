@@ -1,5 +1,8 @@
 Changelog for GoodNews
 
+- corrected poor thinking in registration-confirm resource
+
+
 GoodNews 1.4.1-pl (2016-03-02)
 --------------------------------------------------
 - Added all missing custom validators from Login extra
