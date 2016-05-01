@@ -1,5 +1,6 @@
 Changelog for GoodNews
 
+- fixed Custom Resource Properties Resolver in GoodNews container installation (unsubscribeResource and profileResource properties)
 - fixed template assignement for sample resources on package upgrade
 - corrected poor thinking in registration-confirm resource
 
