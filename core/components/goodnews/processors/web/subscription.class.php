@@ -355,8 +355,8 @@ class GoodNewsSubscriptionSubscriptionProcessor extends GoodNewsSubscriptionProc
     public function sendActivationEmail() {
         $emailProperties = $this->gatherActivationEmailProperties();
 
-        // Send either to user's email or a specified activation email
-        $activationEmail = $this->controller->getProperty('activationEmail', $this->user->get('email'));
+        // Send either to user's email or a specified activation email address
+        $activationEmail = $this->controller->getProperty('activationEmail', $this->profile->get('email'));
         $subject = $this->controller->getProperty('activationEmailSubject', $this->modx->lexicon('goodnews.activation_email_subject'));
         
         return $this->goodnewssubscription->sendEmail($activationEmail, $subject, $emailProperties);
