@@ -253,7 +253,7 @@ class GoodNewsSubscriptionSubscriptionProcessor extends GoodNewsSubscriptionProc
     }
     
     /**
-     * If activated, set extra values in the form to profile extended field.
+     * If activated, use extra field in form to write extra values to profile extended field.
      *
      * @access public
      * @return void
@@ -264,18 +264,26 @@ class GoodNewsSubscriptionSubscriptionProcessor extends GoodNewsSubscriptionProc
         
         $excludeExtended = explode(',', $excludeExtended);
         
-        $userFields = $this->user->toArray();
-        $profileFields = $this->profile->toArray();
+        // gets a list of fields for modUser and modUserProfile by class name
+        $userFields    = $this->modx->getFields('modUser');
+        $profileFields = $this->modx->getFields('modUserProfile');
         
         $extended = array();
         $fields = $this->dictionary->toArray();
         
         foreach ($fields as $field => $value) {
-            if (!isset($profileFields[$field]) && !isset($userFields[$field]) && $field != $usergroupsField && $field != 'gongroups' && $field != 'goncategories' && !in_array($field, $excludeExtended)) {
+            if (
+                !isset($profileFields[$field]) 
+                && !isset($userFields[$field]) 
+                && $field != $usergroupsField 
+                && $field != 'gongroups' 
+                && $field != 'goncategories' 
+                && !in_array($field, $excludeExtended)
+            ) {
                 $extended[$field] = $value;
             }
         }
-        // set extended data
+        // set extended field
         $this->profile->set('extended', $extended);
     }
 
