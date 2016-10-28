@@ -264,6 +264,8 @@ class GoodNewsSubscriptionSubscriptionProcessor extends GoodNewsSubscriptionProc
         
         $excludeExtended = explode(',', $excludeExtended);
         
+        $alwaysExclude = array('gongroups','goncategories','password_confirm','passwordconfirm');
+        
         // gets a list of fields for modUser and modUserProfile by class name
         $userFields    = $this->modx->getFields('modUser');
         $profileFields = $this->modx->getFields('modUserProfile');
@@ -276,8 +278,7 @@ class GoodNewsSubscriptionSubscriptionProcessor extends GoodNewsSubscriptionProc
                 !isset($profileFields[$field]) 
                 && !isset($userFields[$field]) 
                 && $field != $usergroupsField 
-                && $field != 'gongroups' 
-                && $field != 'goncategories' 
+                && !in_array($field, $alwaysExclude) 
                 && !in_array($field, $excludeExtended)
             ) {
                 $extended[$field] = $value;
