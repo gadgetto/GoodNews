@@ -102,15 +102,16 @@ class GoodNewsSubscriptionSubscriptionProcessor extends GoodNewsSubscriptionProc
         // Activate Subscriber without double opt-in
         } else {
             $this->onBeforeUserActivate();
+            
             $this->user->set('active', 1);
+            $this->user->_fields['cachepwd'] = '';
+            $this->user->setDirty('cachepwd');
+            
             if (!$this->user->save()) {
                 $this->modx->log(modX::LOG_LEVEL_ERROR,'[GoodNews] Could not save activated user: '.$this->user->get('username'));
                 $this->controller->redirectAfterFailure();
             }
 
-            // Clear the cachepwd field
-            $this->goodnewssubscription->emptyCachePwd($this->user->get('id'));
-            
             // Invoke OnUserActivate event
             $this->modx->invokeEvent('OnUserActivate', array(
                 'user' => &$this->user,

@@ -1,5 +1,6 @@
 Changelog for GoodNews
 
+- fixed emptying cachepwd field when subscription is confirmed
 - fixed sending activation email if activationEmail property is not set
 - fixed a problem with detecting extended fields in form
 - fixed Custom Resource Properties Resolver in GoodNews container installation (unsubscribeResource and profileResource properties)
