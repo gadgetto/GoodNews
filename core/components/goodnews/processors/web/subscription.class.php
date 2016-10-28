@@ -217,7 +217,8 @@ class GoodNewsSubscriptionSubscriptionProcessor extends GoodNewsSubscriptionProc
      */
     public function saveGroupMember() {
         $userid = $this->user->get('id');
-        $selectedGroups = $this->dictionary->get('gongroups');
+        $gongroups = $this->dictionary->get('gongroups');
+        $selectedGroups = !empty($gongroups) ? $gongroups : array();
         
         $success = true;
         foreach ($selectedGroups as $grpid) {
@@ -239,7 +240,8 @@ class GoodNewsSubscriptionSubscriptionProcessor extends GoodNewsSubscriptionProc
      */
     public function saveCategoryMember() {
         $userid = $this->user->get('id');
-        $selectedCategories = $this->dictionary->get('goncategories');
+        $goncategories = $this->dictionary->get('goncategories');
+        $selectedCategories = !empty($goncategories) ? $goncategories : array();
 
         $success = true;
         foreach ($selectedCategories as $catid) {
