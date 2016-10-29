@@ -102,15 +102,16 @@ class GoodNewsSubscriptionSubscriptionProcessor extends GoodNewsSubscriptionProc
         // Activate Subscriber without double opt-in
         } else {
             $this->onBeforeUserActivate();
+            
             $this->user->set('active', 1);
+            $this->user->_fields['cachepwd'] = '';
+            $this->user->setDirty('cachepwd');
+            
             if (!$this->user->save()) {
                 $this->modx->log(modX::LOG_LEVEL_ERROR,'[GoodNews] Could not save activated user: '.$this->user->get('username'));
                 $this->controller->redirectAfterFailure();
             }
 
-            // Clear the cachepwd field
-            $this->goodnewssubscription->emptyCachePwd($this->user->get('id'));
-            
             // Invoke OnUserActivate event
             $this->modx->invokeEvent('OnUserActivate', array(
                 'user' => &$this->user,
@@ -201,7 +202,7 @@ class GoodNewsSubscriptionSubscriptionProcessor extends GoodNewsSubscriptionProc
     public function setSubscriberMeta() {
         $userid = $this->user->get('id');
         $this->subscribermeta->set('subscriber_id', $userid);
-        $this->subscribermeta->set('createdon', strftime('%Y-%m-%d %H:%M:%S'));
+        $this->subscribermeta->set('subscribedon', time());
         // create and set new sid
         $this->subscribermeta->set('sid', md5(time().$userid));
         $this->subscribermeta->set('testdummy', 0);
@@ -216,7 +217,8 @@ class GoodNewsSubscriptionSubscriptionProcessor extends GoodNewsSubscriptionProc
      */
     public function saveGroupMember() {
         $userid = $this->user->get('id');
-        $selectedGroups = $this->dictionary->get('gongroups');
+        $gongroups = $this->dictionary->get('gongroups');
+        $selectedGroups = !empty($gongroups) ? $gongroups : array();
         
         $success = true;
         foreach ($selectedGroups as $grpid) {
@@ -238,7 +240,8 @@ class GoodNewsSubscriptionSubscriptionProcessor extends GoodNewsSubscriptionProc
      */
     public function saveCategoryMember() {
         $userid = $this->user->get('id');
-        $selectedCategories = $this->dictionary->get('goncategories');
+        $goncategories = $this->dictionary->get('goncategories');
+        $selectedCategories = !empty($goncategories) ? $goncategories : array();
 
         $success = true;
         foreach ($selectedCategories as $catid) {
@@ -253,7 +256,7 @@ class GoodNewsSubscriptionSubscriptionProcessor extends GoodNewsSubscriptionProc
     }
     
     /**
-     * If activated, set extra values in the form to profile extended field.
+     * If activated, use extra field in form to write extra values to profile extended field.
      *
      * @access public
      * @return void
@@ -264,18 +267,27 @@ class GoodNewsSubscriptionSubscriptionProcessor extends GoodNewsSubscriptionProc
         
         $excludeExtended = explode(',', $excludeExtended);
         
-        $userFields = $this->user->toArray();
-        $profileFields = $this->profile->toArray();
+        $alwaysExclude = array('gongroups','goncategories','password_confirm','passwordconfirm');
+        
+        // gets a list of fields for modUser and modUserProfile by class name
+        $userFields    = $this->modx->getFields('modUser');
+        $profileFields = $this->modx->getFields('modUserProfile');
         
         $extended = array();
         $fields = $this->dictionary->toArray();
         
         foreach ($fields as $field => $value) {
-            if (!isset($profileFields[$field]) && !isset($userFields[$field]) && $field != $usergroupsField && $field != 'gongroups' && $field != 'goncategories' && !in_array($field, $excludeExtended)) {
+            if (
+                !isset($profileFields[$field]) 
+                && !isset($userFields[$field]) 
+                && $field != $usergroupsField 
+                && !in_array($field, $alwaysExclude) 
+                && !in_array($field, $excludeExtended)
+            ) {
                 $extended[$field] = $value;
             }
         }
-        // set extended data
+        // set extended field
         $this->profile->set('extended', $extended);
     }
 
@@ -346,8 +358,8 @@ class GoodNewsSubscriptionSubscriptionProcessor extends GoodNewsSubscriptionProc
     public function sendActivationEmail() {
         $emailProperties = $this->gatherActivationEmailProperties();
 
-        // Send either to user's email or a specified activation email
-        $activationEmail = $this->controller->getProperty('activationEmail', $this->user->get('email'));
+        // Send either to user's email or a specified activation email address
+        $activationEmail = $this->controller->getProperty('activationEmail', $this->profile->get('email'));
         $subject = $this->controller->getProperty('activationEmailSubject', $this->modx->lexicon('goodnews.activation_email_subject'));
         
         return $this->goodnewssubscription->sendEmail($activationEmail, $subject, $emailProperties);

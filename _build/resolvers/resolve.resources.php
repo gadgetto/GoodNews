@@ -36,6 +36,7 @@ if ($object->xpdo) {
     
     switch ($options[xPDOTransport::PACKAGE_ACTION]) {
         case xPDOTransport::ACTION_INSTALL:
+        case xPDOTransport::ACTION_UPGRADE:
  
             $i = 0;
             $resourcesAttributes[++$i] = array(
@@ -146,7 +147,6 @@ if ($object->xpdo) {
             }
             break;
  
-        case xPDOTransport::ACTION_UPGRADE:
         case xPDOTransport::ACTION_UNINSTALL:
             break;
     }

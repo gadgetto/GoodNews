@@ -104,7 +104,7 @@ class GoodNewsSubscriptionModxUserSubscriptionProcessor extends GoodNewsSubscrip
     public function setSubscriberMeta() {
         $userid = $this->user->get('id');
         $this->subscribermeta->set('subscriber_id', $userid);
-        $this->subscribermeta->set('createdon', strftime('%Y-%m-%d %H:%M:%S'));
+        $this->subscribermeta->set('subscribedon', time());
         // create and set new sid
         $this->subscribermeta->set('sid', md5(time().$userid));
         $this->subscribermeta->set('testdummy', 0);

@@ -11,7 +11,7 @@ $xpdo_meta_map['GoodNewsSubscriberMeta']= array (
   array (
     'subscriber_id' => NULL,
     'sid' => '',
-    'createdon' => NULL,
+    'subscribedon' => 0,
     'testdummy' => 0,
     'ip' => '0',
     'soft_bounces' => '',
@@ -36,11 +36,13 @@ $xpdo_meta_map['GoodNewsSubscriberMeta']= array (
       'null' => false,
       'default' => '',
     ),
-    'createdon' => 
+    'subscribedon' => 
     array (
-      'dbtype' => 'datetime',
-      'phptype' => 'datetime',
-      'null' => true,
+      'dbtype' => 'int',
+      'precision' => '20',
+      'phptype' => 'timestamp',
+      'null' => false,
+      'default' => 0,
     ),
     'testdummy' => 
     array (

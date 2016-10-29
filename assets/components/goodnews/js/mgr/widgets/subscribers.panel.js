@@ -70,7 +70,7 @@ GoodNews.grid.Subscribers = function(config){
             ,'email'
             ,'testdummy'
             ,'active'
-            ,'createdon_formatted'
+            ,'subscribedon_formatted'
             ,'ip'
             ,'soft_bounces'
             ,'hard_bounces'
@@ -129,8 +129,8 @@ GoodNews.grid.Subscribers = function(config){
             ,editor: { xtype: 'combo-boolean', renderer: 'boolean' }
             ,width: 60
         },{
-            header: _('goodnews.subscriber_created_on')
-            ,dataIndex: 'createdon_formatted'
+            header: _('goodnews.subscriber_subscribed_on')
+            ,dataIndex: 'subscribedon_formatted'
             ,sortable: true
             ,width: 80
         },{

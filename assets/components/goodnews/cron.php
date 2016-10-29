@@ -175,8 +175,7 @@ function cleanUpSubscriptions(&$modx, $debug_cs = false) {
     if (!$autoCleanUpSubscriptions) { return false; }
     
     $autoCleanUpSubscriptionsTtl = $modx->getOption('goodnews.auto_cleanup_subscriptions_ttl', null, 360);
-    // convert UNIX timestamp value to ISO date (as "SubscriberMeta.createdon" is a date field)
-    $expDate = date('Y-m-d H:i:s', time() - ($autoCleanUpSubscriptionsTtl * 60));
+    $expDate = time() - ($autoCleanUpSubscriptionsTtl * 60);
 
     $c = $modx->newQuery('modUser');
     $c->leftJoin('GoodNewsSubscriberMeta', 'SubscriberMeta', 'modUser.id = SubscriberMeta.subscriber_id');
@@ -186,13 +185,13 @@ function cleanUpSubscriptions(&$modx, $debug_cs = false) {
     // - have a cachepwd (this means it's an unactivated account)
     // - not be in a MODX group
     // - must not be sudo
-    // - have SubscriberMeta.createdon date < expiration date (GoodNews setting)
+    // - have SubscriberMeta.subscribedon date < expiration date (GoodNews setting)
     $c->where(array(
         'active' => false,
         'cachepwd:!=' => '', 
         'primary_group' => 0,
         'sudo' => 0,
-        'SubscriberMeta.createdon:<' => $expDate,
+        'SubscriberMeta.subscribedon:<' => $expDate,
     ));
     
     $users = $modx->getIterator('modUser', $c);

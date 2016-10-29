@@ -396,8 +396,8 @@ class GoodNewsSubscriptionSubscriptionController extends GoodNewsSubscriptionCon
      */
     public function removeExpired($search, $searchMode = self::SEARCH_BY_EMAIL) {
         $activationttl = $this->getProperty('activationttl', 180);
-        // convert UNIX timestamp value to ISO date (as "SubscriberMeta.createdon" is a date field)
-        $expDate = date('Y-m-d H:i:s', time() - ($activationttl * 60));
+        // Calculate the expiration date in seconds
+        $expDate = time() - ($activationttl * 60);
 
         $c = $this->modx->newQuery('modUser');
         $c->leftJoin('modUserProfile', 'Profile');
@@ -406,21 +406,21 @@ class GoodNewsSubscriptionSubscriptionController extends GoodNewsSubscriptionCon
         switch ($searchMode) {
             default:
             case self::SEARCH_BY_EMAIL:
-                $c->where(array('modUser.username' => $search));
+                $c->where(array('Profile.email' => $search));
                 break;
             case self::SEARCH_BY_USERNAME:
-                $c->where(array('Profile.email' => $search));
+                $c->where(array('modUser.username' => $search));
                 break;
         }
 
         // in addition modUser must:
         // - be inactive
         // - have a cachepwd (this means it's an unactivated account)
-        // - have SubscriberMeta.createdon date < expiration date (GoodNews setting)
+        // - have SubscriberMeta.subscribedon date < expiration date (GoodNews setting)
         $c->where(array(
             'active' => false,
             'cachepwd:!=' => '', 
-            'SubscriberMeta.createdon:<' => $expDate,
+            'SubscriberMeta.subscribedon:<' => $expDate,
         ));
         
         $users = $this->modx->getIterator('modUser', $c);

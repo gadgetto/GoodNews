@@ -48,33 +48,12 @@ $manager = $modx->getManager();
 
 /***** Start test-code *****/
 
-$email = '30605.z.valshina@ya.ru';
-$activationttl = 180;
+$tblSubscriberMeta = 'modx_goodnews_subscriber_meta';
 
-$expDate = time() - ($activationttl * 60);
-$modx->log(modX::LOG_LEVEL_INFO, '$expDate: '.$expDate);
+$sql = "UPDATE {$tblSubscriberMeta} SET subscribedon = UNIX_TIMESTAMP(createdon)";
 
-$c = $modx->newQuery('modUser');
-$c->leftJoin('modUserProfile', 'Profile');
-$c->leftJoin('GoodNewsSubscriberMeta', 'SubscriberMeta', 'modUser.id = SubscriberMeta.subscriber_id');
-
-// modUser must:
-// - be inactive
-// - have a cachepwd (this means it's an unactivated account)
-// - have SubscriberMeta.subscribedon date < expiration date (GoodNews setting)
-$c->where(array(
-    'Profile.email' => $email,
-    'active' => false,
-    'cachepwd:!=' => '', 
-    'SubscriberMeta.subscribedon:<' => $expDate,
-));
-
-$users = $modx->getIterator('modUser', $c);
-foreach ($users as $idx => $user) {
-    $modx->log(modX::LOG_LEVEL_INFO, 'Found expired user: '.$user->get('id'));
-    //$user->remove();
-}
-
+$updResult = $modx->exec($sql);
+$modx->log(modX::LOG_LEVEL_INFO, '$updResult: '.$updResult);
 
 /***** End test-code *****/
 

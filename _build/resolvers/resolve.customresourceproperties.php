@@ -59,7 +59,7 @@ if ($object->xpdo) {
             }
 
             // Set default resource for 1-click unsubscription
-            $unsubscribeResource = $modx->getObject('modResource', array('pagetitle' => 'Unsubscribe'));
+            $unsubscribeResource = $modx->getObject('modResource', array('pagetitle' => 'GoodNews Unsubscribe'));
             if ($unsubscribeResource) {
                 $properties['unsubscribeResource'] = $unsubscribeResource->get('id');
             } else {
@@ -67,7 +67,7 @@ if ($object->xpdo) {
             }
             
             // Set default resource for updating subscription profile
-            $profileResource = $modx->getObject('modResource', array('pagetitle' => 'Subscription Update'));
+            $profileResource = $modx->getObject('modResource', array('pagetitle' => 'GoodNews Subscription Update'));
             if ($profileResource) {
                 $properties['profileResource'] = $profileResource->get('id');
             } else {
