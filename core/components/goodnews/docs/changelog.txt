@@ -1,5 +1,7 @@
 Changelog for GoodNews
 
+GoodNews 1.4.2-pl (2016-10-29)
+--------------------------------------------------
 - fixed subscriber "Created on" problem (conflicting field names since MODX 1.5.x users have an explicit createdon field)
 - fixed emptying cachepwd field when subscription is confirmed
 - fixed sending activation email if activationEmail property is not set
