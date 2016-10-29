@@ -166,11 +166,9 @@ class GoodNewsMailing {
      * @return array $properties
      */
     private function _cleanupKeys(array $properties = array()) {
-        $properties['subscribedon'] = $properties['createdon'];  // @todo: change DB field name
         unset(
             $properties['id'],          // multiple occurrence; not needed
             $properties['internalKey'], // not needed
-            $properties['createdon'],   // conflicting with createdon field of resource
             $properties['sessionid'],   // security!
             $properties['extended']     // not needed as its already flattened
         );    

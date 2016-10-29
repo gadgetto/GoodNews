@@ -26,6 +26,33 @@
  */
 
 /**
+ * Checks if a field in a specified database table exist
+ * 
+ * @param mixed &$modx A reference to the MODX object
+ * @param string $xpdoTableClass xPDO schema class name for the database table
+ * @param string $field Name of the field to check
+ * @return boolean
+ */
+if (!function_exists('existsField')) {
+    function existsField(&$modx, $xpdoTableClass, $field) {
+
+        $existsField = true;
+        
+        $table = $modx->getTableName($xpdoTableClass);
+        $sql = "SHOW COLUMNS FROM {$table} LIKE '".$field."'";
+        $stmt = $modx->prepare($sql);
+        $stmt->execute();
+        $count = $stmt->rowCount();
+        $stmt->closeCursor();
+        
+        if ($count < 1) {
+            $existsField = false;
+        }
+        return $existsField;
+    }
+}
+
+/**
  * Checks if a field in a specified database table exist and creates it if not.
  * (this prevents the annoying erro messages in MODx install log)
  * 
@@ -39,20 +66,14 @@
 if (!function_exists('checkAddField')) {
     function checkAddField(&$modx, &$manager, $xpdoTableClass, $field, $after = '') {
 
-        $table = $modx->getTableName($xpdoTableClass);
-        $sql = "SHOW COLUMNS FROM {$table} LIKE '".$field."'";
-        $stmt = $modx->prepare($sql);
-        $stmt->execute();
-        $count = $stmt->rowCount();
-        $stmt->closeCursor();
-        
-        if ($count < 1) {
-            $options = array();
-            if (!empty($after)) $options['after'] = $after;
-            $manager->addField($xpdoTableClass, $field, $options);
-        }
+        if (existsField($modx, $xpdoTableClass, $field)) { return; }
+
+        $options = array();
+        if (!empty($after)) $options['after'] = $after;
+        $manager->addField($xpdoTableClass, $field, $options);
     }
 }
+
 
 if ($object->xpdo) {
     $modx = &$object->xpdo;
@@ -88,6 +109,26 @@ if ($object->xpdo) {
             
             // 1.3.9-pl+
             checkAddField($modx, $manager, 'GoodNewsGroup', 'public', 'description');
+            
+            // 1.4.2-pl+
+            // We need to change the field name of GoodNewsSubscriberMeta.createdon to GoodNewsSubscriberMeta.subscribedon
+            // and change the field type from date to int (phptype="timestamp")
+            
+            // First add the new field
+            checkAddField($modx, $manager, 'GoodNewsSubscriberMeta', 'subscribedon', 'sid');
+            
+            // Now convert all ISO Dates from old createdon field to unix timestamp and move to new subscribedon field
+            if (existsField($modx, 'GoodNewsSubscriberMeta', 'createdon')) {
+                
+                $tblSubscriberMeta = $modx->getTableName('GoodNewsSubscriberMeta');
+                $sql = "UPDATE {$tblSubscriberMeta} SET subscribedon = UNIX_TIMESTAMP(createdon)";
+        
+                $updResult = $modx->exec($sql); // returns count of affected rows
+                if ($updResult) {
+                    // If conversion was successfull, remove old createdon field
+                    $manager->removeField('GoodNewsSubscriberMeta', 'createdon');
+                }
+            }
             
             // Set bakck log-level to previous level
             $modx->setLogLevel($oldLogLevel);

@@ -263,8 +263,7 @@ class GoodNewsImportSubscribers {
                 $subscriberMeta->set('subscriber_id', $id);
                 $sid = md5(time().$id);
                 $subscriberMeta->set('sid', $sid);
-                $createdon = strftime('%Y-%m-%d %H:%M:%S');
-                $subscriberMeta->set('createdon', $createdon);
+                $subscriberMeta->set('subscribedon', time());
                 $subscriberMeta->set('ip', 'imported'); // Set IP field to string 'imported' for later reference
                 
         		if (!$subscriberMeta->save()) {
@@ -354,8 +353,7 @@ class GoodNewsImportSubscribers {
             $subscriberMeta->set('subscriber_id', $id);
             $sid = md5(time().$id);
             $subscriberMeta->set('sid', $sid);
-            $createdon = strftime('%Y-%m-%d %H:%M:%S');
-            $subscriberMeta->set('createdon', $createdon);
+            $subscriberMeta->set('subscribedon', time());
             $subscriberMeta->set('ip', 'imported'); // Set IP field to string 'imported' for later reference
             
     		if ($subscriberMeta->save()) {

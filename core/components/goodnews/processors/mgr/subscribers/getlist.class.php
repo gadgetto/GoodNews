@@ -40,8 +40,8 @@ class SubscribersGetListProcessor extends modObjectGetListProcessor {
             'activefilter' => '',
         ));
 
-        if ($this->getProperty('sort') == 'createdon_formatted') {
-            $this->setProperty('sort', 'SubscriberMeta.createdon');
+        if ($this->getProperty('sort') == 'subscribedon_formatted') {
+            $this->setProperty('sort', 'SubscriberMeta.subscribedon');
         }
   
         return $initialized;
@@ -103,7 +103,7 @@ class SubscribersGetListProcessor extends modObjectGetListProcessor {
     public function prepareQueryAfterCount(xPDOQuery $c) {
         $c->select($this->modx->getSelectColumns('modUser', 'modUser'));
         $c->select($this->modx->getSelectColumns('modUserProfile', 'Profile', '', array('fullname', 'email')));
-        $c->select($this->modx->getSelectColumns('GoodNewsSubscriberMeta', 'SubscriberMeta', '', array('testdummy', 'createdon', 'ip', 'soft_bounces', 'hard_bounces')));
+        $c->select($this->modx->getSelectColumns('GoodNewsSubscriberMeta', 'SubscriberMeta', '', array('testdummy', 'subscribedon', 'ip', 'soft_bounces', 'hard_bounces')));
         return $c;
     }
 
@@ -136,13 +136,11 @@ class SubscribersGetListProcessor extends modObjectGetListProcessor {
             $userArray['testdummy'] = '-';
         }
         
-        if ($userArray['createdon'] == null || $userArray['createdon'] == '') {
-            $userArray['createdon_formatted'] = '-';
+        if ($userArray['subscribedon'] == null || $userArray['subscribedon'] == '') {
+            $userArray['subscribedon_formatted'] = '-';
         } else {
-            // @todo: change date field in goodnews_subscriber_meta to timestamp field
-            // currently we get a iso date-time so need to convert to timestamp first
-            $createdonTimeStamp = strtotime($userArray['createdon']);
-            $userArray['createdon_formatted'] = date($dateTimeFormat, $createdonTimeStamp);
+            // Format timestamp into manager date/time format
+            $userArray['subscribedon_formatted'] = date($dateTimeFormat, $userArray['subscribedon']);
         }
         
         if ($userArray['ip'] == null || $userArray['ip'] == '0') {

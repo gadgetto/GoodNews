@@ -126,8 +126,8 @@ class SubscribersUpdateProcessor extends modProcessor {
         if (!is_object($meta)) {
             $meta = $this->modx->newObject('GoodNewsSubscriberMeta');
             $meta->set('subscriber_id', $this->userid);
-            // Set member creation date (this is not the creation date of the MODx user!)
-            $meta->set('createdon', strftime('%Y-%m-%d %H:%M:%S'));
+            // Set member subscription date (this is not the creation date of the MODx user!)
+            $meta->set('subscribedon', time());
             $meta->set('sid', md5(time().$this->userid));
             $meta->set('ip', 'manually');  // Set IP field to string 'manually' for later reference
         }

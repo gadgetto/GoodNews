@@ -55,7 +55,7 @@
     <object class="GoodNewsSubscriberMeta" table="goodnews_subscriber_meta" extends="xPDOSimpleObject">
         <field key="subscriber_id" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="false" index="unique" />
         <field key="sid" dbtype="varchar" precision="255" phptype="string" null="false" default="" />
-        <field key="createdon" dbtype="datetime" phptype="datetime" null="true" />
+        <field key="subscribedon" dbtype="int" precision="20" phptype="timestamp" null="false" default="0" />
         <field key="testdummy" dbtype="int" precision="1" attributes="unsigned" phptype="boolean" null="false" default="0" />
         <field key="ip" dbtype="varchar" precision="50" phptype="string" null="false" default="0" />
         <field key="soft_bounces" dbtype="text" phptype="string" null="true" default="" />
