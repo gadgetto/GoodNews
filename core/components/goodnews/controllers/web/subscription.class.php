@@ -217,7 +217,13 @@ class GoodNewsSubscriptionSubscriptionController extends GoodNewsSubscriptionCon
         $this->generateGrpCatFields($selectedGroups, $selectedCategories);
 
         // Preserve field values if form loads again (no redirect in subscription processor!)
-        $this->modx->setPlaceholders($this->dictionary->toArray(), $placeholderPrefix);
+        $placeholders = $this->dictionary->toArray();
+        $this->modx->setPlaceholders($placeholders, $placeholderPrefix);
+        foreach ($placeholders as $k => $v) {
+            if (is_array($v)) {
+                $this->modx->setPlaceholder($placeholderPrefix.$k, json_encode($v));
+            }
+        }
         return '';
     }
 

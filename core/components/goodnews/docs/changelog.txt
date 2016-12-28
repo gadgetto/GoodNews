@@ -1,5 +1,8 @@
 Changelog for GoodNews
 
+- fixed issues with array fields in GoodNewsSubscription snippet (fix by @Jako taken from Register snippet/Login package)
+
+
 GoodNews 1.4.2-pl (2016-10-29)
 --------------------------------------------------
 - fixed subscriber "Created on" problem (conflicting field names since MODX 1.5.x users have an explicit createdon field)
