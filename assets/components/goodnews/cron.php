@@ -44,8 +44,9 @@ $modx->initialize('mgr');
 $modx->getService('error', 'error.modError', '', '');
 
 // If set - connector script may only be continued if the correct security key is provided by cron (@param sid)
+$sid = isset($_GET['sid']) ? $_GET['sid'] : '';
 $securityKey = $modx->getOption('goodnews.cron_security_key', null, '');
-if ($_GET['sid'] != $securityKey) {
+if ($sid != $securityKey) {
     exit('[GoodNews] cron.php - Missing or wrong authentification! Sorry Dude!');
 }
 
@@ -106,7 +107,7 @@ if (!$modx->goodnews->isMultiProcessing || $workerProcessLimit <= 1) {
     while ($actualProcessCount < $workerProcessLimit) {
             
         $actualProcessCount++;
-        $modx->goodnewsprocesshandler->setCommand('php '.rtrim(MODX_BASE_PATH, '/').$assetsUrl.'cron.worker.php sid='.$_GET['sid']);
+        $modx->goodnewsprocesshandler->setCommand('php '.rtrim(MODX_BASE_PATH, '/').$assetsUrl.'cron.worker.php sid='.$sid);
         if (!$modx->goodnewsprocesshandler->start()) {
             if ($debug) { $modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] cron.php - No worker started.'); }
             break;
@@ -136,7 +137,6 @@ cleanUpSubscriptions($modx, $debug);
 function bounceHandling(&$modx, $debug_bmh = false) {
  
     $containerIDs = $modx->bmh->getGoodNewsBmhContainers();
-    //$modx->log(modX::LOG_LEVEL_INFO,'[GoodNews] cron.php - mailing containers: '.print_r($containerIDs, true));
     if (!is_array($containerIDs)) {
         return false;
     }
