@@ -364,13 +364,13 @@ class GoodNewsMailing {
         // No more recipients (or list is empty which shouldn't happen here)
         if (!$recipientId) {
             if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsMailing::getNextRecipient - No unsent recipients found.'); }
-            $this->goodnewsprocesshandler->lock($this->mailingid);
+            $this->goodnewsprocesshandler->unlock($this->mailingid);
             return false;
         }
         // Habemus recipient!
         if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsMailing::getNextRecipient - Unsent recipient [id: '.$recipientId.'] found.'); }
         
-        $this->goodnewsprocesshandler->lock($this->mailingid);
+        $this->goodnewsprocesshandler->unlock($this->mailingid);
         
         if ($this->debug) {
             $mtime = microtime();
@@ -405,7 +405,7 @@ class GoodNewsMailing {
 
         if (!$this->goodnewsrecipienthandler->cleanupRecipient($recipientId, $this->mailingid, $status)) {
             if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsMailing::updateRecipientStatus - Status for recipient [id: '.$recipientId.'] could not be updated to: '.$status); }
-            $this->goodnewsprocesshandler->lock($this->mailingid);
+            $this->goodnewsprocesshandler->unlock($this->mailingid);
             return false;
         }
 
@@ -424,7 +424,7 @@ class GoodNewsMailing {
         $meta->save();
         unset($meta);
         
-        $this->goodnewsprocesshandler->lock($this->mailingid);
+        $this->goodnewsprocesshandler->unlock($this->mailingid);
         
         if ($this->debug) {
             $mtime = microtime();
