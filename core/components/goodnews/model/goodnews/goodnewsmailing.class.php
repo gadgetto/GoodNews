@@ -207,6 +207,11 @@ class GoodNewsMailing {
         if ($this->testMailing) {
             $subject = $this->modx->getOption('goodnews.test_subject_prefix').$subject;
         }
+        // Convert subject to charset of mailing
+        $mail_charset           = $this->modx->getOption('mail_charset', null, 'UTF-8');
+        $modx_charset           = $this->modx->getOption('modx_charset', null, 'UTF-8');
+        $mail_charset_goodnews  = $this->mailing->getProperty('mailCharset', 'goodnews', $mail_charset);
+        $subject = iconv($modx_charset, $mail_charset_goodnews.'//TRANSLIT', $subject);
         return $subject;
     }
     
