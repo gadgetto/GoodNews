@@ -1,7 +1,7 @@
 Changelog for GoodNews
 
 - fixed a very stupid and old bug in lock-file handling
-- mail subjects are now converted to charset of mailing
+- mail subjects are now converted to charset of mailing (contributed by @mindeffects)
 - fixed a missing index log entry in cron.php
 - fixed a problem (since MODX 2.5.2) in goodnews.class.php constructor when executed in CLI mode
 - fixed issues with array fields in GoodNewsSubscription snippet (fix by @Jako taken from Register snippet/Login package)
