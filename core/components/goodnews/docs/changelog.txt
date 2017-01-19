@@ -1,5 +1,6 @@
 Changelog for GoodNews
 
+- removed superfluous default 'isset' parameter from getProperty calls (fix by @Jako taken from Register snippet/Login package)
 - fixed a very stupid and old bug in lock-file handling
 - mail subjects are now converted to charset of mailing (contributed by @mindeffects)
 - fixed a missing index log entry in cron.php
