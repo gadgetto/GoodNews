@@ -154,6 +154,11 @@ class GoodNewsSubscriptionUpdateProfileController extends GoodNewsSubscriptionCo
             }
         }
         $this->modx->toPlaceholders($placeholders, $placeholderPrefix);
+        foreach ($placeholders as $k => $v) {
+            if (is_array($v)) {
+                $this->modx->toPlaceholder($k, json_encode($v), $placeholderPrefix);
+            }
+        }
     }
 
     /**
