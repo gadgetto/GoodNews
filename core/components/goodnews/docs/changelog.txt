@@ -1,5 +1,6 @@
 Changelog for GoodNews
 
+- changed row expander icons for newsletter and subscribers grid to make it clear that rows can be expanded
 - fixed issues with array fields in GoodNewsUpdateProfile snippet (fix by @Jako taken from Register snippet/Login package)
 - removed superfluous default 'isset' parameter from getProperty calls (fix by @Jako taken from Register snippet/Login package)
 - fixed a very stupid and old bug in lock-file handling
