@@ -49,6 +49,7 @@ $_lang['goodnews.start']                                            = 'Start';
 $_lang['goodnews.stop']                                             = 'Stopp';
 $_lang['goodnews.continue']                                         = 'Fortsetzen';
 $_lang['goodnews.test']                                             = 'Test';
+$_lang['goodnews.sendlog']                                          = 'Sendeprotokoll';
 $_lang['goodnews.id']                                               = 'ID';
 $_lang['goodnews.management']                                       = 'GoodNews - Gruppenmailer';
 $_lang['goodnews.button_settings']                                  = 'Einstellungen';
@@ -126,10 +127,21 @@ $_lang['goodnews.newsletter_cat_assign']                            = 'Mailing K
 $_lang['goodnews.newsletter_cat_assign_desc']                       = 'Entsprechend dieser Zuweisung erfolgt die Zusammenstellung der Empfänger.';
 $_lang['goodnews.newsletter_send_process']                          = 'Sendeprozess: ';
 $_lang['goodnews.newsletter_grid_autorefresh']                      = 'Auto-Refresh: ';
-$_lang['goodnews.newsletter_send_log_view']                         = 'Versand Protokoll öffnen';
-$_lang['goodnews.newsletter_send_log_window_title']                 = 'Versand Protokoll für Mailing ID: ';
-$_lang['goodnews.newsletter_send_log_close_button']                 = 'Schließen';
+$_lang['goodnews.newsletter_sendlog_view']                          = 'Sendeprotokoll öffnen';
+$_lang['goodnews.newsletter_sendlog_window_title']                  = 'Sendeprotokoll für Mailing: ';
+$_lang['goodnews.newsletter_sendlog_export_button']                 = 'Exportieren';
+$_lang['goodnews.newsletter_sendlog_close_button']                  = 'Schließen';
 $_lang['goodnews.newsletter_err_save_already_sending']              = 'Das Mailing kann nicht mehr geändert/bearbeitet werden nachdem der Mailversand gestartet wurde.';
+
+$_lang['goodnews.sendlog_subscriber_email']                         = 'Abonnent (Email)';
+$_lang['goodnews.sendlog_subscriber_fullname']                      = 'Abonnent (Name)';
+$_lang['goodnews.sendlog_statustime']                               = 'Status-Zeit';
+$_lang['goodnews.sendlog_status']                                   = 'Status';
+$_lang['goodnews.sendlog_status_filter']                            = 'Filtern nach Status...';
+$_lang['goodnews.sendlog_status_sent']                              = 'Gesendet';
+$_lang['goodnews.sendlog_status_send_error']                        = 'Sendefehler';
+$_lang['goodnews.sendlog_status_unknown']                           = 'Unbekannt';
+$_lang['goodnews.sendlog_none']                                     = 'Keine Sendeprotokoll Einträge';
 
 $_lang['goodnews.groups']                                           = 'Gruppen';
 $_lang['goodnews.groups_management_desc']                           = 'Verwalten Sie Ihre Abonnenten-Gruppen hier. Wird eine GoodNews Gruppe mit einer MODX Benutzergruppe verkn&uuml;pft (<span class="gon-modx-group-assigned">blau markiert</span>), erm&ouml;glicht dies den Versand eines Mailings an s&auml;mtliche Mitglieder dieser MODX Benutzergruppe. Bei Verkn&uuml;pfung mit einer MODX Benutzergruppe, kann diese GoodNews Gruppe <strong>nicht</strong> f&uuml;r die Verwaltung von Abonnenten verwendet werden.';
