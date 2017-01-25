@@ -25,6 +25,7 @@ Ext.extend(GoodNewsResource.page.CreateGoodNewsResourceMailing,MODx.page.CreateR
                 ,id: 'modx-abtn-save'
                 ,text: _('save')
                 ,method: 'remote'
+                ,cls: 'primary-button'
                 ,checkDirty: true
                 ,keys: [{
                     key: MODx.config.keymap_save || 's'

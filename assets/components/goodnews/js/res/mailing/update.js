@@ -31,10 +31,11 @@ Ext.extend(GoodNewsResource.page.UpdateGoodNewsResourceMailing,MODx.page.UpdateR
             if (cfg.canSave == 1) {
                 btns.push({
                     process: MODx.config.connector_url ? 'resource/update' : 'update'
+                    ,id: 'modx-abtn-save'
                     ,text: _('save')
                     ,method: 'remote'
+                    ,cls: 'primary-button'
                     ,checkDirty: cfg.richtext || MODx.request.activeSave == 1 ? false : true
-                    ,id: 'modx-abtn-save'
                     ,keys: [{
                         key: MODx.config.keymap_save || 's'
                         ,ctrl: true
