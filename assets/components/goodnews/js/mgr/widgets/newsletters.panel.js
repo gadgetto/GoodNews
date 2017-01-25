@@ -817,9 +817,13 @@ GoodNews.window.NewsletterLogWindow = function(config) {
         ,id: 'goodnews-window-newsletter-log'
         ,maximizable: true
         ,modal: false
-        ,minWidth: 800
-        ,minHeight: 600
+        ,minWidth: 680
+        ,minHeight:600
         ,layout: 'fit'
+        ,style: {
+            width: '680px'
+            ,height: '600px'
+        }
         ,items : [{
             xtype: 'goodnews-grid-sendlog'
             ,params: {
@@ -840,6 +844,11 @@ GoodNews.window.NewsletterLogWindow = function(config) {
             }
             ,scope: this
         }]
+        ,listeners: {
+            'render': {fn: function(win) {
+                this.setSize(680,600);
+            },scope:this}
+        }
     });
     GoodNews.window.NewsletterLogWindow.superclass.constructor.call(this,config); 
 };
