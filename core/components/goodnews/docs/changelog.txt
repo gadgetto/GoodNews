@@ -1,5 +1,6 @@
 Changelog for GoodNews
 
+- fixed a problem where selecting Collection rows didn't fire a resource form change ("Save" button wasn't activated)
 - [#17] added newsletter send-log viewer and log-file export to CSV
 - changed row expander icons for newsletter and subscribers grid to make it clear that rows can be expanded
 - fixed issues with array fields in GoodNewsUpdateProfile snippet (fix by @Jako taken from Register snippet/Login package)
