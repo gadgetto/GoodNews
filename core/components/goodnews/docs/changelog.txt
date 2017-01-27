@@ -1,5 +1,6 @@
 Changelog for GoodNews
 
+- fixed "Created by" dropdown username display in mailing editor
 - "Save" button in mailing editor has now MODX primary button color
 - fixed a problem where selecting Collection rows didn't fire a resource form change ("Save" button wasn't activated)
 - [#17] added newsletter send-log viewer and log-file export to CSV

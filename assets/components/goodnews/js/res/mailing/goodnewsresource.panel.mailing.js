@@ -482,7 +482,12 @@ Ext.extend(GoodNewsResource.panel.Mailing,MODx.panel.Resource,{
                 ,dateWidth: 120
                 ,timeWidth: 120
                 ,value: config.record.pub_date
-            },{
+            }
+            // workaround for MODX bug in:
+            // https://github.com/modxcms/revolution/blob/2.x/core/model/modx/processors/security/user/getlist.class.php#L35
+            // Issue: https://github.com/modxcms/revolution/issues/13267
+            // We cannot use modx-combo-user but the following modx-combo instead!
+            /*,{
                 xtype: MODx.config.publish_document ? 'modx-combo-user' : 'hidden'
                 ,fieldLabel: _('resource_createdby')
                 ,description: '<b>[[*createdby]]</b><br />'+_('resource_createdby_help')
@@ -491,6 +496,27 @@ Ext.extend(GoodNewsResource.panel.Mailing,MODx.panel.Resource,{
                 ,id: 'modx-resource-createdby'
                 ,anchor: '100%'
                 ,value: config.record.createdby || MODx.user.id
+            }*/
+            ,{
+                xtype: MODx.config.publish_document ? 'modx-combo' : 'hidden'
+                ,fieldLabel: _('resource_createdby')
+                ,description: '<b>[[*createdby]]</b>'
+                ,id: 'modx-resource-createdby'
+                ,url: GoodNewsResource.connector_url
+                ,baseParams: {
+                    action: 'mgr/subscribers/user/getList'
+                }
+                ,fields: ['username','id']
+                ,name: 'created_by'
+                ,hiddenName: 'createdby'
+                ,displayField: 'username'
+                ,valueField: 'id'
+                ,value: config.record.createdby || MODx.user.id
+                ,pageSize: 20
+                ,anchor: '100%'
+                ,allowBlank: false
+                ,editable: true
+                ,typeAhead: false
             }]
         }]
     }
