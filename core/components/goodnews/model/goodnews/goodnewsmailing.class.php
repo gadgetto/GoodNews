@@ -831,7 +831,7 @@ class GoodNewsMailing {
         
     /**
      * Replace URLs in resource with full URLs
-     * (Method from Bob Ray's emailresource plugin with kind permission)
+     * (Based on method from Bob Ray's emailresource plugin with kind permission)
      *
      * @param string $base
      * @param string $html
@@ -843,20 +843,21 @@ class GoodNewsMailing {
             return false;
         }
 
-        // Extract domain name from $base
+        // Extract domain name and protocol from $base
         $splitBase = explode('//', $base);
+        $protocol = $splitBase[0];
         $domain = $splitBase[1];
         $domain = rtrim($domain,'/ ');
 
-        // remove space around = sign
+        // Remove space around = sign
         //$html = preg_replace('@(href|src)\s*=\s*@', '\1=', $html);
         $html = preg_replace('@(?<=href|src)\s*=\s*@', '=', $html);
 
         // Fix google link weirdness
         $html = str_ireplace('google.com/undefined', 'google.com', $html);
 
-        // add http to naked domain links so they'll be ignored later
-        $html = str_ireplace('a href="'.$domain, 'a href="http://'.$domain, $html);
+        // Add base protocol to naked domain links so they'll be ignored later
+        $html = str_ireplace('a href="'.$domain, 'a href="'.$protocol.'//'.$domain, $html);
 
         // Standardize orthography of domain name
         $html = str_ireplace($domain, $domain, $html);
