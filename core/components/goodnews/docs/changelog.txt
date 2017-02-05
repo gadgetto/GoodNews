@@ -1,5 +1,8 @@
 Changelog for GoodNews
 
+- fixed errors in package uninstall process
+- refined Package installer and uninstaller to output more usefull informations
+- added setup options to package installer to enable/disable installation of sample Resource documents
 - added system setting to enable/disable automatic URL conversion in email body
 - fixed "Created by" dropdown username display in mailing editor
 - "Save" button in mailing editor has now MODX primary button color

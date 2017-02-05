@@ -169,5 +169,4 @@ $chunks[$i]->fromArray(array(
     'snippet'     => file_get_contents($sources['chunks'].'sample.goodnewsreregistrationemail.chunk.tpl'),
 ), '', true, true);
 
-
 return $chunks;

@@ -30,6 +30,10 @@ if ($object->xpdo) {
     
     switch ($options[xPDOTransport::PACKAGE_ACTION]) {
         case xPDOTransport::ACTION_INSTALL:
+        case xPDOTransport::ACTION_UPGRADE:
+
+            $modx->log(modX::LOG_LEVEL_INFO, 'Database Tables Resolver - creating database tables...');
+            $modx->log(modX::LOG_LEVEL_WARN, 'Existing tables will be skipped!');
 
             // Add GoodNews package
             $modelPath = $modx->getOption('goodnews.core_path', null, $modx->getOption('core_path').'components/goodnews/').'model/';
@@ -47,18 +51,21 @@ if ($object->xpdo) {
                 'GoodNewsCategoryMember',
                 'GoodNewsProcess',
             );
-            
+    
             $count = 0;
             foreach ($objects as $obj) {
+                $tableName = $modx->getTableName($obj);
+                $modx->log(modX::LOG_LEVEL_INFO, '-> creating table: '.$tableName);
+                $prevLogLevel = $modx->setLogLevel(modX::LOG_LEVEL_ERROR); // Do not detailed report tables creation in install-log
                 $manager->createObjectContainer($obj);
+                $modx->setLogLevel($prevLogLevel);                         // Set back previous log-level
                 $count++;
             }
-            break;
-
-        case xPDOTransport::ACTION_UPGRADE:
+            
             break;
  
         case xPDOTransport::ACTION_UNINSTALL:
+            $modx->log(modX::LOG_LEVEL_WARN, 'Database Tables Resolver - database tables will not be uninstalled to prevent data loss. Please remove manually.');
             break;
     }
 }

@@ -31,6 +31,8 @@ if ($object->xpdo) {
     switch ($options[xPDOTransport::PACKAGE_ACTION]) {
         case xPDOTransport::ACTION_INSTALL:
 
+            $modx->log(modX::LOG_LEVEL_INFO, 'Tables Content Resolver - creating some database entries in custom tables...');
+
             // Add GoodNews package
             $modelPath = $modx->getOption('goodnews.core_path', null, $modx->getOption('core_path').'components/goodnews/').'model/';
             $modx->addPackage('goodnews', $modelPath);
@@ -56,7 +58,6 @@ if ($object->xpdo) {
                     // Check if group already exists
                     $group = $modx->getObject('GoodNewsGroup', array('name' => $attributes['name']));
                     if ($group) {
-                        $modx->log(modX::LOG_LEVEL_INFO, 'Tables Content Resolver - group '.$attributes['name'].' already exists.');
                         continue;
                     }
 

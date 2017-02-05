@@ -44,7 +44,7 @@ if ($object->xpdo) {
             
             // Set default mailing templates category
             $templatesCategory = $modx->getObject('modCategory', array('category' => 'Newsletter Templates'));
-            if ($templatesCategory) {
+            if (is_object($templatesCategory)) {
                 $properties['templatesCategory'] = $templatesCategory->get('id');
             } else {
                 $modx->log(modX::LOG_LEVEL_ERROR, 'Custom Resource Properties Resolver - could not set templatesCategory property for GoodNews container.');
@@ -52,7 +52,7 @@ if ($object->xpdo) {
             
             // Set default mailing template
             $mailingTemplate = $modx->getObject('modTemplate', array('templatename' => 'sample.GoodNewsNewsletterTemplate1'));
-            if ($mailingTemplate) {
+            if (is_object($mailingTemplate)) {
                 $properties['mailingTemplate'] = $mailingTemplate->get('id');
             } else {
                 $modx->log(modX::LOG_LEVEL_ERROR, 'Custom Resource Properties Resolver - could not set mailingTemplate property for GoodNews container.');
@@ -60,18 +60,18 @@ if ($object->xpdo) {
 
             // Set default resource for 1-click unsubscription
             $unsubscribeResource = $modx->getObject('modResource', array('pagetitle' => 'GoodNews Unsubscribe'));
-            if ($unsubscribeResource) {
+            if (is_object($unsubscribeResource)) {
                 $properties['unsubscribeResource'] = $unsubscribeResource->get('id');
             } else {
-                $modx->log(modX::LOG_LEVEL_ERROR, 'Custom Resource Properties Resolver - could not set unsubscribeResource property for GoodNews container.');
+                $modx->log(modX::LOG_LEVEL_WARN, 'Custom Resource Properties Resolver - unsubscribeResource property for GoodNews container not set as Resource does not exist. Please set manually.');
             }
             
             // Set default resource for updating subscription profile
             $profileResource = $modx->getObject('modResource', array('pagetitle' => 'GoodNews Subscription Update'));
-            if ($profileResource) {
+            if (is_object($profileResource)) {
                 $properties['profileResource'] = $profileResource->get('id');
             } else {
-                $modx->log(modX::LOG_LEVEL_ERROR, 'Custom Resource Properties Resolver - could not set profileResource property for GoodNews container.');
+                $modx->log(modX::LOG_LEVEL_WARN, 'Custom Resource Properties Resolver - profileResource property for GoodNews container not set as Resource does not exist. Please set manually.');
             }
             
             $properties['editorGroups'] = 'Administrator';
@@ -124,6 +124,11 @@ if ($object->xpdo) {
             break;
  
         case xPDOTransport::ACTION_UPGRADE:
+        
+            // @todo: add/change missing/new properties fields
+            
+            break;
+            
         case xPDOTransport::ACTION_UNINSTALL:
             break;
     }

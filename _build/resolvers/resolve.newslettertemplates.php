@@ -89,7 +89,7 @@ if ($object->xpdo) {
                     // Assign category
                     $template->set('category', getCategoryID($modx, $categoryName));
                     if (!$template->save()) {
-                        $modx->log(modX::LOG_LEVEL_ERROR, 'Newsletter Templates Resolver - could not add template '.$templateName.' to category '.$categoryName);
+                        $modx->log(modX::LOG_LEVEL_ERROR, 'Newsletter Templates Resolver - could not assign template '.$templateName.' to category '.$categoryName);
                     }
                 }
             }
