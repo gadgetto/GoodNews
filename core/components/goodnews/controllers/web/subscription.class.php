@@ -271,15 +271,18 @@ class GoodNewsSubscriptionSubscriptionController extends GoodNewsSubscriptionCon
         $usernameField = $this->getProperty('usernameField', 'username');
         $username = $this->dictionary->get($usernameField);
         
-        $success = false;
+        $success = true;
         
+        // Generate username
         if (empty($username) && !$this->validator->hasErrorsInField($usernameField)) {
             $this->generateUsername();
-            $success = true;
+        // Take username from form field
         } else {
             if ($this->usernameExists($username)) {
                 $this->validator->addError($usernameField, $this->modx->lexicon('goodnews.validator_username_taken'));
                 $success = false;
+            } else {
+                $this->dictionary->set('username', $username);
             }
         }
         return $success;
