@@ -15,8 +15,6 @@
     <meta name="format-detection" content="telephone=no" /> <!-- Disable auto phone number linking in iOS -->
     
     <title>[[++site_name]] | [[*pagetitle]]</title>
-    <!-- base tag is needed for previewing the newsletter from within the MODX back-end -->
-    <base href="[[++site_url]]" />
     <style type="text/css">
     
         /* Force Hotmail to display emails at full width */
