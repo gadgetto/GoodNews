@@ -96,6 +96,8 @@ $html .= '<a href="http://user@:80">http://user@:80</a>'.PHP_EOL;
 
 $html .= '<img src="folder1/img1.jpg">'.PHP_EOL;
 
+$html .= '<img src="http://www.domain.com/folder1/img1.jpg">'.PHP_EOL;
+
 $base = 'https://www.domain.com/';
 
 
