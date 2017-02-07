@@ -834,11 +834,12 @@ class GoodNewsMailing {
      * Replace URLs in HTML with full URLs
      * (works for "<a href" and "<img src" tags)
      *
+     * @access private
      * @param string $base The base URL (needs trailing /)
      * @param string $html The unparsed HTML
      * @return mixed The parsed HTML as string or false
      */
-    function fullURLs($base = null, $html = null) {
+    private function _fullURLs($base = null, $html = null) {
         if (empty($html) || empty($base)) { return false; }
         
         // Use the SmartDOMDocument extension
