@@ -864,7 +864,7 @@ class GoodNewsMailing {
             // Sample:  //www.domain.com/page.html 
             if (mb_substr($href, 0, 2) == '//') { continue; }
             
-            // Remove / from relative URLs
+            // Remove leading / from relative URLs
             $href = ltrim($href, '/');
             
             // De-construct the UR(L|I)
