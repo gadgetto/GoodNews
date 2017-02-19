@@ -1,5 +1,8 @@
 Changelog for GoodNews
 
+GoodNews 1.4.5-pl (2017-02-19)
+--------------------------------------------------
+
 - exclude blocked MODX users from recipients collection
 - fixed a problem in Subscription controller when &usernameField property is set
 - [#43] complete rewrite of automatic full URL conversion (now respects #anchor links external links and protocol-relative URLs)
