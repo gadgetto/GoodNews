@@ -217,7 +217,13 @@ class GoodNewsSubscriptionSubscriptionController extends GoodNewsSubscriptionCon
         $this->generateGrpCatFields($selectedGroups, $selectedCategories);
 
         // Preserve field values if form loads again (no redirect in subscription processor!)
-        $this->modx->setPlaceholders($this->dictionary->toArray(), $placeholderPrefix);
+        $placeholders = $this->dictionary->toArray();
+        $this->modx->setPlaceholders($placeholders, $placeholderPrefix);
+        foreach ($placeholders as $k => $v) {
+            if (is_array($v)) {
+                $this->modx->setPlaceholder($placeholderPrefix.$k, json_encode($v));
+            }
+        }
         return '';
     }
 
@@ -265,15 +271,18 @@ class GoodNewsSubscriptionSubscriptionController extends GoodNewsSubscriptionCon
         $usernameField = $this->getProperty('usernameField', 'username');
         $username = $this->dictionary->get($usernameField);
         
-        $success = false;
+        $success = true;
         
+        // Generate username
         if (empty($username) && !$this->validator->hasErrorsInField($usernameField)) {
             $this->generateUsername();
-            $success = true;
+        // Take username from form field
         } else {
             if ($this->usernameExists($username)) {
                 $this->validator->addError($usernameField, $this->modx->lexicon('goodnews.validator_username_taken'));
                 $success = false;
+            } else {
+                $this->dictionary->set('username', $username);
             }
         }
         return $success;

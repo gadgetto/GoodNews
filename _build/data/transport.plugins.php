@@ -36,19 +36,4 @@ $plugins[$i]->fromArray(array(
     'plugincode'  => getFileContent($sources['plugins'].'goodnews.plugin.php'),
 ), '', true, true);
 
-//$properties = include $sources['data'].'properties/properties.myplugin1.php';
-//$plugins[$i]->setProperties($properties);
-//unset($properties);
-
-/* add plugin events */
-$events = include $sources['events'].'events.goodnews.php';
-if (!is_array($events) && empty($events)) {
-    $modx->log(xPDO::LOG_LEVEL_ERROR, 'Could not find events for GoodNews plugin!');
-} else {
-    $plugins[$i]->addMany($events);
-    $modx->log(xPDO::LOG_LEVEL_INFO, 'Packaged in '.count($events).' events for GoodNews plugin.');
-}
-flush();
-unset($events);
-
 return $plugins;

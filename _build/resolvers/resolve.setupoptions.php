@@ -19,36 +19,41 @@
  */
 
 /**
- * Resolve setup options
+ * Resolve setup options (only for system settings)
  *
  * @package goodnews 
  * @subpackage build
  */
- 
+
+$settings = array(
+    //'setting1',
+    //'setting2',
+    //'setting3',
+);
+
 if ($object->xpdo) {
     $modx =& $object->xpdo;
     
     switch ($options[xPDOTransport::PACKAGE_ACTION]) {
         case xPDOTransport::ACTION_INSTALL:
         case xPDOTransport::ACTION_UPGRADE:
-        
-            $settings = array(
-                //'setting1',
-                //'setting2',
-                //'setting3',
-            );
-            
-            foreach ($settings as $key) {
-                if (isset($options[$key])) {
-                    $setting = $modx->getObject('modSystemSetting', array('key' => 'goodnews.'.$key));
-                    if ($setting != null) {
-                        $setting->set('value', $options[$key]);
-                        $setting->save();
-                    } else {
-                        $modx->log(xPDO::LOG_LEVEL_ERROR, $key.' setting could not be found');
+                    
+            // Process system setting based install options
+            // System settings must already exist (will be created by installer before)!
+            if (!empty($settings) && is_array($settings)) {
+                foreach ($settings as $key) {
+                    if (isset($options[$key])) {
+                        $setting = $modx->getObject('modSystemSetting', array('key' => 'goodnews.'.$key));
+                        if ($setting != null) {
+                            $setting->set('value', $options[$key]);
+                            $setting->save();
+                        } else {
+                            $modx->log(xPDO::LOG_LEVEL_ERROR, $key.' setting could not be found');
+                        }
                     }
                 }
             }
+            
             break;
             
         case xPDOTransport::ACTION_UNINSTALL:

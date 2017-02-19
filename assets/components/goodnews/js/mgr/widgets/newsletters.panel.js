@@ -42,6 +42,13 @@ var GON_NEWSLETTER_STATUS_IN_PROGRESS       = 4;
 var GON_NEWSLETTER_STATUS_SENT              = 5;
 var GON_NEWSLETTER_STATUS_SCHEDULED         = 6;
 
+// constants (equivalent to php constants in GoodNewsRecipientHandler)
+var GON_USER_NOT_YET_SENT = 0;
+var GON_USER_SENT         = 1;
+var GON_USER_SEND_ERROR   = 2;
+var GON_USER_RESERVED     = 4;
+
+
 /**
  * A taskrunner to automatically refresh grid each n seconds
  */
@@ -341,6 +348,9 @@ Ext.extend(GoodNews.grid.Newsletters,MODx.grid.Grid,{
                     },{
                         text: _('goodnews.newsletter_publish')
                         ,handler: this.publishNewsletter
+                    },'-',{
+                        text: _('goodnews.newsletter_sendlog_view')
+                        ,handler: this.viewLog
                     }];
                     break;
                 case GON_NEWSLETTER_STATUS_NOT_READY_TO_SEND:
@@ -359,6 +369,9 @@ Ext.extend(GoodNews.grid.Newsletters,MODx.grid.Grid,{
                     },{
                         text: _('goodnews.newsletter_unpublish')
                         ,handler: this.unpublishNewsletter
+                    },'-',{
+                        text: _('goodnews.newsletter_sendlog_view')
+                        ,handler: this.viewLog
                     }];
                     break;
                 case GON_NEWSLETTER_STATUS_NOT_YET_SENT:
@@ -380,6 +393,9 @@ Ext.extend(GoodNews.grid.Newsletters,MODx.grid.Grid,{
                     },{
                         text: _('goodnews.newsletter_unpublish')
                         ,handler: this.unpublishNewsletter
+                    },'-',{
+                        text: _('goodnews.newsletter_sendlog_view')
+                        ,handler: this.viewLog
                     }];
                     break;
                 case GON_NEWSLETTER_STATUS_STOPPED:
@@ -392,6 +408,9 @@ Ext.extend(GoodNews.grid.Newsletters,MODx.grid.Grid,{
                     },'-',{
                         text: _('goodnews.newsletter_remove')
                         ,handler: this.removeNewsletter
+                    },'-',{
+                        text: _('goodnews.newsletter_sendlog_view')
+                        ,handler: this.viewLog
                     }];
                     break;
                 case GON_NEWSLETTER_STATUS_IN_PROGRESS:
@@ -401,6 +420,9 @@ Ext.extend(GoodNews.grid.Newsletters,MODx.grid.Grid,{
                     },'-',{
                         text: _('goodnews.newsletter_view')
                         ,handler: this.previewNewsletter
+                    },'-',{
+                        text: _('goodnews.newsletter_sendlog_view')
+                        ,handler: this.viewLog
                     }];
                     break;
                 case GON_NEWSLETTER_STATUS_SENT:
@@ -413,6 +435,9 @@ Ext.extend(GoodNews.grid.Newsletters,MODx.grid.Grid,{
                     },{
                         text: _('goodnews.newsletter_unpublish')
                         ,handler: this.unpublishNewsletter
+                    },'-',{
+                        text: _('goodnews.newsletter_sendlog_view')
+                        ,handler: this.viewLog
                     }];
                     break;
                 case GON_NEWSLETTER_STATUS_SCHEDULED:
@@ -431,6 +456,9 @@ Ext.extend(GoodNews.grid.Newsletters,MODx.grid.Grid,{
                     },{
                         text: _('goodnews.newsletter_publish')
                         ,handler: this.publishNewsletter
+                    },'-',{
+                        text: _('goodnews.newsletter_sendlog_view')
+                        ,handler: this.viewLog
                     }];
                     break;
             }
@@ -473,6 +501,9 @@ Ext.extend(GoodNews.grid.Newsletters,MODx.grid.Grid,{
 					break;
 				case 'preview':
 					this.previewNewsletter();
+					break;
+				case 'log':
+					this.viewLog(t,e);
 					break;
 				default:
 					break;
@@ -711,21 +742,17 @@ Ext.extend(GoodNews.grid.Newsletters,MODx.grid.Grid,{
 	,_renderPageTitle:function(v,md,rec) {
 		return this.tplPageTitle.apply(rec.data);
 	}
-    /*
     ,viewLog: function(btn,e) {
         this.NewsletterLogWindow = MODx.load({
             xtype: 'goodnews-window-newsletter-log'
             ,params: {
                 mailingid: this.menu.record.id
+                ,mailingtitle: this.menu.record.pagetitle
             }
-            //,listeners: {
-            //    'success': {fn:this.refresh,scope:this}
-            //}
         });
         //this.SendNewsletterWindow.setValues(this.menu.record);
         this.NewsletterLogWindow.show(e.target);
     }
-    */
 });
 Ext.reg('goodnews-grid-newsletters',GoodNews.grid.Newsletters);
 
@@ -774,51 +801,193 @@ Ext.extend(GoodNews.window.Preview,MODx.Window);
 Ext.reg('goodnews-window-preview',GoodNews.window.Preview);
 
 
-/*
+/**
+ * Window to view the mailing send-log.
+ * 
+ * @class GoodNews.window.NewsletterLogWindow
+ * @extends MODx.Window
+ * @param {Object} config An object of options.
+ * @xtype goodnews-window-newsletter-log
+ */
 GoodNews.window.NewsletterLogWindow = function(config) {
     config = config || {};
-    //console.log(this);
-
-    var logsrc = GoodNews.config.assetsUrl+'log/nl'+config.params.mailingid+'.log'
     
     Ext.applyIf(config,{
-        title: _('goodnews.newsletter_send_log_window_title')+config.params.mailingid
+        title: _('goodnews.newsletter_sendlog_window_title')+config.params.mailingtitle
         ,id: 'goodnews-window-newsletter-log'
-        ,width: 640
-        ,height: 480
+        ,maximizable: true
         ,modal: false
+        ,minWidth: 680
+        ,minHeight:600
+        ,layout: 'fit'
+        ,style: {
+            width: '680px'
+            ,height: '600px'
+        }
         ,items : [{
-            xtype : "component"
-            ,id : 'newsletter-log-frame'
-            ,autoEl : {
-                tag : "iframe",
-                src : logsrc
+            xtype: 'goodnews-grid-sendlog'
+            ,params: {
+                mailingid: config.params.mailingid
             }
+            ,preventRender: true
         }]
         ,buttons: [{ 
-            text: _('goodnews.newsletter_send_log_close_button')
+            text: _('goodnews.newsletter_sendlog_export_button')
+            ,cls: 'primary-button'
             ,handler: function() {
-                tr2.stop(logrefresh);
-                console.log('logrefresh: STOP');
+                Ext.getCmp('goodnews-grid-sendlog').exportSendLog();
+            }
+        },{ 
+            text: _('goodnews.newsletter_sendlog_close_button')
+            ,handler: function() {
                 this.close();
             }
             ,scope: this
         }]
-    });
-    GoodNews.window.NewsletterLogWindow.superclass.constructor.call(this,config);
-    
-    var tr2 = new Ext.util.TaskRunner;
-    var logrefresh = {
-        run: function(){
-            Ext.getCmp('newsletter-log-frame').reload(); // bug!!!
-            //document.getElementById('newsletter-log-frame').contentWindow.location.reload();
+        ,listeners: {
+            'render': {fn: function(win) {
+                this.setSize(680,600);
+            },scope:this}
         }
-        ,interval: 1000 // = 1 second
-    }
-    tr2.start(logrefresh);
-    console.log('logrefresh: START');
- 
+    });
+    GoodNews.window.NewsletterLogWindow.superclass.constructor.call(this,config); 
 };
 Ext.extend(GoodNews.window.NewsletterLogWindow,Ext.Window);
 Ext.reg('goodnews-window-newsletter-log',GoodNews.window.NewsletterLogWindow);
-*/
+
+
+/**
+ * Grid which lists a mailing send-log.
+ * 
+ * @class GoodNews.grid.SendLog
+ * @extends MODx.grid.Grid
+ * @param {Object} config An object of options.
+ * @xtype goodnews-grid-send-log
+ */
+GoodNews.grid.SendLog = function(config) {
+    config = config || {};
+    
+    Ext.applyIf(config,{
+        id: 'goodnews-grid-sendlog'
+        ,url: GoodNews.config.connectorUrl
+        ,baseParams: {
+            action: 'mgr/mailing/sendlog/getList'
+            ,mailingid: config.params.mailingid
+        }
+        ,fields: [
+            'id'
+            ,'mailing_id'
+            ,'subscriber_id'
+            ,'subscriber_email'
+            ,'subscriber_fullname'
+            ,'statustime'
+            ,'status'
+        ]
+        ,emptyText: _('goodnews.sendlog_none')
+        ,paging: true
+        ,remoteSort: true
+        ,columns: [{
+            header: _('goodnews.id')
+            ,dataIndex: 'id'
+            ,sortable: true
+            ,hidden: true
+        },{
+            header: _('goodnews.sendlog_subscriber_email')
+            ,dataIndex: 'subscriber_email'
+            ,sortable: true
+        },{
+            header: _('goodnews.sendlog_subscriber_fullname')
+            ,dataIndex: 'subscriber_fullname'
+            ,sortable: true
+        },{
+            header: _('goodnews.sendlog_statustime')
+            ,dataIndex: 'statustime'
+            ,sortable: true
+        },{
+            header: _('goodnews.sendlog_status')
+            ,dataIndex: 'status'
+            ,sortable: true
+            ,width: 80
+        }]
+        ,tbar:['->',{
+            xtype: 'modx-combo'
+            ,id: 'goodnews-sendlog-status-filter'
+            ,emptyText: _('goodnews.sendlog_status_filter')
+            ,width: 200
+            ,listWidth: 200
+            ,displayField: 'statusname'
+            ,valueField: 'status'
+            ,mode: 'local'
+            ,store: new Ext.data.ArrayStore({
+                fields: ['status','statusname']
+                ,data: [
+                     [GON_USER_SENT,_('goodnews.sendlog_status_sent')]
+                    ,[GON_USER_SEND_ERROR,_('goodnews.sendlog_status_send_error')]
+                ]
+            })
+            ,listeners: {
+                'select': {fn:this.filterByStatus,scope:this}
+            }
+        },'-',{
+            xtype: 'textfield'
+            ,cls: 'x-form-filter'
+            ,id: 'goodnews-sendlog-search-filter'
+            ,emptyText: _('goodnews.input_search_filter')
+            ,listeners: {
+                'change': {fn: this.search,scope:this}
+                ,'render': {fn: function(cmp) {
+                    new Ext.KeyMap(cmp.getEl(), {
+                        key: Ext.EventObject.ENTER
+                        ,fn: function() {
+                            this.fireEvent('change',this);
+                            this.blur();
+                            return true;
+                        }
+                        ,scope: cmp
+                    });
+                },scope:this}
+            }
+        },{
+            xtype: 'button'
+            ,cls: 'x-form-filter-clear'
+            ,id: 'goodnews-sendlog-filter-clear'
+            ,text: _('goodnews.button_filter_clear')
+            ,listeners: {
+                'click': {fn: this.clearFilter, scope: this}
+            }
+        }]
+    });
+    GoodNews.grid.SendLog.superclass.constructor.call(this,config);
+};
+Ext.extend(GoodNews.grid.SendLog,MODx.grid.Grid,{
+    filterByStatus: function(combo) {
+        var s = this.getStore();
+        s.baseParams.statusfilter = combo.getValue();
+        this.getBottomToolbar().changePage(1);
+        this.refresh();
+    }
+    ,search: function(tf,nv,ov) {
+        var s = this.getStore();
+        s.baseParams.query = tf.getValue();
+        this.getBottomToolbar().changePage(1);
+        this.refresh();
+    }
+    ,clearFilter: function() {
+    	this.getStore().baseParams = {
+            action: 'mgr/mailing/sendlog/getList'
+            ,mailingid: this.config.params.mailingid
+    	};
+        Ext.getCmp('goodnews-sendlog-status-filter').reset();
+        Ext.getCmp('goodnews-sendlog-search-filter').reset();
+    	this.getBottomToolbar().changePage(1);
+        this.refresh();
+    }
+    ,exportSendLog: function() {
+        var s = this.getStore();
+        var action = 'mgr/mailing/sendlog/export';
+        var mailingid = s.baseParams.mailingid;
+        location.href = GoodNews.config.connectorUrl+'?action='+action+'&mailingid='+mailingid+'&HTTP_MODAUTH='+MODx.siteId;
+    }
+});
+Ext.reg('goodnews-grid-sendlog',GoodNews.grid.SendLog);
+

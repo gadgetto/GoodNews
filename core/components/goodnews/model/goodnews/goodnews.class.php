@@ -26,8 +26,8 @@
 
 class GoodNews {
 
-    const VERSION = '1.4.2';
-    const RELEASE = 'pl';
+    const VERSION = '1.4.5';
+    const RELEASE = 'beta7';
     
     const MIN_PHP_VERSION = '5.3.0';
 
@@ -109,6 +109,7 @@ class GoodNews {
 
             // Determine MODX Revo version and set legacy mode (for usage in ExtJS - deprecated connectors since 2.3)
             $version = $this->modx->getVersionData();
+
             $fullVersion = $version['full_version'];
             $this->legacyMode         = version_compare($fullVersion, '2.3.0-dev', '>=') ? false : true;
             $this->debug              = $this->modx->getOption('goodnews.debug', null, false) ? true : false;
@@ -118,40 +119,46 @@ class GoodNews {
             $this->actualPhpVersion   = phpversion();
             $this->requiredPhpVersion = self::MIN_PHP_VERSION;
             $this->phpVersionOK       = version_compare($this->actualPhpVersion, $this->requiredPhpVersion, '>=') ? true : false;
-            $this->isGoodNewsAdmin    = $this->_isGoodNewsAdmin();
-            $this->assignedContainers = $this->_assignedContainers();
             
-            if (!$this->assignedContainers) {
-                $this->setupError = true;
-            }
-            // If request has a container id - switch to this container
-            if (isset($_GET['id'])) {
-                $reqid = $_GET['id'];
-                if (!empty($reqid) && is_numeric($reqid)) {
-                    $this->setUserCurrentContainer($reqid);
+            $contextKey = false;
+            $mailingTemplate = false;
+
+            // Only executed if we have a logged in user within MODX manager!
+            if ($this->_loggedInMgrUser()) {
+                
+                $this->isGoodNewsAdmin    = $this->_isGoodNewsAdmin();
+                $this->assignedContainers = $this->_assignedContainers();
+                
+                if (!$this->assignedContainers) {
+                    $this->setupError = true;
                 }
-            }
-            
-            $this->currentContainer = $this->_getUserCurrentContainer();
-            // Check if current container is set
-            if (empty($this->currentContainer) || !$this->isGoodNewsContainer($this->currentContainer)) {
-                // If no container is preselected, set default container (=first container based on id)
-                $containers = explode(',', $this->assignedContainers);
-                $this->currentContainer = reset($containers);
-                $this->setUserCurrentContainer($this->currentContainer);
+                // If request has a container id - switch to this container
+                if (isset($_GET['id'])) {
+                    $reqid = $_GET['id'];
+                    if (!empty($reqid) && is_numeric($reqid)) {
+                        $this->setUserCurrentContainer($reqid);
+                    }
+                }            
+                $this->currentContainer = $this->_getUserCurrentContainer();
+                
+                // Check if current container is set
+                if (empty($this->currentContainer) || !$this->isGoodNewsContainer($this->currentContainer)) {
+                    // If no container is preselected, set default container (=first container based on id)
+                    $containers = explode(',', $this->assignedContainers);
+                    $this->currentContainer = reset($containers);
+                    $this->setUserCurrentContainer($this->currentContainer);
+                }
+                
+                // Get context key of actual GoodNews container
+                $resource = $modx->getObject('modResource', $this->currentContainer);
+                $contextKey = $resource->get('context_key');
+        
+                // Read template setting for child resources (mailings) of actual GoodNews container
+                $mailingTemplate = $resource->getProperty('mailingTemplate', 'goodnews');
             }
             
             $this->siteStatus        = $this->modx->getOption('site_status', null, false) ? true : false;
             $this->cronTriggerStatus = $this->modx->getOption('goodnews.worker_process_active', null, 1) ? true : false;
-            $contextKey = false;
-            $mailingTemplate = false;
-            
-            // Get context key of actual GoodNews container
-            $resource = $modx->getObject('modResource', $this->currentContainer);
-            $contextKey = $resource->get('context_key');
-    
-            // Read template setting for child resources (mailings) of actual GoodNews container
-            $mailingTemplate = $resource->getProperty('mailingTemplate', 'goodnews');
 
             $this->config = array_merge(array(
                 'setupError'         => $this->setupError,
@@ -178,8 +185,7 @@ class GoodNews {
                 'legacyMode'         => $this->legacyMode,
             ), $this->config);
 
-        }
-        
+        }        
         $this->modx->addPackage('goodnews', $this->config['modelPath']);
     }
 
@@ -192,7 +198,6 @@ class GoodNews {
      * @return boolean
      */    
     public function isGoodNewsContainer($id) {
-    
         $goncontainer = false;
         
         $c = $this->modx->newQuery('modResource');
@@ -259,7 +264,7 @@ class GoodNews {
     }
     
     /**
-     * Checks if the current logged in user has permissions to administrate GoodNews system
+     * Checks if the current logged in user has permissions to administrate GoodNews system.
      *
      * @access private
      * @return boolean
@@ -327,7 +332,7 @@ class GoodNews {
     }
 
     /**
-     * Check if current user is entitled to access a specific mailing container
+     * Check if current user is entitled to access a specific mailing container.
      *
      * @access public
      * @param $gonrc A GoodNews container object
@@ -362,6 +367,22 @@ class GoodNews {
      */
     public function hasAccess() {
         
+    }
+
+    /**
+     * Check if we have a logged in manager user.
+     *
+     * @access private
+     * @return mixed user ID || false
+     */
+    private function _loggedInMgrUser() {
+        $loggedInMgrUser = false;
+        
+        $user = &$this->modx->user;
+        if ($user->hasSessionContext('mgr')) {
+            $loggedInMgrUser = $user->get('id');
+        }
+        return $loggedInMgrUser;
     }
     
     /**

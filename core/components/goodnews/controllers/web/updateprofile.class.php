@@ -76,9 +76,9 @@ class GoodNewsSubscriptionUpdateProfileController extends GoodNewsSubscriptionCo
      */
     public function process() {
         $placeholderPrefix = $this->getProperty('placeholderPrefix', '');
-        $reloadOnSuccess   = $this->getProperty('reloadOnSuccess', true, 'isset');
+        $reloadOnSuccess   = $this->getProperty('reloadOnSuccess', true);
         $successKey        = $this->getProperty('successKey', 'updsuccess');
-        $groupsOnly        = $this->getProperty('groupsOnly', false, 'isset');
+        $groupsOnly        = $this->getProperty('groupsOnly', false);
         
         // Verifies a subscriber by its sid and loads user + profile object
         if (!$this->authenticateSubscriberBySid()) {
@@ -143,7 +143,7 @@ class GoodNewsSubscriptionUpdateProfileController extends GoodNewsSubscriptionCo
      */
     public function setFieldPlaceholders() {
         $placeholderPrefix = $this->getProperty('placeholderPrefix', '');
-        $useExtended       = $this->getProperty('useExtended', false, 'isset');
+        $useExtended       = $this->getProperty('useExtended', false);
         
         $placeholders = $this->profile->toArray();
         // Add extended fields to placeholders
@@ -154,6 +154,11 @@ class GoodNewsSubscriptionUpdateProfileController extends GoodNewsSubscriptionCo
             }
         }
         $this->modx->toPlaceholders($placeholders, $placeholderPrefix);
+        foreach ($placeholders as $k => $v) {
+            if (is_array($v)) {
+                $this->modx->toPlaceholder($k, json_encode($v), $placeholderPrefix);
+            }
+        }
     }
 
     /**
@@ -249,8 +254,8 @@ class GoodNewsSubscriptionUpdateProfileController extends GoodNewsSubscriptionCo
         $placeholderPrefix    = $this->getProperty('placeholderPrefix', '');
         $submitVar            = $this->getProperty('submitVar', 'goodnews-updateprofile-btn');
         $preHooks             = $this->getProperty('preHooks', '');
-        $sendUnauthorizedPage = $this->getProperty('sendUnauthorizedPage', true, 'isset');
-        $reloadOnSuccess      = $this->getProperty('reloadOnSuccess', true, 'isset');
+        $sendUnauthorizedPage = $this->getProperty('sendUnauthorizedPage', true);
+        $reloadOnSuccess      = $this->getProperty('reloadOnSuccess', true);
         
         $validated = true;
         if (!empty($preHooks)) {

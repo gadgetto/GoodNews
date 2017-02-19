@@ -56,6 +56,18 @@ GoodNews.panel.GeneralSettings = function(config) {
                         ,cls: 'desc-under'
                     },{
                         xtype: 'xcheckbox'
+                        ,name: 'auto_full_urls'
+                        ,id: 'auto_full_urls'
+                        ,hideLabel: true
+                        ,boxLabel: _('goodnews.settings_auto_full_urls')
+                        ,description: MODx.expandHelp ? '' : _('goodnews.settings_auto_full_urls_desc')
+                    },{
+                        xtype: MODx.expandHelp ? 'label' : 'hidden'
+                        ,forId: 'auto_full_urls'
+                        ,html: _('goodnews.settings_auto_full_urls_desc')
+                        ,cls: 'desc-under'
+                    },{
+                        xtype: 'xcheckbox'
                         ,name: 'auto_cleanup_subscriptions'
                         ,id: 'auto_cleanup_subscriptions'
                         ,hideLabel: true

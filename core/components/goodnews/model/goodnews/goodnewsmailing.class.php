@@ -20,6 +20,7 @@
 
 require_once dirname(dirname(__FILE__)).'/csstoinlinestyles/Exception.php';
 require_once dirname(dirname(__FILE__)).'/csstoinlinestyles/CssToInlineStyles.php';
+require_once dirname(dirname(__FILE__)).'/smartdomdocument/smartdomdocument.class.php';
 
 /**
  * GoodNewsMailing class handles mailing/newsletter sending
@@ -207,6 +208,11 @@ class GoodNewsMailing {
         if ($this->testMailing) {
             $subject = $this->modx->getOption('goodnews.test_subject_prefix').$subject;
         }
+        // Convert subject to charset of mailing
+        $mail_charset           = $this->modx->getOption('mail_charset', null, 'UTF-8');
+        $modx_charset           = $this->modx->getOption('modx_charset', null, 'UTF-8');
+        $mail_charset_goodnews  = $this->mailing->getProperty('mailCharset', 'goodnews', $mail_charset);
+        $subject = iconv($modx_charset, $mail_charset_goodnews.'//TRANSLIT', $subject);
         return $subject;
     }
     
@@ -285,17 +291,17 @@ class GoodNewsMailing {
 
         // Process embeded CSS
         $html = $this->_inlineCSS($html);
-
-        // Process full URLs
-        $base = $this->modx->getOption('site_url');
         
         // AutoFixImageSizes if activated in settings
         if ($this->modx->getOption('goodnews.auto_fix_imagesizes', null, true)) {
             $html = $this->_autoFixImageSizes($base, $html);
         }
         
-        // Make full URLs
-        $html = $this->_fullUrls($base, $html);
+        // Make full URLs if activated in settings
+        if ($this->modx->getOption('goodnews.auto_full_urls', null, true)) {
+            $base = $this->modx->getOption('site_url');
+            $html = $this->_fullUrls($base, $html);
+        }
 
         return $html;
     }
@@ -359,13 +365,13 @@ class GoodNewsMailing {
         // No more recipients (or list is empty which shouldn't happen here)
         if (!$recipientId) {
             if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsMailing::getNextRecipient - No unsent recipients found.'); }
-            $this->goodnewsprocesshandler->lock($this->mailingid);
+            $this->goodnewsprocesshandler->unlock($this->mailingid);
             return false;
         }
         // Habemus recipient!
         if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsMailing::getNextRecipient - Unsent recipient [id: '.$recipientId.'] found.'); }
         
-        $this->goodnewsprocesshandler->lock($this->mailingid);
+        $this->goodnewsprocesshandler->unlock($this->mailingid);
         
         if ($this->debug) {
             $mtime = microtime();
@@ -400,7 +406,7 @@ class GoodNewsMailing {
 
         if (!$this->goodnewsrecipienthandler->cleanupRecipient($recipientId, $this->mailingid, $status)) {
             if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsMailing::updateRecipientStatus - Status for recipient [id: '.$recipientId.'] could not be updated to: '.$status); }
-            $this->goodnewsprocesshandler->lock($this->mailingid);
+            $this->goodnewsprocesshandler->unlock($this->mailingid);
             return false;
         }
 
@@ -419,7 +425,7 @@ class GoodNewsMailing {
         $meta->save();
         unset($meta);
         
-        $this->goodnewsprocesshandler->lock($this->mailingid);
+        $this->goodnewsprocesshandler->unlock($this->mailingid);
         
         if ($this->debug) {
             $mtime = microtime();
@@ -823,49 +829,97 @@ class GoodNewsMailing {
         
         return $html;
     }
-        
+
     /**
-     * Replace URLs in resource with full URLs
-     * (Method from Bob Ray's emailresource plugin with kind permission)
+     * Replace URLs in HTML with full URLs
+     * (works for "<a href" and "<img src" tags)
      *
-     * @param string $base
-     * @param string $html
-     * @return mixed string $html The parsed string or false
+     * @access private
+     * @param string $base The base URL (needs trailing /)
+     * @param string $html The unparsed HTML
+     * @return mixed The parsed HTML as string or false
      */
-    private function _fullUrls($base, $html) {
-        if (empty($html)) {
-            if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsMailing::_fullUrls - No HTML content provided for parsing.'); }
+    private function _fullURLs($base = null, $html = null) {
+        if (empty($html) || empty($base)) { return false; }
+        
+        // Use the SmartDOMDocument extension
+        if (!class_exists('SmartDOMDocument')) { return false; }
+    
+        $smartDOMDocument = new SmartDOMDocument();
+        if (!($smartDOMDocument instanceof SmartDOMDocument)) {
+            $this->modx->log(modX::LOG_LEVEL_ERROR, '[GoodNews] SmartDOMDocument class could not be instantiated.');
             return false;
         }
-
-        // Extract domain name from $base
-        $splitBase = explode('//', $base);
-        $domain = $splitBase[1];
-        $domain = rtrim($domain,'/ ');
-
-        // remove space around = sign
-        //$html = preg_replace('@(href|src)\s*=\s*@', '\1=', $html);
-        $html = preg_replace('@(?<=href|src)\s*=\s*@', '=', $html);
-
-        // Fix google link weirdness
-        $html = str_ireplace('google.com/undefined', 'google.com', $html);
-
-        // add http to naked domain links so they'll be ignored later
-        $html = str_ireplace('a href="'.$domain, 'a href="http://'.$domain, $html);
-
-        // Standardize orthography of domain name
-        $html = str_ireplace($domain, $domain, $html);
-
-        // Correct base URL, if necessary
-        $server = preg_replace('@^([^\:]*)://([^/*]*)(/|$).*@', '\1://\2/', $base);
-
-        // Handle root-relative URLs
-        $html = preg_replace('@\<([^>]*) (href|src)="/([^"]*)"@i', '<\1 \2="'.$server.'\3"', $html);
-
-        // Handle base-relative URLs
-        $html = preg_replace('@\<([^>]*) (href|src)="(?!http|mailto|sip|tel|callto|sms|ftp|sftp|gtalk|skype)(([^\:"])*|([^"]*:[^/"].*))"@i', '<\1 \2="'.$base.'\3"', $html);
-
-        return $html;
+    
+        $smartDOMDocument->loadHTML($html);
+        
+        // Process all link tags
+        $elements = $smartDOMDocument->getElementsByTagName('a');
+    
+        foreach ($elements as $element){
+            // Get the value of the href attribute
+            $href = $element->getAttribute('href');
+            
+            // Check if we have a protocol-relative URL - if so, don't touch and continue!
+            // Sample:  //www.domain.com/page.html 
+            if (mb_substr($href, 0, 2) == '//') { continue; }
+            
+            // Remove leading / from relative URLs
+            $href = ltrim($href, '/');
+            
+            // De-construct the UR(L|I)
+            $url_parts = parse_url($href);
+            
+            // ['scheme']   - (string) https | http | ftp | ...
+            // ['host']     - (string) www.domain.com
+            // ['port']     - (int)    9090
+            // ['user']     - (string) username
+            // ['pass']     - (string) password
+            // ['path']     - (string) section1/page1.html | /section1/page1.html
+            // ['query']    - (string) all after ?
+            // ['fragment'] - (string) all after text anchor #
+            
+            // Check if UR(L|I) is completely invalid - if so, don't touch and continue!
+            if ($url_parts == false) { continue; }
+            
+            // Check if text anchor only - if so, don't touch and continue!
+            // Sample: #textanchor
+            if (!empty($url_parts['fragment']) && empty($url_parts['scheme']) && empty($url_parts['host']) && empty($url_parts['path'])) { continue; }
+    
+            // Finally add base URL to href value
+            if (empty($url_parts['host'])) {
+                $element->setAttribute('href', $base.$href);
+            }
+        }
+    
+        // Process all img tags
+        $elements = $smartDOMDocument->getElementsByTagName('img');
+        
+        foreach ($elements as $element){
+            // Get the value of the img attribute
+            $href = $element->getAttribute('src');
+            
+            // Check if we have a protocol-relative URL - if so, don't touch and continue!
+            // Sample:  //www.domain.com/page.html 
+            if (mb_substr($href, 0, 2) == '//') { continue; }
+            
+            // Remove / from relative URLs
+            $href = ltrim($href, '/');
+            
+            // De-construct the UR(L|I)
+            $url_parts = parse_url($href);
+    
+            // Check if UR(L|I) is completely invalid - if so, don't touch and continue!
+            if ($url_parts == false) { continue; }
+            
+            // Finally add base URL to href value
+            if (empty($url_parts['host'])) {
+                $element->setAttribute('src', $base.$href);
+            }
+        }
+            
+        // Return the processed (X)HTML
+        return $smartDOMDocument->saveHTMLExact();
     }
 
     /**

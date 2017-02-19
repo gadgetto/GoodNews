@@ -105,7 +105,7 @@ class GoodNewsSubscriptionUnSubscriptionController extends GoodNewsSubscriptionC
     public function runPreHooks() {
         $placeholderPrefix    = $this->getProperty('placeholderPrefix', '');
         $preHooks             = $this->getProperty('preHooks', '');
-        $sendUnauthorizedPage = $this->getProperty('sendUnauthorizedPage', true, 'isset');
+        $sendUnauthorizedPage = $this->getProperty('sendUnauthorizedPage', true);
         
         $validated = true;
         if (!empty($preHooks)) {

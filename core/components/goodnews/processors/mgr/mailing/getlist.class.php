@@ -272,6 +272,10 @@ class NewsletterGetListProcessor extends modObjectGetListProcessor {
                     'className' => 'publish orange gon-ab-publish',
                     'text'      => $this->modx->lexicon('publish'),
                 );
+                $resourceArray['actions'][] = array(
+                    'className' => 'log gon-ab-log',
+                    'text'      => $this->modx->lexicon('goodnews.sendlog'),
+                );
             } elseif ($resourceArray['status'] == self::GON_NEWSLETTER_STATUS_NOT_READY_TO_SEND) {
                 $resourceArray['actions'][] = array(
                     'className' => 'start gon-ab-start',
@@ -303,6 +307,10 @@ class NewsletterGetListProcessor extends modObjectGetListProcessor {
                     'className' => 'unpublish gon-ab-unpublish',
                     'text'      => $this->modx->lexicon('unpublish'),
                 );
+                $resourceArray['actions'][] = array(
+                    'className' => 'log gon-ab-log',
+                    'text'      => $this->modx->lexicon('goodnews.sendlog'),
+                );
             } elseif ($resourceArray['status'] == self::GON_NEWSLETTER_STATUS_NOT_YET_SENT) {
                 $resourceArray['actions'][] = array(
                     'className' => 'start gon-ab-start',
@@ -332,6 +340,10 @@ class NewsletterGetListProcessor extends modObjectGetListProcessor {
                 $resourceArray['actions'][] = array(
                     'className' => 'unpublish gon-ab-unpublish',
                     'text'      => $this->modx->lexicon('unpublish'),
+                );
+                $resourceArray['actions'][] = array(
+                    'className' => 'log gon-ab-log',
+                    'text'      => $this->modx->lexicon('goodnews.sendlog'),
                 );
             } elseif ($resourceArray['status'] == self::GON_NEWSLETTER_STATUS_STOPPED) {
                 $resourceArray['actions'][] = array(
@@ -365,6 +377,10 @@ class NewsletterGetListProcessor extends modObjectGetListProcessor {
                     'className' => 'unpublish gon-ab-unpublish',
                     'text'      => $this->modx->lexicon('unpublish'),
                     'disabled'  => ' disabled="disabled"',
+                );
+                $resourceArray['actions'][] = array(
+                    'className' => 'log gon-ab-log',
+                    'text'      => $this->modx->lexicon('goodnews.sendlog'),
                 );
             } elseif ($resourceArray['status'] == self::GON_NEWSLETTER_STATUS_IN_PROGRESS) {
                 $resourceArray['actions'][] = array(
@@ -400,6 +416,10 @@ class NewsletterGetListProcessor extends modObjectGetListProcessor {
                     'text'      => $this->modx->lexicon('unpublish'),
                     'disabled'  => ' disabled="disabled"',
                 );
+                $resourceArray['actions'][] = array(
+                    'className' => 'log gon-ab-log',
+                    'text'      => $this->modx->lexicon('goodnews.sendlog'),
+                );
             } elseif ($resourceArray['status'] == self::GON_NEWSLETTER_STATUS_SENT) {
                 $resourceArray['actions'][] = array(
                     'className' => 'start gon-ab-start',
@@ -433,6 +453,10 @@ class NewsletterGetListProcessor extends modObjectGetListProcessor {
                     'className' => 'unpublish gon-ab-unpublish',
                     'text'      => $this->modx->lexicon('unpublish'),
                 );
+                $resourceArray['actions'][] = array(
+                    'className' => 'log gon-ab-log',
+                    'text'      => $this->modx->lexicon('goodnews.sendlog'),
+                );
             } elseif ($resourceArray['status'] == self::GON_NEWSLETTER_STATUS_SCHEDULED) {
                 $resourceArray['actions'][] = array(
                     'className' => 'start gon-ab-start',
@@ -463,6 +487,10 @@ class NewsletterGetListProcessor extends modObjectGetListProcessor {
                 $resourceArray['actions'][] = array(
                     'className' => 'publish orange gon-ab-publish',
                     'text'      => $this->modx->lexicon('publish'),
+                );
+                $resourceArray['actions'][] = array(
+                    'className' => 'log gon-ab-log',
+                    'text'      => $this->modx->lexicon('goodnews.sendlog'),
                 );
             }            
             

@@ -151,7 +151,7 @@ Ext.extend(GoodNewsResource.grid.CollectResources,MODx.grid.Grid,{
         return this.selectedRecords[this.key].join();
     }
     ,makeDirty: function() {
-        Ext.getCmp('goodnewsresource-'+this.config.baseParams.collectionInternalName).fireEvent('change');
+        Ext.getCmp('modx-panel-resource').fireEvent('fieldChange');
     }
     ,filterByParent: function(combo) {
         var s = this.getStore();

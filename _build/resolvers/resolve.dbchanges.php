@@ -54,7 +54,7 @@ if (!function_exists('existsField')) {
 
 /**
  * Checks if a field in a specified database table exist and creates it if not.
- * (this prevents the annoying erro messages in MODx install log)
+ * (this prevents the annoying erro messages in MODX install log)
  * 
  * @param mixed &$modx A reference to the MODX object
  * @param mixed &$manager A reference to the Manager object
@@ -80,7 +80,11 @@ if ($object->xpdo) {
     
     switch ($options[xPDOTransport::PACKAGE_ACTION]) {
         case xPDOTransport::ACTION_INSTALL:
+            break;
+            
         case xPDOTransport::ACTION_UPGRADE:
+
+            $modx->log(modX::LOG_LEVEL_INFO, 'Database Changes Resolver - updating required database tables/fields...');
 
             // Add GoodNews package
             $modelPath = $modx->getOption('goodnews.core_path', null, $modx->getOption('core_path').'components/goodnews/').'model/';
@@ -132,6 +136,9 @@ if ($object->xpdo) {
             
             // Set bakck log-level to previous level
             $modx->setLogLevel($oldLogLevel);
+            break;
+
+        case xPDOTransport::ACTION_UNINSTALL:
             break;
     }
 }

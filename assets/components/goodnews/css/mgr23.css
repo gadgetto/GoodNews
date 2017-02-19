@@ -195,38 +195,22 @@ button:hover:disabled[class*="gon-ab-"] {
     color: #999; /* grey */
 }
 
-/* Row expander icon for Newsletters grid */
-#goodnews-grid-newsletters .x-grid3-row-collapsed .x-grid3-row-expander::before {
+/* Mail-icon prefix for newsletter title in newsletters grid */
+.gon-newsletter-title::before {
     font-family: fontawesome;
-    font-size: 14px;
+    font-size: 18px;
     content: "\f0e0";
-    color: #53595f;
-}
-#goodnews-grid-newsletters .x-grid3-row-expanded .x-grid3-row-expander::before {
-    font-family: fontawesome;
-    font-size: 14px;
-    content: "\f003";
-    color: #3697cd;
-}
-#goodnews-grid-newsletters .x-grid3-row-expander {
-    cursor: help;
+    color: #6b747d;
+    margin-right: 8px;    
 }
 
-/* Row expander icon for Subscribers grid */
-#goodnews-grid-subscribers .x-grid3-row-collapsed .x-grid3-row-expander::before {
+/* User-icon prefix for email address in subscriber row */
+.gon-subscriber-email::before {
     font-family: fontawesome;
     font-size: 14px;
     content: "\f007";
-    color: #53595f;
-}
-#goodnews-grid-subscribers .x-grid3-row-expanded .x-grid3-row-expander::before {
-    font-family: fontawesome;
-    font-size: 14px;
-    content: "\f007";
-    color: #3697cd;
-}
-#goodnews-grid-subscribers .x-grid3-row-expander {
-    cursor: help;
+    color: #6b747d;
+    margin-right: 5px;    
 }
 
 /* Textarea in plain-text mail preview window */

@@ -91,9 +91,9 @@ GoodNews.grid.Subscribers = function(config){
             ,width: 100
             ,renderer: function(value,meta,record){
                 if (record.get('grpcount') == 0) {
-                    return '<span class="gon-no-subscriptions">'+value+'</span>';
+                    return '<span class="gon-subscriber-email gon-no-subscriptions">'+value+'</span>';
                 } else {
-                    return '<span>'+value+'</span>';
+                    return '<span class="gon-subscriber-email">'+value+'</span>';
                 }
             }
         },{
