@@ -95,6 +95,7 @@ class GoodNewsRecipientHandler {
             
         // Select subscribers based on groups/categories + assigned MODx user groups
         $tblUsers                  = $this->modx->getTableName('modUser');
+        $tblUserProfile            = $this->modx->getTableName('modUserProfile');
         $tblGoodNewsGroupMember    = $this->modx->getTableName('GoodNewsGroupMember');
         $tblGoodNewsCategoryMember = $this->modx->getTableName('GoodNewsCategoryMember');
         
@@ -103,10 +104,12 @@ class GoodNewsRecipientHandler {
         
         $sql = "SELECT DISTINCT {$tblUsers}.id
                 FROM {$tblUsers} 
+                LEFT JOIN {$tblUserProfile} ON {$tblUserProfile}.internalKey = {$tblUsers}.id
                 LEFT JOIN {$tblGoodNewsGroupMember} ON {$tblGoodNewsGroupMember}.member_id = {$tblUsers}.id
                 LEFT JOIN {$tblGoodNewsCategoryMember} ON {$tblGoodNewsCategoryMember}.member_id = {$tblUsers}.id
                 WHERE ({$tblGoodNewsGroupMember}.goodnewsgroup_id IN ({$groupslist}) OR {$tblGoodNewsCategoryMember}.goodnewscategory_id IN ({$categorieslist}))
-                AND {$tblUsers}.active = 1";
+                AND {$tblUsers}.active = 1
+                AND {$tblUserProfile}.blocked = 0";
 
         $query = $this->modx->query($sql);
         if ($query) {
