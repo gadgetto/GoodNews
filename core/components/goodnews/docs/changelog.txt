@@ -1,5 +1,8 @@
 Changelog for GoodNews
 
+- fixed a problem where GoodNews groups which were assigned to MODX user groups couldn't be unassigned
+
+
 GoodNews 1.4.5-pl (2017-02-19)
 --------------------------------------------------
 

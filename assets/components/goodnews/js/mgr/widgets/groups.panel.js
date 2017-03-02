@@ -273,6 +273,10 @@ GoodNews.window.Group = function(config) {
             ,anchor: '100%'
         },{
             xtype: 'modx-combo-usergroup'
+            ,baseParams: {
+                action: 'security/group/getList'
+                ,addNone: true
+            }
             ,fieldLabel: _('goodnews.group_belongs_to_modx_usergroup')
             ,name: 'modxusergroup'
             ,hiddenName: 'modxusergroup'
