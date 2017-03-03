@@ -55,7 +55,10 @@ var GON_USER_RESERVED     = 4;
 var tr1 = new Ext.util.TaskRunner;
 var gridrefresh = {
     run: function(){
-         Ext.getCmp('goodnews-grid-newsletters').refresh();
+        var newslettersGrid = Ext.getCmp('goodnews-grid-newsletters');
+        newslettersGrid.loadMask.disable();
+        newslettersGrid.refresh();
+        newslettersGrid.loadMask.enable();
     }
     ,interval: 5000 // = 5 seconds
 }
