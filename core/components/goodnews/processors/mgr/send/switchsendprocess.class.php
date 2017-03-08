@@ -27,7 +27,6 @@
 class GoodNewsSwitchSendProcessProcessor extends modObjectProcessor {
 
     public $languageTopics = array('setting');
-    public $permission = 'settings';    
 
     /** @var string $value The state to switch the send process to (can be on off off) */
     public $state = null;
