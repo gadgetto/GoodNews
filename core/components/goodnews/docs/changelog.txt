@@ -1,6 +1,6 @@
 Changelog for GoodNews
 
-
+- fixed a PHP warning: Undefined variable: base
 - removed permission check for „Toggle send process“
 - removed grid flickering (grid mask) when auto-refresh is activated
 - fixed a problem where GoodNews groups which were assigned to MODX user groups couldn't be unassigned

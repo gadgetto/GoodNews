@@ -292,6 +292,8 @@ class GoodNewsMailing {
         // Process embeded CSS
         $html = $this->_inlineCSS($html);
         
+        $base = $this->modx->getOption('site_url');
+
         // AutoFixImageSizes if activated in settings
         if ($this->modx->getOption('goodnews.auto_fix_imagesizes', null, true)) {
             $html = $this->_autoFixImageSizes($base, $html);
@@ -299,7 +301,6 @@ class GoodNewsMailing {
         
         // Make full URLs if activated in settings
         if ($this->modx->getOption('goodnews.auto_full_urls', null, true)) {
-            $base = $this->modx->getOption('site_url');
             $html = $this->_fullUrls($base, $html);
         }
 
