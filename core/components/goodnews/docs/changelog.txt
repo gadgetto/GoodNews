@@ -1,5 +1,6 @@
 Changelog for GoodNews
 
+- fixed a problem where Subscriber placeholders in newsletter templates were URL encoded before processing
 - fixed a PHP warning: Undefined variable: base
 - removed permission check for „Toggle send process“
 - removed grid flickering (grid mask) when auto-refresh is activated

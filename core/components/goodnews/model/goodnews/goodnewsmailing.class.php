@@ -292,16 +292,10 @@ class GoodNewsMailing {
         // Process embeded CSS
         $html = $this->_inlineCSS($html);
         
-        $base = $this->modx->getOption('site_url');
-
         // AutoFixImageSizes if activated in settings
         if ($this->modx->getOption('goodnews.auto_fix_imagesizes', null, true)) {
+            $base = $this->modx->getOption('site_url');
             $html = $this->_autoFixImageSizes($base, $html);
-        }
-        
-        // Make full URLs if activated in settings
-        if ($this->modx->getOption('goodnews.auto_full_urls', null, true)) {
-            $html = $this->_fullUrls($base, $html);
         }
 
         return $html;
@@ -340,6 +334,14 @@ class GoodNewsMailing {
         $chunk->_processed = false;
         $output = $chunk->process($subscriberProperties);
         $this->modx->parser->processElementTags('', $output, true, true);
+        
+        // After(!) Subscriber placeholders are processed -> make full URLs if activated in settings
+        // (this is not very elegant here but is needed to prevent DOMDocument from URL encoding MODX tags e.g. [[+sid]] gets %5B%5B+sid%5D%5D)
+        if ($this->modx->getOption('goodnews.auto_full_urls', null, true)) {
+            $base = $this->modx->getOption('site_url');
+            $output = $this->_fullUrls($base, $output);
+        }
+
         return $output;
     }
 
