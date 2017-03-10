@@ -1,5 +1,9 @@
 Changelog for GoodNews
 
+
+GoodNews 1.4.6-pl (2017-03-10)
+--------------------------------------------------
+
 - fixed a problem where Subscriber placeholders in newsletter templates were URL encoded before processing
 - fixed a PHP warning: Undefined variable: base
 - removed permission check for „Toggle send process“
