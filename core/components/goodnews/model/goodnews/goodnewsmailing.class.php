@@ -580,8 +580,7 @@ class GoodNewsMailing {
             $subscriber = $this->_getSubscriberProperties($recipientId);
             if ($subscriber) {
                 $temp_mail = $mail;
-                $temp_mail['body'] = $this->_processSubscriberPlaceholders($temp_mail['body'], $subscriber);            
- 
+                $temp_mail['body'] = $this->_processSubscriberPlaceholders($temp_mail['body'], $subscriber);
                 if ($this->sendEmail($temp_mail, $subscriber)) {
                     $status = GoodNewsRecipientHandler::GON_USER_SENT;
                 } else {
