@@ -80,13 +80,15 @@ class GoodNewsSubscriptionUpdateProfileController extends GoodNewsSubscriptionCo
         $successKey        = $this->getProperty('successKey', 'updsuccess');
         $groupsOnly        = $this->getProperty('groupsOnly', false);
         
-        // Verifies a subscriber by its sid and loads user + profile object
-        if (!$this->authenticateSubscriberBySid()) {
+        // Verifies a subscriber and loads user + profile object
+        if (!$this->authenticateSubscriber()) {
             // this is only executed if sendUnauthorizedPage property is set to false
             $this->modx->setPlaceholder($placeholderPrefix.'authorization_failed', true);
             return '';
         } else {
-            $this->modx->setPlaceholder($placeholderPrefix.'sid', $this->sid);
+            if (!empty($this->sid)) {
+                $this->modx->setPlaceholder($placeholderPrefix.'sid', $this->sid);
+            }
             $this->modx->setPlaceholder($placeholderPrefix.'authorization_success', true);
         }
 
@@ -115,15 +117,28 @@ class GoodNewsSubscriptionUpdateProfileController extends GoodNewsSubscriptionCo
 
                 if ($this->runPreHooks()) {
                 
+                    // If user has no GoodNews profile (= GoodNewsSubscriberMeta) create one
+                    if (empty($this->sid)) {
+                        
+                        $result = $this->runProcessor('CreateSubscriberMeta');
+                        if ($result !== true) {
+                            $this->modx->setPlaceholder($placeholderPrefix.'error.message', $result);
+                            $this->setFieldPlaceholders();
+                            return '';
+                        }
+                    }
+                    
                     // Update the profile
                     $result = $this->runProcessor('UpdateProfile');
                     if ($result !== true) {
                         $this->modx->setPlaceholder($placeholderPrefix.'error.message', $result);
                     } elseif ($reloadOnSuccess) {
-                        $url = $this->modx->makeUrl($this->modx->resource->get('id'), '', array(
-                            $successKey => 1,
-                            'sid' => $this->sid,
-                        ), 'full');
+                        $urlParams = array();
+                        $urlParams[$successKey] = 1;
+                        if (!empty($this->sid)) {
+                            $urlParams['sid'] = $this->sid;
+                        }
+                        $url = $this->modx->makeUrl($this->modx->resource->get('id'), '', $urlParams, 'full');
                         $this->modx->sendRedirect($url);
                     } else {
                         $this->modx->setPlaceholder($placeholderPrefix.'update_success', true);

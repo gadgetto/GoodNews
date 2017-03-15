@@ -109,16 +109,17 @@ abstract class GoodNewsSubscriptionController {
     abstract public function process();
 
     /**
-     * Authenticate the subscriber by sid param submitted via URL string
+     * Authenticate the subscriber by his user session or by sid param submitted via URL string
      * and load modUser, modUserProfile and GoodNewsSusbcriberMeta objects.
-     * (Authentication means we have a valid sid from SubscriberMeta - we dont need real MODX login!)
      *
      * @access public
      * @return boolean
      */
-    public function authenticateSubscriberBySid() {
+    public function authenticateSubscriber() {
+        $placeholderPrefix = $this->getProperty('placeholderPrefix', '');
         $authenticated = false;
         
+        // Authenticate user by SID (submitted via URL param)
         if ($this->getSid()) {
             if ($this->getUserBySid()) {
                 if ($this->getProfile()) {
@@ -126,6 +127,23 @@ abstract class GoodNewsSubscriptionController {
                         $authenticated = true;   
                     }
                 }        
+            }
+        // Authenticate user by its session context
+        } else {
+            $currentContext = $this->modx->context->key;
+            if (!empty($currentContext) && $currentContext != 'mgr') {
+                if ($this->modx->user->hasSessionContext($currentContext)) {
+                    $this->user = $this->modx->user;
+                    if ($this->getProfile()) {
+                        $authenticated = true; 
+                        if ($this->getSubscriberMeta($this->user->get('id'))) {
+                            // Set $sid to indicate that SubscriberMeta exists for this user
+                            $this->sid = $this->subscribermeta->get('sid');
+                            // Set placeholder for filtering content in templates
+                            $this->modx->setPlaceholder($placeholderPrefix.'is_subscriber', '1');
+                        }
+                    }
+                }
             }
         }
         if (!$authenticated) {
@@ -772,6 +790,39 @@ abstract class GoodNewsSubscriptionController {
             // send to the default MODX error page
             $this->modx->sendErrorPage();
         }
+    }
+
+    /**
+     * Helper function to get the "real" IP address of a subscriber.
+     *
+     * @access public
+     * @return string $ip The IP address (or string 'unknown')
+     */
+    public function getSubscriberIP() {
+        $ip_keys = array(
+            'HTTP_CLIENT_IP',
+            'HTTP_X_FORWARDED_FOR',
+            'HTTP_X_FORWARDED',
+            'HTTP_X_CLUSTER_CLIENT_IP',
+            'HTTP_FORWARDED_FOR',
+            'HTTP_FORWARDED',
+            'REMOTE_ADDR'
+        );
+        foreach ($ip_keys as $key) {
+            if (array_key_exists($key, $_SERVER) === true) {
+                foreach (explode(',', $_SERVER[$key]) as $ip) {
+                    // trim for safety measures
+                    $ip = trim($ip);
+                    // validate IP
+                    if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 | FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) !== false) {
+                        return $ip;
+                    }
+                }
+            }
+        }
+        // If no IP could be determined
+        $ip = 'unknown';
+        return $ip;
     }
 }
 

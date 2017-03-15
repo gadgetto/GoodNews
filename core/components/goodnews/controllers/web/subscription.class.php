@@ -120,7 +120,8 @@ class GoodNewsSubscriptionSubscriptionController extends GoodNewsSubscriptionCon
         if (!$groupsOnly) { $this->selectParentGroupsByCategories(); }
              
         // Get the subscribers IP address
-        $this->getSubscriberIP();
+        $ip = $this->getSubscriberIP();
+        $this->dictionary->set('ip', $ip);
 
         $emailField = $this->getProperty('emailField', 'email');
         $email = $this->dictionary->get($emailField);
@@ -436,41 +437,6 @@ class GoodNewsSubscriptionSubscriptionController extends GoodNewsSubscriptionCon
         foreach ($users as $idx => $user) {
             $user->remove();
         }
-    }
-
-    /**
-     * Helper function to get the "real" IP address of a subscriber.
-     *
-     * @access public
-     * @return string $ip The IP address (or string 'unknown')
-     */
-    public function getSubscriberIP() {
-        $ip_keys = array(
-            'HTTP_CLIENT_IP',
-            'HTTP_X_FORWARDED_FOR',
-            'HTTP_X_FORWARDED',
-            'HTTP_X_CLUSTER_CLIENT_IP',
-            'HTTP_FORWARDED_FOR',
-            'HTTP_FORWARDED',
-            'REMOTE_ADDR'
-        );
-        foreach ($ip_keys as $key) {
-            if (array_key_exists($key, $_SERVER) === true) {
-                foreach (explode(',', $_SERVER[$key]) as $ip) {
-                    // trim for safety measures
-                    $ip = trim($ip);
-                    // validate IP
-                    if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 | FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) !== false) {
-                        $this->dictionary->set('ip', $ip);
-                        return $ip;
-                    }
-                }
-            }
-        }
-        // If no IP could be determined
-        $ip = 'unknown';
-        $this->dictionary->set('ip', $ip);
-        return $ip;
     }
 
     /**
