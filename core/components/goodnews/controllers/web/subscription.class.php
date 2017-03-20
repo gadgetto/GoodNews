@@ -122,11 +122,10 @@ class GoodNewsSubscriptionSubscriptionController extends GoodNewsSubscriptionCon
         // Get the subscribers IP address
         $ip = $this->getSubscriberIP();
         $this->dictionary->set('ip', $ip);
-
-        $emailField = $this->getProperty('emailField', 'email');
-        $email = $this->dictionary->get($emailField);
         
         // Email address is entered by subscriber
+        $emailField = $this->getProperty('emailField', 'email');
+        $email = $this->dictionary->get($emailField);
         if ($this->validateEmail($emailField, $email)) {
             
             // Is email address already in use? (existing MODX user!)
