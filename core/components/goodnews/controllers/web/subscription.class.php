@@ -122,6 +122,9 @@ class GoodNewsSubscriptionSubscriptionController extends GoodNewsSubscriptionCon
         // Get the subscribers IP address
         $ip = $this->getSubscriberIP();
         $this->dictionary->set('ip', $ip);
+
+        // Check/create username here to prevent processor save error later
+        $this->_setUsername();
         
         // Email address is entered by subscriber
         $emailField = $this->getProperty('emailField', 'email');
@@ -191,7 +194,6 @@ class GoodNewsSubscriptionSubscriptionController extends GoodNewsSubscriptionCon
                 // A new Subscriber
                 } else {
                     
-                    $this->_setUsername();
                     $this->_setPassword();
 
                     // Execute the Subscription processor:
