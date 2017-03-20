@@ -262,7 +262,6 @@ class GoodNewsSubscriptionSubscriptionController extends GoodNewsSubscriptionCon
     /**
      * Check if username is submitted via form or needs to be auto-generated.
      *  - if submitted via form - check if already exists
-     *  - cleanup expired activations
      * 
      * @access private
      * @return boolean $success
