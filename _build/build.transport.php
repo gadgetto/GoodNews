@@ -279,8 +279,8 @@ $vehicle->resolve('php', array('source' => $sources['resolvers'].'resolve.resour
 $vehicle->resolve('php', array('source' => $sources['resolvers'].'resolve.customresources.php'));
 $vehicle->resolve('php', array('source' => $sources['resolvers'].'resolve.customresourceproperties.php'));
 $vehicle->resolve('php', array('source' => $sources['resolvers'].'resolve.plugins.php'));
-$vehicle->resolve('php', array('source' => $sources['resolvers'].'resolve.tvs.php'));
-$vehicle->resolve('php', array('source' => $sources['resolvers'].'resolve.paths.php'));
+//$vehicle->resolve('php', array('source' => $sources['resolvers'].'resolve.tvs.php'));
+//$vehicle->resolve('php', array('source' => $sources['resolvers'].'resolve.paths.php'));
 
 $builder->putVehicle($vehicle);
 flush();
