@@ -1,5 +1,6 @@
 Changelog for GoodNews
 
+- send mail method now also respects mail port setting from MODX system settings
 - removed path and TV resolvers from setup process
 - fixed a problem in Registration/Subscription process where username wasn't checked before trying to create user
 - added feature to use GoodNewsUpdateProfile Snippet for logged in MODX users (not only via sid URL param)

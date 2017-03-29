@@ -646,6 +646,7 @@ class GoodNewsMailing {
             $this->modx->mail->set(modMail::MAIL_SMTP_USER,   $this->mailing->getProperty('mailSmtpUser',   'goodnews', $this->modx->getOption('mail_smtp_user',   null, '')));
             $this->modx->mail->set(modMail::MAIL_SMTP_PASS,   $this->mailing->getProperty('mailSmtpPass',   'goodnews', $this->modx->getOption('mail_smtp_pass',   null, '')));
             $this->modx->mail->set(modMail::MAIL_SMTP_HOSTS,  $this->mailing->getProperty('mailSmtpHosts',  'goodnews', $this->modx->getOption('mail_smtp_hosts',  null, 'localhost:25')));
+            $this->modx->mail->set(modMail::MAIL_SMTP_PORT,   $this->modx->getOption('mail_smtp_port', null, 25)); // this is from MODX system settings only (GoodNews containers settings only hold the [hostname:port] format)
             $this->modx->mail->set(modMail::MAIL_SMTP_PREFIX, $this->mailing->getProperty('mailSmtpPrefix', 'goodnews', $this->modx->getOption('mail_smtp_prefix', null, '')));
             $helo = $this->mailing->getProperty('mailSmtpHelo', 'goodnews', $this->modx->getOption('mail_smtp_helo', null, ''));
             if (!empty($helo)) {
