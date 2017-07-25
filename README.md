@@ -4,15 +4,15 @@ GoodNews is a powerful integrated group and newsletter mailing system for the co
 
 ### Latest Changes
 
-For complete list of changes read the [changelog](./core/docs/changelog.txt "changelog")
+For complete list of changes read the [changelog](./core/components/goodnews/docs/changelog.txt "changelog")
 
 ### Copyright
 
-GoodNews is copyright 2017 by bitego.
+GoodNews is copyright 2014-2017 by bitego (@gadgetto).
 All rights reserved.
 
 ### License
 
 GoodNews is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
 
-[GNU General Public License v2](./core/docs/license.txt "GNU General Public License v2")
+[GNU General Public License v2](./core/components/goodnews/docs/license.txt "GNU General Public License v2")
