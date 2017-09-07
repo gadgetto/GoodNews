@@ -6,7 +6,7 @@
     </tr>
     <tr class="collectionbody">
         <td bgcolor="#ffffff" style="background-color: #ffffff; font-size: 16px; line-height: 22px; font-family: Helvetica, sans-serif; color: #333;">
-            [[+content:notags:ellipsis=`200`:default=`[[+introtext:ellipsis=`200]]`]]
+            [[+content:notags:ellipsis=`200`:default=`[[+introtext:ellipsis=`200`]]`]]
         </td>
     </tr>
 </table>
