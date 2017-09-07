@@ -142,7 +142,7 @@ class GoodNewsSubscriptionRequestLinksProcessor extends GoodNewsSubscriptionProc
         
         $profileResourceId = $this->controller->getProperty('profileResourceId', '');
         if (empty($profileResourceId)) {
-            $this->modx->log(modX::LOG_LEVEL_WANR, '[GoodNews] GoodNewsRequestLinks - snippet parameter profileResourceId not set.');
+            $this->modx->log(modX::LOG_LEVEL_WARN, '[GoodNews] GoodNewsRequestLinks - snippet parameter profileResourceId not set.');
         } else {
             $emailProperties['updateProfileUrl'] = $this->modx->makeUrl($profileResourceId, '', $params, 'full');
         }

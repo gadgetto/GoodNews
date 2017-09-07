@@ -1,5 +1,6 @@
 Changelog for GoodNews
 
+- [#53] fixed typo in requestlinks.class.php
 - [#52] fixed typo in sample.GoodNewsContentCollectionRowTpl
 - [#51] fixed typos in LOG_LEVEL_WARN constant
 - send mail method now also respects mail port setting from MODX system settings
