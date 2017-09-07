@@ -1,5 +1,6 @@
 Changelog for GoodNews
 
+- [#51] fixed typos in LOG_LEVEL_WARN constant
 - send mail method now also respects mail port setting from MODX system settings
 - removed path and TV resolvers from setup process
 - fixed a problem in Registration/Subscription process where username wasn't checked before trying to create user

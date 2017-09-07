@@ -718,7 +718,7 @@ abstract class GoodNewsSubscriptionController {
 
         $profileResourceId = $this->getProperty('profileResourceId', '');
         if (empty($profileResourceId)) {
-            $this->modx->log(modX::LOG_LEVEL_WANR, '[GoodNews] GoodNewsSubscription - snippet parameter profileResourceId not set.');
+            $this->modx->log(modX::LOG_LEVEL_WARN, '[GoodNews] GoodNewsSubscription - snippet parameter profileResourceId not set.');
         } else {
             $emailProperties['updateProfileUrl'] = $this->modx->makeUrl($profileResourceId, '', $params, 'full');
         }
@@ -758,7 +758,7 @@ abstract class GoodNewsSubscriptionController {
         
         $profileResourceId = $this->getProperty('profileResourceId', '');
         if (empty($profileResourceId)) {
-            $this->modx->log(modX::LOG_LEVEL_WANR, '[GoodNews] GoodNewsSubscription - snippet parameter profileResourceId not set.');
+            $this->modx->log(modX::LOG_LEVEL_WARN, '[GoodNews] GoodNewsSubscription - snippet parameter profileResourceId not set.');
         } else {
             $emailProperties['updateProfileUrl'] = $this->modx->makeUrl($profileResourceId, '', $params, 'full');
         }
