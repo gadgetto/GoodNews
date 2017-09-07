@@ -44,7 +44,7 @@ class GoodNewsSubscription {
         $corePath = $modx->getOption('goodnews.core_path', $config, $modx->getOption('core_path', null, MODX_CORE_PATH).'components/goodnews/');
         $this->config = array_merge(array(
             'corePath'        => $corePath,
-            'chunksPath'      => $corePath.'chunks/',
+            'chunksPath'      => $corePath.'elements/chunks/',
             'controllersPath' => $corePath.'controllers/web/',
             'modelPath'       => $corePath.'model/',
             'processorsPath'  => $corePath.'processors/web/',
