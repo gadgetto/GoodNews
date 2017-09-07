@@ -98,6 +98,8 @@ $html .= '<img src="folder1/img1.jpg">'.PHP_EOL;
 
 $html .= '<img src="http://www.domain.com/folder1/img1.jpg">'.PHP_EOL;
 
+$html .= '<a href="mailto:info@example.com">mailto:info@example.com</a>'.PHP_EOL;
+
 $base = 'https://www.domain.com/';
 
 
@@ -154,6 +156,9 @@ function fullURLs($base = null, $html = null) {
         // Sample: #textanchor
         if (!empty($url_parts['fragment']) && empty($url_parts['scheme']) && empty($url_parts['host']) && empty($url_parts['path'])) { continue; }
 
+        // Check if mailto: link - if so, don't touch and continue!
+        if ($url_parts['scheme'] == "mailto") { continue; }
+        
         // Finally add base URL to href value
         if (empty($url_parts['host'])) {
             $element->setAttribute('href', $base.$href);

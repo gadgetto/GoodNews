@@ -888,7 +888,10 @@ class GoodNewsMailing {
             // Check if text anchor only - if so, don't touch and continue!
             // Sample: #textanchor
             if (!empty($url_parts['fragment']) && empty($url_parts['scheme']) && empty($url_parts['host']) && empty($url_parts['path'])) { continue; }
-    
+
+            // Check if mailto: link - if so, don't touch and continue!
+            if ($url_parts['scheme'] == "mailto") { continue; }
+
             // Finally add base URL to href value
             if (empty($url_parts['host'])) {
                 $element->setAttribute('href', $base.$href);

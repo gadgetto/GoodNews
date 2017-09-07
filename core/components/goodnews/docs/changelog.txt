@@ -1,5 +1,6 @@
 Changelog for GoodNews
 
+- [#57] exlude mailto links from link manipulation (_fullURLs method)
 - [#54] fixed typos in sample.GoodNewsSubscriptionBoxTpl Chunk
 - [#53] fixed typo in requestlinks.class.php
 - [#52] fixed typo in sample.GoodNewsContentCollectionRowTpl
