@@ -36,7 +36,7 @@ $_lang['prop_goodnewssubscription.activationemailtplalt_desc']      = 'Plain-tex
 $_lang['prop_goodnewssubscription.activationemailtpltype_desc']     = 'The template-type for the activation email.';
 $_lang['prop_goodnewssubscription.activationresourceid_desc']       = 'The ID of the Resource where the GoodNewsConfirmSubscription snippet for activation is located.';
 $_lang['prop_goodnewssubscription.submittedresourceid_desc']        = 'Redirect to the Resource with the specified ID after the subscriber submits the form.';
-$_lang['prop_goodnewssubscription.sendsubscriptionemail_desc']      = 'Wether to send the subscriber an email after successful activation.';
+$_lang['prop_goodnewssubscription.sendsubscriptionemail_desc']      = 'Whether to send the subscriber an email after successful activation.';
 $_lang['prop_goodnewssubscription.unsubscriberesourceid_desc']      = 'The ID of the Resource to cancel subscriptions.';
 $_lang['prop_goodnewssubscription.profileresourceid_desc']          = 'The ID of the Resource to edit subscription profiles.';
 $_lang['prop_goodnewssubscription.subscriptionemailsubject_desc']   = 'The subject of the success email.';
@@ -80,7 +80,7 @@ $_lang['prop_goodnewssubscription.placeholderprefix_desc']          = 'The prefi
 $_lang['prop_goodnewssubscription.errorpage_desc']                  = 'If set, will redirect user to a custom error page.';
 
 // GoodNewsConfirmSubscription snippet
-$_lang['prop_goodnewsconfirmsubscription.sendsubscriptionemail_desc']      = 'Wether to send the subscriber an email after successful activation.';
+$_lang['prop_goodnewsconfirmsubscription.sendsubscriptionemail_desc']      = 'Whether to send the subscriber an email after successful activation.';
 $_lang['prop_goodnewsconfirmsubscription.unsubscriberesourceid_desc']      = 'The ID of the Resource to cancel subscriptions.';
 $_lang['prop_goodnewsconfirmsubscription.profileresourceid_desc']          = 'The ID of the Resource to edit subscription profiles.';
 $_lang['prop_goodnewsconfirmsubscription.subscriptionemailsubject_desc']   = 'The subject of the success email.';
