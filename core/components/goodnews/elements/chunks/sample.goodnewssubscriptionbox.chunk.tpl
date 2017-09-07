@@ -1,6 +1,6 @@
 [[!GoodNewsSubscription?
-    &submittedResourceId=`[[!GoodNewsGetResourceID? &pagetitle=`Subscription Mail Sent`]]`
-    &activationResourceId=`[[!GoodNewsGetResourceID? &pagetitle=`Subscription Confirm`]]`
+    &submittedResourceId=`[[!GoodNewsGetResourceID? &pagetitle=`GoodNews Subscription Mail Sent`]]`
+    &activationResourceId=`[[!GoodNewsGetResourceID? &pagetitle=`GoodNews Subscription Confirm`]]`
     &activationEmailTpl=`sample.GoodNewsActivationEmailTpl`
     &activationEmailSubject=`Thank you for joining our newsletter service at [[++site_name]]`
     &validate=`
