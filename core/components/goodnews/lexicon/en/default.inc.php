@@ -30,7 +30,7 @@ $_lang['goodnews']                                                  = 'GoodNews'
 $_lang['goodnews.desc']                                             = 'An integrated group and newsletter mailing system.';
 $_lang['goodnews.credits']                                          = 'Credits';
 $_lang['goodnews.credits_modx_community']                           = 'Many thanks to the stunning MODX community for their tireless help!';
-$_lang['goodnews.credits_bob_ray']                                  = 'Methods to generate full URLs and convert inline image styles by Bob Ray - <a href="http://bobsguides.com">http://bobsguides.com</a>';
+$_lang['goodnews.credits_bob_ray']                                  = 'Methods to convert inline image styles by Bob Ray - <a href="http://bobsguides.com">http://bobsguides.com</a>';
 $_lang['goodnews.credits_icons_by']                                 = 'Icons under Revo 2.2.x by: FatCow Web Hosting - <a href="http://www.fatcow.com">http://www.fatcow.com</a>';
 $_lang['goodnews.system_checks']                                    = 'System Checks';
 $_lang['goodnews.system_check_title']                               = 'Title';

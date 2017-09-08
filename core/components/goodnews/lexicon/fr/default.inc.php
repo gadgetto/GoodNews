@@ -30,7 +30,7 @@ $_lang['goodnews']                                                  = 'GoodNews'
 $_lang['goodnews.desc']                                             = 'Un système intégré d\'envoi de newsletter et de groupes.';
 $_lang['goodnews.credits']                                          = 'Crédits';
 $_lang['goodnews.credits_modx_community']                           = 'Un grand merci à l\'étonnante communauté MODX pour leur aide infatigable!';
-$_lang['goodnews.credits_bob_ray']                                  = 'Méthodes pour générer des URLs pleines et convertir les styles d\'image inline par Bob Ray- <a href="http://bobsguides.com">http://bobsguides.com</a>';
+$_lang['goodnews.credits_bob_ray']                                  = 'Méthodes pour convertir les styles d\'image inline par Bob Ray- <a href="http://bobsguides.com">http://bobsguides.com</a>';
 $_lang['goodnews.credits_icons_by']                                 = 'Icones sous Revo 2.2.x par :FatCow Web Hosting - <a href="http://www.fatcow.com">http://www.fatcow.com</a>';
 $_lang['goodnews.system_checks']                                    = 'Contrôles du système';
 $_lang['goodnews.system_check_title']                               = 'Titre';
