@@ -27,6 +27,17 @@ Ext.reg('goodnews-panel-settings-container', GoodNews.panel.ContainerSettings);
 GoodNews.grid.Containers = function(config) {
     config = config || {};
     
+    this.tplActionButtons = new Ext.XTemplate(
+        '<tpl for=".">'
+            +'<tpl if="actions !== null">'
+                +'<tpl for="actions">'
+                    +'<i style="cursor:pointer;" class="controlLink {className}" title="{text}"></i>'
+                +'</tpl>'
+            +'</tpl>'
+        +'</tpl>'
+    ,{compiled: true});
+
+
     Ext.applyIf(config,{
         id: 'goodnews-grid-containers'
         ,url: GoodNews.config.connectorUrl
@@ -77,6 +88,7 @@ GoodNews.grid.Containers = function(config) {
             ,'collection3_parents'
             ,'context_key'
             ,'menu'
+            ,'actions'
         ]
         ,emptyText: _('goodnews.settings_containers_none')
         ,paging: true
@@ -120,9 +132,20 @@ GoodNews.grid.Containers = function(config) {
             ,sortable: true
             ,editable: false
             ,width: 80
+        },{
+            header: ''
+            ,dataIndex: 'actions'
+            ,sortable: false
+            ,fixed: true
+            ,width: 50
+            ,resizable: false
+            ,hideable: false
+            ,align: 'right'
+            ,renderer: {fn:this._renderActionButtons,scope:this}
         }]
     });
     GoodNews.grid.Containers.superclass.constructor.call(this,config);
+    this.on('click',this.handleActionButtons,this);
 };
 Ext.extend(GoodNews.grid.Containers,MODx.grid.Grid,{
     getMenu: function() {
@@ -134,6 +157,22 @@ Ext.extend(GoodNews.grid.Containers,MODx.grid.Grid,{
             ,handler: this.updateContainerSettings
         }];
     }
+	,handleActionButtons: function(e) {
+		var t = e.getTarget();
+		var elm = t.className.split(' ')[0];
+		if(elm == 'controlLink') {
+			var action = t.className.split(' ')[1];
+			var record = this.getSelectionModel().getSelected();
+            this.menu.record = record.data;
+			switch (action) {
+                case 'settings':
+					this.updateContainerSettings(t,e);
+                    break;
+				default:
+					break;
+            }
+		}
+	}	
     ,updateContainerSettings: function(btn,e) {
         if (!this.updateContainerSettingsWindow) {
             this.updateContainerSettingsWindow = MODx.load({
@@ -148,6 +187,9 @@ Ext.extend(GoodNews.grid.Containers,MODx.grid.Grid,{
         this.updateContainerSettingsWindow.enableDisableSMTPAuthFields(this.menu.record.mail_smtp_auth);
         this.updateContainerSettingsWindow.enableDisableBounceFields(this.menu.record.mail_service);
         this.updateContainerSettingsWindow.show(e.target);
+    }
+    ,_renderActionButtons: function(v,md,rec) {
+		return this.tplActionButtons.apply(rec.data);
     }
 });
 Ext.reg('goodnews-grid-containers',GoodNews.grid.Containers);
