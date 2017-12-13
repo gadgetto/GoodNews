@@ -62,7 +62,7 @@ class ContainerSettingsGetListProcessor extends modObjectGetListProcessor {
         // action buttons in grid row
         $resourceArray['actions'] = array();
         $resourceArray['actions'][] = array(
-            'className' => 'settings fa fa-lg fa-cog',
+            'className' => 'settings icon icon-lg icon-cog',
             'text' => $this->modx->lexicon('goodnews.settings_container_update'),
         );
 

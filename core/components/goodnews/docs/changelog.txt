@@ -1,5 +1,10 @@
 Changelog for GoodNews
 
+GoodNews 1.4.7-pl2 (2017-12-13)
+--------------------------------------------------
+- fixed edit icon in grid row in Settings -> Container grid
+
+
 GoodNews 1.4.7-pl (2017-12-12)
 --------------------------------------------------
 - added edit icon to grid row in Settings -> Container grid
