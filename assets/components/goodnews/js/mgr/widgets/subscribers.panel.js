@@ -281,7 +281,7 @@ Ext.extend(GoodNews.grid.Subscribers,MODx.grid.Grid,{
         return [{
             text: _('goodnews.subscriber_update')
             ,handler: this.updateSubscriber
-        },{
+        },'-',{
             text: _('goodnews.subscriber_reset_bounce_counters')
             ,handler: this.resetBounceCounters
         },{
