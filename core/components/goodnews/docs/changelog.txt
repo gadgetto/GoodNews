@@ -1,5 +1,8 @@
 Changelog for GoodNews
 
+- fixed a critical bug in subscriber authentication (as a result from a merge conflict)
+
+
 GoodNews 1.4.7-pl2 (2017-12-13)
 --------------------------------------------------
 - fixed edit icon in grid row in Settings -> Container grid

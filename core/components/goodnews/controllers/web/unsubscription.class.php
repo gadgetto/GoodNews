@@ -64,7 +64,7 @@ class GoodNewsSubscriptionUnSubscriptionController extends GoodNewsSubscriptionC
         }
         
         // Verifies a subscriber by its sid and loads user + profile object
-        if (!$this->authenticateSubscriberBySid()) {
+        if (!$this->authenticateSubscriber()) {
             // this is only executed if sendUnauthorizedPage property is set to false
             $this->modx->setPlaceholder($placeholderPrefix.'authorization_failed', true);
             return '';
