@@ -43,6 +43,21 @@ Ext.reg('goodnews-panel-subscribers',GoodNews.panel.Subscribers);
 GoodNews.grid.Subscribers = function(config){
     config = config || {};
 
+    this.selectedRecords = [];
+    this.selectedRecords[this.key] = [];
+    this.selectionRestoreFinished = false;
+
+    this.sm = new Ext.grid.CheckboxSelectionModel({
+        listeners: {
+            'rowselect': function(sm,rowIndex,record) {
+                this.rememberRow(record.id);
+            },scope: this
+            ,'rowdeselect': function(sm,rowIndex,record) {
+                this.forgetRow(record.id);
+            },scope: this
+        }
+    });
+
     // Content of the expanded subscriber grid row
     var subscrInfos = [
         '<table id="gon-subscrinfo-{id}" class="gon-expinfos">',
@@ -80,10 +95,12 @@ GoodNews.grid.Subscribers = function(config){
         ,emptyText: _('goodnews.subscribers_none')
         ,paging: true
         ,remoteSort: true
+        ,sm: this.sm
         ,plugins: [this.subexpander]
         ,autoExpandColumn: 'username'
         ,columns: [
-        this.subexpander
+        this.sm
+        ,this.subexpander
         ,{
             header: _('goodnews.subscriber_email')
             ,dataIndex: 'email'
@@ -154,12 +171,16 @@ GoodNews.grid.Subscribers = function(config){
             }
             ,defaultType: 'toolbar'
             ,items: [{
-                items: ['->',{
+                items: [{
+                    text: (GoodNews.config.legacyMode ? '' : '<i class="icon icon-download icon-lg"></i>&nbsp;') + _('goodnews.import_button')
+                    ,handler: this.importSubscribers
+                    ,scope: this
+                },'->',{
                     xtype: 'modx-combo'
                     ,id: 'goodnews-subscribers-group-filter'
                     ,emptyText: _('goodnews.subscribers_user_group_filter')
-                    ,width: 265
-                    ,listWidth: 265
+                    ,width: 250
+                    ,listWidth: 250
                     ,displayField: 'name'
                     ,valueField: 'id'
                     ,store: new Ext.data.JsonStore({
@@ -178,8 +199,8 @@ GoodNews.grid.Subscribers = function(config){
                     xtype: 'modx-combo'
                     ,id: 'goodnews-subscribers-category-filter'
                     ,emptyText: _('goodnews.subscribers_user_category_filter')
-                    ,width: 265
-                    ,listWidth: 265
+                    ,width: 250
+                    ,listWidth: 250
                     ,displayField: 'name'
                     ,valueField: 'id'
                     ,store: new Ext.data.JsonStore({
@@ -202,9 +223,25 @@ GoodNews.grid.Subscribers = function(config){
                     ,scope: this
                     ,cls: 'primary-button'
                 },'-',{
-                    text: (GoodNews.config.legacyMode ? '' : '<i class="icon icon-download icon-lg"></i>&nbsp;') + _('goodnews.import_button')
-                    ,handler: this.importSubscribers
-                    ,scope: this
+                    text: _('bulk_actions')
+                    ,xtype: 'splitbutton'
+                    ,menu: [{
+                        text: _('goodnews.subscriber_assign_multi')
+                        ,handler: this.assignMulti
+                        ,scope: this
+                    },'-',{
+                        text: _('goodnews.subscriber_reset_bounce_counters_multi')
+                        ,handler: this.resetBounceCountersMulti
+                        ,scope: this
+                    },{
+                        text: _('goodnews.subscriber_remove_subscriptions_multi')
+                        ,handler: this.removeSubscriptionsMulti
+                        ,scope: this
+                    },{
+                        text: _('goodnews.subscriber_remove_meta_data_multi')
+                        ,handler: this.removeMetaMulti
+                        ,scope: this
+                    }]
                 },'->',{
                     xtype: 'modx-combo'
                     ,id: 'goodnews-subscribers-testdummy-filter'
@@ -272,6 +309,7 @@ GoodNews.grid.Subscribers = function(config){
         }
     });
     GoodNews.grid.Subscribers.superclass.constructor.call(this,config);
+    this.getView().on('refresh',this.refreshSelection,this);
 };
 Ext.extend(GoodNews.grid.Subscribers,MODx.grid.Grid,{
     getMenu: function() {
@@ -294,6 +332,35 @@ Ext.extend(GoodNews.grid.Subscribers,MODx.grid.Grid,{
             text: _('goodnews.user_update')
             ,handler: this.updateUser
         }];
+    }
+    ,rememberRow: function(userid) {
+        if (this.selectedRecords[this.key].indexOf(userid) == -1){
+            this.selectedRecords[this.key].push(userid);
+        }
+    }
+    ,forgetRow: function(userid) {
+        this.selectedRecords[this.key].remove(userid);
+    }
+    ,forgetAllRows: function() {
+        this.selectedRecords = [];
+        this.selectedRecords[this.key] = [];
+    }
+    ,refreshSelection: function() {
+        var rowsToSelect = [];        
+        Ext.each(this.selectedRecords[this.key],function(item){
+            rowsToSelect.push(this.store.indexOfId(item));
+        },this);       
+        Ext.getCmp(this.config.id).getSelectionModel().selectRows(rowsToSelect);
+        
+        // workaround:
+        // @todo: find fix for: checkboxes are only checked in first grid
+        if (!this.selectionRestoreFinished) {
+            this.refresh(); 
+            this.selectionRestoreFinished = true;
+        }
+    }
+    ,getSelectedAsList: function(){
+        return this.selectedRecords[this.key].join();
     }
     ,createSubscriber: function(btn,e) {
         var createUser = MODx.action ? MODx.action['security/user/create'] : 'security/user/create';
@@ -356,6 +423,91 @@ Ext.extend(GoodNews.grid.Subscribers,MODx.grid.Grid,{
                 'success': {fn: this.refresh, scope: this}
             }
         });
+    }
+    ,assignMulti: function(btn,e) {
+        var sel = this.getSelectedAsList();
+        if (sel === false) {
+            return false;
+        }
+        var win = MODx.load({
+            xtype: 'goodnews-window-subscribers-assign-multi'
+        });
+        win.setValues({ 
+            userIds: sel
+        });
+        win.show(e.target);
+    }
+    ,resetBounceCountersMulti: function() {
+        var sel = this.getSelectedAsList();
+        if (sel === false) {
+            return false;
+        }
+        MODx.msg.confirm({
+            title: _('goodnews.subscriber_reset_bounce_counters_multi')
+            ,text: _('goodnews.subscriber_reset_bounce_counters_confirm_multi')
+            ,url: this.config.url
+            ,params: {
+                action: 'mgr/subscribers/resetBounceCountersMulti'
+                ,userIds: sel
+            }
+            ,listeners: {
+                'success': {fn:function(r) {
+                    // Let rows stay selected!
+                    //this.forgetAllRows();
+                    //this.getSelectionModel().clearSelections(true);
+                    this.refresh();
+                },scope:this}
+            }
+        });
+        return true;
+    }
+    ,removeSubscriptionsMulti: function() {
+        var sel = this.getSelectedAsList();
+        if (sel === false) {
+            return false;
+        }
+        MODx.msg.confirm({
+            title: _('goodnews.subscriber_remove_subscriptions_multi')
+            ,text: _('goodnews.subscriber_remove_subscriptions_confirm_multi')
+            ,url: this.config.url
+            ,params: {
+                action: 'mgr/subscribers/removeSubscriptionsMulti'
+                ,userIds: sel
+            }
+            ,listeners: {
+                'success': {fn:function(r) {
+                    // Let rows stay selected!
+                    //this.forgetAllRows();
+                    //this.getSelectionModel().clearSelections(true);
+                    this.refresh();
+                },scope:this}
+            }
+        });
+        return true;
+    }
+    ,removeMetaMulti: function() {
+        var sel = this.getSelectedAsList();
+        if (sel === false) {
+            return false;
+        }
+        MODx.msg.confirm({
+            title: _('goodnews.subscriber_remove_meta_data_multi')
+            ,text: _('goodnews.subscriber_remove_meta_data_confirm_multi')
+            ,url: this.config.url
+            ,params: {
+                action: 'mgr/subscribers/removeMetaMulti'
+                ,userIds: sel
+            }
+            ,listeners: {
+                'success': {fn:function(r) {
+                    // Let rows stay selected!
+                    //this.forgetAllRows();
+                    //this.getSelectionModel().clearSelections(true);
+                    this.refresh();
+                },scope:this}
+            }
+        });
+        return true;
     }
     ,filterByUserGroup: function(combo) {
         var s = this.getStore();
@@ -534,3 +686,106 @@ Ext.extend(GoodNews.window.UpdateSubscriptions,MODx.Window,{
     }    
 });
 Ext.reg('goodnews-window-subscriber-update',GoodNews.window.UpdateSubscriptions);
+
+
+/**
+ * Window to assign groups/categories and testdummy flag to a batch of subscribers.
+ * 
+ * @class GoodNews.window.SubscribersAssignMulti
+ * @extends MODx.Window
+ * @param {Object} config An object of options.
+ * @xtype goodnews-window-subscribers-assign-multi
+ */
+GoodNews.window.SubscribersAssignMulti = function(config) {
+    config = config || {};
+
+    Ext.applyIf(config,{
+        title: _('goodnews.subscriber_assign_multi')
+        ,width: 480
+        ,closeAction: 'close'
+        ,url: GoodNews.config.connectorUrl
+        ,baseParams: {
+            action: 'mgr/subscribers/assignmulti'
+        }
+        ,fields: [{
+            xtype: 'hidden'
+            ,name: 'userIds'
+        },{
+            xtype: 'hidden'
+            ,name: 'groupscategories'
+        },{
+            xtype: 'hidden'
+            ,name: 'replaceGrpsCats'
+        },{
+            xtype: 'goodnews-tree-groupscategories'
+            ,fieldLabel: _('goodnews.subscriber_groups_categories_multi')
+        },{
+            //todo: if using xcheckbox the checked status isn't set. Why?
+            xtype: 'checkbox'
+            ,hideLabel: true
+            ,boxLabel: _('goodnews.subscriber_select_as_testdummy_multi')
+            ,name: 'testdummy'
+            ,inputValue: '1'
+        }]
+        ,buttons: [{
+            text: config.cancelBtnText || _('cancel')
+            ,scope: this
+            ,handler: function() { config.closeAction !== 'close' ? this.hide() : this.close(); }
+        },{
+            text: _('goodnews.subscriber_button_save_replace')
+            ,scope: this
+            ,handler: function() {
+                this.setValues({ 
+                    replaceGrpsCats: '1'
+                });
+                this.submit();
+            }
+        },{
+            text: _('goodnews.subscriber_button_save_add')
+            ,cls: 'primary-button'
+            ,scope: this
+            ,handler: function() {
+                this.setValues({ 
+                    replaceGrpsCats: '0'
+                });
+                this.submit();
+            }
+        }]
+        ,listeners: {
+            'beforeSubmit': {fn: function() {
+                    this.getSelectedGrpCat();
+                }
+                ,scope: this
+            }
+            ,'success': {fn: function() {
+                    Ext.getCmp('goodnews-grid-subscribers').refresh();
+                }
+                ,scope: this
+            }
+        }
+    });
+    GoodNews.window.SubscribersAssignMulti.superclass.constructor.call(this,config);
+};
+Ext.extend(GoodNews.window.SubscribersAssignMulti,MODx.Window,{
+    getSelectedGrpCat: function() {
+        // get selected groups and categories from tree
+        var nodeIDs = '';
+        var selNodes;
+        var tree = Ext.getCmp('goodnews-tree-groupscategories');
+        
+        selNodes = tree.getChecked();
+        Ext.each(selNodes, function(node){
+            if (nodeIDs!='') {
+                nodeIDs += ',';
+            }
+            nodeIDs += node.id;
+        });
+        //console.log('node IDs: ' + nodeIDs);
+
+        // write selected nodes to hidden field
+        this.setValues({ 
+            groupscategories: nodeIDs
+        });
+    }    
+});
+Ext.reg('goodnews-window-subscribers-assign-multi',GoodNews.window.SubscribersAssignMulti);
