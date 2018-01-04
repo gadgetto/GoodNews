@@ -1,5 +1,6 @@
 Changelog for GoodNews
 
+- [#6] added bulk actions to susbcribers grid
 - fixed a critical bug in subscriber authentication (as a result from a merge conflict)
 
 

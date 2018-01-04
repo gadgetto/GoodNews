@@ -95,10 +95,14 @@ class GroupCategoryGetNodesProcessor extends modProcessor {
             $groups = $this->getGonGroups();
             foreach ($groups['results'] as $group) {
                 // if userID is set
-                if ($this->userID) {
+                if (!empty($this->userID)) {
                     $groupArray = $this->prepareGonGroupUser($group);
-                } else {
+                // if resourceID is set
+                } elseif (!empty($this->resourceID)) {
                     $groupArray = $this->prepareGonGroupResource($group);
+                // for plain tree
+                } else {
+                    $groupArray = $this->prepareGonGroup($group);
                 }
                 if (!empty($groupArray)) {
                     $list[] = $groupArray;
@@ -112,8 +116,12 @@ class GroupCategoryGetNodesProcessor extends modProcessor {
                 // if userID is set
                 if ($this->userID) {
                     $categoryArray = $this->prepareGonCategoryUser($category);
-                } else {
+                // if resourceID is set
+                } elseif (!empty($this->resourceID)) {
                     $categoryArray = $this->prepareGonCategoryResource($category);
+                // for plain tree
+                } else {
+                    $categoryArray = $this->prepareGonCategory($category);
                 }
                 if (!empty($categoryArray)) {
                     $list[] = $categoryArray;
@@ -324,5 +332,62 @@ class GroupCategoryGetNodesProcessor extends modProcessor {
         );
     }
 
+    /**
+     * Prepare a GoodNews group node for plain listing
+     * 
+     * @param GoodNewsGroup $group
+     * @return array
+     */
+    public function prepareGonGroup(GoodNewsGroup $group) {
+        if ($group->get('modxusergroup')) {
+            $cssClass = 'gonr-modx-group-assigned';
+        } else {
+            $cssClass = '';
+        }
+        
+        if (!$this->getProperty('legacyMode')) {
+            // We are on Revo >= 2.3.0
+            $iconCls = 'icon-tags';
+        } else {
+            // We are on Revo < 2.3.0
+            $iconCls = 'gonr-icn-group';
+        }
+
+        return array(
+            'text'    => '<span class="'.$cssClass.'">'.$group->get('name').'</span>',
+            'id'      => 'n_gongrp_'.$group->get('id'),
+            'leaf'    => false,
+            'type'    => 'gongroup',
+            'qtip'    => $group->get('description'),
+            'checked' => false,
+            'iconCls' => $iconCls,
+        );
+    }
+
+    /**
+     * Prepare GoodNews category for plain listing
+     * 
+     * @param GoodNewsCategory $category
+     * @return array
+     */
+    public function prepareGonCategory(GoodNewsCategory $category) {
+        if (!$this->getProperty('legacyMode')) {
+            // We are on Revo >= 2.3.0
+            $iconCls = 'icon-tag';
+        } else {
+            // We are on Revo < 2.3.0
+            $iconCls = 'gonr-icn-category';
+        }
+
+        return array(
+            'text'    => $category->get('name'),
+            'id'      => 'n_goncat_'.$category->get('id').'_'.$this->gonGroup->get('id'),
+            'leaf'    => true,
+            'type'    => 'goncategory',
+            'qtip'    => $category->get('description'),
+            'checked' => false,
+            'iconCls' => $iconCls,
+        );
+    }
 }
 return 'GroupCategoryGetNodesProcessor';
