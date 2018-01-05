@@ -65,6 +65,8 @@ GoodNews.grid.Subscribers = function(config){
                 '<td class="gon-expinfos-key">'+_('goodnews.id')+'</td><td class="gon-expinfos-val">{id}</td>',
                 '<td class="gon-expinfos-key">'+_('goodnews.modx_username')+'</td><td class="gon-expinfos-val">{username}</td>',
                 '<td class="gon-expinfos-key">'+_('goodnews.subscriber_ip')+'</td><td class="gon-expinfos-val">{ip}</td>',
+                '<td class="gon-expinfos-key">'+_('goodnews.groups')+'</td><td class="gon-expinfos-val">{grpcount}</td>',
+                '<td class="gon-expinfos-key">'+_('goodnews.categories')+'</td><td class="gon-expinfos-val">{catcount}</td>',
             '</tr>',
         '</table>'
         ].join('\n');
@@ -90,7 +92,9 @@ GoodNews.grid.Subscribers = function(config){
             ,'ip'
             ,'soft_bounces'
             ,'hard_bounces'
+            ,'hasmeta'
             ,'grpcount'
+            ,'catcount'
             ,'menu'
         ]
         ,emptyText: _('goodnews.subscribers_none')
@@ -108,18 +112,32 @@ GoodNews.grid.Subscribers = function(config){
             ,sortable: true
             ,width: 100
             ,renderer: function(value,meta,record){
-                if (record.get('grpcount') == 0) {
-                    return '<span class="gon-subscriber-email gon-no-subscriptions">'+value+'</span>';
+                var addCls = '';
+                if (record.get('hasmeta') === false) {
+                    addCls = ' gon-no-goodnewsmeta';
                 } else {
-                    return '<span class="gon-subscriber-email">'+value+'</span>';
+                    if (record.get('grpcount') === 0) {
+                        addCls = ' gon-no-subscriptions';
+                    }
                 }
+                return '<span class="gon-subscriber-email'+addCls+'">'+value+'</span>';
             }
         },{
             header: _('goodnews.subscriber_fullname')
             ,dataIndex: 'fullname'
             ,sortable: true
             ,width: 100
-            ,renderer: Ext.util.Format.htmlEncode
+            ,renderer: function(value,meta,record){
+                var addCls = '';
+                if (record.get('hasmeta') === false) {
+                    addCls = ' gon-no-goodnewsmeta';
+                } else {
+                    if (record.get('grpcount') === 0) {
+                        addCls = ' gon-no-subscriptions';
+                    }
+                }
+                return '<span class="'+addCls+'">'+Ext.util.Format.htmlEncode(value)+'</span>';
+            }
         },{
             header: _('goodnews.subscriber_testdummy')
             ,dataIndex: 'testdummy'

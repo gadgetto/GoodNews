@@ -121,15 +121,35 @@ class SubscribersGetListProcessor extends modObjectGetListProcessor {
         $managerTimeFormat = $this->modx->getOption('manager_time_format', null, 'H:i');
         $dateTimeFormat = $managerDateFormat.' '.$managerTimeFormat;
 
-        //todo: remove this quickhack and get the count in prepareQueryBeforeCount
+        // @todo: remove this quickhack and get the counts in prepareQueryBeforeCount
         if (!empty($userArray['id'])) {
-            // count group subscriptions
+            // check if user has GoodNews meta data
+            $c = $this->modx->newQuery('GoodNewsSubscriberMeta');
+            $c->where(array(
+                'subscriber_id' => $userArray['id'],
+            ));
+            $hasmeta = $this->modx->getCount('GoodNewsSubscriberMeta', $c);
+            if ($hasmeta) {
+                $userArray['hasmeta'] = true;
+            } else {
+                $userArray['hasmeta'] = false;
+            }
+            
+            // count groups where user is member
             $c = $this->modx->newQuery('GoodNewsGroupMember');
             $c->where(array(
                 'member_id' => $userArray['id'],
             ));
             $grpcount = $this->modx->getCount('GoodNewsGroupMember', $c);
             $userArray['grpcount'] = (int)$grpcount;
+            
+            // count categories where user is member
+            $c = $this->modx->newQuery('GoodNewsCategoryMember');
+            $c->where(array(
+                'member_id' => $userArray['id'],
+            ));
+            $catcount = $this->modx->getCount('GoodNewsCategoryMember', $c);
+            $userArray['catcount'] = (int)$catcount;
         }
         
         if ($userArray['testdummy'] == null || $userArray['testdummy'] == '') {

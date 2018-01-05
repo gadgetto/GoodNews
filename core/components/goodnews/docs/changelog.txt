@@ -1,5 +1,6 @@
 Changelog for GoodNews
 
+- refined subscribers grid display (more details, better differentiability)
 - [#6] added bulk actions to susbcribers grid
 - fixed a critical bug in subscriber authentication (as a result from a merge conflict)
 

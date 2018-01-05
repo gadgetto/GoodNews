@@ -194,6 +194,10 @@ button:hover:disabled[class*="gon-ab-"] {
 .gon-no-subscriptions .x-grid3-cell-inner {
     color: #999; /* grey */
 }
+.gon-no-goodnewsmeta,
+.gon-no-goodnewsmeta .x-grid3-cell-inner {
+    color: #999; /* grey */
+}
 
 /* Mail-icon prefix for newsletter title in newsletters grid */
 .gon-newsletter-title::before {
@@ -211,6 +215,14 @@ button:hover:disabled[class*="gon-ab-"] {
     content: "\f007";
     color: #6b747d;
     margin-right: 5px;    
+}
+.gon-subscriber-email.gon-no-subscriptions::before {
+    content: "\f007";
+    color: #bebebe;
+}
+.gon-subscriber-email.gon-no-goodnewsmeta::before {
+    content: "\f007";
+    color: transparent;
 }
 
 /* Textarea in plain-text mail preview window */
