@@ -63,6 +63,7 @@ GoodNews.grid.Subscribers = function(config){
         '<table id="gon-subscrinfo-{id}" class="gon-expinfos">',
             '<tr>',
                 '<td class="gon-expinfos-key">'+_('goodnews.id')+'</td><td class="gon-expinfos-val">{id}</td>',
+                '<td class="gon-expinfos-key">'+_('goodnews.modx_username')+'</td><td class="gon-expinfos-val">{username}</td>',
                 '<td class="gon-expinfos-key">'+_('goodnews.subscriber_ip')+'</td><td class="gon-expinfos-val">{ip}</td>',
             '</tr>',
         '</table>'
@@ -80,12 +81,12 @@ GoodNews.grid.Subscribers = function(config){
         ,baseParams: { action: 'mgr/subscribers/getList' }
         ,fields: [
             'id'
-            ,'username'
-            ,'fullname'
             ,'email'
+            ,'fullname'
             ,'testdummy'
             ,'active'
             ,'subscribedon_formatted'
+            ,'username'
             ,'ip'
             ,'soft_bounces'
             ,'hard_bounces'
@@ -97,7 +98,7 @@ GoodNews.grid.Subscribers = function(config){
         ,remoteSort: true
         ,sm: this.sm
         ,plugins: [this.subexpander]
-        ,autoExpandColumn: 'username'
+        ,autoExpandColumn: 'email'
         ,columns: [
         this.sm
         ,this.subexpander

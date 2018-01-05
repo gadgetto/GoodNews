@@ -51,6 +51,7 @@ $_lang['goodnews.continue']                                         = 'Fortsetze
 $_lang['goodnews.test']                                             = 'Test';
 $_lang['goodnews.sendlog']                                          = 'Sendeprotokoll';
 $_lang['goodnews.id']                                               = 'ID';
+$_lang['goodnews.modx_username']                                    = 'MODX Benutzername';
 $_lang['goodnews.management']                                       = 'GoodNews - Gruppenmailer';
 $_lang['goodnews.button_settings']                                  = 'Einstellungen';
 $_lang['goodnews.input_search_filter']                              = 'Suchfilter...';
