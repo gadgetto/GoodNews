@@ -194,6 +194,10 @@ GoodNews.grid.Subscribers = function(config){
                     text: (GoodNews.config.legacyMode ? '' : '<i class="icon icon-download icon-lg"></i>&nbsp;') + _('goodnews.import_button')
                     ,handler: this.importSubscribers
                     ,scope: this
+                },{
+                    text: (GoodNews.config.legacyMode ? '' : '<i class="icon icon-upload icon-lg"></i>&nbsp;') + _('goodnews.export_button')
+                    ,handler: this.exportSubscribers
+                    ,scope: this
                 },'->',{
                     xtype: 'modx-combo'
                     ,id: 'goodnews-subscribers-group-filter'
@@ -393,6 +397,21 @@ Ext.extend(GoodNews.grid.Subscribers,MODx.grid.Grid,{
         if (GoodNews.config.isGoodNewsAdmin) {
             location.href = MODx.config.manager_url + '?a=' + MODx.request.a + '&action=import';
         }
+    }
+    ,exportSubscribers: function(btn,e) {
+        var s = this.getStore();
+        var win = MODx.load({
+            xtype: 'goodnews-window-subscribers-export'
+            ,exportcount: s.totalLength
+        });
+        win.setValues({ 
+            query: s.baseParams.query
+            ,groupfilter: s.baseParams.groupfilter
+            ,categoryfilter: s.baseParams.categoryfilter
+            ,testdummyfilter: s.baseParams.testdummyfilter
+            ,activefilter: s.baseParams.activefilter
+        });
+        win.show(e.target);
     }
     ,updateSubscriber: function(btn,e) {
         var win = MODx.load({
@@ -914,3 +933,103 @@ Ext.extend(GoodNews.window.SubscribersRemoveMulti,MODx.Window,{
     }    
 });
 Ext.reg('goodnews-window-subscribers-remove-multi',GoodNews.window.SubscribersRemoveMulti);
+
+
+/**
+ * Window to export subscribers to CSV file based on selected filter.
+ * 
+ * @class GoodNews.window.SubscribersExport
+ * @extends MODx.Window
+ * @param {Object} config An object of options.
+ * @xtype goodnews-window-subscribers-export
+ */
+GoodNews.window.SubscribersExport = function(config) {
+    config = config || {};
+    
+    Ext.applyIf(config,{
+        title: _('goodnews.export_subscribers')
+        ,width: 480
+        ,closeAction: 'close'
+        ,url: GoodNews.config.connectorUrl
+        ,baseParams: {
+            action: 'mgr/subscribers/export'
+        }
+        ,items:[{
+            html: '<p>'+_('goodnews.export_subscribers_desc',{ count: config.exportcount })+'</p>'
+            ,border: false
+            ,bodyCssClass: 'panel-desc'
+        }]
+        ,fields: [{
+            xtype: 'hidden'
+            ,name: 'query'
+        },{
+            xtype: 'hidden'
+            ,name: 'groupfilter'
+        },{
+            xtype: 'hidden'
+            ,name: 'categoryfilter'
+        },{
+            xtype: 'hidden'
+            ,name: 'testdummyfilter'
+        },{
+            xtype: 'hidden'
+            ,name: 'activefilter'
+        },{
+            xtype: 'textfield'
+            ,name: 'delimiter'
+            ,id: 'delimiter'
+            ,value: ','
+            ,maxLength: 1
+            ,fieldLabel: _('goodnews.export_subscribers_delimiter')
+            ,description: MODx.expandHelp ? '' : _('goodnews.export_subscribers_delimiter_desc')
+            ,anchor: '100%'
+        },{
+            xtype: MODx.expandHelp ? 'label' : 'hidden'
+            ,forId: 'delimiter'
+            ,html: _('goodnews.export_subscribers_delimiter_desc')
+            ,cls: 'desc-under'
+        },{
+            xtype: 'textfield'
+            ,name: 'enclosure'
+            ,id: 'enclosure'
+            ,value: '"'
+            ,maxLength: 1
+            ,fieldLabel: _('goodnews.export_subscribers_enclosure')
+            ,description: MODx.expandHelp ? '' : _('goodnews.export_subscribers_enclosure_desc')
+            ,anchor: '100%'
+        },{
+            xtype: MODx.expandHelp ? 'label' : 'hidden'
+            ,forId: 'enclosure'
+            ,html: _('goodnews.export_subscribers_enclosure_desc')
+            ,cls: 'desc-under'
+        }]
+        ,buttons: [{
+            text: config.cancelBtnText || _('cancel')
+            ,scope: this
+            ,handler: function() { config.closeAction !== 'close' ? this.hide() : this.close(); }
+        },{
+            text: _('goodnews.export_subscribers_button_start')
+            ,cls: 'primary-button'
+            ,scope: this
+            ,handler: this.submit
+        }]
+        ,listeners: {
+            'success': {
+                fn: function(o) {
+        			MODx.msg.status({
+                    	title: _('goodnews.export_subscribers'),
+                    	message: o.a.result.message,
+                    	delay: 5
+                	});
+        			if(o.a.result.object.total > 0){
+                        location.href = MODx.config.manager_url + '?a=' + MODx.request.a + '&action=export&f=' + o.a.result.object.file;
+        			}
+                }
+                ,scope: this
+            }
+        }
+    });
+    GoodNews.window.SubscribersExport.superclass.constructor.call(this,config);
+};
+Ext.extend(GoodNews.window.SubscribersExport,MODx.Window);
+Ext.reg('goodnews-window-subscribers-export',GoodNews.window.SubscribersExport);

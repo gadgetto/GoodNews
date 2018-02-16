@@ -447,6 +447,20 @@ $_lang['goodnews.import_subscribers_log_finished']                  = 'Import fi
 $_lang['goodnews.import_subscribers_log_failed']                    = 'Import failed. Please check error messages.';
 $_lang['goodnews.import_subscribers_log_err_open_csvfile']          = 'Error opening the CSV file.';
 
+$_lang['goodnews.export_button']                                    = 'Export';
+$_lang['goodnews.export_subscribers']                               = 'Subscribers - Export';
+$_lang['goodnews.export_subscribers_desc']                          = 'Export <b>[[+count]]</b> subscribers as CSV file based on your filter settings.';
+$_lang['goodnews.export_subscribers_delimiter']                     = 'Field Delimiter Character';
+$_lang['goodnews.export_subscribers_delimiter_desc']                = 'Set the field delimiter character (one character only). Default is ,';
+$_lang['goodnews.export_subscribers_enclosure']                     = 'Field Enclosure Character';
+$_lang['goodnews.export_subscribers_enclosure_desc']                = 'Set the field enclosure character (one character only). Default is "';
+$_lang['goodnews.export_subscribers_button_start']                  = 'Start export';
+$_lang['goodnews.export_subscribers_msg_successfull']               = ' subscribers exported successfully. Downloading file...';
+$_lang['goodnews.export_subscribers_msg_ns_subscribers']            = 'There are no subscribers to export. Please check your filter settings.';
+$_lang['goodnews.export_subscribers_error_page_ns_export_file']     = 'An error occurred while downloading the export file!';
+$_lang['goodnews.export_subscribers_error_page_check_log']          = 'Please check the MODX error log for more details.';
+$_lang['goodnews.export_subscribers_error_page_back_button']        = 'Back to GoodNews';
+
 $_lang['setting_goodnews.current_container']                        = 'Current GoodNews Container';
 $_lang['setting_goodnews.current_container_desc']                   = 'ID of the current selected GoodNews container.';
 $_lang['setting_goodnews.test_subject_prefix']                      = 'Prefix for Test-Mailing Subjects';

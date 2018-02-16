@@ -447,6 +447,20 @@ $_lang['goodnews.import_subscribers_log_finished']                  = 'Import ab
 $_lang['goodnews.import_subscribers_log_failed']                    = 'Import fehlgeschlagen. Bitte überprüfen Sie die Fehlermeldungen.';
 $_lang['goodnews.import_subscribers_log_err_open_csvfile']          = 'Fehler beim Öffnen der CSV Datei.';
 
+$_lang['goodnews.export_button']                                    = 'Export';
+$_lang['goodnews.export_subscribers']                               = 'Abonnenten - Export';
+$_lang['goodnews.export_subscribers_desc']                          = 'Exportieren Sie <b>[[+count]]</b> Abonnenten entsprechend Ihrer Filtereinstellungen als CSV Datei.';
+$_lang['goodnews.export_subscribers_delimiter']                     = 'Feld-Trennzeichen';
+$_lang['goodnews.export_subscribers_delimiter_desc']                = 'Legen Sie das Feld-Trennzeichen fest (nur ein Zeichen). Standard ist ,';
+$_lang['goodnews.export_subscribers_enclosure']                     = 'Feld-Begrenzerzeichen';
+$_lang['goodnews.export_subscribers_enclosure_desc']                = 'Legen Sie das Feld-Begrenzerzeichen fest (nur ein Zeichen). Standard ist "';
+$_lang['goodnews.export_subscribers_button_start']                  = 'Export starten';
+$_lang['goodnews.export_subscribers_msg_successfull']               = ' Abonnenten erfolgreich exportiert. Datei wird heruntergeladen...';
+$_lang['goodnews.export_subscribers_msg_ns_subscribers']            = 'Keine Abonnenten zum Exportieren vorhanden. Bitte überprüfen Sie Ihre Filter-Einstellungen.';
+$_lang['goodnews.export_subscribers_error_page_ns_export_file']     = 'Beim Download der Export-Datei ist ein Fehler aufgetreten!';
+$_lang['goodnews.export_subscribers_error_page_check_log']          = 'Bitte überprüfen Sie das MODX Error-Log für weitere Details.';
+$_lang['goodnews.export_subscribers_error_page_back_button']        = 'Zurück zu GoodNews';
+
 $_lang['setting_goodnews.current_container']                        = 'Aktueller GoodNews Container';
 $_lang['setting_goodnews.current_container_desc']                   = 'ID des aktuell ausgewählten GoodNews Containers.';
 $_lang['setting_goodnews.test_subject_prefix']                      = 'Präfix für Betreff bei Test-Mailings';
