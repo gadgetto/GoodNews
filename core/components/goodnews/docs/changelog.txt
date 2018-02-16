@@ -1,5 +1,8 @@
 Changelog for GoodNews
 
+GoodNews 1.4.8-pl (2017-02-16)
+--------------------------------------------------
+- [#39] added subscribers export feature
 - refined subscribers grid display (more details, better differentiability)
 - [#6] added bulk actions to susbcribers grid
 - fixed a critical bug in subscriber authentication (as a result from a merge conflict)
