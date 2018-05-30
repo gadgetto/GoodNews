@@ -134,6 +134,10 @@ if ($object->xpdo) {
                 }
             }
             
+            // 1.4.9-pl+
+            checkAddField($modx, $manager, 'GoodNewsSubscriberMeta', 'activatedon', 'subscribedon');
+            checkAddField($modx, $manager, 'GoodNewsSubscriberMeta', 'ip_activated', 'ip');
+
             // Set bakck log-level to previous level
             $modx->setLogLevel($oldLogLevel);
             break;
