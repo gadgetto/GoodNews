@@ -7,13 +7,19 @@ $xpdo_meta_map['GoodNewsSubscriberMeta']= array (
   'version' => NULL,
   'table' => 'goodnews_subscriber_meta',
   'extends' => 'xPDOSimpleObject',
+  'tableMeta' => 
+  array (
+    'engine' => 'MyISAM',
+  ),
   'fields' => 
   array (
     'subscriber_id' => NULL,
     'sid' => '',
     'subscribedon' => 0,
-    'testdummy' => 0,
+    'activatedon' => 0,
     'ip' => '0',
+    'ip_activated' => '0',
+    'testdummy' => 0,
     'soft_bounces' => '',
     'hard_bounces' => '',
   ),
@@ -44,12 +50,11 @@ $xpdo_meta_map['GoodNewsSubscriberMeta']= array (
       'null' => false,
       'default' => 0,
     ),
-    'testdummy' => 
+    'activatedon' => 
     array (
       'dbtype' => 'int',
-      'precision' => '1',
-      'attributes' => 'unsigned',
-      'phptype' => 'boolean',
+      'precision' => '20',
+      'phptype' => 'timestamp',
       'null' => false,
       'default' => 0,
     ),
@@ -60,6 +65,23 @@ $xpdo_meta_map['GoodNewsSubscriberMeta']= array (
       'phptype' => 'string',
       'null' => false,
       'default' => '0',
+    ),
+    'ip_activated' => 
+    array (
+      'dbtype' => 'varchar',
+      'precision' => '50',
+      'phptype' => 'string',
+      'null' => false,
+      'default' => '0',
+    ),
+    'testdummy' => 
+    array (
+      'dbtype' => 'int',
+      'precision' => '1',
+      'attributes' => 'unsigned',
+      'phptype' => 'boolean',
+      'null' => false,
+      'default' => 0,
     ),
     'soft_bounces' => 
     array (
