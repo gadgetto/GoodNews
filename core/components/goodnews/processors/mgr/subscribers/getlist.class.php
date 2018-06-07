@@ -57,6 +57,7 @@ class SubscribersGetListProcessor extends modObjectGetListProcessor {
             $c->orCondition(array('Profile.fullname:LIKE' => '%'.$query.'%'));
             $c->orCondition(array('Profile.email:LIKE' => '%'.$query.'%'));
             $c->orCondition(array('SubscriberMeta.ip:LIKE' => '%'.$query.'%'));
+            $c->orCondition(array('SubscriberMeta.ip_activated:LIKE' => '%'.$query.'%'));
         }
 
         $groupfilter = $this->getProperty('groupfilter', '');
@@ -103,7 +104,7 @@ class SubscribersGetListProcessor extends modObjectGetListProcessor {
     public function prepareQueryAfterCount(xPDOQuery $c) {
         $c->select($this->modx->getSelectColumns('modUser', 'modUser'));
         $c->select($this->modx->getSelectColumns('modUserProfile', 'Profile', '', array('fullname', 'email')));
-        $c->select($this->modx->getSelectColumns('GoodNewsSubscriberMeta', 'SubscriberMeta', '', array('testdummy', 'subscribedon', 'ip', 'soft_bounces', 'hard_bounces')));
+        $c->select($this->modx->getSelectColumns('GoodNewsSubscriberMeta', 'SubscriberMeta', '', array('testdummy', 'subscribedon', 'activatedon', 'ip', 'ip_activated', 'soft_bounces', 'hard_bounces')));
         return $c;
     }
 
@@ -156,11 +157,18 @@ class SubscribersGetListProcessor extends modObjectGetListProcessor {
             $userArray['testdummy'] = '-';
         }
         
-        if ($userArray['subscribedon'] == null || $userArray['subscribedon'] == '') {
+        if (empty($userArray['subscribedon'])) {
             $userArray['subscribedon_formatted'] = '-';
         } else {
             // Format timestamp into manager date/time format
             $userArray['subscribedon_formatted'] = date($dateTimeFormat, $userArray['subscribedon']);
+        }
+        
+        if (empty($userArray['activatedon'])) {
+            $userArray['activatedon_formatted'] = '-';
+        } else {
+            // Format timestamp into manager date/time format
+            $userArray['activatedon_formatted'] = date($dateTimeFormat, $userArray['activatedon']);
         }
         
         if ($userArray['ip'] == null || $userArray['ip'] == '0') {
@@ -173,6 +181,16 @@ class SubscribersGetListProcessor extends modObjectGetListProcessor {
             $userArray['ip'] = $this->modx->lexicon('goodnews.subscriber_ip_manually');
         }
         
+        if ($userArray['ip_activated'] == null || $userArray['ip_activated'] == '0') {
+            $userArray['ip_activated'] = '-';
+        } elseif ($userArray['ip_activated'] == 'unknown') {
+            $userArray['ip_activated'] = $this->modx->lexicon('goodnews.subscriber_ip_unknown');
+        } elseif ($userArray['ip_activated'] == 'imported') {
+            $userArray['ip_activated'] = $this->modx->lexicon('goodnews.subscriber_ip_imported');
+        } elseif ($userArray['ip_activated'] == 'manually') {
+            $userArray['ip_activated'] = $this->modx->lexicon('goodnews.subscriber_ip_manually');
+        }
+                
         $softBounces = unserialize($userArray['soft_bounces']);
         if (!is_array($softBounces)) {
             $userArray['soft_bounces'] = 0;

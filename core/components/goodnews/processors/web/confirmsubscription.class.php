@@ -55,6 +55,18 @@ class GoodNewsSubscriptionConfirmSubscriptionProcessor extends GoodNewsSubscript
             $this->controller->redirectAfterFailure();
         }
 
+        // Get the subscribers activation IP address
+        $ip = $this->controller->getSubscriberIP();
+        
+        // Set some GDPR relevant fields (those fields will only be set when 2-opt-in is activated in snippet!)
+        $this->subscribermeta->set('activatedon', time());
+        $this->subscribermeta->set('ip_activated', $ip);
+
+        if (!$this->subscribermeta->save()) {
+            $this->modx->log(modX::LOG_LEVEL_ERROR,'[GoodNews] Could not save activated user: '.$this->user->get('username'));
+            $this->controller->redirectAfterFailure();
+        }
+
         // Invoke OnUserActivate event
         $this->modx->invokeEvent('OnUserActivate', array(
             'user' => &$this->user,

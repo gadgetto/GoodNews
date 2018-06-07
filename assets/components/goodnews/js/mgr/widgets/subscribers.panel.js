@@ -63,10 +63,27 @@ GoodNews.grid.Subscribers = function(config){
         '<table id="gon-subscrinfo-{id}" class="gon-expinfos">',
             '<tr>',
                 '<td class="gon-expinfos-key">'+_('goodnews.id')+'</td><td class="gon-expinfos-val">{id}</td>',
+            '</tr>',
+            '<tr>',
                 '<td class="gon-expinfos-key">'+_('goodnews.modx_username')+'</td><td class="gon-expinfos-val">{username}</td>',
-                '<td class="gon-expinfos-key">'+_('goodnews.subscriber_ip')+'</td><td class="gon-expinfos-val">{ip}</td>',
+            '</tr>',
+            '<tr>',
                 '<td class="gon-expinfos-key">'+_('goodnews.groups')+'</td><td class="gon-expinfos-val">{grpcount}</td>',
+            '</tr>',
+            '<tr>',
                 '<td class="gon-expinfos-key">'+_('goodnews.categories')+'</td><td class="gon-expinfos-val">{catcount}</td>',
+            '</tr>',
+            '<tr>',
+                '<td class="gon-expinfos-key">'+_('goodnews.subscriber_subscribed_on')+'</td><td class="gon-expinfos-val">{subscribedon_formatted}</td>',
+            '</tr>',
+            '<tr>',
+                '<td class="gon-expinfos-key">'+_('goodnews.subscriber_ip')+'</td><td class="gon-expinfos-val">{ip}</td>',
+            '</tr>',
+            '<tr>',
+                '<td class="gon-expinfos-key">'+_('goodnews.subscriber_activated_on')+'</td><td class="gon-expinfos-val">{activatedon_formatted}</td>',
+            '</tr>',
+            '<tr>',
+                '<td class="gon-expinfos-key">'+_('goodnews.subscriber_ip_activated')+'</td><td class="gon-expinfos-val">{ip_activated}</td>',
             '</tr>',
         '</table>'
         ].join('\n');
@@ -88,8 +105,10 @@ GoodNews.grid.Subscribers = function(config){
             ,'testdummy'
             ,'active'
             ,'subscribedon_formatted'
+            ,'activatedon_formatted'
             ,'username'
             ,'ip'
+            ,'ip_activated'
             ,'soft_bounces'
             ,'hard_bounces'
             ,'hasmeta'
