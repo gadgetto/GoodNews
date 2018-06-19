@@ -1,4 +1,5 @@
-<p class="grpfield">
-    <input type="checkbox" name="gongroups[]" value="[[+id]]" id="gongroup[[+id]]"[[+checked]]>
-    <label for="gongroup[[+id]]" class="cblabel">[[+name]][[+description:notempty=` <span class="desc">([[+description]])</span>`]]</label>
-</p>
+<label>
+    <input type="checkbox" name="gongroups[]" value="[[+id]]" aria-describedby="gongrp[[+id]]Help"[[+checked]]>
+    [[+name]]
+    [[+description:notempty=`<small id="gongrp[[+id]]Help">([[+description]])</small>`]]
+</label>

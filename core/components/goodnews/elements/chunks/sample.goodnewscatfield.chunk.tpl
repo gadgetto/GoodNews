@@ -1,4 +1,5 @@
-<p class="catfield">
-    <input type="checkbox" name="goncategories[]" value="[[+id]]" id="goncategory[[+id]]"[[+checked]]>
-    <label for="goncategory[[+id]]" class="cblabel">[[+name]][[+description:notempty=` <span class="desc">([[+description]])</span>`]]</label>
-</p>
+<label>
+    <input type="checkbox" name="goncategories[]" value="[[+id]]" aria-describedby="goncat[[+id]]Help"[[+checked]]>
+    [[+name]]
+    [[+description:notempty=`<small id="goncat[[+id]]Help">([[+description]])</small>`]]
+</label>

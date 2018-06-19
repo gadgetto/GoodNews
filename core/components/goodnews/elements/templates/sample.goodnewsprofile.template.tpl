@@ -5,220 +5,140 @@
     <title>[[++site_name]] | [[*pagetitle]]</title>
     <base href="[[++site_url]]">
     <style type="text/css">
-        * { margin: 0; padding: 0; }
-        button,
-        input {
-            font-size: 100%;
-            margin: 0;
-            vertical-align: baseline;
-            *vertical-align: middle;
-        }
-        input[type="checkbox"] {
+        html {
             box-sizing: border-box;
-            padding: 0;
-            *height: 13px;
-            *width: 13px;
+        }
+        *,
+        *::before,
+        *::after {
+            box-sizing: inherit;
         }
         body {
-            background-color: #515151;
             font-family: sans-serif;
-            font-size: 17px;
-            color: #666;
-            line-height: 1.4;
-            padding: 0 15px;
         }
-        p { margin-bottom: 20px; }
-        p:last-child { margin: 0; }
-        p a { color: #000; text-decoration: none; }
-        strong { font-weight: normal; color: #9ec41a; }
         .container {
-            max-width: 640px;
-            margin: 30px auto;
-            background-color: #f6f6f6;
-            border-radius: 12px;
-            overflow: hidden;
+            max-width: 40rem;
+            margin: 0 auto;
         }
-        .header {
-            background-color: #9ec41a;
-            margin-bottom: 30px;
+        h1,
+        h2 {
+            font-weight: 400;
         }
-        .header h1 {
-            font-size: 24px;
-            font-weight: normal;
-            color: #fff;
-            text-align: center;
-            padding: 30px;
+        p {
+            margin: 0 0 1.25rem 0;
         }
-        .main {
-            margin: 30px;
+        form {
+            padding: 0;
+            margin-right: 0;
+            margin-left: 0;
         }
-        .main h2 { 
-            font-size: 20px;
-            font-weight: normal;
-            color: #333;
-            margin-bottom: 15px;
+        fieldset {
+            min-width: 0;
+            padding: 0;
+            margin: 0 0 1rem 0;
+            border: 0;
         }
-        .aside { margin: 30px; }
-        .aside a {
+        legend {
             display: block;
-            margin-top: 15px;
-            text-align: center;
-            color: #000;
-            text-decoration: none;
+            width: 100%;
+            max-width: 100%;
+            padding: 0;
+            margin-bottom: .5rem;
+            font-size: 1.5rem;
+            line-height: inherit;
+            color: inherit;
+            white-space: normal;
         }
-        .footer {
-            margin: 0 -30px;
-            padding: 15px 30px;
-            font-size: 14px;
-            background-color: #e2e2e2;
-        }
-        .footer p {
-            text-align: center;
-            margin: 0;
-        }
-        .errorMsg {
+        label {
             display: block;
-            overflow: hidden;
-            font-size: 18px;
-            text-align: center;
-            padding: 8px;
-            margin-bottom: 20px !important;
-            color: #f2430e;
-            background-color: #f9dfd7;
-            border-radius: 5px;
+            font-size: 1rem;
+            line-height: 1.5;
+            margin-bottom: .75rem;
         }
-        .successMsg {
-            display: block;
-            overflow: hidden;
-            font-size: 18px;
-            text-align: center;
-            padding: 8px;
-            margin-bottom: 20px !important;
-            color: #9ec41a;
-            background-color: #e4e8d0;
-            border-radius: 5px;
+        label strong {
+            font-weight: 600;
         }
-        
-        /* form styles */
-        .gon-form { overflow: hidden; margin: 20px 0; }
-        .gon-form fieldset { border: none; margin-bottom: 30px; }
-        .gon-form fieldset fieldset { margin: 10px; }
-        .gon-form legend { font-size: 24px; font-weight: normal; color: #9ec41a; margin: 0; padding: 0 0 10px 0; }
-        .gon-form p { margin: 0; }
-        .gon-form p.intro { margin-bottom: 20px; }
-        .gon-form p.fieldbg {
-            margin-bottom: 10px;
-            padding: 10px;
-            background-color: #e8e8e8;                    
-            border-radius: 5px;
-        }
-        .gon-form p.grpfield { }
-        .gon-form p.grpfield label { font-weight: bold; }
-        .gon-form p.grpfield span { font-weight: normal; }
-        .gon-form p.catfield {
-            margin-left: 30px;
-        }
-        .gon-form label {
-            font-size: 15px;
-            display: block;
-            margin-bottom: 5px;
-            line-height: 24px;
-            letter-spacing: 1px;
-            overflow: hidden;
-        }
-        .gon-form label.cblabel {
-            display: inline;
-            margin-bottom: 5px;
-            line-height: 24px;
-            letter-spacing: 1px;
-            overflow: hidden;
-        }
-        .gon-form label.cblabel .desc {
-            color: #adadad;
-            font-size: 14px;
-        }
-        .gon-form label.singlelabel {
+        .gongrpfieldset label,
+        .goncatfieldset label {
             margin-bottom: 0;
         }
-        .gon-form .error {
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        textarea {
             display: block;
-            width: auto;
-            margin-top: 5px;
-            padding: 3px 10px;
-            color: #f2430e;
-            background-color: #f9dfd7;                    
-            border-radius: 5px;
-        }
-        .gon-form input[type="text"],
-        .gon-form input[type="email"],
-        .gon-form input[type="password"],
-        .gon-form textarea {
             width: 100%;
-            font-size: 17px;
-            color: #333;
-            margin: 0;
-            padding: 5px 0;
-            background: transparent;
-            border: none;
-            border-top: 1px solid transparent;
-            border-bottom: 1px solid transparent;
-            -webkit-appearance: none;
+            padding: .375rem .75rem;
+            font-size: 1rem;
+            line-height: 1.5;
+            color: #495057;
+            background-color: #fff;
+            border: 1px solid #b1b9c1;
+            border-radius: .25rem;
         }
-        .gon-form input:focus,
-        .gon-form textarea:focus {
-            outline: none;
-            border-top: 1px dotted #ccc;
-            border-bottom: 1px dotted #ccc;
-            /* todo: define my own input, textarea outline */
-        } 
-        .gon-form button:focus { outline: none; /* todo: define my own button outline */ } 
-        /* Remove box shadow firefox, chrome and opera put around required fields */  
-        .gon-form input:required,
-        .gon-form textarea:required {  
-            -webkit-box-shadow: none;  
-               -moz-box-shadow: none;  
-                 -o-box-shadow: none;  
-                    box-shadow: none;  
-        } 
-        /* chrome, safari */  
-        .gon-form ::-webkit-input-placeholder { color: #ccc; font-style: italic; }
-        /* mozilla */  
-        .gon-form input:-moz-placeholder,
-        .gon-form textarea:-moz-placeholder { color: #ccc; font-style: italic; }
-        /* ie (faux placeholder) */  
-        .gon-form input.placeholder-text, 
-        .gon-form textarea.placeholder-text  { color: #ccc; font-style: italic; }
-
-        /* button styles */
-        .button,
-        .button:link,
-        .button:visited {
-            margin: 0 auto;
-            display: inline-block;
-            font-size: 17px;
-            width: auto;
-            height: auto;
-            zoom: 1;
-            padding: .5em 1.5em;
-            cursor: pointer;
-            text-decoration: none;
-            border: none;
-            /* todo: define outline */
-            border-radius: 5px;
+        input.readonly,
+        textarea.readonly {
+            background-color: #f7f8fb;
+            cursor: not-allowed;
         }
-        
-        .button.green,
-        .button.green:link,
-        .button.green:visited {
+        .formerror {
+            display: block;
+            margin-bottom: 1rem;
+            padding: .75rem 1rem;
+            color: #d1293a;
+            background-color: #fbd3d7;
+            border-radius: .25rem;
+        }
+        .formsuccess {
+            display: block;
+            margin-bottom: 1rem;
+            padding: .75rem 1rem;
+            color: #27a946;
+            background-color: #cfe7d5;
+            border-radius: .25rem;
+        }
+        .fielderror,
+        .gongrpfieldserror,
+        .goncatfieldserror {
+            color: #d1293a;
+        }
+        .fielderror input {
+            border-color: #d1293a;
+        }
+        span.error {
+            display: block;
+            margin-bottom: .5rem;
+            padding: .375rem .75rem;
+            color: #d1293a;
+            background-color: #fbd3d7;
+            border-radius: .25rem;
+            font-size: smaller;
+            line-height: 1rem;
+        }
+        button,
+        input[type="button"] {
+            color: #fff;
             background-color: #9ec41a;
-            color: white;
+            display: inline-block;
+            font-weight: 400;
+            vertical-align: middle;
+            border: 1px solid #9ec41a;
+            padding: .375rem .75rem;
+            font-size: 1rem;
+            line-height: 1.5;
+            border-radius: .25rem;
         }
-        .button.green:hover {
-            background-color: #89ab17;
+        button:hover,
+        input[type="button"]:hover {
+            background-color: #8da534;
+            border-color: #8da534;
+        }
+        .hidden {
+            visibility: hidden;
         }
     </style>
 </head>
 <body>
-[[*content]]
+    [[*content]]
 </body>
 </html>

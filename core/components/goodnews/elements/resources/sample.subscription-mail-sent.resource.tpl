@@ -1,9 +1,11 @@
 <div class="container">
-    <div class="header">
+    <header>
         <h1>[[++site_name]]</h1>
-    </div>
-    <div class="main">
-        <p class="successMsg">Thank you for signing up to our newsletter service!</p>
+    </header>
+    <main>
+        <div class="formsuccess">
+            Thank you for signing up to our newsletter service!
+        </div>
         <p>
             You will receive an email shortly, asking you to confirm your subscription. Please <strong>click on the link 
             in the email</strong> to complete the subscription process. You will not receive our newsletters unless you 
@@ -19,8 +21,8 @@
             <em>Best wishes,<br>
             Your [[++site_name]] Team!</em>
         </p>
-    </div>
-    <div class="footer">
-        <p>&copy; Copyright [[++site_name]]</p>
-    </div>
+    </main>
+    <footer>
+        <p>&copy; Copyright [[++site_name]] | <a href="[[!GoodNewsGetResourceID? &pagetitle=`GoodNews Terms and Conditions`]]">Terms and Conditions</a> | <a href="[[!GoodNewsGetResourceID? &pagetitle=`GoodNews Privacy Policy`]]">Privacy Policy</a></p>
+    </footer>
 </div>

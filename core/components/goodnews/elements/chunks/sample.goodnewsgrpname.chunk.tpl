@@ -1,3 +1,4 @@
-<p class="grpfield">
-    <label class="cblabel">[[+name]][[+description:notempty=` <span class="desc">([[+description]])</span>`]]</label>
-</p>
+<label>
+    <strong>[[+name]]</strong>
+    [[+description:notempty=`<small>([[+description]])</small>`]]
+</label>

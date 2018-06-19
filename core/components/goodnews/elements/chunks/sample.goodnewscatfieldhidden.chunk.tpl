@@ -1,1 +1,1 @@
-<input type="hidden" name="goncategories[]" value="[[+id]]" id="goncategory[[+id]]">
+<input type="hidden" name="goncategories[]" value="[[+id]]">

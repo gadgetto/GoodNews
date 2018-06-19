@@ -1,9 +1,11 @@
 <div class="container">
-    <div class="header">
+    <header>
         <h1>[[++site_name]]</h1>
-    </div>
-    <div class="main">
-        <p class="successMsg">You successfully finished your subscription to our newsletter service!</p>
+    </header>
+    <main>
+        <div class="formsuccess">
+            You successfully finished your subscription to our newsletter service!
+        </div>
         <p>
             <strong>Please note:</strong> Each newsletter will contain links to immediately cancel or edit your newsletter profile.
         </p>
@@ -11,8 +13,8 @@
             <em>Best wishes,<br>
             Your [[++site_name]] Team!</em>
         </p>
-    </div>
-    <div class="footer">
-        <p>&copy; Copyright [[++site_name]]</p>
-    </div>
+    </main>
+    <footer>
+        <p>&copy; Copyright [[++site_name]] | <a href="[[!GoodNewsGetResourceID? &pagetitle=`GoodNews Terms and Conditions`]]">Terms and Conditions</a> | <a href="[[!GoodNewsGetResourceID? &pagetitle=`GoodNews Privacy Policy`]]">Privacy Policy</a></p>
+    </footer>
 </div>

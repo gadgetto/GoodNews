@@ -5,23 +5,30 @@
     &subscriptionEmailSubject=`Your subscription to our newsletter service at [[++site_name]] was successful!`
 ]]
 
+[[-
+    Please read the documentation for a full list of configuration parameters.
+]]
+
 <div class="container">
-    <div class="header">
+    <header>
         <h1>[[++site_name]]</h1>
-    </div>
-    <div class="main">
-        <p class="successMsg">You successfully finished your registration to our website!</p>
-        <p>Please login with the credentials you submitted via registration form.</p>
+    </header>
+    <main>
+        <div class="formsuccess">
+            You successfully finished your registration to our website!
+        </div>
         <p>
-            <strong>Please note:</strong> If you registered for our newsletter service,
-            each mail will contain links to immediately cancel or edit your newsletter profile.
+            Please login with the credentials you submitted via registration form.
+        </p>
+        <p>
+            <strong>Please note:</strong> If you additionally subscribed to our newsletter service, each mail will contain links to immediately cancel or edit your newsletter profile.
         </p>
         <p>
             <em>Best wishes,<br>
             Your [[++site_name]] Team!</em>
         </p>
-    </div>
-    <div class="footer">
-        <p>&copy; Copyright [[++site_name]]</p>
-    </div>
+    </main>
+    <footer>
+        <p>&copy; Copyright [[++site_name]] | <a href="[[!~[[!GoodNewsGetResourceID? &pagetitle=`GoodNews Terms and Conditions`]]]]">Terms and Conditions</a> | <a href="[[!~[[!GoodNewsGetResourceID? &pagetitle=`GoodNews Privacy Policy`]]]]">Privacy Policy</a></p>
+    </footer>
 </div>
