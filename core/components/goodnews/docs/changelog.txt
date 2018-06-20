@@ -1,6 +1,11 @@
 Changelog for GoodNews
 
+- general GDPR compliance release (1st-step)!
 - make automatic inlining of CSS a setting (Gmail now supports embedded CSS, which removes the need for inline CSS in Gmail)
+- fixed user related placeholders for subscription/activation email templates (now all placeholders from user object are provided)
+- [#63] refactored all sample resource documents for GDPR compliance + fresh and clean HTML5
+- added sample Privacy Policy and terms and Conditions resources to installer
+- [#61] extended subscription process to also log activation IP + timestamp (GDPR compliance)
 
 
 GoodNews 1.4.8-pl (2017-02-16)
