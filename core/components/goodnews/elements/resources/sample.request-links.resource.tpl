@@ -44,14 +44,14 @@
                 <label[[!+error.gdprcheck:notempty=` class="fielderror"`]]>
                     [[!+error.gdprcheck]]
                     <input type="checkbox" name="gdprcheck" value="agreed" required="required">
-                    I have read and agree to the <a href="[[!GoodNewsGetResourceID? &pagetitle=`GoodNews Terms and Conditions`]]">Terms and Conditions</a> and <a href="[[!GoodNewsGetResourceID? &pagetitle=`GoodNews Privacy Policy`]]">Privacy Policy</a>
+                    I have read and agree to the <a href="[[!~[[!GoodNewsGetResourceID? &pagetitle=`GoodNews Terms and Conditions`]]]]">Terms and Conditions</a> and <a href="[[!~[[!GoodNewsGetResourceID? &pagetitle=`GoodNews Privacy Policy`]]]]">Privacy Policy</a>
                 </label>
                 <button type="submit" name="goodnews-requestlinks-btn" value="Request">Request Secure Links</button>
             </fieldset>
         </form>
     </main>
     <footer>
-        <p>&copy; Copyright [[++site_name]] | <a href="[[!GoodNewsGetResourceID? &pagetitle=`GoodNews Terms and Conditions`]]">Terms and Conditions</a> | <a href="[[!GoodNewsGetResourceID? &pagetitle=`GoodNews Privacy Policy`]]">Privacy Policy</a></p>
+        <p>&copy; Copyright [[++site_name]] | <a href="[[!~[[!GoodNewsGetResourceID? &pagetitle=`GoodNews Terms and Conditions`]]]]">Terms and Conditions</a> | <a href="[[!~[[!GoodNewsGetResourceID? &pagetitle=`GoodNews Privacy Policy`]]]]">Privacy Policy</a></p>
     </footer>
 </div>
         

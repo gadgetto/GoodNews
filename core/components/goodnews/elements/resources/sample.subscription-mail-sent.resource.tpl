@@ -23,6 +23,6 @@
         </p>
     </main>
     <footer>
-        <p>&copy; Copyright [[++site_name]] | <a href="[[!GoodNewsGetResourceID? &pagetitle=`GoodNews Terms and Conditions`]]">Terms and Conditions</a> | <a href="[[!GoodNewsGetResourceID? &pagetitle=`GoodNews Privacy Policy`]]">Privacy Policy</a></p>
+        <p>&copy; Copyright [[++site_name]] | <a href="[[!~[[!GoodNewsGetResourceID? &pagetitle=`GoodNews Terms and Conditions`]]]]">Terms and Conditions</a> | <a href="[[!~[[!GoodNewsGetResourceID? &pagetitle=`GoodNews Privacy Policy`]]]]">Privacy Policy</a></p>
     </footer>
 </div>
