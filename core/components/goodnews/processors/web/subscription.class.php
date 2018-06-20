@@ -120,11 +120,7 @@ class GoodNewsSubscriptionSubscriptionProcessor extends GoodNewsSubscriptionProc
             // Send a subscription success email including the secure links to edit subscription profile
             $sendSubscriptionEmail = $this->controller->getProperty('sendSubscriptionEmail', true, 'isset');
             if ($sendSubscriptionEmail) {
-                $subscriberProperties = array_merge(
-                    $this->user->toArray(),
-                    $this->profile->toArray(),
-                    $this->subscribermeta->toArray()
-                );
+                $subscriberProperties = $this->_getSubscriberProperties();
                 $this->controller->sendSubscriptionEmail($subscriberProperties);
             }
         }
@@ -372,8 +368,8 @@ class GoodNewsSubscriptionSubscriptionProcessor extends GoodNewsSubscriptionProc
      * @return array
      */
     public function gatherActivationEmailProperties() {
-        // Generate a password and encode it and the username into the url
-        $pword = $this->user->generatePassword();
+        // Generate a cache password and encode it and the username into the url
+        $pword = $this->setCachePassword();
         $confirmParams['lp'] = $this->goodnewssubscription->base64url_encode($pword);
         $confirmParams['lu'] = $this->goodnewssubscription->base64url_encode($this->user->get('username'));
         $confirmParams = array_merge($this->persistParams, $confirmParams);
@@ -396,40 +392,117 @@ class GoodNewsSubscriptionSubscriptionProcessor extends GoodNewsSubscriptionProc
         $emailTplAlt = $this->controller->getProperty('activationEmailTplAlt', '');
         $emailTplType = $this->controller->getProperty('activationEmailTplType', 'modChunk');
         
-        $emailProperties = $this->user->toArray();
+        $emailProperties = $this->_getSubscriberProperties();
         $emailProperties['confirmUrl'] = $confirmUrl;
         $emailProperties['tpl'] = $emailTpl;
         $emailProperties['tplAlt'] = $emailTplAlt;
         $emailProperties['tplType'] = $emailTplType;
 
-        $this->setCachePassword($pword);
         return $emailProperties;
     }
 
     /**
-     * setCachePassword function.
+     * Generates a cache password for subscriber activation and writes it to modRegistry.
      * 
      * @access public
      * @param mixed $password
-     * @return bool $success
+     * @return mixed $cachepwd || false
      */
-    public function setCachePassword($password) {
-        // Now set new password to registry to prevent middleman attacks.
-        // Will read from the registry on the confirmation page.
+    public function setCachePassword() {
+        // Generate a new password
+        $cachepwd = $this->user->generatePassword();
+
+        // Set new password to modRegistry to prevent middleman attacks.
+        // (Will be read from the registry on the confirmation page)
         $this->modx->getService('registry', 'registry.modRegistry');
         $this->modx->registry->addRegister('goodnewssubscription', 'registry.modFileRegister');
         $this->modx->registry->goodnewssubscription->connect();
         $this->modx->registry->goodnewssubscription->subscribe('/useractivation/');
-        $this->modx->registry->goodnewssubscription->send('/useractivation/', array($this->user->get('username') => $password), array(
+        $this->modx->registry->goodnewssubscription->send('/useractivation/', array($this->user->get('username') => $cachepwd), array(
             'ttl' => ($this->controller->getProperty('activationttl', 180) * 60),
         ));
         // Set cachepwd here to prevent re-registration of inactive users
-        $this->user->set('cachepwd', md5($password));
+        $this->user->set('cachepwd', md5($cachepwd));
         $success = $this->user->save();
         if (!$success) {
-            $this->modx->log(modX::LOG_LEVEL_ERROR, '[GoodNews] Could not update cachepwd for activation for user: '.$this->user->get('username'));
+            $this->modx->log(modX::LOG_LEVEL_ERROR, '[GoodNews] Could not set cachepwd for activation for user: '.$this->user->get('username'));
+            $cachepwd = false;
         }
-        return $success;
+        return $cachepwd;
+    }
+
+    /**
+     * Get the subscriber properties and collect in array.
+     * 
+     * @access private
+     * @return mixed $properties The collection of properties || false
+     */
+    private function _getSubscriberProperties() {
+
+        $properties = array_merge(
+            $this->user->toArray(),
+            $this->profile->toArray(),
+            $this->subscribermeta->toArray()
+        );
+                
+        // Flatten extended fields:
+        // extended.field1
+        // extended.container1.field2
+        // ...
+        $extended = $this->profile->get('extended') ? $this->profile->get('extended') : array();
+        if (!empty($extended)) {
+            $extended = $this->_flattenExtended($extended, 'extended.');
+        }
+        $properties = array_merge(
+            $properties,
+            $extended
+        );
+        
+        $properties = $this->_cleanupKeys($properties);
+        return $properties;
+    }
+
+    /**
+     * Manipulate/add/remove fields from array.
+     *
+     * @access private
+     * @param array $properties
+     * @return array $properties
+     */
+    private function _cleanupKeys(array $properties = array()) {
+        unset(
+            // users table
+            $properties['id'],          // multiple occurrence; not needed
+            $properties['password'],    // security!
+            $properties['cachepwd'],    // security!
+            $properties['hash_class'],  // security!
+            $properties['salt'],        // security!
+            // user_attributes table
+            $properties['internalKey'], // not needed
+            $properties['sessionid'],   // security!
+            $properties['extended']     // not needed as its already flattened
+        );    
+        return $properties;
+    }
+
+    /**
+     * Helper function to recursively flatten an array.
+     * 
+     * @access private
+     * @param array $array The array to be flattened.
+     * @param string $prefix The prefix for each new array key.
+     * @return array $result The flattened and prefixed array.
+     */
+    private function _flattenExtended($array, $prefix = '') {
+        $result = array();
+        foreach($array as $key => $value) {
+            if (is_array($value)) {
+                $result = $result + $this->_flattenExtended($value, $prefix.$key.'.');
+            } else {
+                $result[$prefix.$key] = $value;
+            }
+        }
+        return $result;
     }
 
     /**

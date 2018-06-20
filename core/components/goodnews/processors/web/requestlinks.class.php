@@ -54,13 +54,9 @@ class GoodNewsSubscriptionRequestLinksProcessor extends GoodNewsSubscriptionProc
             sleep(2); // this is for simulating delay which is normally caused by sending an email!
             return true;
         }
-        
+
         // Send request links email
-        $subscriberProperties = array_merge(
-            $this->user->toArray(),
-            $this->profile->toArray(),
-            $this->subscribermeta->toArray()
-        );
+        $subscriberProperties = $this->_getSubscriberProperties();
         if (!$this->sendRequestLinksEmail($subscriberProperties)) {
             return $this->modx->lexicon('goodnews.email_not_sent');
         }
@@ -161,6 +157,80 @@ class GoodNewsSubscriptionRequestLinksProcessor extends GoodNewsSubscriptionProc
         $subject = $this->controller->getProperty('requestLinksEmailSubject', $this->modx->lexicon('goodnews.requestlinks_email_subject'));
         
         return $this->goodnewssubscription->sendEmail($this->email, $subject, $emailProperties);
+    }
+
+    /**
+     * Get the subscriber properties and collect in array.
+     * 
+     * @access private
+     * @return mixed $properties The collection of properties || false
+     */
+    private function _getSubscriberProperties() {
+
+        $properties = array_merge(
+            $this->user->toArray(),
+            $this->profile->toArray(),
+            $this->subscribermeta->toArray()
+        );
+                
+        // Flatten extended fields:
+        // extended.field1
+        // extended.container1.field2
+        // ...
+        $extended = $this->profile->get('extended') ? $this->profile->get('extended') : array();
+        if (!empty($extended)) {
+            $extended = $this->_flattenExtended($extended, 'extended.');
+        }
+        $properties = array_merge(
+            $properties,
+            $extended
+        );
+        
+        $properties = $this->_cleanupKeys($properties);
+        return $properties;
+    }
+
+    /**
+     * Manipulate/add/remove fields from array.
+     *
+     * @access private
+     * @param array $properties
+     * @return array $properties
+     */
+    private function _cleanupKeys(array $properties = array()) {
+        unset(
+            // users table
+            $properties['id'],          // multiple occurrence; not needed
+            $properties['password'],    // security!
+            $properties['cachepwd'],    // security!
+            $properties['hash_class'],  // security!
+            $properties['salt'],        // security!
+            // user_attributes table
+            $properties['internalKey'], // not needed
+            $properties['sessionid'],   // security!
+            $properties['extended']     // not needed as its already flattened
+        );    
+        return $properties;
+    }
+
+    /**
+     * Helper function to recursively flatten an array.
+     * 
+     * @access private
+     * @param array $array The array to be flattened.
+     * @param string $prefix The prefix for each new array key.
+     * @return array $result The flattened and prefixed array.
+     */
+    private function _flattenExtended($array, $prefix = '') {
+        $result = array();
+        foreach($array as $key => $value) {
+            if (is_array($value)) {
+                $result = $result + $this->_flattenExtended($value, $prefix.$key.'.');
+            } else {
+                $result[$prefix.$key] = $value;
+            }
+        }
+        return $result;
     }
 
     /**
