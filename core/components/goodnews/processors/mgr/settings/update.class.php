@@ -37,6 +37,7 @@ class SettingsUpdateProcessor extends modProcessor {
             'admin_groups',
             'auto_fix_imagesizes',
             'auto_full_urls',
+            'auto_inline_css',
             'auto_cleanup_subscriptions',
             'auto_cleanup_subscriptions_ttl',
             'mailing_bulk_size',

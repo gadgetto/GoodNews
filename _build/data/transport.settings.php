@@ -81,6 +81,15 @@ $settings['goodnews.auto_full_urls']->fromArray(array(
     'area'      => '',
 ), '', true, true);
 
+$settings['goodnews.auto_inline_css'] = $modx->newObject('modSystemSetting');
+$settings['goodnews.auto_inline_css']->fromArray(array(
+    'key'       => 'goodnews.auto_inline_css',
+    'value'     => '0',
+    'xtype'     => 'combo-boolean',
+    'namespace' => 'goodnews',
+    'area'      => '',
+), '', true, true);
+
 $settings['goodnews.auto_cleanup_subscriptions'] = $modx->newObject('modSystemSetting');
 $settings['goodnews.auto_cleanup_subscriptions']->fromArray(array(
     'key'       => 'goodnews.auto_cleanup_subscriptions',

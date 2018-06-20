@@ -1,5 +1,8 @@
 Changelog for GoodNews
 
+- make automatic inlining of CSS a setting (Gmail now supports embedded CSS, which removes the need for inline CSS in Gmail)
+
+
 GoodNews 1.4.8-pl (2017-02-16)
 --------------------------------------------------
 - [#39] added subscribers export feature

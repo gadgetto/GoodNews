@@ -289,8 +289,10 @@ class GoodNewsMailing {
         $this->modx->resourceIdentifier = $currentResourceIdentifier;
         $this->modx->resource           = $currentResource;
 
-        // Process embeded CSS
-        $html = $this->_inlineCSS($html);
+        // AutoInline CSS styles from template header (<styles>...</styles>) if activated in settings
+        if ($this->modx->getOption('goodnews.auto_inline_css', null, false)) {
+            $html = $this->_inlineCSS($html);
+        }
         
         // AutoFixImageSizes if activated in settings
         if ($this->modx->getOption('goodnews.auto_fix_imagesizes', null, true)) {
