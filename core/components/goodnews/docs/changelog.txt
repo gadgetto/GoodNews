@@ -1,5 +1,6 @@
 Changelog for GoodNews
 
+- fixed a PHP warning in full URL conversion class
 - general GDPR compliance release (1st-step)!
 - make automatic inlining of CSS a setting (Gmail now supports embedded CSS, which removes the need for inline CSS in Gmail)
 - fixed user related placeholders for subscription/activation email templates (now all placeholders from user object are provided)
