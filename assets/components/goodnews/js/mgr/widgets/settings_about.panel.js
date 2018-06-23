@@ -15,7 +15,6 @@ GoodNews.panel.AboutSettings = function(config) {
     var credits = [
         '<h3>'+_('goodnews.credits')+'</h3>',
         '<p>'+_('goodnews.credits_modx_community')+'</p>',
-        '<p>'+_('goodnews.credits_bob_ray')+'</p>',
         '<p>'+_('goodnews.credits_icons_by')+'</p>',
         ].join('\n');
 
