@@ -196,6 +196,12 @@ button:hover:disabled[class*="gon-ab-"] {
     list-style-type: disc;
     margin-left: 20px;
 }
+.gon-about-box-error {
+    color: #f22;
+}
+.gon-about-box-error h3 {
+    color: #f22;
+}
 
 /* status colors */
 .gon-ok {
@@ -238,6 +244,14 @@ button:hover:disabled[class*="gon-ab-"] {
     .gon-odd {
         background-color: #fafafa;
     }
+
+/* Error panel */
+.gon-panel-desc-error {
+    color: #fff;
+    background-color: #f99;
+    font-size: 1.2rem;
+    font-weight: bold;
+}
 
 /* Overwrite default MODx Revo manager styles */
 .x-grid3-row.x-grid3-row-selected {

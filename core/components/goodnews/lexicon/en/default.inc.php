@@ -28,6 +28,7 @@
 
 $_lang['goodnews']                                                  = 'GoodNews';
 $_lang['goodnews.desc']                                             = 'An integrated group and newsletter mailing system.';
+$_lang['goodnews.version']                                          = 'GoodNews version';
 $_lang['goodnews.credits']                                          = 'Credits';
 $_lang['goodnews.credits_modx_community']                           = 'Many thanks to the stunning MODX community for their tireless help!';
 $_lang['goodnews.credits_bob_ray']                                  = 'Methods to convert inline image styles by Bob Ray - <a href="http://bobsguides.com">http://bobsguides.com</a>';
@@ -286,6 +287,13 @@ $_lang['goodnews.settings_auto_cleanup_subscriptions']              = 'Auto Clea
 $_lang['goodnews.settings_auto_cleanup_subscriptions_desc']         = 'Whether or not never activated Subscriptions, including their corresponding MODX User-Accounts, will be removed automatically. This only concerns MODX User-Accounts which have GoodNews meta-data assigned! MODX User-Accounts which belongs to MODX User-Groups will stay untouched!.';
 $_lang['goodnews.settings_auto_cleanup_subscriptions_ttl']          = 'Time To Live Until Remove';
 $_lang['goodnews.settings_auto_cleanup_subscriptions_ttl_desc']     = 'Number of minutes until never activated Subscriptions will be removed automatically. (Default: 360 minutes).';
+
+$_lang['goodnews.error']                                            = 'GoodNews - Setup Failure';
+$_lang['goodnews.error_message_tab']                                = 'Failure Report';
+$_lang['goodnews.error_message_tab_desc']                           = 'There is a problem in GoodNews Setup - the application could not be started.';
+$_lang['goodnews.error_messages']                                   = 'The following problems were detected';
+$_lang['goodnews.error_message_no_container_available']             = 'No accessible GoodNews mailing container available. There needs to be at least one published and accessible GoodNews resource container in your resources tree.';
+$_lang['goodnews.error_message_unauthorized']                       = 'Access denied! You are not entitled to access this GoodNews mailing container. Please contact your site admin.';
 
 $_lang['goodnews.settings_containers_none']                         = 'No GoodNews resource containers found';
 $_lang['goodnews.settings_container_id']                            = 'ID';

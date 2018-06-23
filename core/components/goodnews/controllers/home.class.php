@@ -38,24 +38,45 @@ class GoodNewsHomeManagerController extends GoodNewsManagerController {
     
     public function loadCustomCssJs() {
         
-        // load utilities and reusable functions
+        // Load utilities and reusable functions
         $this->addJavascript($this->goodnews->config['jsUrl'].'utils/utilities.js');
         
-        // load widgets
-        $this->addJavascript($this->goodnews->config['jsUrl'].'mgr/widgets/newsletters.panel.js');
-        $this->addJavascript($this->goodnews->config['jsUrl'].'mgr/widgets/categories.panel.js');
-        $this->addJavascript($this->goodnews->config['jsUrl'].'mgr/widgets/groups.panel.js');
-        $this->addJavascript($this->goodnews->config['jsUrl'].'mgr/widgets/subscribers.panel.js');
+        $setupErrors = $this->goodnews->getSetupErrors();
+        
+        if (empty($setupErrors)) {
+            
+            // Load widgets
+            $this->addJavascript($this->goodnews->config['jsUrl'].'mgr/widgets/newsletters.panel.js');
+            $this->addJavascript($this->goodnews->config['jsUrl'].'mgr/widgets/categories.panel.js');
+            $this->addJavascript($this->goodnews->config['jsUrl'].'mgr/widgets/groups.panel.js');
+            $this->addJavascript($this->goodnews->config['jsUrl'].'mgr/widgets/subscribers.panel.js');
+    
+            // load home panel widgets container
+            $this->addLastJavascript($this->goodnews->config['jsUrl'].'mgr/sections/home.panel.js');
 
-        // load home panel widgets container
-        $this->addLastJavascript($this->goodnews->config['jsUrl'].'mgr/sections/home.panel.js');
+            $this->addHtml('<script type="text/javascript">
+            Ext.onReady(function(){
+                GoodNews.config = '.$this->modx->toJSON($this->goodnews->config).';
+                GoodNews.request = '.$this->modx->toJSON($_GET).';
+                MODx.add("goodnews-panel-home");
+            });
+            </script>');
 
-        $this->addHtml('<script type="text/javascript">
-        Ext.onReady(function(){
-            GoodNews.config = '.$this->modx->toJSON($this->goodnews->config).';
-            GoodNews.request = '.$this->modx->toJSON($_GET).';
-            MODx.add("goodnews-panel-home");
-        });
-        </script>');
+        } else {
+            
+            // Load widgets
+            $this->addJavascript($this->goodnews->config['jsUrl'].'mgr/widgets/error_message.panel.js');
+    
+            // load error panel widgets container
+            $this->addLastJavascript($this->goodnews->config['jsUrl'].'mgr/sections/error.panel.js');
+            
+            $this->addHtml('<script type="text/javascript">
+            Ext.onReady(function(){
+                GoodNews.config = '.$this->modx->toJSON($this->goodnews->config).';
+                GoodNews.request = '.$this->modx->toJSON($_GET).';
+                MODx.add("goodnews-panel-error");
+            });
+            </script>');
+        }
     }
 }

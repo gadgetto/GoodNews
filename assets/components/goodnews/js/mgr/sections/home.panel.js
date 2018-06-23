@@ -83,7 +83,7 @@ Ext.extend(GoodNews.HomePanel,MODx.Panel,{
             ,hiddenName: 'container'
             ,valueField: 'id'
             ,displayField: 'name'
-            ,value: GoodNews.config.currentContainer
+            ,value: GoodNews.config.userCurrentContainer
             ,editable: false
             ,selectOnFocus: false
             ,preventRender: false
@@ -94,13 +94,13 @@ Ext.extend(GoodNews.HomePanel,MODx.Panel,{
                 url: GoodNews.config.connectorUrl
                 ,baseParams: {
                     action : 'mgr/settings/containers/getContList'
-                    ,containerIDs: GoodNews.config.assignedContainers
+                    ,containerIDs: GoodNews.config.userAvailableContainers
                 }
                 ,fields: ['id','name']
                 ,root: 'results'
             })
             ,listeners: {
-                'select': {fn:this.setCurrentContainer,scope:this}
+                'select': {fn:this.setUserCurrentContainer,scope:this}
             }
         },'-')
         // Settings button
@@ -131,7 +131,7 @@ Ext.extend(GoodNews.HomePanel,MODx.Panel,{
             location.href = MODx.config.manager_url + '?a=' + MODx.request.a + '&action=settings';
         }
     }
-    ,setCurrentContainer: function(cb) {
+    ,setUserCurrentContainer: function(cb) {
         MODx.Ajax.request({
             url: GoodNews.config.connectorUrl
             ,params: {
@@ -148,7 +148,7 @@ Ext.extend(GoodNews.HomePanel,MODx.Panel,{
                         ,delay: 2
                     })
                     Ext.getCmp('goodnews-grid-newsletters').refresh();
-                    GoodNews.config.currentContainer = cb.getValue(); // this is for changing parent parameter on Create Newsletter button on the fly
+                    GoodNews.config.userCurrentContainer = cb.getValue(); // this is for changing parent parameter on Create Newsletter button on the fly
                 },scope:this}
             }
         });

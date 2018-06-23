@@ -1,5 +1,10 @@
 Changelog for GoodNews
 
+- remastered the initialization process
+- implemented a flexible setup/initialization error handling
+- added a CMP for error handling
+- [#60] proper handling for "no GoodNews container available" situations
+- proper handling for "access denied" situations
 - fixed a PHP warning in full URL conversion class
 - general GDPR compliance release (1st-step)!
 - make automatic inlining of CSS a setting (Gmail now supports embedded CSS, which removes the need for inline CSS in Gmail)

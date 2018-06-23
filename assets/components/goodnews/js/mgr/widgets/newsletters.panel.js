@@ -590,7 +590,7 @@ Ext.extend(GoodNews.grid.Newsletters,MODx.grid.Grid,{
         if (GoodNews.config.mailingTemplate) {
             tpl = '&template='+GoodNews.config.mailingTemplate;
         }
-        location.href = 'index.php?a='+createPage+'&class_key=GoodNewsResourceMailing&parent='+GoodNews.config.currentContainer+'&context_key='+GoodNews.config.contextKey+tpl;
+        location.href = 'index.php?a='+createPage+'&class_key=GoodNewsResourceMailing&parent='+GoodNews.config.userCurrentContainer+'&context_key='+GoodNews.config.contextKey+tpl;
     }
     ,previewNewsletter: function(btn,e) {
         if (this.menu.record.richtext == true) {

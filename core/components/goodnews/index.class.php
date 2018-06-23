@@ -33,15 +33,16 @@ abstract class GoodNewsManagerController extends modExtraManagerController {
     
     public function initialize() {
         $this->goodnews = new GoodNews($this->modx);
-        $containerObj = $this->modx->getObject('modResource', $this->goodnews->currentContainer);
+        $container = $this->modx->getObject('modResource', $this->goodnews->userCurrentContainer);
         
+        // Normally should not happen here (but we stay secure)
+        if (!is_object($container)) {
+            $this->goodnews->addSetupError('503 Service Unavailable', $this->modx->lexicon('goodnews.error_message_no_container_available'), false);
+        }
+
         // Security ceck: is user entitled to manage the requested GoodNews container?
-        if (!$this->goodnews->isEditor($containerObj)) {
-            header("Content-Type: text/html; charset=UTF-8");
-            header('HTTP/1.1 401 Not Authorized');
-            echo '<html><title>Error 401: Not Authorized</title><body><h1>Error!</h1><p>Access denied.</p></body></html>';
-            @session_write_close();
-            die();
+        if (!$this->goodnews->isEditor($container)) {
+            $this->goodnews->addSetupError('401 Unauthorized', $this->modx->lexicon('goodnews.error_message_unauthorized'), false);
         }
         
         // Add custom css file to manager-page header based on Revo version
@@ -52,6 +53,7 @@ abstract class GoodNewsManagerController extends modExtraManagerController {
             // We are on Revo < 2.3.0
             $cssFile = $this->goodnews->config['cssUrl'].'mgr.css';
         }
+
         $this->addCss($cssFile);
         
         // initialize GoodNews Js

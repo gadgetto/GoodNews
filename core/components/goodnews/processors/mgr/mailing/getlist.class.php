@@ -45,8 +45,8 @@ class NewsletterGetListProcessor extends modObjectGetListProcessor {
     public $defaultSortDirection = 'DESC';
     public $objectType = 'goodnews';
 
-    /** @var GoodNewsResourceContainer $currentContainer */
-    public $currentContainer = 0;
+    /** @var GoodNewsResourceContainer $userCurrentContainer */
+    public $userCurrentContainer = 0;
     
     /** @var boolean $legacyMode */
     public $legacyMode = false;
@@ -57,7 +57,7 @@ class NewsletterGetListProcessor extends modObjectGetListProcessor {
         $fullVersion = $version['full_version'];
         $this->legacyMode = version_compare($fullVersion, '2.3.0-dev', '>=') ? false : true;
         
-        $this->currentContainer = $this->modx->goodnews->config['currentContainer'];
+        $this->userCurrentContainer = $this->modx->goodnews->config['userCurrentContainer'];
         return parent::initialize();
     }
 
@@ -104,7 +104,7 @@ class NewsletterGetListProcessor extends modObjectGetListProcessor {
         );
         $c->select($this->modx->getSelectColumns('GoodNewsMailingMeta', 'MailingMeta', '', $metaColumns));
 
-        $c->where(array('parent' => $this->currentContainer));
+        $c->where(array('parent' => $this->userCurrentContainer));
         $c->where(array('class_key' => 'GoodNewsResourceMailing'));
         
         // filter combo

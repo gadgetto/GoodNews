@@ -26,8 +26,13 @@
 
 class GoodNews {
 
-    const VERSION = '1.4.9';
-    const RELEASE = 'beta1';
+    const NAME     = 'GoodNews';
+    const VERSION  = '1.4.9';
+    const RELEASE  = 'beta1';
+    
+    const HELP_URL = 'http://www.bitego.com/extras/goodnews/';
+    const DEV_NAME = 'bitego (Martin Gartner, Franz Gallei)';
+    const DEV_URL  = 'http://www.bitego.com';
     
     const MIN_PHP_VERSION = '5.3.0';
 
@@ -58,11 +63,11 @@ class GoodNews {
     /** @var boolean $isGoodNewsAdmin Is the current user a GoodNews admin? */
     public $isGoodNewsAdmin = false;
     
-    /** @var string $assignedContainers Comma separated list of GoodNews containers the actual user has access to */
-    public $assignedContainers = '';
+    /** @var string $userAvailableContainers Comma separated list of GoodNews containers the actual user has access to */
+    public $userAvailableContainers = '';
 
-    /** @var integer $currentContainer The current GoodNews resource container for actual user */
-    public $currentContainer = 0;
+    /** @var integer $userCurrentContainer The current GoodNews resource container for actual user */
+    public $userCurrentContainer = 0;
 
     /** @var integer $siteStatus The site_status from system settings */
     public $siteStatus = false;
@@ -70,8 +75,8 @@ class GoodNews {
     /** @var integer $cronTriggerStatus The worker process status from system settings */
     public $cronTriggerStatus = false;
 
-    /** @var boolean $setupError */
-    public $setupError = false;
+    /** @var array $setupErrors The setup error stack */
+    public $setupErrors = array();
     
     /** @var boolean $debug Debug mode on/off */
     public $debug = false;
@@ -90,6 +95,8 @@ class GoodNews {
  
         $corePath = $this->modx->getOption('goodnews.core_path', $config, $this->modx->getOption('core_path').'components/goodnews/');
         $assetsUrl = $this->modx->getOption('goodnews.assets_url', $config, $this->modx->getOption('assets_url').'components/goodnews/');
+
+        $this->modx->lexicon->load('goodnews:default');
 
         $this->config = array_merge(array(            
             'corePath'       => $corePath,
@@ -113,9 +120,9 @@ class GoodNews {
             $fullVersion = $version['full_version'];
             $this->legacyMode         = version_compare($fullVersion, '2.3.0-dev', '>=') ? false : true;
             $this->debug              = $this->modx->getOption('goodnews.debug', null, false) ? true : false;
-            $this->isMultiProcessing  = $this->_isMultiProcessing();
-            $this->imapExtension      = $this->_imapExtension();
-            $this->pThumbAddOn        = $this->_isTransportPackageInstalled('pThumb');
+            $this->isMultiProcessing  = $this->isMultiProcessing();
+            $this->imapExtension      = $this->imapExtension();
+            $this->pThumbAddOn        = $this->isTransportPackageInstalled('pThumb');
             $this->actualPhpVersion   = phpversion();
             $this->requiredPhpVersion = self::MIN_PHP_VERSION;
             $this->phpVersionOK       = version_compare($this->actualPhpVersion, $this->requiredPhpVersion, '>=') ? true : false;
@@ -124,69 +131,167 @@ class GoodNews {
             $mailingTemplate = false;
 
             // Only executed if we have a logged in user within MODX manager!
-            if ($this->_loggedInMgrUser()) {
+            if ($this->loggedInMgrUser()) {
                 
-                $this->isGoodNewsAdmin    = $this->_isGoodNewsAdmin();
-                $this->assignedContainers = $this->_assignedContainers();
+                $this->isGoodNewsAdmin = $this->isGoodNewsAdmin();
                 
-                if (!$this->assignedContainers) {
-                    $this->setupError = true;
+                // Get all GoodNews mailing containers the user has access to
+                $this->userAvailableContainers = $this->getUserAvailableContainers();
+                
+                if ($this->userAvailableContainers) {
+                    $this->_initializeMailingContainer();
+                } else {
+                    $this->addSetupError('503 Service Unavailable', $this->modx->lexicon('goodnews.error_message_no_container_available'), false);
                 }
-                // If request has a container id - switch to this container
-                if (isset($_GET['id'])) {
-                    $reqid = $_GET['id'];
-                    if (!empty($reqid) && is_numeric($reqid)) {
-                        $this->setUserCurrentContainer($reqid);
-                    }
-                }            
-                $this->currentContainer = $this->_getUserCurrentContainer();
-                
-                // Check if current container is set
-                if (empty($this->currentContainer) || !$this->isGoodNewsContainer($this->currentContainer)) {
-                    // If no container is preselected, set default container (=first container based on id)
-                    $containers = explode(',', $this->assignedContainers);
-                    $this->currentContainer = reset($containers);
-                    $this->setUserCurrentContainer($this->currentContainer);
-                }
-                
-                // Get context key of actual GoodNews container
-                $resource = $modx->getObject('modResource', $this->currentContainer);
-                $contextKey = $resource->get('context_key');
-        
-                // Read template setting for child resources (mailings) of actual GoodNews container
-                $mailingTemplate = $resource->getProperty('mailingTemplate', 'goodnews');
             }
             
             $this->siteStatus        = $this->modx->getOption('site_status', null, false) ? true : false;
             $this->cronTriggerStatus = $this->modx->getOption('goodnews.worker_process_active', null, 1) ? true : false;
 
             $this->config = array_merge(array(
-                'setupError'         => $this->setupError,
-                'currentContainer'   => $this->currentContainer,
-                'assignedContainers' => $this->assignedContainers,
-                'contextKey'         => $contextKey,
-                'mailingTemplate'    => $mailingTemplate,
-                'isMultiProcessing'  => $this->isMultiProcessing,
-                'imapExtension'      => $this->imapExtension,
-                'pThumbAddOn'        => $this->pThumbAddOn,
-                'actualPhpVersion'   => $this->actualPhpVersion,   
-                'requiredPhpVersion' => $this->requiredPhpVersion,   
-                'phpVersionOK'       => $this->phpVersionOK,   
-                'isGoodNewsAdmin'    => $this->isGoodNewsAdmin,
-                'siteStatus'         => $this->siteStatus,
-                'cronTriggerStatus'  => $this->cronTriggerStatus,
-                'helpUrl'            => 'http://www.bitego.com/extras/goodnews/',
-                'componentName'      => 'GoodNews',
-                'componentVersion'   => self::VERSION,
-                'componentRelease'   => self::RELEASE,
-                'developerName'      => 'bitego (Martin Gartner, Franz Gallei)',
-                'developerUrl'       => 'http://www.bitego.com',
-                'debug'              => $this->debug,
-                'legacyMode'         => $this->legacyMode,
+                'setupErrors'             => $this->setupErrors,
+                'userCurrentContainer'    => $this->userCurrentContainer,
+                'userAvailableContainers' => $this->userAvailableContainers,
+                'contextKey'              => $contextKey,
+                'mailingTemplate'         => $mailingTemplate,
+                'isMultiProcessing'       => $this->isMultiProcessing,
+                'imapExtension'           => $this->imapExtension,
+                'pThumbAddOn'             => $this->pThumbAddOn,
+                'actualPhpVersion'        => $this->actualPhpVersion,   
+                'requiredPhpVersion'      => $this->requiredPhpVersion,   
+                'phpVersionOK'            => $this->phpVersionOK,   
+                'isGoodNewsAdmin'         => $this->isGoodNewsAdmin,
+                'siteStatus'              => $this->siteStatus,
+                'cronTriggerStatus'       => $this->cronTriggerStatus,
+                'helpUrl'                 => self::HELP_URL,
+                'componentName'           => self::NAME,
+                'componentVersion'        => self::VERSION,
+                'componentRelease'        => self::RELEASE,
+                'developerName'           => self::DEV_NAME,
+                'developerUrl'            => self::DEV_URL,
+                'debug'                   => $this->debug,
+                'legacyMode'              => $this->legacyMode,
             ), $this->config);
 
         }        
         $this->modx->addPackage('goodnews', $this->config['modelPath']);
+    }
+
+    /**
+     * Initialize a mailing container for current user.
+     *
+     * @access private
+     * @return void
+     */
+    private function _initializeMailingContainer() {
+        // If request has a container ID - switch to this container
+        if (isset($_GET['id'])) {
+            $reqid = $_GET['id'];
+            if (!empty($reqid) && is_numeric($reqid)) {
+                $this->setUserCurrentContainer($reqid);
+            }
+        }
+        $this->userCurrentContainer = $this->getUserCurrentContainer();
+        
+        // Ensure the current container is set
+        if (empty($this->userCurrentContainer) || !$this->isGoodNewsContainer($this->userCurrentContainer)) {
+            // If no container is preselected, set default container (= first container based on ID)
+            $containers = explode(',', $this->userAvailableContainers);
+            $this->userCurrentContainer = reset($containers);
+            $this->setUserCurrentContainer($this->userCurrentContainer);
+        }
+        
+        $contextKey = false;
+        $mailingTemplate = false;
+
+        $resource = $this->modx->getObject('modResource', $this->userCurrentContainer);
+        if ($resource) {
+            // Get context key of actual GoodNews container
+            $contextKey = $resource->get('context_key');
+    
+            // Read template setting for child resources (mailings) of actual GoodNews container
+            $mailingTemplate = $resource->getProperty('mailingTemplate', 'goodnews');
+        }
+    }
+
+    /**
+     * Collect a list of GoodNews containers the actual user has access to.
+     *
+     * @access public
+     * @return mixed Comma seperated list of container IDs || false.
+     */
+    public function getUserAvailableContainers() {
+                
+        if (!$this->modx->user || ($this->modx->user->get('id') < 1)) {
+            return false;
+        }
+
+        $c = $this->modx->newQuery('modResource');
+        $c->where(array(
+            'published' => true,
+            'deleted'   => false,
+            'class_key' => 'GoodNewsResourceContainer'
+        ));
+        $c->sortby('id', 'ASC');
+        $containers = $this->modx->getCollection('modResource', $c);
+        
+        $containerIDs = false;
+        
+        foreach ($containers as $container) {
+            if ($this->isEditor($container)) {
+                if ($containerIDs != '') {
+                    $containerIDs .= ',';
+                }
+                $containerIDs .= $container->get('id');
+            }
+        }
+
+        return $containerIDs;
+    }
+
+    /**
+     * Read current container id from user settings (uncached!).
+     *
+     * @access public
+     * @return mixed Current container ID || false.
+     */
+    public function getUserCurrentContainer() {
+        $usersetting = $this->modx->getObject('modUserSetting', array(
+            'key' => 'goodnews.current_container',
+            'user' => $this->modx->user->get('id')
+        ));
+        if (!is_object($usersetting)) { return false; }
+        
+        return $usersetting->get('value') ? $usersetting->get('value') : false;
+    }
+
+    /**
+     * Write actual container ID to current user settings (create new setting if not exists).
+     *
+     * @access public
+     * @param integer $containerId The container ID (= MODX resource ID)
+     * @return boolean
+     */
+    public function setUserCurrentContainer($containerId) {
+        $usersetting = $this->modx->getObject('modUserSetting', array(
+            'key' => 'goodnews.current_container',
+            'user' => $this->modx->user->get('id')
+        ));
+        if (!is_object($usersetting)) {
+            $usersetting = $this->modx->newObject('modUserSetting');
+            $usersetting->set('user', $this->modx->user->get('id'));
+            $usersetting->set('key', 'goodnews.current_container');
+            $usersetting->set('xtype', 'textfield');
+            $usersetting->set('namespace', 'goodnews');
+        }
+        $usersetting->set('value', $containerId);
+        if ($usersetting->save()) {
+            // clear user settings cache (MODx 2.1.x)
+            $this->modx->cacheManager->refresh(array('user_settings' => array()));
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -219,10 +324,10 @@ class GoodNews {
      * Cecks if server configuration is capable of doing multiple processes.
      * (php exec required)
      *
-     * @access private
+     * @access public
      * @return boolean
      */    
-    private function _isMultiProcessing() {
+    public function isMultiProcessing() {
         $enabled = true;
         
         $d = ini_get('disable_functions');
@@ -239,10 +344,10 @@ class GoodNews {
     /**
      * Cecks if php IMAP extension is enabled in server configuration.
      *
-     * @access private
+     * @access public
      * @return boolean
      */    
-    private function _imapExtension() {
+    public function imapExtension() {
         return function_exists('imap_open');
     }
     
@@ -253,7 +358,7 @@ class GoodNews {
      * @param string $name Name of transport package
      * @return boolean
      */    
-    private function _isTransportPackageInstalled($tpname) {
+    private function isTransportPackageInstalled($tpname) {
         $installed = false;
         $package = $this->modx->getObject('transport.modTransportPackage', array(
             'package_name' => $tpname,
@@ -266,10 +371,10 @@ class GoodNews {
     /**
      * Checks if the current logged in user has permissions to administrate GoodNews system.
      *
-     * @access private
+     * @access public
      * @return boolean
      */
-    private function _isGoodNewsAdmin() {
+    public function isGoodNewsAdmin() {
         $gonadmin = false;
         
         if (!$this->modx->user || ($this->modx->user->get('id') < 1)) {
@@ -293,89 +398,43 @@ class GoodNews {
     }
 
     /**
-     * Collect a list of GoodNews containers the actual user has access to.
-     *
-     * @access private
-     * @return string/boolean Returns comma seperated list if containers found, otherwise false.
-     */
-    private function _assignedContainers() {
-                
-        if (!$this->modx->user || ($this->modx->user->get('id') < 1)) {
-            return false;
-        }
-
-        $c = $this->modx->newQuery('modResource');
-        $c->where(array(
-            //'id' => $id,
-            'published' => true,
-            'deleted'   => false,
-            'class_key' => 'GoodNewsResourceContainer'
-        ));
-        $c->sortby('id', 'ASC');
-        $containers = $this->modx->getCollection('modResource', $c);
-        
-        $containerIDs = '';
-        foreach ($containers as $container) {
-            if ($this->isEditor($container)) {
-                if ($containerIDs != '') {
-                    $containerIDs .= ',';
-                }
-                $containerIDs .= $container->get('id');
-            }
-        }
-        
-        if (!empty($containerIDs)) {
-            return $containerIDs;
-        } else {
-            return false;
-        }
-    }
-
-    /**
      * Check if current user is entitled to access a specific mailing container.
      *
      * @access public
-     * @param $gonrc A GoodNews container object
+     * @param $container A GoodNews resource container object
      * @return boolean false || true
      */
-    public function isEditor($gonrc) {
-        $goneditor = false;
+    public function isEditor($container) {
         
-        // read GoodNews editor groups from container properties
-        $groups = explode(',', $gonrc->getProperty('editorGroups', 'goodnews', 'Administrator'));
+        if (!$container) { return false; }
+        
+        $iseditor = false;
+        
+        // Read GoodNews editor groups from container properties
+        $groups = explode(',', $container->getProperty('editorGroups', 'goodnews', 'Administrator'));
         $groups = array_map('trim', $groups);
              
-        // Check if group member
+        // Check if user is a specific MODX group member
         if ($this->modx->user->isMember($groups)) {
-            $goneditor = true;
+            $iseditor = true;
 
         // Additionally check for sudo user
         } else {
             $version = $this->modx->getVersionData();
             if (version_compare($version['full_version'], '2.2.1-pl') == 1) {
-                $goneditor = (bool)$this->modx->user->get('sudo');
+                $iseditor = (bool)$this->modx->user->get('sudo');
             }
         }
-        return $goneditor;
-    }
-
-    /**
-     * hasAccess function.
-     * 
-     * @access public
-     * @return void
-     */
-    public function hasAccess() {
-        
+        return $iseditor;
     }
 
     /**
      * Check if we have a logged in manager user.
      *
-     * @access private
+     * @access public
      * @return mixed user ID || false
      */
-    private function _loggedInMgrUser() {
+    public function loggedInMgrUser() {
         $loggedInMgrUser = false;
         
         $user = &$this->modx->user;
@@ -384,55 +443,37 @@ class GoodNews {
         }
         return $loggedInMgrUser;
     }
-    
+
     /**
-     * Read current container id from user settings (uncached!).
+     * Adds a setup error to error stack + redirects to the error page if execution should be stopped.
      *
-     * @access private
-     * @return integer Current container id or false if not found.
+     * @access public
+     * @param string $statuscode HTTP/1.1 Status Code definitions
+     * @param string $description Verbose status/error description
+     * @return void
      */
-    private function _getUserCurrentContainer() {
-        $usersetting = $this->modx->getObject('modUserSetting', array(
-            'key' => 'goodnews.current_container',
-            'user' => $this->modx->user->get('id')
-        ));
-        if (!is_object($usersetting)) { return false; }
-        
-        $current_container = $usersetting->get('value');
-        if (!empty($current_container)) {
-            return $current_container;
-        } else {
-            return false;
+    public function addSetupError($statuscode, $description, $stopexecution = false) {
+        if (empty($statuscode) || empty($description)) { return; }
+        $this->setupErrors[] = array(
+            'statuscode'    => $statuscode,
+            'description'   => $description,
+            'stopexecution' => $stopexecution
+        );        
+        if ($stopexecution) {
+            ob_get_level() && @ob_end_flush();
+            @include($this->config['modelPath'].'goodnews/error/stopexecution.include.php');
+            exit();
         }
     }
 
     /**
-     * Write actual container id to current user settings (create new setting if not exists).
+     * Get the full setup error stack.
      *
      * @access public
-     * @param $id
-     * @return boolean
+     * @return array $setupErrors The setup error stack.
      */
-    public function setUserCurrentContainer($id) {
-        $usersetting = $this->modx->getObject('modUserSetting', array(
-            'key' => 'goodnews.current_container',
-            'user' => $this->modx->user->get('id')
-        ));
-        if (!is_object($usersetting)) {
-            $usersetting = $this->modx->newObject('modUserSetting');
-            $usersetting->set('user', $this->modx->user->get('id'));
-            $usersetting->set('key', 'goodnews.current_container');
-            $usersetting->set('xtype', 'textfield');
-            $usersetting->set('namespace', 'goodnews');
-        }
-        $usersetting->set('value', $id);
-        if($usersetting->save()) {
-            // clear user settings cache (MODx 2.1.x)
-            $this->modx->cacheManager->refresh(array('user_settings' => array()));
-            return true;
-        } else {
-            return false;
-        }
+    public function getSetupErrors() {
+        return $this->setupErrors;
     }
 
     /**

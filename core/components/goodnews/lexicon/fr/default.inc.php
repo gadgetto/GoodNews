@@ -28,6 +28,7 @@
 
 $_lang['goodnews']                                                  = 'GoodNews';
 $_lang['goodnews.desc']                                             = 'Un système intégré d\'envoi de newsletter et de groupes.';
+$_lang['goodnews.version']                                          = 'Version GoodNews';
 $_lang['goodnews.credits']                                          = 'Crédits';
 $_lang['goodnews.credits_modx_community']                           = 'Un grand merci à l\'étonnante communauté MODX pour leur aide infatigable!';
 $_lang['goodnews.credits_bob_ray']                                  = 'Méthodes pour convertir les styles d\'image inline par Bob Ray- <a href="http://bobsguides.com">http://bobsguides.com</a>';
@@ -286,6 +287,13 @@ $_lang['goodnews.settings_auto_cleanup_subscriptions']              = 'Autonetto
 $_lang['goodnews.settings_auto_cleanup_subscriptions_desc']         = 'Si oui ou non supprimer automatiquement les souscriptions jamais activées, ainsi que leur compte utilisateur MODX associé. Cela ne concerne que les comptes utilisateur MODX qui ont des meta-data GoodNews associées! Les comptes utilisateur MODX qui appartiennent à des groupes d\'utilisateurs MODX ne seront pas touchés!';
 $_lang['goodnews.settings_auto_cleanup_subscriptions_ttl']          = 'Durée de vie jusqu\'à suppression';
 $_lang['goodnews.settings_auto_cleanup_subscriptions_ttl_desc']     = 'Nombre de minutes jusqu\'à ce que les souscriptions non-activées sont supprimées. (Défaut : 360 minutes).';
+
+$_lang['goodnews.error']                                            = 'GoodNews - Défaillance de Setup';
+$_lang['goodnews.error_message_tab']                                = 'Rapport de défaillance';
+$_lang['goodnews.error_message_tab_desc']                           = 'Il y a un problème dans GoodNews Setup - l\'application n\'a pas pu être démarrée.';
+$_lang['goodnews.error_messages']                                   = 'Les problèmes suivants ont été détectés';
+$_lang['goodnews.error_message_no_container_available']             = 'Aucun conteneur de courrier GoodNews accessible n\'est disponible. Il doit y avoir au moins un conteneur de ressources GoodNews publié et accessible dans votre arbre de ressources.';
+$_lang['goodnews.error_message_unauthorized']                       = 'Accès refusé! Vous n\'avez pas le droit d\'accéder à ce conteneur de courrier GoodNews. Veuillez contacter l\'administrateur de votre site.';
 
 $_lang['goodnews.settings_containers_none']                         = 'Aucun conteneur de resources GoodNews trouvé';
 $_lang['goodnews.settings_container_id']                            = 'ID';
