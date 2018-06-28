@@ -1,5 +1,6 @@
 Changelog for GoodNews
 
+- better UI/UX for emergency stop of worker processes
 - remastered the initialization process
 - implemented a flexible setup/initialization error handling
 - added a CMP for error handling

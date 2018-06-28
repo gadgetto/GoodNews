@@ -233,23 +233,16 @@ GoodNews.grid.Newsletters = function(config) {
             ,scope: this
             ,cls: 'primary-button'
         },'->',{
-            xtype: 'cycle'
-            ,id: 'sendprocess'
+            xtype: 'button'
+            ,id: 'workerprocess-emergency-stop'
+            ,enableToggle: true
+            ,text: GoodNews.config.workerProcessActive ? '<i class="icon icon-exclamation-triangle icon-lg"></i>' : _('goodnews.newsletter_send_process_stopped')+' <i class="icon icon-exclamation-triangle icon-lg"></i>'
+            ,pressed: GoodNews.config.workerProcessActive ? false : true
             ,disabled: GoodNews.config.isGoodNewsAdmin ? false : true
-            ,showText: true
-            ,cls: GoodNews.config.cronTriggerStatus ? '' : 'gon-sendprocess-off'
-            ,prependText: _('goodnews.newsletter_send_process')
-            ,items: [{
-                text: _('goodnews.off')
-                ,itemId: 'off'
-                ,checked: GoodNews.config.cronTriggerStatus ? false : true
-            },{
-                text: _('goodnews.on')
-                ,itemId: 'on'
-                ,checked: GoodNews.config.cronTriggerStatus ? true : false
-            }]
-            ,changeHandler:function(btn,item){
-                this.toggleSendProcess(btn,item.itemId);
+            ,ctCls: 'gon-sendprocess'
+            ,cls: GoodNews.config.workerProcessActive ? '' : 'gon-sendprocess-off'
+            ,toggleHandler:function(btn,emergencystop){
+                this.toggleWorkerProcess(btn,emergencystop);
             }
         },'-',{
             xtype: 'cycle'
@@ -534,44 +527,38 @@ Ext.extend(GoodNews.grid.Newsletters,MODx.grid.Grid,{
             btn.removeClass('gon-autorefresh-on');
         }  
     }
-    ,toggleSendProcess: function(btn,state) {
+    ,toggleWorkerProcess: function(btn,emergencystop) {
         MODx.Ajax.request({
             url: GoodNews.config.connectorUrl
             ,params: {
                 action: 'mgr/send/switchSendProcess'
-                ,state: state
+                ,emergencystop: emergencystop
             }
             ,method: 'post'
             ,scope: this
             ,listeners: {
                 'success':{fn:function(r) {
-                    if (state == 'off') {
+                    if (emergencystop === true) {
                         btn.addClass('gon-sendprocess-off');
+                        btn.setText(_('goodnews.newsletter_send_process_stopped')+' <i class="icon icon-exclamation-triangle icon-lg"></i>');
                     } else {
                         btn.removeClass('gon-sendprocess-off');
+                        btn.setText('<i class="icon icon-exclamation-triangle icon-lg"></i>');
                     }
-                    MODx.msg.status({
-                        title: _('success')
-                        ,message: r.message
-                        ,delay: 3
-                    })
+                    Ext.Msg.alert(_('success'), r.message);
                 },scope:this}
                 ,'failure':{fn:function(r) {
-                    // Restore state of cycle button to previous value
-                    var m = btn.menu;
-                    var nextIdx, checkItem;
-                    for (var i = 1; i < btn.itemCount; i++) {
-                        nextIdx = (btn.activeItem.itemIndex + i) % btn.itemCount;
-                        // Check the potential item without firing event
-                        checkItem = m.items.itemAt(nextIdx);
-                        btn.setActiveItem(checkItem,true);
-                        break;
-                    }                    
-                    MODx.msg.status({
-                        title: _('failure')
-                        ,message: r.message
-                        ,delay: 3
-                    })
+                    // Restore state of button to previous value
+                    if (emergencystop === true) {
+                        btn.toggle(false);
+                        btn.removeClass('gon-sendprocess-off');
+                        btn.setText('<i class="icon icon-exclamation-triangle icon-lg"></i>');
+                    } else {
+                        btn.toggle(true);
+                        btn.addClass('gon-sendprocess-off');
+                        btn.setText(_('goodnews.newsletter_send_process_stopped')+' <i class="icon icon-exclamation-triangle icon-lg"></i>');
+                    }
+                    Ext.Msg.alert(_('failure'), r.message);
                 },scope:this}
             }
         });

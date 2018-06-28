@@ -7,9 +7,19 @@
     color: #6cb24a;
 }
 
-/* The send-process button: status off (ExtJS Cycle button) */
-.gon-sendprocess-off button {
+/* The send-process button (ExtJS button) */
+.gon-sendprocess .x-btn {
     color: #be0000;
+    box-shadow: 0 0 0 1px #eeb1b1;
+}
+.gon-sendprocess .x-btn.gon-sendprocess-off {
+    background-color: #eeb1b1;
+    box-shadow: 0 0 0 1px #eeb1b1;
+}
+.gon-sendprocess .x-btn.gon-sendprocess-off.x-btn-focus,
+.gon-sendprocess .x-btn.gon-sendprocess-off.x-btn-over {
+    background-color: #e29191;
+    box-shadow: 0 0 0 1px #e29191;
 }
 
 /* The container selector in ActionBar */

@@ -72,8 +72,8 @@ class GoodNews {
     /** @var integer $siteStatus The site_status from system settings */
     public $siteStatus = false;
 
-    /** @var integer $cronTriggerStatus The worker process status from system settings */
-    public $cronTriggerStatus = false;
+    /** @var integer $workerProcessActive The worker process status from system settings */
+    public $workerProcessActive = false;
 
     /** @var array $setupErrors The setup error stack */
     public $setupErrors = array();
@@ -145,8 +145,8 @@ class GoodNews {
                 }
             }
             
-            $this->siteStatus        = $this->modx->getOption('site_status', null, false) ? true : false;
-            $this->cronTriggerStatus = $this->modx->getOption('goodnews.worker_process_active', null, 1) ? true : false;
+            $this->siteStatus          = $this->modx->getOption('site_status', null, false) ? true : false;
+            $this->workerProcessActive = $this->modx->getOption('goodnews.worker_process_active', null, 1) ? true : false;
 
             $this->config = array_merge(array(
                 'setupErrors'             => $this->setupErrors,
@@ -162,7 +162,7 @@ class GoodNews {
                 'phpVersionOK'            => $this->phpVersionOK,   
                 'isGoodNewsAdmin'         => $this->isGoodNewsAdmin,
                 'siteStatus'              => $this->siteStatus,
-                'cronTriggerStatus'       => $this->cronTriggerStatus,
+                'workerProcessActive'     => $this->workerProcessActive,
                 'helpUrl'                 => self::HELP_URL,
                 'componentName'           => self::NAME,
                 'componentVersion'        => self::VERSION,
