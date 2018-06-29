@@ -245,19 +245,13 @@ GoodNews.grid.Newsletters = function(config) {
                 this.toggleWorkerProcess(btn,emergencystop);
             }
         },'-',{
-            xtype: 'cycle'
+            xtype: 'button'
             ,id: 'autorefresh'
-            ,showText: true
-            ,prependText: _('goodnews.newsletter_grid_autorefresh')
-            ,items: [{
-                text: _('goodnews.off')
-                ,itemId: 'off'
-            },{
-                text: _('goodnews.on')
-                ,itemId: 'on'
-            }]
-            ,changeHandler:function(btn,item){
-                this.toggleAutoRefresh(btn,item.itemId);
+            ,enableToggle: true
+            ,text: '<i class="icon icon-refresh icon-lg"></i>'
+            ,ctCls: 'gon-autorefresh'
+            ,toggleHandler:function(btn,state){
+                this.toggleAutoRefresh(btn,state);
             }
         },'-',{
             xtype: 'modx-combo'
@@ -519,12 +513,14 @@ Ext.extend(GoodNews.grid.Newsletters,MODx.grid.Grid,{
         this.refresh();
     }
     ,toggleAutoRefresh: function(btn,state) {
-        if (state == 'on') {
+        if (state == true) {
             tr1.start(gridrefresh);
             btn.addClass('gon-autorefresh-on');
+            btn.setText(_('goodnews.newsletter_grid_autorefresh_on')+'&nbsp;&nbsp;<i class="icon icon-refresh icon-lg"></i>');
         } else {
             tr1.stop(gridrefresh);
             btn.removeClass('gon-autorefresh-on');
+            btn.setText('<i class="icon icon-refresh icon-lg"></i>');
         }  
     }
     ,toggleWorkerProcess: function(btn,emergencystop) {

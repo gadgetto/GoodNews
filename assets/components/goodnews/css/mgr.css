@@ -37,9 +37,25 @@
     color: #777;
 }
 
-/* The auto-refresh button: status on (ExtJS Cycle button) */
-.gon-autorefresh-on button {
+/* The auto-refresh button: status on (ExtJS button) */
+.gon-autorefresh .x-btn {
     color: green;
+    box-shadow: 0 0 0 1px #64be33;
+}
+.gon-autorefresh .x-btn-focus,
+.gon-autorefresh .x-btn-over {
+    color: #fff;
+}
+.gon-autorefresh .x-btn.gon-autorefresh-on {
+    color: #2d8000;
+    background-color: #a5e0a5;
+    box-shadow: 0 0 0 1px #a5e0a5;
+}
+.gon-autorefresh .x-btn.gon-autorefresh-on.x-btn-focus,
+.gon-autorefresh .x-btn.gon-autorefresh-on.x-btn-over {
+    color: #2d8000;
+    background-color: #82ce82;
+    box-shadow: 0 0 0 1px #82ce82;
 }
 
 /* The send-process button (ExtJS button) */
