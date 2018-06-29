@@ -138,7 +138,7 @@ class SubscribersExportProcessor extends modObjectGetListProcessor {
     public function prepareQueryAfterCount(xPDOQuery $c) {
         $c->select($this->modx->getSelectColumns('modUser', 'modUser'));
         $c->select($this->modx->getSelectColumns('modUserProfile', 'Profile', '', array('id', 'internalKey'), true));
-        $c->select($this->modx->getSelectColumns('GoodNewsSubscriberMeta', 'SubscriberMeta', '', array('testdummy', 'subscribedon', 'ip', 'soft_bounces', 'hard_bounces')));
+        $c->select($this->modx->getSelectColumns('GoodNewsSubscriberMeta', 'SubscriberMeta', '', array('testdummy', 'subscribedon', 'activatedon', 'ip', 'ip_activated', 'soft_bounces', 'hard_bounces')));
         return $c;
     }
 
@@ -209,6 +209,13 @@ class SubscribersExportProcessor extends modObjectGetListProcessor {
             $userArray['subscribedon'] = date($dateTimeFormat, $userArray['subscribedon']);
         }
         
+        if (empty($userArray['activatedon'])) {
+            $userArray['activatedon'] = '';
+        } else {
+            // Format timestamp into manager date/time format
+            $userArray['activatedon'] = date($dateTimeFormat, $userArray['activatedon']);
+        }
+        
         if ($userArray['ip'] == null || $userArray['ip'] == '0') {
             $userArray['ip'] = '';
         } elseif ($userArray['ip'] == 'unknown') {
@@ -217,6 +224,16 @@ class SubscribersExportProcessor extends modObjectGetListProcessor {
             $userArray['ip'] = $this->modx->lexicon('goodnews.subscriber_ip_imported');
         } elseif ($userArray['ip'] == 'manually') {
             $userArray['ip'] = $this->modx->lexicon('goodnews.subscriber_ip_manually');
+        }
+        
+        if ($userArray['ip_activated'] == null || $userArray['ip_activated'] == '0') {
+            $userArray['ip_activated'] = '';
+        } elseif ($userArray['ip_activated'] == 'unknown') {
+            $userArray['ip_activated'] = $this->modx->lexicon('goodnews.subscriber_ip_unknown');
+        } elseif ($userArray['ip_activated'] == 'imported') {
+            $userArray['ip_activated'] = $this->modx->lexicon('goodnews.subscriber_ip_imported');
+        } elseif ($userArray['ip_activated'] == 'manually') {
+            $userArray['ip_activated'] = $this->modx->lexicon('goodnews.subscriber_ip_manually');
         }
         
         // We don't need these fields in our array
