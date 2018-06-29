@@ -10,6 +10,7 @@
 .gon-autorefresh .x-btn-focus,
 .gon-autorefresh .x-btn-over {
     color: #fff;
+    box-shadow: 0 0 0 1px #3697cd;
 }
 .gon-autorefresh .x-btn.gon-autorefresh-on {
     color: #2d8000;
@@ -28,12 +29,19 @@
     color: #be0000;
     box-shadow: 0 0 0 1px #eeb1b1;
 }
+.gon-sendprocess .x-btn-focus,
+.gon-sendprocess .x-btn-over {
+    color: #fff;
+    box-shadow: 0 0 0 1px #3697cd;
+}
 .gon-sendprocess .x-btn.gon-sendprocess-off {
+    color: #be0000;
     background-color: #eeb1b1;
     box-shadow: 0 0 0 1px #eeb1b1;
 }
 .gon-sendprocess .x-btn.gon-sendprocess-off.x-btn-focus,
 .gon-sendprocess .x-btn.gon-sendprocess-off.x-btn-over {
+    color: #be0000;
     background-color: #e29191;
     box-shadow: 0 0 0 1px #e29191;
 }
