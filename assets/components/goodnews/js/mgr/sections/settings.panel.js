@@ -65,7 +65,7 @@ GoodNews.SettingsPanel = function(config) {
 Ext.extend(GoodNews.SettingsPanel,MODx.FormPanel,{
     init: function(){
         this.actionToolbar = new Ext.Toolbar({
-            renderTo: 'modAB'
+            renderTo: 'modx-action-buttons-container'
             ,id: 'modx-action-buttons'
             ,defaults: { scope: this }
             ,items: this.getButtons()
