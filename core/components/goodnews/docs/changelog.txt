@@ -1,5 +1,6 @@
 Changelog for GoodNews
 
+- first changes for better MODX 3 compatibility
 - added new GDPR fields (activatedon, ip_activated) to subscribers export
 - better UI for auto-refresh button
 - better UI/UX for emergency stop of worker processes
