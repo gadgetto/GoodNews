@@ -2,49 +2,111 @@
  * Custom GoodNews CMP styles for Revo >= 2.3.0
  */
 
-/* The auto-refresh button: status on (ExtJS button) */
-.gon-autorefresh .x-btn {
-    color: #2d8000;
-    box-shadow: 0 0 0 1px #64be33;
+/* Render checkboxes as toogle switch (CSS from MODX3 alpha) */
+.gon-checkbox-toggle .x-form-check-wrap [type="checkbox"],
+.gon-checkbox-toggle .x-fieldset-checkbox-toggle legend [type="checkbox"], 
+.gon-checkbox-toggle .x-fieldset legend [type="checkbox"] {
+    position: absolute;
+    left: -9999px;
 }
-.gon-autorefresh .x-btn-focus,
-.gon-autorefresh .x-btn-over {
-    color: #fff;
-    box-shadow: 0 0 0 1px #3697cd;
+.gon-checkbox-toggle .x-form-check-wrap [type="checkbox"] + .x-form-cb-label,
+.gon-checkbox-toggle .x-form-check-wrap [type="checkbox"] + .x-fieldset-header-text,
+.gon-checkbox-toggle .x-fieldset-checkbox-toggle legend [type="checkbox"] + .x-form-cb-label,
+.gon-checkbox-toggle .x-fieldset-checkbox-toggle legend [type="checkbox"] + .x-fieldset-header-text,
+.gon-checkbox-toggle .x-fieldset legend [type="checkbox"] + .x-form-cb-label,
+.gon-checkbox-toggle .x-fieldset legend [type="checkbox"] + .x-fieldset-header-text {
+    position: relative;
+    padding-left: 3.6em;
+    padding-top: .2em;
+    padding-bottom: .2em;
+    margin-left: 0;
+    cursor: pointer;
+    box-sizing: border-box;
+    line-height: 1.1;
+    font-size: 1.1em;
 }
-.gon-autorefresh .x-btn.gon-autorefresh-on {
-    color: #2d8000;
-    background-color: #a5e0a5;
-    box-shadow: 0 0 0 1px #a5e0a5;
+.gon-checkbox-toggle .x-form-check-wrap [type="checkbox"] + .x-form-cb-label:before,
+.gon-checkbox-toggle .x-form-check-wrap [type="checkbox"] + .x-form-cb-label:after,
+.gon-checkbox-toggle .x-form-check-wrap [type="checkbox"] + .x-fieldset-header-text:before,
+.gon-checkbox-toggle .x-form-check-wrap [type="checkbox"] + .x-fieldset-header-text:after,
+.gon-checkbox-toggle .x-fieldset-checkbox-toggle legend [type="checkbox"] + .x-form-cb-label:before,
+.gon-checkbox-toggle .x-fieldset-checkbox-toggle legend [type="checkbox"] + .x-form-cb-label:after,
+.gon-checkbox-toggle .x-fieldset-checkbox-toggle legend [type="checkbox"] + .x-fieldset-header-text:before,
+.gon-checkbox-toggle .x-fieldset-checkbox-toggle legend [type="checkbox"] + .x-fieldset-header-text:after,
+.gon-checkbox-toggle .x-fieldset legend [type="checkbox"] + .x-form-cb-label:before,
+.gon-checkbox-toggle .x-fieldset legend [type="checkbox"] + .x-form-cb-label:after,
+.gon-checkbox-toggle .x-fieldset legend [type="checkbox"] + .x-fieldset-header-text:before,
+.gon-checkbox-toggle .x-fieldset legend [type="checkbox"] + .x-fieldset-header-text:after {
+    content: '';
+    position: absolute;
+    transition: all .2s ease;
+    font-size: inherit;
 }
-.gon-autorefresh .x-btn.gon-autorefresh-on.x-btn-focus,
-.gon-autorefresh .x-btn.gon-autorefresh-on.x-btn-over {
-    color: #2d8000;
-    background-color: #82ce82;
-    box-shadow: 0 0 0 1px #82ce82;
+.gon-checkbox-toggle .x-form-check-wrap [type="checkbox"] + .x-form-cb-label:before,
+.gon-checkbox-toggle .x-form-check-wrap [type="checkbox"] + .x-fieldset-header-text:before,
+.gon-checkbox-toggle .x-fieldset-checkbox-toggle legend [type="checkbox"] + .x-form-cb-label:before,
+.gon-checkbox-toggle .x-fieldset-checkbox-toggle legend [type="checkbox"] + .x-fieldset-header-text:before,
+.gon-checkbox-toggle .x-fieldset legend [type="checkbox"] + .x-form-cb-label:before,
+.gon-checkbox-toggle .x-fieldset legend [type="checkbox"] + .x-fieldset-header-text:before {
+    left: 0;
+    top: 0;
+    width: 3em;
+    height: 1.6em;
+    background: #E4E4E4;
+    border-radius: 1.2em;
+    z-index: 10;
+}
+.gon-checkbox-toggle .x-form-check-wrap [type="checkbox"] + .x-form-cb-label:after,
+.gon-checkbox-toggle .x-form-check-wrap [type="checkbox"] + .x-fieldset-header-text:after,
+.gon-checkbox-toggle .x-fieldset-checkbox-toggle legend [type="checkbox"] + .x-form-cb-label:after,
+.gon-checkbox-toggle .x-fieldset-checkbox-toggle legend [type="checkbox"] + .x-fieldset-header-text:after,
+.gon-checkbox-toggle .x-fieldset legend [type="checkbox"] + .x-form-cb-label:after,
+.gon-checkbox-toggle .x-fieldset legend [type="checkbox"] + .x-fieldset-header-text:after {
+    left: .1em;
+    top: 0.8em;
+    margin-top: -.65em;
+    height: 1.3em;
+    width: 1.3em;
+    border-radius: 50%;
+    background-color: #fff;
+    z-index: 11;
+}
+.gon-checkbox-toggle .x-form-check-wrap [type="checkbox"]:checked + .x-form-cb-label:after,
+.gon-checkbox-toggle .x-form-check-wrap [type="checkbox"]:checked + .x-fieldset-header-text:after,
+.gon-checkbox-toggle .x-fieldset-checkbox-toggle legend [type="checkbox"]:checked + .x-form-cb-label:after,
+.gon-checkbox-toggle .x-fieldset-checkbox-toggle legend [type="checkbox"]:checked + .x-fieldset-header-text:after,
+.gon-checkbox-toggle .x-fieldset legend [type="checkbox"]:checked + .x-form-cb-label:after,
+.gon-checkbox-toggle .x-fieldset legend [type="checkbox"]:checked + .x-fieldset-header-text:after {
+    left: 1.6em;
+}
+.gon-checkbox-toggle .x-form-check-wrap [type="checkbox"]:checked + .x-form-cb-label:before,
+.gon-checkbox-toggle .x-form-check-wrap [type="checkbox"]:checked + .x-fieldset-header-text:before,
+.gon-checkbox-toggle .x-fieldset-checkbox-toggle legend [type="checkbox"]:checked + .x-form-cb-label:before,
+.gon-checkbox-toggle .x-fieldset-checkbox-toggle legend [type="checkbox"]:checked + .x-fieldset-header-text:before,
+.gon-checkbox-toggle .x-fieldset legend [type="checkbox"]:checked + .x-form-cb-label:before,
+.gon-checkbox-toggle .x-fieldset legend [type="checkbox"]:checked + .x-fieldset-header-text:before {
+    background-color: #6CB24A;
+    border-color: #6CB24A;
+}
+.gon-checkbox-toggle .x-form-check-wrap [type="checkbox"].danger:checked + .x-form-cb-label:before,
+.gon-checkbox-toggle .x-form-check-wrap [type="checkbox"].danger:checked + .x-fieldset-header-text:before,
+.gon-checkbox-toggle .x-fieldset-checkbox-toggle legend [type="checkbox"].danger:checked + .x-form-cb-label:before,
+.gon-checkbox-toggle .x-fieldset-checkbox-toggle legend [type="checkbox"].danger:checked + .x-fieldset-header-text:before,
+.gon-checkbox-toggle .x-fieldset legend [type="checkbox"].danger:checked + .x-form-cb-label:before,
+.gon-checkbox-toggle .x-fieldset legend [type="checkbox"].danger:checked + .x-fieldset-header-text:before {
+    background-color: #BE0000;
+    border-color: #BE0000;
+}
+.gon-checkbox-toggle .x-form-check-wrap [type="checkbox"].warning:checked + .x-form-cb-label:before,
+.gon-checkbox-toggle .x-form-check-wrap [type="checkbox"].warning:checked + .x-fieldset-header-text:before,
+.gon-checkbox-toggle .x-fieldset-checkbox-toggle legend [type="checkbox"].warning:checked + .x-form-cb-label:before,
+.gon-checkbox-toggle .x-fieldset-checkbox-toggle legend [type="checkbox"].warning:checked + .x-fieldset-header-text:before,
+.gon-checkbox-toggle .x-fieldset legend [type="checkbox"].warning:checked + .x-form-cb-label:before,
+.gon-checkbox-toggle .x-fieldset legend [type="checkbox"].warning:checked + .x-fieldset-header-text:before {
+    background-color: #F49548;
+    border-color: #F49548;
 }
 
-/* The send-process button (ExtJS button) */
-.gon-sendprocess .x-btn {
-    color: #be0000;
-    box-shadow: 0 0 0 1px #eeb1b1;
-}
-.gon-sendprocess .x-btn-focus,
-.gon-sendprocess .x-btn-over {
-    color: #fff;
-    box-shadow: 0 0 0 1px #3697cd;
-}
-.gon-sendprocess .x-btn.gon-sendprocess-off {
-    color: #be0000;
-    background-color: #eeb1b1;
-    box-shadow: 0 0 0 1px #eeb1b1;
-}
-.gon-sendprocess .x-btn.gon-sendprocess-off.x-btn-focus,
-.gon-sendprocess .x-btn.gon-sendprocess-off.x-btn-over {
-    color: #be0000;
-    background-color: #e29191;
-    box-shadow: 0 0 0 1px #e29191;
-}
 
 /* The container selector in ActionBar */
 .gon-choose-container .x-form-field-trigger-wrap {

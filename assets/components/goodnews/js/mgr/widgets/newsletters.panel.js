@@ -232,26 +232,38 @@ GoodNews.grid.Newsletters = function(config) {
             ,handler: this.createNewsletter
             ,scope: this
             ,cls: 'primary-button'
-        },'->',{
-            xtype: 'button'
-            ,id: 'workerprocess-emergency-stop'
-            ,enableToggle: true
-            ,text: GoodNews.config.workerProcessActive ? '<i class="icon icon-exclamation-triangle icon-lg"></i>' : _('goodnews.newsletter_send_process_stopped')+' <i class="icon icon-exclamation-triangle icon-lg"></i>'
-            ,pressed: GoodNews.config.workerProcessActive ? false : true
-            ,disabled: GoodNews.config.isGoodNewsAdmin ? false : true
-            ,ctCls: 'gon-sendprocess'
-            ,cls: GoodNews.config.workerProcessActive ? '' : 'gon-sendprocess-off'
-            ,toggleHandler:function(btn,emergencystop){
-                this.toggleWorkerProcess(btn,emergencystop);
-            }
         },'-',{
-            xtype: 'button'
+            xtype: 'xcheckbox'
+            ,disabled: GoodNews.config.isGoodNewsAdmin ? false : true
+            ,id: 'workerprocess-emergency-stop'
+            ,name: 'worker_process_active'
+            ,boxLabel: _('goodnews.newsletter_send_process_stop')
+            ,description: _('goodnews.newsletter_send_process_toggle_tooltip')
+            ,hideLabel: true
+            ,ctCls: 'gon-checkbox-toggle'
+            ,cls: 'danger'
+            ,inputValue: 1
+            ,checked: GoodNews.config.workerProcessActive ? false : true
+            ,listeners: {
+                'check': function(cbx,checked){
+                    this.toggleWorkerProcess(cbx,checked);
+                }
+                ,scope:this
+            }
+        },'->',{
+            xtype: 'xcheckbox'
             ,id: 'autorefresh'
-            ,enableToggle: true
-            ,text: '<i class="icon icon-refresh icon-lg"></i>'
-            ,ctCls: 'gon-autorefresh'
-            ,toggleHandler:function(btn,state){
-                this.toggleAutoRefresh(btn,state);
+            ,name: 'autorefresh'
+            ,boxLabel: _('goodnews.newsletter_grid_autorefresh')
+            ,description: _('goodnews.newsletter_grid_autorefresh_tooltip')
+            ,hideLabel: true
+            ,ctCls: 'gon-checkbox-toggle'
+            ,inputValue: 1
+            ,listeners: {
+                'check': function(cbx,checked){
+                    this.toggleAutoRefresh(cbx,checked);
+                }
+                ,scope:this
             }
         },'-',{
             xtype: 'modx-combo'
@@ -512,18 +524,7 @@ Ext.extend(GoodNews.grid.Newsletters,MODx.grid.Grid,{
         this.getBottomToolbar().changePage(1);
         this.refresh();
     }
-    ,toggleAutoRefresh: function(btn,state) {
-        if (state == true) {
-            tr1.start(gridrefresh);
-            btn.addClass('gon-autorefresh-on');
-            btn.setText(_('goodnews.newsletter_grid_autorefresh_on')+'&nbsp;&nbsp;<i class="icon icon-refresh icon-lg"></i>');
-        } else {
-            tr1.stop(gridrefresh);
-            btn.removeClass('gon-autorefresh-on');
-            btn.setText('<i class="icon icon-refresh icon-lg"></i>');
-        }  
-    }
-    ,toggleWorkerProcess: function(btn,emergencystop) {
+    ,toggleWorkerProcess: function(cbx,emergencystop) {
         MODx.Ajax.request({
             url: GoodNews.config.connectorUrl
             ,params: {
@@ -534,30 +535,22 @@ Ext.extend(GoodNews.grid.Newsletters,MODx.grid.Grid,{
             ,scope: this
             ,listeners: {
                 'success':{fn:function(r) {
-                    if (emergencystop === true) {
-                        btn.addClass('gon-sendprocess-off');
-                        btn.setText(_('goodnews.newsletter_send_process_stopped')+' <i class="icon icon-exclamation-triangle icon-lg"></i>');
-                    } else {
-                        btn.removeClass('gon-sendprocess-off');
-                        btn.setText('<i class="icon icon-exclamation-triangle icon-lg"></i>');
-                    }
                     Ext.Msg.alert(_('success'), r.message);
                 },scope:this}
                 ,'failure':{fn:function(r) {
                     // Restore state of button to previous value
-                    if (emergencystop === true) {
-                        btn.toggle(false);
-                        btn.removeClass('gon-sendprocess-off');
-                        btn.setText('<i class="icon icon-exclamation-triangle icon-lg"></i>');
-                    } else {
-                        btn.toggle(true);
-                        btn.addClass('gon-sendprocess-off');
-                        btn.setText(_('goodnews.newsletter_send_process_stopped')+' <i class="icon icon-exclamation-triangle icon-lg"></i>');
-                    }
+                    cbx.reset();
                     Ext.Msg.alert(_('failure'), r.message);
                 },scope:this}
             }
         });
+    }
+    ,toggleAutoRefresh: function(cbx,autorefresh) {
+        if (autorefresh == true) {
+            tr1.start(gridrefresh);
+        } else {
+            tr1.stop(gridrefresh);
+        }  
     }
     ,clearFilter: function() {
     	this.getStore().baseParams = {
