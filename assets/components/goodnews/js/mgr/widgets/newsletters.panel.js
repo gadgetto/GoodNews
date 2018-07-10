@@ -170,6 +170,12 @@ GoodNews.grid.Newsletters = function(config) {
         ,columns: [
         this.nlexpander
         ,{
+            header: _('goodnews.id')
+            ,dataIndex: 'id'
+            ,hidden: true
+            ,sortable: true
+            ,width: 40
+        },{
             header: _('goodnews.newsletter_title')
             ,id: 'main' //needed for styling purposes
             ,dataIndex: 'pagetitle'
