@@ -89,7 +89,7 @@ GoodNews.grid.Subscribers = function(config){
         ].join('\n');
 
     // A row expander for subscribers grid rows (additional informations)
-    this.subexpander = new Ext.ux.grid.RowExpander({
+    this.exp = new Ext.ux.grid.RowExpander({
         tpl: new Ext.Template(subscrInfos)
         ,enableCaching: false
     });
@@ -120,11 +120,11 @@ GoodNews.grid.Subscribers = function(config){
         ,paging: true
         ,remoteSort: true
         ,sm: this.sm
-        ,plugins: [this.subexpander]
+        ,plugins: [this.exp]
         ,autoExpandColumn: 'email'
         ,columns: [
         this.sm
-        ,this.subexpander
+        ,this.exp
         ,{
             header: _('goodnews.subscriber_email')
             ,dataIndex: 'email'
@@ -356,6 +356,7 @@ GoodNews.grid.Subscribers = function(config){
     });
     GoodNews.grid.Subscribers.superclass.constructor.call(this,config);
     this.getView().on('refresh',this.refreshSelection,this);
+    this.getView().on('beforerefresh',this._collapseAll,this);
 };
 Ext.extend(GoodNews.grid.Subscribers,MODx.grid.Grid,{
     getMenu: function() {
@@ -629,6 +630,22 @@ Ext.extend(GoodNews.grid.Subscribers,MODx.grid.Grid,{
         Ext.getCmp('goodnews-subscribers-active-filter').reset();
         Ext.getCmp('goodnews-subscribers-search-filter').reset();
     	this.getBottomToolbar().changePage(1);
+    }
+    // Workaround for https://github.com/modxcms/revolution/issues/13989
+    // (method missing in rowExpander plugin in modx.grid.js)
+    ,_expandAll: function() {
+        var a = this.getView().getRows();
+        for (var i=0;i<a.length;i++) {
+            this.exp.expandRow(a[i]);
+        }
+    }
+    // Workaround for https://github.com/modxcms/revolution/issues/13989
+    // (method missing in rowExpander plugin in modx.grid.js)
+    ,_collapseAll: function() {
+        var a = this.getView().getRows();
+        for (var i=0;i<a.length;i++) {
+            this.exp.collapseRow(a[i]);
+        }
     }
 });
 Ext.reg('goodnews-grid-subscribers',GoodNews.grid.Subscribers);

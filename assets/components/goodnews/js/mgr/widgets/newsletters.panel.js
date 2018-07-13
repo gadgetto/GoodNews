@@ -103,7 +103,7 @@ GoodNews.grid.Newsletters = function(config) {
         ].join('\n');
 
     // A row expander for newsletter grid rows (additional informations)
-    this.nlexpander = new Ext.ux.grid.RowExpander({
+    this.exp = new Ext.ux.grid.RowExpander({
         tpl: new Ext.Template(nlInfos)
         ,enableCaching: false
     });
@@ -165,10 +165,10 @@ GoodNews.grid.Newsletters = function(config) {
         ,paging: true
         ,pageSize: 10
         ,remoteSort: true
-        ,plugins: [this.nlexpander]
+        ,plugins: [this.exp]
         ,autoExpandColumn: 'pagetitle'
         ,columns: [
-        this.nlexpander
+        this.exp
         ,{
             header: _('goodnews.id')
             ,dataIndex: 'id'
@@ -325,6 +325,7 @@ GoodNews.grid.Newsletters = function(config) {
     });
     GoodNews.grid.Newsletters.superclass.constructor.call(this,config);
     this.on('click',this.handleActionButtons,this);
+    this.getView().on('beforerefresh',this._collapseAll,this);
 };
 Ext.extend(GoodNews.grid.Newsletters,MODx.grid.Grid,{
     getMenu: function() {
@@ -737,6 +738,22 @@ Ext.extend(GoodNews.grid.Newsletters,MODx.grid.Grid,{
         });
         //this.SendNewsletterWindow.setValues(this.menu.record);
         this.NewsletterLogWindow.show(e.target);
+    }
+    // Workaround for https://github.com/modxcms/revolution/issues/13989
+    // (method missing in rowExpander plugin in modx.grid.js)
+    ,_expandAll: function() {
+        var a = this.getView().getRows();
+        for (var i=0;i<a.length;i++) {
+            this.exp.expandRow(a[i]);
+        }
+    }
+    // Workaround for https://github.com/modxcms/revolution/issues/13989
+    // (method missing in rowExpander plugin in modx.grid.js)
+    ,_collapseAll: function() {
+        var a = this.getView().getRows();
+        for (var i=0;i<a.length;i++) {
+            this.exp.collapseRow(a[i]);
+        }
     }
 });
 Ext.reg('goodnews-grid-newsletters',GoodNews.grid.Newsletters);
