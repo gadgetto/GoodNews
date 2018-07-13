@@ -68,6 +68,12 @@ class GoodNews {
 
     /** @var integer $userCurrentContainer The current GoodNews resource container for actual user */
     public $userCurrentContainer = 0;
+    
+    /** @var string $contextKey The context key of the current GoodNews resource container */
+    public $contextKey = '';
+    
+    /** @var integer $mailingTemplate The mailing template for the current GoodNews resource container */
+    public $mailingTemplate = 0;
 
     /** @var integer $siteStatus The site_status from system settings */
     public $siteStatus = false;
@@ -127,9 +133,6 @@ class GoodNews {
             $this->requiredPhpVersion = self::MIN_PHP_VERSION;
             $this->phpVersionOK       = version_compare($this->actualPhpVersion, $this->requiredPhpVersion, '>=') ? true : false;
             
-            $contextKey = false;
-            $mailingTemplate = false;
-
             // Only executed if we have a logged in user within MODX manager!
             if ($this->loggedInMgrUser()) {
                 
@@ -152,8 +155,8 @@ class GoodNews {
                 'setupErrors'             => $this->setupErrors,
                 'userCurrentContainer'    => $this->userCurrentContainer,
                 'userAvailableContainers' => $this->userAvailableContainers,
-                'contextKey'              => $contextKey,
-                'mailingTemplate'         => $mailingTemplate,
+                'contextKey'              => $this->contextKey,
+                'mailingTemplate'         => $this->mailingTemplate,
                 'isMultiProcessing'       => $this->isMultiProcessing,
                 'imapExtension'           => $this->imapExtension,
                 'pThumbAddOn'             => $this->pThumbAddOn,
@@ -201,16 +204,13 @@ class GoodNews {
             $this->setUserCurrentContainer($this->userCurrentContainer);
         }
         
-        $contextKey = false;
-        $mailingTemplate = false;
-
         $resource = $this->modx->getObject('modResource', $this->userCurrentContainer);
         if ($resource) {
             // Get context key of actual GoodNews container
-            $contextKey = $resource->get('context_key');
+            $this->contextKey = $resource->get('context_key');
     
             // Read template setting for child resources (mailings) of actual GoodNews container
-            $mailingTemplate = $resource->getProperty('mailingTemplate', 'goodnews');
+            $this->mailingTemplate = $resource->getProperty('mailingTemplate', 'goodnews');
         }
     }
 
