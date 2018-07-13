@@ -1,5 +1,6 @@
 Changelog for GoodNews
 
+- finally fixing all collapse problems on grid refresh when rowExpander is enabled (thanks @Alroniks)
 - fixed a problem where grid refresh doesn’t properly collapse expanded rows
 - changed autorefresh and workerprocess-emergency-stop buttons from splitbutton to modern chebox toggle switches
 - first changes for better MODX 3 compatibility
