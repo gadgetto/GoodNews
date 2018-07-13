@@ -40,6 +40,8 @@ GoodNewsResource.grid.CollectResources = function(config) {
         tpl : new Ext.Template(
             '<p>{preview}</p>'
         )
+        ,enableCaching: false
+        ,lazyRender: false
     });
 
 	Ext.applyIf(config,{
