@@ -125,7 +125,7 @@
                                                                         <tr>
                                                                             <td style="font-family: sans-serif; font-size: 16px; vertical-align: top; background-color: #9ec41a; border-radius: 5px; text-align: center;">
                                                                                 <a href="[[+confirmUrl]]" target="_blank" style="display: inline-block; color: #ffffff; background-color: #9ec41a; border: solid 1px #9ec41a; border-radius: 5px; box-sizing: border-box; cursor: pointer; text-decoration: none; font-size: 16px; font-weight: bold; margin: 0; padding: 12px 25px; text-transform: capitalize; border-color: #9ec41a;">
-                                                                                    Activate Subscription
+                                                                                    Activate Registration
                                                                                 </a>
                                                                             </td>
                                                                         </tr>
@@ -136,7 +136,7 @@
                                                     </tbody>
                                                 </table>
                                                 <p style="font-family: sans-serif; font-size: 16px; font-weight: normal; margin: 0; margin-bottom: 15px;">
-                                                    Only after finishing this step you will be able to login and receive our newsletters.
+                                                    Only after finishing this step you will be able to login (and if you selected during registration, receive our newsletters).
                                                 </p>
                                                 <p style="font-family: sans-serif; font-size: 16px; font-weight: normal; margin: 0; margin-bottom: 15px;">
                                                     If you did not request this message, please ignore/delete it!
