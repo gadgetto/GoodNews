@@ -1,158 +1,212 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-   "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 <html lang="[[++cultureKey]]">
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=[[++modx_charset]]" />
-    <meta name="viewport" content="initial-scale=1.0" />    <!-- Mobile webkit will display zoomed in -->
-    <meta name="format-detection" content="telephone=no" /> <!-- Disable auto phone number linking in iOS -->
-    
-    <title>Request Subscription Links</title>
-    <style type="text/css">
-    
-        /* Force Hotmail to display emails at full width */
-        .ReadMsgBody { width: 100%; background-color: #515151; }
-        .ExternalClass { width: 100%; background-color: #515151; }
-
-        /* Forces Hotmail to display normal line spacing. */
-        .ExternalClass, .ExternalClass p, .ExternalClass span, .ExternalClass font, .ExternalClass td, .ExternalClass div { line-height: 100%; }
-
-        /* Prevents Webkit and Windows Mobile platforms from changing default font sizes. */
-        body { -webkit-text-size-adjust: none; -ms-text-size-adjust: none; }
-        
-        /* Resets all body margins and padding to "0" for good measure. */
-        body { margin: 0; padding: 0; }
-        
-        /* Resolves webkit padding issue. */
-        table { border-spacing: 0; }
-        
-        /* Resolves the Outlook 2007, 2010, and Gmail td padding issue. */
-        table td { border-collapse: collapse; }
-        
-        /* http://www.symphonious.net/2010/09/02/the-email-and-p-myth/ */
-        p { margin-top: 0; margin-bottom: 1em; }
-        
-        /* Image display hack for HotMail */
-        img { display:block; }
-        
-        /* Weird Yahoo links and border bottom */
-        .yshortcuts a { border-bottom: none !important; }
-        
-        /* E-mail width for small screens */
-        @media screen and (max-width: 600px) {
-            body {
+    <head>
+        <meta name="viewport" content="width=device-width">
+        <meta http-equiv="Content-Type" content="text/html; charset=[[++modx_charset]]">
+        <title>Requested Subscription Links</title>
+        <style>
+        /**
+         * Email template based on:
+         * https://github.com/leemunroe/responsive-html-email-template
+         *
+         * License: The MIT License (MIT)
+         * https://github.com/leemunroe/responsive-html-email-template/blob/master/license.txt
+         */
+        @media only screen and (max-width: 620px) {
+            table[class=body] h1 {
+                font-size: 28px !important;
+                margin-bottom: 10px !important;
+            }
+            table[class=body] p,
+            table[class=body] ul,
+            table[class=body] ol,
+            table[class=body] td,
+            table[class=body] span,
+            table[class=body] a {
+                font-size: 16px !important;
+            }
+            table[class=body] .wrapper,
+            table[class=body] .article {
+                padding: 10px !important;
+            }
+            table[class=body] .content {
                 padding: 0 !important;
             }
-            table[class="header"] {
+            table[class=body] .container {
+                padding: 0 !important;
                 width: 100% !important;
             }
-            table[class="container"] {
+            table[class=body] .main {
+                border-left-width: 0 !important;
+                border-radius: 0 !important;
+                border-right-width: 0 !important;
+            }
+            table[class=body] .btn table {
                 width: 100% !important;
             }
-            table[class="footer"] {
+            table[class=body] .btn a {
                 width: 100% !important;
+            }
+            table[class=body] .img-responsive {
+                height: auto !important;
+                max-width: 100% !important;
+                width: auto !important;
             }
         }
+        @media all {
+            .ExternalClass {
+                width: 100%;
+            }
+            .ExternalClass,
+            .ExternalClass p,
+            .ExternalClass span,
+            .ExternalClass font,
+            .ExternalClass td,
+            .ExternalClass div {
+                line-height: 100%;
+            }
+            .apple-link a {
+                color: inherit !important;
+                font-family: inherit !important;
+                font-size: inherit !important;
+                font-weight: inherit !important;
+                line-height: inherit !important;
+                text-decoration: none !important;
+            }
+            .btn-primary table td:hover {
+                background-color: #8da534 !important;
+            }
+            .btn-primary a:hover {
+                background-color: #8da534 !important;
+                border-color: #8da534 !important;
+            }
+            .btn-secondary table td:hover {
+                background-color: #eff3db !important;
+            }
+            .btn-secondary a:hover {
+                background-color: #eff3db !important;
+                border-color: #8da534 !important;
+            }
+        }
+        </style>
+    </head>
+
+    <body class="" style="background-color: #f6f6f6; font-family: sans-serif; -webkit-font-smoothing: antialiased; font-size: 16px; line-height: 1.4; margin: 0; padding: 0; -ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;">
+        <table border="0" cellpadding="0" cellspacing="0" class="body" style="border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%; background-color: #f6f6f6;">
+            <tr>
+                <td style="font-family: sans-serif; font-size: 16px; vertical-align: top;">&nbsp;</td>
+                <td class="container" style="font-family: sans-serif; font-size: 16px; vertical-align: top; display: block; Margin: 0 auto; max-width: 580px; padding: 10px; width: 580px;">
+                    <div class="content" style="box-sizing: border-box; display: block; Margin: 0 auto; max-width: 580px; padding: 10px;">
         
-        /* Give content more room on mobile */
-        @media screen and (max-width: 480px) {
-            td[class="header-padding"],
-            td[class="container-padding"],
-            td[class="footer-padding"] {
-                padding-left: 12px !important;
-                padding-right: 12px !important;
-            }
-        }
-    
-    </style>
-</head>
-<body style="margin: 0; padding: 20px 0;" bgcolor="#515151" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0">
-    
-    <!-- 100% wrapper (grey background) -->
-    <table border="0" width="100%" height="100%" cellpadding="0" cellspacing="0" bgcolor="#515151">
-        <tr>
-            <td align="center" valign="top" bgcolor="#515151" style="background-color: #515151;">
-    
-                <!-- 600px header (grey background) -->
-                <table border="0" width="600" cellpadding="0" cellspacing="0" class="header" bgcolor="#ebebeb">
-                    <tr>
-                        <td class="header-padding" bgcolor="#9ec41a" align="center" style="background-color: #9ec41a; text-align: center; padding-left: 30px; padding-right: 30px; font-weight: bold; font-size: 24px; line-height: 28px; font-family: Helvetica, sans-serif; color: #ffffff;">
-                            <br>
-                            Links to Your Profile<br>
-                            <br>
-                        </td>
-                    </tr>
-                </table>
-                <!-- /600px header -->
-                
-                <!-- 600px container (white background) -->
-                <table border="0" width="600" cellpadding="0" cellspacing="0" class="container" bgcolor="#ffffff">
-                    <tr>
-                        <td class="container-padding" bgcolor="#ffffff" style="background-color: #ffffff; padding-left: 30px; padding-right: 30px; font-size: 20px; line-height: 24px; font-family: Helvetica, sans-serif; color: #333;">
-                            <br>
-                            Hello, [[+fullname]]<br>
-                            <br>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="container-padding" bgcolor="#ffffff" style="background-color: #ffffff; padding-left: 30px; padding-right: 30px; font-size: 16px; line-height: 22px; font-family: Helvetica, sans-serif; color: #333;">
-                            <p>
-                                here are your requested secure links to edit or cancel your subscription:
-                            </p>
-                            <br>
-                            <table border="0" cellpadding="0" cellspacing="0">
+                        <!-- START CENTERED WHITE CONTAINER -->
+                        <span class="preheader" style="color: transparent; display: none; height: 0; max-height: 0; max-width: 0; opacity: 0; overflow: hidden; mso-hide: all; visibility: hidden; width: 0;">
+                            Here Are Your Request Subscription Links
+                        </span>
+                        
+                        <table class="main" style="border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%; background: #ffffff; border-radius: 3px;">
+                            <!-- START MAIN CONTENT AREA -->
+                            <tr>
+                                <td class="wrapper" style="font-family: sans-serif; font-size: 16px; vertical-align: top; box-sizing: border-box; padding: 20px;">
+                                    <table border="0" cellpadding="0" cellspacing="0" style="border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%;">
+                                        <tr>
+                                            <td style="font-family: sans-serif; font-size: 16px; vertical-align: top;">
+                                                <p style="font-family: sans-serif; font-size: 16px; font-weight: normal; margin: 0; margin-bottom: 15px;">
+                                                    Hello, [[+fullname]]
+                                                </p>
+                                                <p style="font-family: sans-serif; font-size: 16px; font-weight: normal; margin: 0; margin-bottom: 15px;">
+                                                    here are your requested secure links to edit or cancel your subscription:
+                                                </p>
+                                                <table border="0" cellpadding="0" cellspacing="0" style="border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: auto;">
+                                                    <tr>
+                                                        <td style="font-family: sans-serif; font-size: 16px; vertical-align: top;">
+                                                            <table border="0" cellpadding="0" cellspacing="0" class="btn btn-primary" style="border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%; box-sizing: border-box;">
+                                                                <tbody>
+                                                                    <tr>
+                                                                        <td align="left" style="font-family: sans-serif; font-size: 16px; vertical-align: top; padding-bottom: 15px;">
+                                                                            <table border="0" cellpadding="0" cellspacing="0" style="border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: auto;">
+                                                                                <tbody>
+                                                                                    <tr>
+                                                                                        <td style="font-family: sans-serif; font-size: 16px; vertical-align: top; background-color: #9ec41a; border-radius: 5px; text-align: center;">
+                                                                                            <a href="[[+updateProfileUrl]]" target="_blank" style="display: inline-block; color: #ffffff; background-color: #9ec41a; border: solid 1px #9ec41a; border-radius: 5px; box-sizing: border-box; cursor: pointer; text-decoration: none; font-size: 16px; font-weight: bold; margin: 0; padding: 12px 25px; text-transform: capitalize; border-color: #9ec41a;">
+                                                                                                Edit your profile
+                                                                                            </a>
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                </tbody>
+                                                                            </table>
+                                                                        </td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </td>
+                                                        <td style="font-family: sans-serif; font-size: 16px; vertical-align: top;">&nbsp;</td>
+                                                        <td style="font-family: sans-serif; font-size: 16px; vertical-align: top;">
+                                                            <table border="0" cellpadding="0" cellspacing="0" class="btn btn-secondary" style="border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%; box-sizing: border-box;">
+                                                                <tbody>
+                                                                    <tr>
+                                                                        <td align="left" style="font-family: sans-serif; font-size: 16px; vertical-align: top; padding-bottom: 15px;">
+                                                                            <table border="0" cellpadding="0" cellspacing="0" style="border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: auto;">
+                                                                                <tbody>
+                                                                                    <tr>
+                                                                                        <td style="font-family: sans-serif; font-size: 16px; vertical-align: top; background-color: #ffffff; border-radius: 5px; text-align: center;">
+                                                                                            <a href="[[+unsubscribeUrl]]" target="_blank" style="display: inline-block; color: #9ec41a; background-color: #ffffff; border: solid 1px #9ec41a; border-radius: 5px; box-sizing: border-box; cursor: pointer; text-decoration: none; font-size: 16px; font-weight: bold; margin: 0; padding: 12px 25px; text-transform: capitalize; border-color: #9ec41a;">
+                                                                                                Unsubscribe
+                                                                                            </a>
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                </tbody>
+                                                                            </table>
+                                                                        </td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                                <p style="font-family: sans-serif; font-size: 16px; font-weight: normal; margin: 0; margin-bottom: 15px;">
+                                                    If you did not request the links, someone else entered your email address on our website. 
+                                                    Please feel free to contact our support!
+                                                </p>
+                                                <p style="font-family: sans-serif; font-size: 16px; font-weight: normal; margin: 0; margin-bottom: 15px;">
+                                                    Thank you,<br>
+                                                    Your [[++site_name]] Team
+                                                </p>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                            <!-- END MAIN CONTENT AREA -->
+                        </table>
+        
+                        <!-- START FOOTER -->
+                        <div class="footer" style="clear: both; Margin-top: 10px; text-align: center; width: 100%;">
+                            <table border="0" cellpadding="0" cellspacing="0" style="border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%;">
                                 <tr>
-                                    <td>
-                                        <table border="0" cellpadding="0" cellspacing="0" style="background-color:#9ec41a; border:1px solid #9ec41a; border-radius:5px;">
-                                            <tr>
-                                                <td align="center" valign="middle" style="color:#FFFFFF; font-family:Helvetica, sans-serif; font-size:16px; font-weight:bold; line-height:150%; padding-top:10px; padding-right:25px; padding-bottom:10px; padding-left:25px;">
-                                                    <a href="[[+updateProfileUrl]]" target="_blank" style="color:#FFFFFF; text-decoration:none;">Edit your profile</a>
-                                                </td>
-                                            </tr>
-                                        </table>
+                                    <td class="content-block" style="font-family: sans-serif; vertical-align: top; padding-bottom: 10px; padding-top: 10px; font-size: 13px; color: #999999; text-align: center;">
+                                        <span class="apple-link" style="color: #999999; font-size: 13px; text-align: center;">
+                                            Your are receiving this mail because your e-mail address<br>
+                                            was submitted via our subscription form at<br>
+                                            <a href="[[++site_url]]" style="text-decoration: underline; color: #999999; font-size: 13px; text-align: center;">[[++site_url]]</a>.
+                                        </span>
                                     </td>
-                                    <td style="padding-left:20px;">or <a href="[[+unsubscribeUrl]]" target="_blank" style="color:#9ec41a; text-decoration:none;">Unsubscribe</a></td>
+                                </tr>
+                                <tr>
+                                    <td class="content-block" style="font-family: sans-serif; vertical-align: top; padding-bottom: 10px; padding-top: 10px; font-size: 13px; color: #999999; text-align: center;">
+                                        <span class="apple-link" style="color: #999999; font-size: 13px; text-align: center;">
+                                            Please feel free to contact us: <a href="mailto:[[++emailsender]]" style="text-decoration: underline; color: #999999; font-size: 13px; text-align: center;">[[++emailsender]]</a>.
+                                        </span>
+                                    </td>
                                 </tr>
                             </table>
-                            <br>
-                            <br>
-                            <p>
-                                If you did not request the links, someone else entered your email address on our website. 
-                                Please feel free to contact our support!
-                            </p>
-                            <p>
-                                <em>Best wishes,<br>
-                                Your [[++site_name]] Team</em>
-                            </p>
-                            <br>
-                        </td>
-                    </tr>
-                </table>
-                <!--/600px container -->
-    
-                <!-- 600px footer (grey background) -->
-                <table border="0" width="600" cellpadding="0" cellspacing="0" class="footer" bgcolor="#ebebeb">
-                    <tr>
-                        <td class="footer-padding" bgcolor="#ebebeb" align="center" style="background-color: #ebebeb; text-align: center; padding-left: 30px; padding-right: 30px; font-size: 14px; line-height: 20px; font-family: Helvetica, sans-serif; color: #333;">
-                            <br>
-                            <p>
-                                Your are receiving this e-mail because your email address [[+email]] was submitted 
-                                via our subscription form at [[++site_url]]
-                            </p>
-                            <p>
-                                Please feel free to contact us: [[++emailsender]]<br>
-                                <em>Copyright &copy; [[++site_name]], All rights reserved.</em>
-                            </p>
-                            <br>
-                        </td>
-                    </tr>
-                    <tr><td height="10" bgcolor="#9ec41a" style="background-color: #9ec41a;">&nbsp;</td></tr>
-                </table>
-                <!-- /600px footer -->
-
-            </td>
-        </tr>
-    </table>
-    <!--/100% wrapper-->
-
-</body>
+                        </div>
+                        <!-- END FOOTER -->
+        
+                    <!-- END CENTERED WHITE CONTAINER -->
+                    </div>
+                </td>
+                <td style="font-family: sans-serif; font-size: 16px; vertical-align: top;">&nbsp;</td>
+            </tr>
+        </table>
+    </body>
 </html>
