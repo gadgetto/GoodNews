@@ -1,5 +1,6 @@
 Changelog for GoodNews
 
+- enabled view state for main panels (mailings, subscribers, groups, categories)
 - refactored all email-template chunks (for subscription, profile and reports) for simplicity and clean design
 - finally fixing all collapse problems on grid refresh when rowExpander is enabled (thanks @Alroniks)
 - fixed a problem where grid refresh doesn’t properly collapse expanded rows
