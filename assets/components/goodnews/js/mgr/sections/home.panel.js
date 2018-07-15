@@ -21,6 +21,10 @@ GoodNews.HomePanel = function(config) {
             xtype: 'modx-tabs'
             ,itemId: 'tabs'
             ,cls: 'structure-tabs'
+            /*
+            // State currently disabled:
+            // @todo: Problem with row expander in goodnews-panel-newsletters (not working) if 
+            // newsletter panel isn't the actual panel when CMP is loaded
             ,stateful: true
             ,stateId: 'goodnews-panel-home'
             ,stateEvents: ['tabchange']
@@ -29,6 +33,7 @@ GoodNews.HomePanel = function(config) {
                     activeTab: this.items.indexOf(this.getActiveTab())
                 };
             }
+            */
             ,items: [{
                 xtype: 'goodnews-panel-newsletters'
             },{
