@@ -27,7 +27,10 @@ GoodNews.panel.Categories = function(config) {
         }]
         ,listeners: {
             'activate': {fn: function() {
-                Ext.getCmp('goodnews-grid-categories').refresh();
+                var categoriesGrid = Ext.getCmp('goodnews-grid-categories');
+                categoriesGrid.loadMask.disable();
+                categoriesGrid.refresh();
+                categoriesGrid.loadMask.enable();
             }
             ,scope: this}
         }

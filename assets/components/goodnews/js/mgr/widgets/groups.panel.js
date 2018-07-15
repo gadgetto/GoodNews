@@ -27,7 +27,10 @@ GoodNews.panel.Groups = function(config) {
         }]    
         ,listeners: {
             'activate': {fn: function() {
-                Ext.getCmp('goodnews-grid-groups').refresh();
+                var groupsGrid = Ext.getCmp('goodnews-grid-groups');
+                groupsGrid.loadMask.disable();
+                groupsGrid.refresh();
+                groupsGrid.loadMask.enable();
             }
             ,scope: this}
         }
