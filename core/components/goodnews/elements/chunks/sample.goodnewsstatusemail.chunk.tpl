@@ -169,19 +169,6 @@
                                                     <tr>
                                                         <td style="font-family: sans-serif; font-size: 16px; vertical-align: top;">
                                                             <p style="font-family: sans-serif; font-size: 16px; font-weight: normal; margin: 0; margin-bottom: 15px;">
-                                                                Sent On
-                                                            </p>
-                                                        </td>
-                                                        <td style="font-family: sans-serif; font-size: 16px; vertical-align: top;">&nbsp;</td>
-                                                        <td style="font-family: sans-serif; font-size: 16px; vertical-align: top;">
-                                                            <p style="font-family: sans-serif; font-size: 16px; font-weight: bold; margin: 0; margin-bottom: 15px;">
-                                                                [[+senton]]
-                                                            </p>
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td style="font-family: sans-serif; font-size: 16px; vertical-align: top;">
-                                                            <p style="font-family: sans-serif; font-size: 16px; font-weight: normal; margin: 0; margin-bottom: 15px;">
                                                                 Finished On
                                                             </p>
                                                         </td>
