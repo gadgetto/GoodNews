@@ -341,7 +341,7 @@ class GoodNewsMailing {
         // (this is not very elegant here but is needed to prevent DOMDocument from URL encoding MODX tags e.g. [[+sid]] gets %5B%5B+sid%5D%5D)
         if ($this->modx->getOption('goodnews.auto_full_urls', null, true)) {
             $base = $this->modx->getOption('site_url');
-            $output = $this->_fullUrls($base, $output);
+            $output = $this->_fullURLs($base, $output);
         }
 
         return $output;
