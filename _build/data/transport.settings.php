@@ -84,7 +84,7 @@ $settings['goodnews.auto_full_urls']->fromArray(array(
 $settings['goodnews.auto_inline_css'] = $modx->newObject('modSystemSetting');
 $settings['goodnews.auto_inline_css']->fromArray(array(
     'key'       => 'goodnews.auto_inline_css',
-    'value'     => '0',
+    'value'     => '1',
     'xtype'     => 'combo-boolean',
     'namespace' => 'goodnews',
     'area'      => '',

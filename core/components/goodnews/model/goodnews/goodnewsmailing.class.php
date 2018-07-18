@@ -290,7 +290,7 @@ class GoodNewsMailing {
         $this->modx->resource           = $currentResource;
 
         // AutoInline CSS styles from template header (<styles>...</styles>) if activated in settings
-        if ($this->modx->getOption('goodnews.auto_inline_css', null, false)) {
+        if ($this->modx->getOption('goodnews.auto_inline_css', null, true)) {
             $html = $this->_inlineCSS($html);
         }
         
