@@ -927,7 +927,8 @@ class GoodNewsMailing {
         }
             
         // Return the processed (X)HTML
-        return $smartDOMDocument->saveHTMLExact();
+        // (we don't need to use "saveHTMLExact" method from "SmartDOMDocument" class, as we are always processing a full HTML document)
+        return $smartDOMDocument->saveHTML();
     }
 
     /**

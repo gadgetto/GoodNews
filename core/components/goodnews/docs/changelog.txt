@@ -1,5 +1,6 @@
 Changelog for GoodNews
 
+- fixing a small bug in email template processing (sometimes closing </body></html> tags were cropped)
 - fixed flickering in groups and categories grid on tabchange (caused by forced refresh)
 - refactored all email-template chunks (for subscription, profile and reports) for simplicity and clean design
 - finally fixing all collapse problems on grid refresh when rowExpander is enabled (thanks @Alroniks)
