@@ -222,7 +222,7 @@ class GoodNewsMailing {
      * @access private
      * @return string $html The parsed html of the resource
      */
-    private function _getHtmlMailBody() {
+    private function _getHTMLMailBody() {
         // Store some values for later restoration
         $currentResource           = $this->modx->resource;
         $currentResourceIdentifier = $this->modx->resourceIdentifier;
