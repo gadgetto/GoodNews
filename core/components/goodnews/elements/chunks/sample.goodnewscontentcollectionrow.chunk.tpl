@@ -1,7 +1,7 @@
 <table border="0" cellpadding="0" cellspacing="0">
     <tr>
         <td class="content-block-title">
-            <h2><a href="[[+url]]">[[+pagetitle]]</a></h2>
+            <h2 class="mb0"><a href="[[+url]]">[[+pagetitle]]</a></h2>
         </td>
     </tr>
 </table>

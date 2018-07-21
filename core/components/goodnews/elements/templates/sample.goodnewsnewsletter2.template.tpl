@@ -18,11 +18,6 @@
 
         /* GLOBAL RESETS */
         
-        img {
-            border: none;
-            -ms-interpolation-mode: bicubic;
-            max-width: 100%;
-        }
         body {
             background-color: #f6f6f6;
             font-family: sans-serif;
@@ -45,6 +40,11 @@
             font-size: 16px;
             vertical-align: top;
         }
+        img {
+            border: none;
+            -ms-interpolation-mode: bicubic;
+            max-width: 100%;
+        }
 
         /* BODY & CONTAINER */
         
@@ -55,7 +55,7 @@
         /* Set a max-width, and make it display as block so it will automatically stretch to that width, but will also shrink down on a phone or something */
         .container {
             display: block;
-            Margin: 0 auto !important;
+            margin: 0 auto !important;
             /* makes it centered */
             max-width: 580px;
             padding: 10px;
@@ -65,7 +65,7 @@
         .content {
             box-sizing: border-box;
             display: block;
-            Margin: 0 auto;
+            margin: 0 auto;
             max-width: 580px;
             padding: 10px;
         }
@@ -120,15 +120,20 @@
         h1 {
             font-size: 28px;
             text-align: center;
-            text-transform: capitalize;
         }
         h2 {
             font-size: 24px;
         }
+        h3 {
+            font-size: 20px;
+        }
+        h4 {
+            font-size: 18px;
+        }        
         .content-block-title h2,
         .content-block-title h3,
         .content-block-title h4 {
-            margin-bottom: 0px;
+            margin-bottom: 0;
         }
         p,
         ul,
@@ -253,9 +258,6 @@
             visibility: hidden;
             width: 0;
         }
-        .powered-by a {
-            text-decoration: none;
-        }
         hr {
             border: 0;
             border-bottom: 1px solid #dedede;
@@ -267,18 +269,21 @@
         @media only screen and (max-width: 620px) {
             table[class=body] h1 {
                 font-size: 24px !important;
-                margin-bottom: 10px !important;
             }
             table[class=body] h2 {
                 font-size: 20px !important;
-                margin-bottom: 10px !important;
+            }
+            table[class=body] h3 {
+                font-size: 18px !important;
+            }
+            table[class=body] h4 {
+                font-size: 16px !important;
             }
             table[class=body] p,
             table[class=body] ul,
             table[class=body] ol,
             table[class=body] td,
-            table[class=body] span,
-            table[class=body] a {
+            table[class=body] span {
                 font-size: 14px !important;
             }
             table[class=body] .wrapper,
@@ -301,7 +306,7 @@
             table[class=body] .footer p,
             table[class=body] .footer span,
             table[class=body] .footer a {
-                font-size: 12px;
+                font-size: 11px !important;
             }
             table[class=body] .btn table {
                 width: 100% !important;
@@ -313,6 +318,9 @@
                 height: auto !important;
                 max-width: 100% !important;
                 width: auto !important;
+            }
+            .hello {
+                font-size: 18px !important;
             }
         }
 
