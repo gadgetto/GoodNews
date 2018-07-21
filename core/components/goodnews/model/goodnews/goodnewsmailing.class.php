@@ -678,7 +678,7 @@ class GoodNewsMailing {
         $this->modx->mail->set(modMail::MAIL_CHARSET,   $mail['mailCharset']);
         $this->modx->mail->set(modMail::MAIL_ENCODING,  $mail['mailEncoding']);
 
-        $this->modx->mail->address('reply-to',          $mail['mailReplyTo']);
+        $this->modx->mail->address('reply-to', $mail['mailReplyTo']);
         if (empty($subscriber['fullname'])) { $subscriber['fullname'] = $subscriber['email']; }
         $this->modx->mail->address('to', $subscriber['email'], $subscriber['fullname']);
         $this->modx->mail->setHTML($mail['ishtml']);
@@ -687,8 +687,7 @@ class GoodNewsMailing {
         $this->modx->mail->reset();
 
         if (!$sent) {
-            $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] Email could not be sent to '.$subscriber['email'].' ('.$subscriber['subscriber_id'].').');
-            if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_ERROR, '[GoodNews] Mailer error: '.$this->modx->mail->mailer->ErrorInfo); }
+            $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] Email could not be sent to '.$subscriber['email'].' ('.$subscriber['subscriber_id'].') -- Error: '.$this->modx->mail->mailer->ErrorInfo);
         } else {
             if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsMailing::sendEmail - Email sent to '.$subscriber['email'].' ('.$subscriber['subscriber_id'].').'); }
         }
