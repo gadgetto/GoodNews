@@ -20,7 +20,7 @@
 
 require_once dirname(dirname(__FILE__)).'/csstoinlinestyles/Exception.php';
 require_once dirname(dirname(__FILE__)).'/csstoinlinestyles/CssToInlineStyles.php';
-require_once dirname(dirname(__FILE__)).'/smartdomdocument/smartdomdocument.class.php';
+require_once dirname(dirname(__FILE__)).'/html2text/html2text.php';
 
 /**
  * GoodNewsMailing class handles mailing/newsletter sending
@@ -115,10 +115,10 @@ class GoodNewsMailing {
         $properties['ishtml']        = $this->mailing->get('richtext') ? true : false;
         if ($properties['ishtml']) {
             $properties['body']      = $this->_getHTMLMailBody();
-            $properties['altbody']   = $this->_getPlainMailBody();
+            $properties['altbody']   = ''; // This is filled later when subscriber placeholders are processed!
         } else {
             $properties['body']      = $this->_getPlainMailBody();
-            $properties['altbody']   = '';
+            $properties['altbody']   = ''; // This stays empty when plain text mail is sent!
         }
         $properties['mailFrom']      = $this->mailing->getProperty('mailFrom',     'goodnews', $this->modx->getOption('emailsender'));   
         $properties['mailFromName']  = $this->mailing->getProperty('mailFromName', 'goodnews', $this->modx->getOption('site_name'));
@@ -268,7 +268,7 @@ class GoodNewsMailing {
         // Process the non-cacheable content of the Resource, this time removing the unprocessed tags
         $this->modx->parser->processElementTags('', $html, true, true, '[[', ']]', array(), $maxIterations);
 
-        // Set back GoodNews subscriber fields placeholders
+        // Set back GoodNews subscriber fields placeholders to it's original form
         $search = array();
         $replace = array();
         
@@ -300,24 +300,32 @@ class GoodNewsMailing {
             $html = $this->_autoFixImageSizes($base, $html);
         }
 
+        // Make full URLs if activated in settings
+        if ($this->modx->getOption('goodnews.auto_full_urls', null, true)) {
+            $base = $this->modx->getOption('site_url');
+            $html = $this->_fullURLs($base, $html);
+        }
+
         return $html;
     }
 
     /**
-     * Get the plain-text mail body
+     * Get the parsed plain-text mail body
+     * (content field only as we don't use a template!)
+     * (FullURLs generation is not supported here as we have no DOM to parse)
      *
      * @param $id
      * @return mixed string $body || false
      */
     private function _getPlainMailBody() {
-        // Get content of mail directly from resource content field
-        $body = $this->mailing->get('content');
-        if ($body === false) {
-            $this->modx->log(modX::LOG_LEVEL_ERROR, '[GoodNews] Plain mail body for mailing [id: '.$this->mailingid.'] could not be created.');
-            return false;
-        }
-        // Remove all HTML tags (MODX doesn't automatically remove htmls tags if WYSIWYG editor is disabled)
-        return $this->_html2txt($body);
+        $mailingObj = $this->mailing;
+        $mailingObj->set('cacheable', false);
+        $mailingObj->set('_processed', false);
+        $mailingObj->set('_content', false);
+        $mailingObj->set('template', 0); // No template is used!
+        $body = $mailingObj->process();
+
+        return $body;
     }
 
     /**
@@ -336,13 +344,6 @@ class GoodNewsMailing {
         $chunk->_processed = false;
         $output = $chunk->process($subscriberProperties);
         $this->modx->parser->processElementTags('', $output, true, true);
-        
-        // After(!) Subscriber placeholders are processed -> make full URLs if activated in settings
-        // (this is not very elegant here but is needed to prevent DOMDocument from URL encoding MODX tags e.g. [[+sid]] gets %5B%5B+sid%5D%5D)
-        if ($this->modx->getOption('goodnews.auto_full_urls', null, true)) {
-            $base = $this->modx->getOption('site_url');
-            $output = $this->_fullURLs($base, $output);
-        }
 
         return $output;
     }
@@ -585,6 +586,10 @@ class GoodNewsMailing {
             if ($subscriber) {
                 $temp_mail = $mail;
                 $temp_mail['body'] = $this->_processSubscriberPlaceholders($temp_mail['body'], $subscriber);
+                if ($temp_mail['ishtml']) {
+                    // Convert HTML to plain text using "html2text" library from https://github.com/soundasleep/html2text
+                    $temp_mail['altbody'] = convert_html_to_text($temp_mail['body']);
+                }
                 if ($this->sendEmail($temp_mail, $subscriber)) {
                     $status = GoodNewsRecipientHandler::GON_USER_SENT;
                 } else {
@@ -623,6 +628,10 @@ class GoodNewsMailing {
             $subscriber = $this->_getSubscriberProperties($recipientId);
             $temp_mail = $mail;
             $temp_mail['body'] = $this->_processSubscriberPlaceholders($temp_mail['body'], $subscriber);
+            if ($temp_mail['ishtml']) {
+                // Create altbody -> convert HTML to plain text using "html2text" library from https://github.com/soundasleep/html2text
+                $temp_mail['altbody'] = convert_html_to_text($temp_mail['body']);
+            }
             $sent = $this->sendEmail($temp_mail, $subscriber);            
         }
         return true;
@@ -842,24 +851,21 @@ class GoodNewsMailing {
      * @access private
      * @param string $base The base URL (needs trailing /)
      * @param string $html The unparsed HTML
-     * @return mixed The parsed HTML as string or false
+     * @return mixed $output The parsed HTML as string or false
      */
-    private function _fullURLs($base = null, $html = null) {
+    private function _fullURLs($base, $html) {
         if (empty($html) || empty($base)) { return false; }
         
-        // Use the SmartDOMDocument extension
-        if (!class_exists('SmartDOMDocument')) { return false; }
-    
-        $smartDOMDocument = new SmartDOMDocument();
-        if (!($smartDOMDocument instanceof SmartDOMDocument)) {
-            $this->modx->log(modX::LOG_LEVEL_ERROR, '[GoodNews] SmartDOMDocument class could not be instantiated.');
-            return false;
-        }
-    
-        $smartDOMDocument->loadHTML($html);
+        // Preserve GoodNews subscriber fields placeholders (which aren't processed yet)
+        $html = str_replace('[[', '%5B%5B', $html);
+        $html = str_replace(']]', '%5D%5D', $html);
+
+        $document = new DOMDocument();
+        // Ensure UTF-8 is respected by using 'mb_convert_encoding'
+        $document->loadHTML(mb_convert_encoding($html, 'HTML-ENTITIES', 'UTF-8'));
         
         // Process all link tags
-        $elements = $smartDOMDocument->getElementsByTagName('a');
+        $elements = $document->getElementsByTagName('a');
     
         foreach ($elements as $element){
             // Get the value of the href attribute
@@ -901,7 +907,7 @@ class GoodNewsMailing {
         }
     
         // Process all img tags
-        $elements = $smartDOMDocument->getElementsByTagName('img');
+        $elements = $document->getElementsByTagName('img');
         
         foreach ($elements as $element){
             // Get the value of the img attribute
@@ -927,8 +933,13 @@ class GoodNewsMailing {
         }
             
         // Return the processed (X)HTML
-        // (we don't need to use "saveHTMLExact" method from "SmartDOMDocument" class, as we are always processing a full HTML document)
-        return $smartDOMDocument->saveHTML();
+        $html = $document->saveHTML();
+
+        // Set back GoodNews subscriber fields placeholders to it's original form
+        $html = str_replace('%5B%5B', '[[', $html);
+        $html = str_replace('%5D%5D', ']]', $html);
+
+        return $html;
     }
 
     /**
@@ -974,24 +985,6 @@ class GoodNewsMailing {
         return $html;
     }
     
-    /**
-     * Helper method to turn HTML into text.
-     * 
-     * @access private
-     * @param string $html
-     * @return string
-     */
-    private function _html2txt($html) { 
-        $search = array(
-            '@<script[^>]*?>.*?</script>@si',   // Strip out javascript 
-            '@<[\/\!]*?[^<>]*?>@si',            // Strip out HTML tags 
-            '@<style[^>]*?>.*?</style>@siU',    // Strip style tags properly 
-            '@<![\s\S]*?--[ \t\n\r]*>@'         // Strip multi-line comments including CDATA 
-        ); 
-        $text = preg_replace($search, '', $html); 
-        return $text; 
-    }
-
     /**
      * Auto start scheduled mailings.
      * (Check for mailing resources with pub_date reached and set them to published
