@@ -1,5 +1,6 @@
 Changelog for GoodNews
 
+- fixed a problem with opening preview window for plain text mailings
 - enhanced automatic multipart mail generation (plain-text part of mail is now perfectly formatted and respects full mail body)
 - refactored preinstalled sample newsletter templates for simplicity and clean design
 - fixing a small bug in email template processing (sometimes closing </body></html> tags were cropped)

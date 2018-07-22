@@ -583,7 +583,7 @@ Ext.extend(GoodNews.grid.Newsletters,MODx.grid.Grid,{
                 xtype: 'goodnews-window-preview'
             });
             win.setValues(this.menu.record);
-            win.show(e.target);
+            win.show(); // had to remove "e.target" param because it's undefined here (don't know why)
         }
     }
     ,testSendNewsletter: function(btn,e) {
