@@ -39,7 +39,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fixed user related placeholders for subscription/activation email templates (now all placeholders from user object are provided)
 
 
-## [1.4.8-pl] - 2017-02-16
+## [1.4.8-pl] - 2018-02-16
 ### Added
 - [#39] Added subscribers export feature
 - [#6] Added bulk actions to susbcribers grid
