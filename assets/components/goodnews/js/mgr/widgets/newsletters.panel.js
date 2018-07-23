@@ -266,6 +266,7 @@ GoodNews.grid.Newsletters = function(config) {
             ,hideLabel: true
             ,ctCls: 'gon-checkbox-toggle'
             ,inputValue: 1
+            ,checked: true
             ,listeners: {
                 'check': function(cbx,checked){
                     this.toggleAutoRefresh(cbx,checked);
@@ -325,6 +326,7 @@ GoodNews.grid.Newsletters = function(config) {
         }]
     });
     GoodNews.grid.Newsletters.superclass.constructor.call(this,config);
+    tr1.start(gridrefresh);
     this.on('click',this.handleActionButtons,this);
 };
 Ext.extend(GoodNews.grid.Newsletters,MODx.grid.Grid,{
