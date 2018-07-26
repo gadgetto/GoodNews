@@ -27,7 +27,7 @@
 class GoodNews {
 
     const NAME     = 'GoodNews';
-    const VERSION  = '1.5.0';
+    const VERSION  = '1.5.1';
     const RELEASE  = 'pl';
     
     const HELP_URL = 'http://www.bitego.com/extras/goodnews/';
