@@ -5,6 +5,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 
+## [1.5.1-pl] - 2018-07-26
+### Added
+- Added task scheduler status display in action toolbar (seconds since last touch by task scheduler job)
+
+### Removed
+- Removed add-on version number from action toolbar
+
+
 ## [1.5.0-pl] - 2018-07-23
 ### Added
 - General GDPR compliance release (1st-step)!

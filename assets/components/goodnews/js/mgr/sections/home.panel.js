@@ -63,13 +63,48 @@ Ext.extend(GoodNews.HomePanel,MODx.Panel,{
             ,items: this.getElements()
         });                                
         this.actionToolbar.doLayout();
+
+        // A taskrunner to update the cron ping display in actionToolbar
+        var cronPingDisplay = Ext.getCmp('goodnews-cron-ping-display');
+        var lastPing = 0;
+        var cronPingTr = new Ext.util.TaskRunner;
+        var cronPingUpdate = {
+            run: function(){
+                MODx.Ajax.request({
+                    url: GoodNews.config.connectorUrl
+                    ,params: {
+                        action: 'mgr/mailing/cron/ping'
+                    }
+                    ,method: 'post'
+                    ,scope: this
+                    ,listeners: {
+                        'success':{fn:function(r) {
+                            cronPingDisplay.setText(r.message);
+                        },scope:this}
+                    }
+                });
+            }
+            ,interval: 10000 // = 10 seconds
+        }
+        cronPingTr.start(cronPingUpdate);
     }
     ,getElements: function() {
         var elements = [];
-        // Plugin version
+        // Cron ping display
         elements.push('-',{
             xtype: 'tbtext'
-            ,html: '<i>'+GoodNews.config.componentVersion+'-'+GoodNews.config.componentRelease+'</i>'
+            ,id: 'goodnews-cron-ping-display'
+            ,text: _('goodnews.task_scheduler_touch_waiting')
+            ,listeners: {
+                'afterrender':{fn:function() {
+                    Ext.QuickTips.register({
+                        target:  'goodnews-cron-ping-display'
+                        ,text: _('goodnews.task_scheduler_touch_desc')
+                        ,enabled: true
+                        ,dismissDelay: 10000
+                    });
+                },scope:this}
+            }
         },'-')
         // Dropdown for choosing a GoodNews container
         elements.push({

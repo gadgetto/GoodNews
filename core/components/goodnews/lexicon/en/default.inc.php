@@ -63,6 +63,9 @@ $_lang['goodnews.msg_saving_successfull']                           = 'The chang
 $_lang['goodnews.msg_failed']                                       = 'Failed';
 $_lang['goodnews.choose_container']                                 = 'Choose Mailing Container';
 $_lang['goodnews.container_switching']                              = 'Switching Mailing Container';
+$_lang['goodnews.task_scheduler_touch_waiting']                     = '<b>Task scheduler touch</b><br><span style="color: #be0000;"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> waiting...</span>';
+$_lang['goodnews.task_scheduler_touch_seconds_ago']                 = '<b>Task scheduler touch</b><br>[[+seconds]] seconds ago';
+$_lang['goodnews.task_scheduler_touch_desc']                        = 'Shows the last call of cron.php by the task scheduler job.<br>If <b><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> waiting...</b> is displayed, please check if the required task scheduler job (e.g. Cron) has been configured.';
 
 $_lang['goodnews.mail_plaintext_preview']                           = 'Plain-Text Mail Preview';
 $_lang['goodnews.mail_subject']                                     = 'Mail Subject';

@@ -50,6 +50,14 @@ if ($sid != $securityKey) {
     exit('[GoodNews] cron.php - Missing or wrong authentification! Sorry Dude!');
 }
 
+// Set cron ping-time to modRegistry.
+// (Will be read by ping processor called in home.panel.js)
+$modx->getService('registry', 'registry.modRegistry');
+$modx->registry->addRegister('goodnewscron', 'registry.modFileRegister');
+$modx->registry->goodnewscron->connect();
+$modx->registry->goodnewscron->subscribe('/ping/');
+$modx->registry->goodnewscron->send('/ping/', array('time' => time()));
+
 $debug = $modx->getOption('goodnews.debug', null, false) ? true : false;
 
 $workerProcessActive = $modx->getOption('goodnews.worker_process_active', null, 1);
