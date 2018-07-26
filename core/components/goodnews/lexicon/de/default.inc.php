@@ -63,9 +63,9 @@ $_lang['goodnews.msg_saving_successfull']                           = 'Die geän
 $_lang['goodnews.msg_failed']                                       = 'Fehlgeschlagen';
 $_lang['goodnews.choose_container']                                 = 'Auswahl Mailing Container';
 $_lang['goodnews.container_switching']                              = 'Mailing Container wird gewechselt';
-$_lang['goodnews.task_scheduler_touch_waiting']                     = '<b>Task-Planer Aufruf</b><br><span style="color: #be0000;"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> warte...</span>';
+$_lang['goodnews.task_scheduler_touch_waiting']                     = '<b>Task-Planer Aufruf</b><br><span style="color: #be0000;"><i class="icon icon-exclamation-triangle" aria-hidden="true"></i> warte...</span>';
 $_lang['goodnews.task_scheduler_touch_seconds_ago']                 = '<b>Task-Planer Aufruf</b><br>vor [[+seconds]] Sekunden';
-$_lang['goodnews.task_scheduler_touch_desc']                        = 'Zeigt den letzten Aufruf der cron.php durch den Task-Planer Job an.<br>Bei Anzeige von <b><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> warte...</b>, überprüfen Sie bitte, ob der erforderliche Task-Planer Job (zB. Cron) eingerichtet wurde.';
+$_lang['goodnews.task_scheduler_touch_desc']                        = 'Zeigt den letzten Aufruf der cron.php durch den Task-Planer Job an.<br>Bei Anzeige von <b><i class="icon icon-exclamation-triangle" aria-hidden="true"></i> warte...</b>, überprüfen Sie bitte, ob der erforderliche Task-Planer Job (zB. Cron) eingerichtet wurde.';
 
 $_lang['goodnews.mail_plaintext_preview']                           = 'Nur-Text Mail Vorschau';
 $_lang['goodnews.mail_subject']                                     = 'Mail Betreff';

@@ -63,9 +63,9 @@ $_lang['goodnews.msg_saving_successfull']                           = 'Les param
 $_lang['goodnews.msg_failed']                                       = 'Echoué';
 $_lang['goodnews.choose_container']                                 = 'Choisir le conteneur du Mailing';
 $_lang['goodnews.container_switching']                              = 'Changer le conteneur du Mailing';
-$_lang['goodnews.task_scheduler_touch_waiting']                     = '<b>Task scheduler touch</b><br><span style="color: #be0000;"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> waiting...</span>';
+$_lang['goodnews.task_scheduler_touch_waiting']                     = '<b>Task scheduler touch</b><br><span style="color: #be0000;"><i class="icon icon-exclamation-triangle" aria-hidden="true"></i> waiting...</span>';
 $_lang['goodnews.task_scheduler_touch_seconds_ago']                 = '<b>Task scheduler touch</b><br>[[+seconds]] seconds ago';
-$_lang['goodnews.task_scheduler_touch_desc']                        = 'Shows the last call of cron.php by the task scheduler job.<br>If <b><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> waiting...</b> is displayed, please check if the required task scheduler job (e.g. Cron) has been configured.';
+$_lang['goodnews.task_scheduler_touch_desc']                        = 'Shows the last call of cron.php by the task scheduler job.<br>If <b><i class="icon icon-exclamation-triangle" aria-hidden="true"></i> waiting...</b> is displayed, please check if the required task scheduler job (e.g. Cron) has been configured.';
 
 $_lang['goodnews.mail_plaintext_preview']                           = 'Prévisualisation du mail en texte brut';
 $_lang['goodnews.mail_subject']                                     = 'Sujet du Mailing';
