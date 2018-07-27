@@ -4,11 +4,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-
 ## [1.5.1-pl2] - 2018-07-26
 ### Fixed
 - Fixed icon in task scheduler status display
-
 
 ## [1.5.1-pl] - 2018-07-26
 ### Added
@@ -16,7 +14,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Removed
 - Removed add-on version number from action toolbar
-
 
 ## [1.5.0-pl] - 2018-07-23
 ### Added
@@ -51,7 +48,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fixed a PHP warning in full URL conversion class
 - Fixed user related placeholders for subscription/activation email templates (now all placeholders from user object are provided)
 
-
 ## [1.4.8-pl] - 2018-02-16
 ### Added
 - [#39] Added subscribers export feature
@@ -63,11 +59,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 - Fixed a critical bug in subscriber authentication (as a result from a merge conflict)
 
-
 ## [1.4.7-pl2] - 2017-12-13
 ### Fixed
 - Fixed edit icon in grid row in Settings -> Container grid
-
 
 ## [1.4.7-pl] - 2017-12-12
 ### Added
@@ -90,7 +84,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - [#51] Fixed typos in LOG_LEVEL_WARN constant
 - Fixed a problem in Registration/Subscription process where username wasn't checked before trying to create user
 
-
 ## [1.4.6-pl] - 2017-03-10
 ### Removed
 - Removed permission check for „Toggle send process“
@@ -100,7 +93,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fixed a problem where Subscriber placeholders in newsletter templates were URL encoded before processing
 - Fixed a PHP warning: Undefined variable: base
 - Fixed a problem where GoodNews groups which were assigned to MODX user groups couldn't be unassigned
-
 
 ## [1.4.5-pl] - 2017-02-19
 ### Added
@@ -130,7 +122,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fixed a problem (since MODX 2.5.2) in goodnews.class.php constructor when executed in CLI mode
 - Fixed issues with array fields in GoodNewsSubscription snippet (fix by @Jako taken from Register snippet/Login package)
 
-
 ## [1.4.2-pl] - 2016-10-29
 ### Fixed
 - Fixed subscriber "Created on" problem (conflicting field names since MODX 1.5.x users have an explicit createdon field)
@@ -140,7 +131,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fixed Custom Resource Properties Resolver in GoodNews container installation (unsubscribeResource and profileResource properties)
 - Fixed template assignement for sample resources on package upgrade
 - Corrected poor thinking in registration-confirm resource
-
 
 ## [1.4.1-pl] - 2016-03-02
 ### Added
@@ -159,7 +149,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Preinstalled Resource documents aren't moved to tree root on package update (Installer)
 - [#38] Fixed a php warning in processhandler class
 
- 
 ## [1.4.0-pl] - 2015-11-05
 ### Added
 - New professional system mail templates (activation, success, request links, etc.)
@@ -173,7 +162,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fixed a few nasty bugs in Susbcriber registration
 - fixed Security/privacy problems (now front-end forms will never tell if email addresses already exists)
 
-
 ## [1.3.9-pl] - 2015-10-23
 ### Added
 - Added "public" field to Groups (same behaviour as in Categories)
@@ -185,7 +173,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Improved robustness of mail processing
 - Fixed a nasty bug with lockfile handling + recipient status update
 - Fixed error messages in GoodNews installer while updating database schema (...field allready exists)
-
 
 ## [1.3.8-pl] - 2015-09-13
 ### Added
@@ -207,7 +194,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - [#35] Fixed a problem with send counter when timed out mails are detected
 - Small graphical fixes
 
-
 ## [1.3.7-pl] - 2015-06-29
 ### Added
 - Added preset for Mandrill SMTP service settings
@@ -216,7 +202,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 - Fixed a PHP warning in MODX error log
-
 
 ## [1.3.6-pl] - 2015-03-29
 ### Added
@@ -234,7 +219,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fixed some PHP warnings if collections field of mailing_meta is empty (happens for resources prior to version 1.3.0-pl)
 - Fixed a problem in ContentCollection snippet when using tplWrapper
 
-
 ## [1.3.5-pl] - 2014-12-10
 ### Added
 - Added ability to click on newsletter title to edit the newsletter
@@ -249,7 +233,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fixed a bug with slider value displays in GoodNews - System settings
 - Fixed a bug in resource rendering (this was a tricky one!)
 
-
 ## [1.3.4-pl] - 2014-12-03
 ### Added
 - Added container filter dropdown in Resource Collections grid (better user experience)
@@ -262,7 +245,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fixed a problem where Resource Collections aren't restored correctly from database
 - Again fixed another small bug in how cron security keys are checked :)
 - Fixed a problem where Resource Collections are empty on first load (no Collections array available in mailing_meta)
-
 
 ## [1.3.3-pl] - 2014-11-16
 ### Added
@@ -278,7 +260,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - [#29] Frontend: groups checkboxes output is falsely rendered inside html form fieldset for each single group
 - [#28] Frontend: Subscription snippet - crashes during validation if email field is empty
 
-
 ## [1.3.2-pl] - 2014-11-01
 ### Changed
 - Small lexicon adjustments to better match MODX 2.3
@@ -286,7 +267,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 - [#27] Subscriber meta data not created for existing MODX users when using the "Import Update Feature"
 - [#26] Editing a GoodNews Container - mailing templates category dropdown doesn't list all Categories
-
 
 ## [1.3.1-pl] - 2014-10-28
 ### Added
@@ -300,16 +280,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fixed a bug in German lexicon file (missing semicolon could lead to white page -> sorry for this!)
 - Deleted mailing editor users are now recognized and it's id is now shown instead empty string
 
-
 ## [1.3.0-pl] - 2014-10-13
 ### Added
 - [#15] New feature: Content collector
 
-
 ## [1.2.2-pl] - 2014-09-15
 ### Changed
 - Some small cosmetical changes in forms
-
 
 ## [1.2.1-pl] - 2014-09-14
 ### Added
@@ -323,7 +300,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fixed some PHP warnings in getgroupcatnodes.class.php
 - Fixed some IMAP warnings in bounce handler
 
-
 ## [1.2.0-pl] - 2014-09-09
 ### Added
 - Added sending error counter to mailing grid
@@ -336,7 +312,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 - [#23] Fixed PHP memory limit problem on server with huge list of subscribers
 
-
 ## [1.1.7-pl] - 2014-09-02
 ### Added
 - [#20] New feature to manually disable multiprocessing
@@ -344,7 +319,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 - Fixed another small bug in how cron security keys are checked :)
-
 
 ## [1.1.6-pl] - 2014-08-24
 ### Added
@@ -368,7 +342,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Security
 - Security fix for subscribers getlist processor
 
-
 ## [1.1.5-pl] - 2014-07-25
 ### Changed
 - Small corrections/changes in lexicon strings
@@ -379,14 +352,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 - Additional CSS fixes (because of last minute changes in Revo 2.3)
 
-
 ## [1.1.4-pl] - 2014-07-20
 ### Added
 - Added contentblocks_replacement class to make GoodNews compatible with ContentBlocks 1.1
 
 ### Fixed
 - [#12] You have changes pending; are you sure you want to cancel?
-
 
 ## [1.1.3-pl] - 2014-07-17
 ### Added
@@ -395,7 +366,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Removed
 - Removed version_compare JS plugin and all it's references
 
-
 ## [1.1.2-pl] - 2014-07-14
 ### Changed
 - Changed default bounce handling settings to more secure values
@@ -403,14 +373,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 - Fixed some installation issues (missing or wrong default settings, default container template)
 
-
 ## [1.1.1-pl] - 2014-07-09
 ### Added
 - Added SB + HB column to Subscribers grid
 
 ### Fixed
 - Fixed deleteSubscribers + updateSubscribers methods (also added groupmember and sudo check!)
-
 
 ## [1.1.0-pl] - 2014-07-09
 ### Added
@@ -422,33 +390,27 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
 - Moved all protected container settings into GoodNews system settings
 
-
 ## [1.0.4-pl] - 2014-06-16
 ### Fixed
 - [#11] Compatibility problems with Revolution >= 2.3
-
 
 ## [1.0.3-pl] - 2014-06-10
 ### Fixed
 - [#10] cron.php cannot be called without the sid parameter when security key setting is disabled
 - [#9] cron.worker.php throws a warning to the MODX error log (Invalid argument supplied for foreach())
 
-
 ## [1.0.2-pl] - 2014-06-08
 ### Fixed
 - [#7] Mailing: selection of subscribers in a category will erroneously also select the full group
-
 
 ## [1.0.1-pl]
 ### Added
 - Added feature/properties to optionally send user an email after successful subscription
 - Added preinstalled Resource for successful subscriptions when activation isn't required
 
-
 ## [1.0.0-pl]
 ### Changed
 - First stable release
-
 
 ## [1.0.0-beta3]
 ### Added
@@ -458,7 +420,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 - Fixed missing security check if user is entitled to manage GoodNews container
 
-
 ## [1.0.0-beta2]
 ### Added
 - Added necessary code to provide support for Revo version >= 2.3
@@ -466,7 +427,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 - Fixed a bug in multiprocessed sending (catch some rare race conditions)
-
 
 ## [1.0.0-beta1]
 ### Added
