@@ -28,6 +28,7 @@ set_time_limit(0);
 
 // Fetch params of CLI calls and merge with URL params (for universal usage)
 if(isset($_SERVER['argc'])) {
+    $argc = $_SERVER['argc'];
     if ($argc > 0) {
         for ($i=1; $i < $argc; $i++) {
             parse_str($argv[$i], $tmp);
