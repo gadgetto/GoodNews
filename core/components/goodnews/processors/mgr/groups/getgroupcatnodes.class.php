@@ -213,13 +213,14 @@ class GroupCategoryGetNodesProcessor extends modProcessor {
         }
 
         return array(
-            'text'    => '<span class="'.$cssClass.'">'.$group->get('name').'</span>',
+            'text'    => $group->get('name'),
             'id'      => 'n_gongrp_'.$group->get('id'),
             'leaf'    => false,
             'type'    => 'gongroup',
             'qtip'    => $group->get('description'),
             'checked' => $checked,
             'iconCls' => $iconCls,
+            'cls'     => $cssClass,
         );
     }
 
@@ -289,13 +290,14 @@ class GroupCategoryGetNodesProcessor extends modProcessor {
         }
         
         return array(
-            'text'    => '<span class="'.$cssClass.'">'.$group->get('name').'</span>',
+            'text'    => $group->get('name'),
             'id'      => 'n_gongrp_'.$group->get('id'),
             'leaf'    => false,
             'type'    => 'gongroup',
             'qtip'    => $group->get('description'),
             'checked' => $checked,
             'iconCls' => $iconCls,
+            'cls'     => $cssClass,
         );
     }
 
@@ -354,13 +356,14 @@ class GroupCategoryGetNodesProcessor extends modProcessor {
         }
 
         return array(
-            'text'    => '<span class="'.$cssClass.'">'.$group->get('name').'</span>',
+            'text'    => $group->get('name'),
             'id'      => 'n_gongrp_'.$group->get('id'),
             'leaf'    => false,
             'type'    => 'gongroup',
             'qtip'    => $group->get('description'),
             'checked' => false,
             'iconCls' => $iconCls,
+            'cls'     => $cssClass,
         );
     }
 

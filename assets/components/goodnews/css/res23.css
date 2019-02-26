@@ -3,6 +3,7 @@
  */
 
 /* Special styles */
-.gonr-modx-group-assigned {
-    color: #5858ea !important; /* grey-blue */
+.gonr-modx-group-assigned,
+.gonr-modx-group-assigned span {
+    color: #3759cb !important;
 }
