@@ -102,7 +102,7 @@ foreach ($collection as $mailingId => $mailing) {
         $mailing->get($resourceColumns),
         $mailing->get(array('meta_senton','meta_finishedon')),
         $mailing->get(array('sentby_username')),
-        array('url' => $modx->makeUrl($mailing->get('id')))
+        array('url' => $modx->makeUrl($mailing->get('id'), '', '', $modx->getOption('link_tag_scheme')))
     );
     
     $resourceTpl = '';
