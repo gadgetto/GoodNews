@@ -30,7 +30,7 @@ class GoodNews {
     const VERSION  = '1.5.1';
     const RELEASE  = 'pl2';
     
-    const HELP_URL = 'http://www.bitego.com/extras/goodnews/';
+    const HELP_URL = 'https://docs.bitego.com/goodnews/';
     const DEV_NAME = 'bitego (Martin Gartner, Franz Gallei)';
     const DEV_URL  = 'http://www.bitego.com';
     
