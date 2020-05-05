@@ -1,0 +1,11 @@
+{
+  "identifier" : "1533DAEC-DCCD-40EB-8710-F5E7964E2723",
+  "ignoredFilePatterns" : [
+    ".git",
+    ".nova",
+    ".gitignore"
+  ],
+  "remotePath" : "\/modx\/wwwRoot\/modxdev\/goodnews",
+  "server" : "GoodNews",
+  "usesPublishing" : true
+}
