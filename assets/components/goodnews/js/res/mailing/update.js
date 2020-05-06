@@ -67,12 +67,6 @@ Ext.extend(GoodNewsResource.page.UpdateGoodNewsResourceMailing,MODx.page.UpdateR
             ,scope: this
             ,id: 'modx-abtn-cancel'
         });
-        btns.push('-');
-        btns.push({
-            text: _('help_ex')
-            ,handler: MODx.loadHelpPane
-            ,id: 'modx-abtn-help'
-        });
         return btns;
     }
     ,cancel: function(btn,e) {
