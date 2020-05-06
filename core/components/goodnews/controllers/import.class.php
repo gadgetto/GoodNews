@@ -24,13 +24,35 @@
  * @package goodnews
  */
 
-class GoodNewsImportManagerController extends GoodNewsManagerController {
+require_once dirname(dirname(__FILE__)) . '/model/goodnews/goodnews.class.php';
 
+class GoodNewsImportManagerController extends modExtraManagerController {
+    
+    /** @var GoodNews $goodnews */
+    public $goodnews;
+    
+    public function initialize() {
+        $this->goodnews = new GoodNews($this->modx);
+        
+        // Add custom css file to manager-page header
+        $cssFile = $this->goodnews->config['cssUrl'] . 'mgr23.css';
+        $this->addCss($cssFile);
+        
+        // Initialize GoodNews Js
+        $this->addJavascript($this->goodnews->config['jsUrl'] . 'mgr/goodnews.js');
+        
+        return parent::initialize();
+    }
+    
     public function process(array $scriptProperties = array()) {
         if (!$this->goodnews->isGoodNewsAdmin) {
-            $returl = $this->modx->getOption('manager_url').'?a='.$_GET['a'];
+            $returl = $this->modx->getOption('manager_url') . '?a=' . $_GET['a'];
             $this->modx->sendRedirect($returl);
         }
+    }
+    
+    public function getLanguageTopics() {
+        return array('goodnews:default');
     }
     
     public function getPageTitle() {
@@ -40,27 +62,26 @@ class GoodNewsImportManagerController extends GoodNewsManagerController {
     public function getTemplateFile() {
         return '';
     }
-    
+
+    public function checkPermissions() {
+        return true;
+    }
+        
     public function loadCustomCssJs() {
+            
+        // Load utilities and reusable functions
+        $this->addJavascript($this->goodnews->config['jsUrl'] . 'utils/utilities.js');
         
-        // load utilities and reusable functions
-        $this->addJavascript($this->goodnews->config['jsUrl'].'utils/utilities.js');
+        // Load widgets
+        $this->addJavascript($this->goodnews->config['jsUrl'] . 'mgr/widgets/import_subscribers.panel.js');
         
-        // load custom extension to implement a file upload field for MODX versions < 2.3
-        if ($this->goodnews->legacyMode) {
-            $this->addJavascript($this->goodnews->config['jsUrl'].'utils/fileuploadfield.js');
-        }
-        
-        // load widgets
-        $this->addJavascript($this->goodnews->config['jsUrl'].'mgr/widgets/import_subscribers.panel.js');
-        
-        // load import panel widgets container
-        $this->addLastJavascript($this->goodnews->config['jsUrl'].'mgr/sections/import.panel.js');
+        // Load import panel widgets container
+        $this->addLastJavascript($this->goodnews->config['jsUrl'] . 'mgr/sections/import.panel.js');
 
         $this->addHtml('<script type="text/javascript">
         Ext.onReady(function(){
-            GoodNews.config = '.$this->modx->toJSON($this->goodnews->config).';
-            GoodNews.request = '.$this->modx->toJSON($_GET).';
+            GoodNews.config = ' . $this->modx->toJSON($this->goodnews->config) . ';
+            GoodNews.request = ' . $this->modx->toJSON($_GET) . ';
             MODx.add("goodnews-panel-import");
         });
         </script>');

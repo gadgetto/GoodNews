@@ -25,37 +25,71 @@
  * @package goodnews
  */
 
-class GoodNewsExportManagerController extends GoodNewsManagerController {
+require_once dirname(dirname(__FILE__)) . '/model/goodnews/goodnews.class.php';
 
+class GoodNewsExportManagerController extends modExtraManagerController {
+    
+    /** @var GoodNews $goodnews */
+    public $goodnews;
+    
+    public function initialize() {
+        $this->goodnews = new GoodNews($this->modx);
+        
+        // Add custom css file to manager-page header
+        $cssFile = $this->goodnews->config['cssUrl'] . 'mgr23.css';
+        $this->addCss($cssFile);
+        
+        // Initialize GoodNews Js
+        $this->addJavascript($this->goodnews->config['jsUrl'] . 'mgr/goodnews.js');
+        
+        return parent::initialize();
+    }
+    
     public function process(array $scriptProperties = array()) {}
+    
+    public function getLanguageTopics() {
+        return array('goodnews:default');
+    }
+    
+    public function getPageTitle() {
+        return $this->modx->lexicon('goodnews');
+    }
+    
+    public function getTemplateFile() {
+        return '';
+    }
+
+    public function checkPermissions() {
+        return true;
+    }
     
 	public function render(){
         $this->modx->lexicon->load('goodnews:default');
-
+        
         $this->failure('');
-
+        
         $this->loadHeader = false;
         $this->loadFooter = false;
         $this->content = '';
         
         $currentTime = time();
-        $exportDir = $this->modx->getOption('core_path', null, MODX_CORE_PATH).'cache/goodnews/tmp/';
-        $exportFilePath = $exportDir.$_GET['f'];
+        $exportDir = $this->modx->getOption('core_path', null, MODX_CORE_PATH) . 'cache/goodnews/tmp/';
+        $exportFilePath = $exportDir . $_GET['f'];
         $exportFileSize = filesize($exportFilePath);
         $newFileName = 'subscribers.csv';
-
+        
         // If exists, push file to browser
         if (file_exists($exportFilePath)) {
-
+            
             header('Content-Type: text/csv');
-            header('Content-Disposition: attachment;filename="'.$newFileName.'";');
-            header("Content-length: ".$exportFileSize);
-
+            header('Content-Disposition: attachment;filename="' . $newFileName  . '";');
+            header("Content-length: " . $exportFileSize);
+            
             //No cache!
             header('Expires: 0');
             header('Cache-Control: must-revalidate');
             header('Pragma: public');
-
+            
             if (ob_get_length() > 0) { ob_clean(); }
             flush();
             readfile($exportFilePath);
@@ -65,21 +99,21 @@ class GoodNewsExportManagerController extends GoodNewsManagerController {
             
             exit();
         }
-
-        // If file is missing, render error page
-        $this->modx->log(modX::LOG_LEVEL_ERROR,'[GoodNews] GoodNewsExportManagerController: Temporary download file not found in path: '.$exportFilePath.'! Processing aborted.');
         
-        $this->content = '<html><title>'.$this->modx->lexicon('goodnews').': '.$this->modx->lexicon('goodnews.export_subscribers').'</title><head></head><body style="font-family: Sans-Serif;">
-        <h1 style="text-align: center; margin-top: 50px; margin-bottom: 10px; font-size: 24px;">'.$this->modx->lexicon('goodnews.export_subscribers_error_page_ns_export_file').'</h1>
-        <p style="text-align: center; font-size: 15px; margin-bottom: 30px;">'.$this->modx->lexicon('goodnews.export_subscribers_error_page_check_log').'</p>
-        <p style="text-align: center;"><button onClick="history.go(-1); return false;" style="font-size: 18px;">'.$this->modx->lexicon('goodnews.export_subscribers_error_page_back_button').'</button></p>
+        // If file is missing, render error page
+        $this->modx->log(modX::LOG_LEVEL_ERROR, '[GoodNews] GoodNewsExportManagerController: Temporary download file not found in path: ' . $exportFilePath  . '! Processing aborted.');
+        
+        $this->content = '<html><title>' . $this->modx->lexicon('goodnews') . ': ' . $this->modx->lexicon('goodnews.export_subscribers') . '</title><head></head><body style="font-family: Sans-Serif;">
+        <h1 style="text-align: center; margin-top: 50px; margin-bottom: 10px; font-size: 24px;">' . $this->modx->lexicon('goodnews.export_subscribers_error_page_ns_export_file') . '</h1>
+        <p style="text-align: center; font-size: 15px; margin-bottom: 30px;">' . $this->modx->lexicon('goodnews.export_subscribers_error_page_check_log') . '</p>
+        <p style="text-align: center;"><button onClick="history.go(-1); return false;" style="font-size: 18px;">' . $this->modx->lexicon('goodnews.export_subscribers_error_page_back_button') . '</button></p>
         </body></html>';
-
+        
         return $this->content;
-	}
-	
-	public function failure($message){
-		$this->isFailure = false;
-		$this->failureMessage = '';	
-	}
+    }
+    
+    public function failure($message){
+        $this->isFailure = false;
+        $this->failureMessage = '';	
+    }
 }

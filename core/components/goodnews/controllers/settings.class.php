@@ -24,13 +24,35 @@
  * @package goodnews
  */
 
-class GoodNewsSettingsManagerController extends GoodNewsManagerController {
+require_once dirname(dirname(__FILE__)) . '/model/goodnews/goodnews.class.php';
 
+class GoodNewsSettingsManagerController extends modExtraManagerController {
+    
+    /** @var GoodNews $goodnews */
+    public $goodnews;
+    
+    public function initialize() {
+        $this->goodnews = new GoodNews($this->modx);
+        
+        // Add custom css file to manager-page header
+        $cssFile = $this->goodnews->config['cssUrl'] . 'mgr23.css';
+        $this->addCss($cssFile);
+        
+        // Initialize GoodNews Js
+        $this->addJavascript($this->goodnews->config['jsUrl'] . 'mgr/goodnews.js');
+        
+        return parent::initialize();
+    }
+    
     public function process(array $scriptProperties = array()) {
         if (!$this->goodnews->isGoodNewsAdmin) {
-            $returl = $this->modx->getOption('manager_url').'?a='.$_GET['a'];
+            $returl = $this->modx->getOption('manager_url') . '?a=' . $_GET['a'];
             $this->modx->sendRedirect($returl);
         }
+    }
+    
+    public function getLanguageTopics() {
+        return array('goodnews:default');
     }
     
     public function getPageTitle() {
@@ -40,26 +62,30 @@ class GoodNewsSettingsManagerController extends GoodNewsManagerController {
     public function getTemplateFile() {
         return '';
     }
-    
+
+    public function checkPermissions() {
+        return true;
+    }
+        
     public function loadCustomCssJs() {
         
-        // load utilities and reusable functions
-        $this->addJavascript($this->goodnews->config['jsUrl'].'utils/utilities.js');
+        // Load utilities and reusable functions
+        $this->addJavascript($this->goodnews->config['jsUrl'] . 'utils/utilities.js');
         
-        // load widgets
-        $this->addJavascript($this->goodnews->config['jsUrl'].'mgr/widgets/settings_general.panel.js');
-        $this->addJavascript($this->goodnews->config['jsUrl'].'mgr/widgets/settings_container.panel.js');
-        // $this->addJavascript($this->goodnews->config['jsUrl'].'mgr/widgets/settings_bounceparsingrules.panel.js');
-        $this->addJavascript($this->goodnews->config['jsUrl'].'mgr/widgets/settings_system.panel.js');
-        $this->addJavascript($this->goodnews->config['jsUrl'].'mgr/widgets/settings_about.panel.js');
+        // Load widgets
+        $this->addJavascript($this->goodnews->config['jsUrl'] . 'mgr/widgets/settings_general.panel.js');
+        $this->addJavascript($this->goodnews->config['jsUrl'] . 'mgr/widgets/settings_container.panel.js');
+        // $this->addJavascript($this->goodnews->config['jsUrl'] . 'mgr/widgets/settings_bounceparsingrules.panel.js');
+        $this->addJavascript($this->goodnews->config['jsUrl'] . 'mgr/widgets/settings_system.panel.js');
+        $this->addJavascript($this->goodnews->config['jsUrl'] . 'mgr/widgets/settings_about.panel.js');
         
-        // load settings panel widgets container
-        $this->addLastJavascript($this->goodnews->config['jsUrl'].'mgr/sections/settings.panel.js');
-
+        // Load settings panel widgets container
+        $this->addLastJavascript($this->goodnews->config['jsUrl'] . 'mgr/sections/settings.panel.js');
+        
         $this->addHtml('<script type="text/javascript">
         Ext.onReady(function(){
-            GoodNews.config = '.$this->modx->toJSON($this->goodnews->config).';
-            GoodNews.request = '.$this->modx->toJSON($_GET).';
+            GoodNews.config = ' . $this->modx->toJSON($this->goodnews->config) . ';
+            GoodNews.request = ' . $this->modx->toJSON($_GET) . ';
             MODx.add("goodnews-panel-settings");
         });
         </script>');
