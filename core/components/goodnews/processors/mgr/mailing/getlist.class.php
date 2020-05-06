@@ -47,16 +47,8 @@ class NewsletterGetListProcessor extends modObjectGetListProcessor {
 
     /** @var GoodNewsResourceContainer $userCurrentContainer */
     public $userCurrentContainer = 0;
-    
-    /** @var boolean $legacyMode */
-    public $legacyMode = false;
-    
-    public function initialize() {
-        // Determine MODX Revo version and set legacy mode
-        $version = $this->modx->getVersionData();
-        $fullVersion = $version['full_version'];
-        $this->legacyMode = version_compare($fullVersion, '2.3.0-dev', '>=') ? false : true;
         
+    public function initialize() {
         $this->userCurrentContainer = $this->modx->goodnews->config['userCurrentContainer'];
         return parent::initialize();
     }
@@ -244,12 +236,12 @@ class NewsletterGetListProcessor extends modObjectGetListProcessor {
             if ($resourceArray['status'] == self::GON_NEWSLETTER_STATUS_NOT_PUBLISHED) {
                 $resourceArray['actions'][] = array(
                     'className' => 'start gon-ab-start',
-                    'text'      => $this->legacyMode ? $this->modx->lexicon('goodnews.start') : '',
+                    'text'      => '',
                     'disabled'  => ' disabled="disabled"',
                 );
                 $resourceArray['actions'][] = array(
                     'className' => 'stop gon-ab-stop',
-                    'text'      => $this->legacyMode ? $this->modx->lexicon('goodnews.stop') : '',
+                    'text'      => '',
                     'disabled'  => ' disabled="disabled"',
                 );
                 $resourceArray['actions'][] = array(
@@ -279,12 +271,12 @@ class NewsletterGetListProcessor extends modObjectGetListProcessor {
             } elseif ($resourceArray['status'] == self::GON_NEWSLETTER_STATUS_NOT_READY_TO_SEND) {
                 $resourceArray['actions'][] = array(
                     'className' => 'start gon-ab-start',
-                    'text'      => $this->legacyMode ? $this->modx->lexicon('goodnews.start') : '',
+                    'text'      => '',
                     'disabled'  => ' disabled="disabled"',
                 );
                 $resourceArray['actions'][] = array(
                     'className' => 'stop gon-ab-stop',
-                    'text'      => $this->legacyMode ? $this->modx->lexicon('goodnews.stop') : '',
+                    'text'      => '',
                     'disabled'  => ' disabled="disabled"',
                 );
                 $resourceArray['actions'][] = array(
@@ -314,11 +306,11 @@ class NewsletterGetListProcessor extends modObjectGetListProcessor {
             } elseif ($resourceArray['status'] == self::GON_NEWSLETTER_STATUS_NOT_YET_SENT) {
                 $resourceArray['actions'][] = array(
                     'className' => 'start gon-ab-start',
-                    'text'      => $this->legacyMode ? $this->modx->lexicon('goodnews.start') : '',
+                    'text'      => '',
                 );
                 $resourceArray['actions'][] = array(
                     'className' => 'stop gon-ab-stop',
-                    'text'      => $this->legacyMode ? $this->modx->lexicon('goodnews.stop') : '',
+                    'text'      => '',
                     'disabled'  => ' disabled="disabled"',
                 );
                 $resourceArray['actions'][] = array(
@@ -348,11 +340,11 @@ class NewsletterGetListProcessor extends modObjectGetListProcessor {
             } elseif ($resourceArray['status'] == self::GON_NEWSLETTER_STATUS_STOPPED) {
                 $resourceArray['actions'][] = array(
                     'className' => 'continue gon-ab-continue',
-                    'text'      => $this->legacyMode ? $this->modx->lexicon('goodnews.continue') : '',
+                    'text'      => '',
                 );
                 $resourceArray['actions'][] = array(
                     'className' => 'stop gon-ab-stop',
-                    'text'      => $this->legacyMode ? $this->modx->lexicon('goodnews.stop') : '',
+                    'text'      => '',
                     'disabled'  => ' disabled="disabled"',
                 );
                 $resourceArray['actions'][] = array(
@@ -385,12 +377,12 @@ class NewsletterGetListProcessor extends modObjectGetListProcessor {
             } elseif ($resourceArray['status'] == self::GON_NEWSLETTER_STATUS_IN_PROGRESS) {
                 $resourceArray['actions'][] = array(
                     'className' => 'start gon-ab-start',
-                    'text'      => $this->legacyMode ? $this->modx->lexicon('goodnews.start') : '',
+                    'text'      => '',
                     'disabled'  => ' disabled="disabled"',
                 );
                 $resourceArray['actions'][] = array(
                     'className' => 'stop gon-ab-stop',
-                    'text'      => $this->legacyMode ? $this->modx->lexicon('goodnews.stop') : '',
+                    'text'      => '',
                 );
                 $resourceArray['actions'][] = array(
                     'className' => 'preview gon-ab-preview',
@@ -423,12 +415,12 @@ class NewsletterGetListProcessor extends modObjectGetListProcessor {
             } elseif ($resourceArray['status'] == self::GON_NEWSLETTER_STATUS_SENT) {
                 $resourceArray['actions'][] = array(
                     'className' => 'start gon-ab-start',
-                    'text'      => $this->legacyMode ? $this->modx->lexicon('goodnews.start') : '',
+                    'text'      => '',
                     'disabled'  => ' disabled="disabled"',
                 );
                 $resourceArray['actions'][] = array(
                     'className' => 'stop gon-ab-stop',
-                    'text'      => $this->legacyMode ? $this->modx->lexicon('goodnews.stop') : '',
+                    'text'      => '',
                     'disabled'  => ' disabled="disabled"',
                 );
                 $resourceArray['actions'][] = array(
@@ -460,12 +452,12 @@ class NewsletterGetListProcessor extends modObjectGetListProcessor {
             } elseif ($resourceArray['status'] == self::GON_NEWSLETTER_STATUS_SCHEDULED) {
                 $resourceArray['actions'][] = array(
                     'className' => 'start gon-ab-start',
-                    'text'      => $this->legacyMode ? $this->modx->lexicon('goodnews.start') : '',
+                    'text'      => '',
                     'disabled'  => ' disabled="disabled"',
                 );
                 $resourceArray['actions'][] = array(
                     'className' => 'stop gon-ab-stop',
-                    'text'      => $this->legacyMode ? $this->modx->lexicon('goodnews.stop') : '',
+                    'text'      => '',
                     'disabled'  => ' disabled="disabled"',
                 );
                 $resourceArray['actions'][] = array(

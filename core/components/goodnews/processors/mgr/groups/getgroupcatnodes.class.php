@@ -52,17 +52,11 @@ class GroupCategoryGetNodesProcessor extends modProcessor {
      * @return mixed
      */
     public function initialize() {
-        // Determine MODX Revo version and set legacy mode (for usage in ExtJS - deprecated connectors since 2.3)
-        $version = $this->modx->getVersionData();
-        $fullVersion = $version['full_version'];
-
         $this->setDefaultProperties(array(
             'id'         => 0,
             'sort'       => 'name',
             'dir'        => 'ASC',
-            'legacyMode' => version_compare($fullVersion, '2.3.0-dev', '>=') ? false : true,
         ));
-
         return true;
     }
 
@@ -203,14 +197,7 @@ class GroupCategoryGetNodesProcessor extends modProcessor {
         } else {
             $cssClass = '';
         }
-        
-        if (!$this->getProperty('legacyMode')) {
-            // We are on Revo >= 2.3.0
-            $iconCls = 'icon-tags';
-        } else {
-            // We are on Revo < 2.3.0
-            $iconCls = 'gonr-icn-group';
-        }
+        $iconCls = 'icon-tags';
 
         return array(
             'text'    => $group->get('name'),
@@ -241,14 +228,7 @@ class GroupCategoryGetNodesProcessor extends modProcessor {
         } else {
             $checked = false;
         }
-
-        if (!$this->getProperty('legacyMode')) {
-            // We are on Revo >= 2.3.0
-            $iconCls = 'icon-tag';
-        } else {
-            // We are on Revo < 2.3.0
-            $iconCls = 'gonr-icn-category';
-        }
+        $iconCls = 'icon-tag';
 
         return array(
             'text'    => $category->get('name'),
@@ -280,14 +260,7 @@ class GroupCategoryGetNodesProcessor extends modProcessor {
         } else {
             $cssClass = '';
         }
-
-        if (!$this->getProperty('legacyMode')) {
-            // We are on Revo >= 2.3.0
-            $iconCls = 'icon-tags';
-        } else {
-            // We are on Revo < 2.3.0
-            $iconCls = 'gonr-icn-group';
-        }
+        $iconCls = 'icon-tags';
         
         return array(
             'text'    => $group->get('name'),
@@ -314,14 +287,7 @@ class GroupCategoryGetNodesProcessor extends modProcessor {
         } else {
             $checked = false;
         }
-        
-        if (!$this->getProperty('legacyMode')) {
-            // We are on Revo >= 2.3.0
-            $iconCls = 'icon-tag';
-        } else {
-            // We are on Revo < 2.3.0
-            $iconCls = 'gonr-icn-category';
-        }
+        $iconCls = 'icon-tag';
         
         return array(
             'text'    => $category->get('name'),
@@ -346,14 +312,7 @@ class GroupCategoryGetNodesProcessor extends modProcessor {
         } else {
             $cssClass = '';
         }
-        
-        if (!$this->getProperty('legacyMode')) {
-            // We are on Revo >= 2.3.0
-            $iconCls = 'icon-tags';
-        } else {
-            // We are on Revo < 2.3.0
-            $iconCls = 'gonr-icn-group';
-        }
+        $iconCls = 'icon-tags';
 
         return array(
             'text'    => $group->get('name'),
@@ -374,13 +333,7 @@ class GroupCategoryGetNodesProcessor extends modProcessor {
      * @return array
      */
     public function prepareGonCategory(GoodNewsCategory $category) {
-        if (!$this->getProperty('legacyMode')) {
-            // We are on Revo >= 2.3.0
-            $iconCls = 'icon-tag';
-        } else {
-            // We are on Revo < 2.3.0
-            $iconCls = 'gonr-icn-category';
-        }
+        $iconCls = 'icon-tag';
 
         return array(
             'text'    => $category->get('name'),

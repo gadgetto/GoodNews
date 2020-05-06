@@ -62,9 +62,8 @@ Ext.extend(GoodNews.ErrorPanel,MODx.FormPanel,{
         },'-')
         // Help button
         buttons.push({
-            text: (GoodNews.config.legacyMode ? '' : '<i class="icon icon-question-circle icon-lg"></i>&nbsp;') + _('help_ex')
+            text: '<i class="icon icon-question-circle icon-lg"></i>&nbsp;' + _('help_ex')
             ,id: 'button-help'
-            ,iconCls: GoodNews.config.legacyMode ? 'gon-icn-help' : ''
             ,handler: function(){
                 MODx.config.help_url = GoodNews.config.helpUrl;
                 MODx.loadHelpPane();

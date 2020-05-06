@@ -113,7 +113,7 @@ Ext.extend(GoodNews.ImportPanel,MODx.FormPanel,{
         },'-')
         // Start Import button
         buttons.push({
-            text: (GoodNews.config.legacyMode ? '' : '<i class="icon icon-download icon-lg"></i>&nbsp;') + _('goodnews.import_subscribers_button_start')
+            text: '<i class="icon icon-download icon-lg"></i>&nbsp;' + _('goodnews.import_subscribers_button_start')
             ,id: 'button-import-start'
             ,cls: 'primary-button'
             ,handler: this.startSubscriberImport
@@ -121,17 +121,15 @@ Ext.extend(GoodNews.ImportPanel,MODx.FormPanel,{
         },'-')
         // Close Import button
         buttons.push({
-            text: (GoodNews.config.legacyMode ? '' : '<i class="icon icon-arrow-circle-left icon-lg"></i>&nbsp;') + _('goodnews.import_close_button')
+            text: '<i class="icon icon-arrow-circle-left icon-lg"></i>&nbsp;' + _('goodnews.import_close_button')
             ,id: 'button-import-close'
-            ,iconCls: GoodNews.config.legacyMode ? 'gon-icn-close' : ''
             ,handler: this.closeImport
             ,scope: this
         },'-')
         // Help button
         buttons.push({
-            text: (GoodNews.config.legacyMode ? '' : '<i class="icon icon-question-circle icon-lg"></i>&nbsp;') + _('help_ex')
+            text: '<i class="icon icon-question-circle icon-lg"></i>&nbsp;' + _('help_ex')
             ,id: 'button-help'
-            ,iconCls: GoodNews.config.legacyMode ? 'gon-icn-help' : ''
             ,handler: function(){
                 MODx.config.help_url = GoodNews.config.helpUrl;
                 MODx.loadHelpPane();

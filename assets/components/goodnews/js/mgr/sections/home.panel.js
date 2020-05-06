@@ -141,18 +141,16 @@ Ext.extend(GoodNews.HomePanel,MODx.Panel,{
         // Settings button
         if (GoodNews.config.isGoodNewsAdmin) {
             elements.push({
-                text: GoodNews.config.legacyMode ? _('goodnews.button_settings') : '<i class="icon icon-cog icon-lg"></i>'
+                text: '<i class="icon icon-cog icon-lg"></i>'
                 ,id: 'button-settings'
-                ,iconCls: GoodNews.config.legacyMode ? 'gon-icn-settings' : ''
                 ,handler: this.loadSettingsPanel
                 ,scope: this
             },'-')
         }
         // Help button
         elements.push({
-            text: (GoodNews.config.legacyMode ? '' : '<i class="icon icon-question-circle icon-lg"></i>&nbsp;') + _('help_ex')
+            text: '<i class="icon icon-question-circle icon-lg"></i>&nbsp;' + _('help_ex')
             ,id: 'button-help'
-            ,iconCls: GoodNews.config.legacyMode ? 'gon-icn-help' : ''
             ,handler: function(){
                 MODx.config.help_url = GoodNews.config.helpUrl;
                 MODx.loadHelpPane();

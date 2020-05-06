@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Updated installer and package builder to remove deprecated use of modAction
 - Removed fileuploadfield.js utility (already included with MODX > 2.3)
 - Removed mgr.css (no longer needed with MODX > 2.3)
+- Removed legacyMode
 
 ## [1.5.1-pl2] - 2018-07-26
 ### Fixed

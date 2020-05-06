@@ -86,9 +86,6 @@ class GoodNews {
     
     /** @var boolean $debug Debug mode on/off */
     public $debug = false;
-
-    /** @var boolean $legacyMode based on MODX Revo version (true if < 2.3) */
-    public $legacyMode = false;
     
     /**
      * Constructor for GoodNews object
@@ -120,11 +117,7 @@ class GoodNews {
         // This part is only used in 'mgr' context
         if ($this->modx->context->key == 'mgr') {
 
-            // Determine MODX Revo version and set legacy mode (for usage in ExtJS - deprecated connectors since 2.3)
-            $version = $this->modx->getVersionData();
-
             $fullVersion = $version['full_version'];
-            $this->legacyMode         = version_compare($fullVersion, '2.3.0-dev', '>=') ? false : true;
             $this->debug              = $this->modx->getOption('goodnews.debug', null, false) ? true : false;
             $this->isMultiProcessing  = $this->isMultiProcessing();
             $this->imapExtension      = $this->imapExtension();
@@ -173,7 +166,6 @@ class GoodNews {
                 'developerName'           => self::DEV_NAME,
                 'developerUrl'            => self::DEV_URL,
                 'debug'                   => $this->debug,
-                'legacyMode'              => $this->legacyMode,
             ), $this->config);
 
         }        

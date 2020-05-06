@@ -681,9 +681,9 @@ Ext.extend(GoodNews.grid.Newsletters,MODx.grid.Grid,{
         MODx.msg.confirm({
             title: _('goodnews.newsletter_remove')
             ,text: _('goodnews.newsletter_remove_confirm')
-            ,url: GoodNews.config.legacyMode ? MODx.config.connectors_url+'resource/index.php' : MODx.config.connector_url
+            ,url: MODx.config.connector_url
             ,params: {
-                action: GoodNews.config.legacyMode ? 'delete' : 'resource/delete'
+                action: 'resource/delete'
                 ,id: this.menu.record.id
             }
             ,listeners: {
@@ -693,9 +693,9 @@ Ext.extend(GoodNews.grid.Newsletters,MODx.grid.Grid,{
     }
     ,undeleteNewsletter: function(btn,e) {
         MODx.Ajax.request({
-            url: GoodNews.config.legacyMode ?  MODx.config.connectors_url+'resource/index.php' : MODx.config.connector_url
+            url: MODx.config.connector_url
             ,params: {
-                action: GoodNews.config.legacyMode ? 'undelete' : 'resource/undelete'
+                action: 'resource/undelete'
                 ,id: this.menu.record.id
             }
             ,listeners: {
@@ -705,9 +705,9 @@ Ext.extend(GoodNews.grid.Newsletters,MODx.grid.Grid,{
     }
     ,publishNewsletter: function(btn,e) {
         MODx.Ajax.request({
-            url: GoodNews.config.legacyMode ? MODx.config.connectors_url+'resource/index.php' : MODx.config.connector_url
+            url: MODx.config.connector_url
             ,params: {
-                action: GoodNews.config.legacyMode ? 'publish' : 'resource/publish'
+                action: 'resource/publish'
                 ,id: this.menu.record.id
             }
             ,listeners: {
@@ -717,9 +717,9 @@ Ext.extend(GoodNews.grid.Newsletters,MODx.grid.Grid,{
     }
     ,unpublishNewsletter: function(btn,e) {
         MODx.Ajax.request({
-            url: GoodNews.config.legacyMode ? MODx.config.connectors_url+'resource/index.php' : MODx.config.connector_url
+            url: MODx.config.connector_url
             ,params: {
-                action: GoodNews.config.legacyMode ? 'unpublish' : 'resource/unpublish'
+                action: 'resource/unpublish'
                 ,id: this.menu.record.id
             }
             ,listeners: {

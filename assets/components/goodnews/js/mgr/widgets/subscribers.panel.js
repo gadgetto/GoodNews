@@ -211,11 +211,11 @@ GoodNews.grid.Subscribers = function(config){
             ,defaultType: 'toolbar'
             ,items: [{
                 items: [{
-                    text: (GoodNews.config.legacyMode ? '' : '<i class="icon icon-download icon-lg"></i>&nbsp;') + _('goodnews.import_button')
+                    text: '<i class="icon icon-download icon-lg"></i>&nbsp;' + _('goodnews.import_button')
                     ,handler: this.importSubscribers
                     ,scope: this
                 },{
-                    text: (GoodNews.config.legacyMode ? '' : '<i class="icon icon-upload icon-lg"></i>&nbsp;') + _('goodnews.export_button')
+                    text: '<i class="icon icon-upload icon-lg"></i>&nbsp;' + _('goodnews.export_button')
                     ,handler: this.exportSubscribers
                     ,scope: this
                 },'->',{
