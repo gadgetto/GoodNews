@@ -109,12 +109,10 @@ GoodNews.grid.Newsletters = function(config) {
         ,lazyRender: false
     });
 
-    // Newsletter title and action buttons renderer
-    var editPage = MODx.action ? MODx.action['resource/update'] : 'resource/update';
-    
+    // Newsletter title and action buttons renderer    
     this.tplPageTitle = new Ext.XTemplate(
         '<tpl for=".">'
-            +'<h3 class="gon-newsletter-title"><a href="?a='+editPage+'&id={id}" title="'+_('goodnews.newsletter_update')+'" class="x-grid-link">{pagetitle}</a></h3>'
+            +'<h3 class="gon-newsletter-title"><a href="?a=resource/update&id={id}" title="'+_('goodnews.newsletter_update')+'" class="x-grid-link">{pagetitle}</a></h3>'
             +'<tpl if="actions !== null">'
                 +'<ul class="actions">'
                     +'<tpl for="actions">'
@@ -571,11 +569,10 @@ Ext.extend(GoodNews.grid.Newsletters,MODx.grid.Grid,{
         this.refresh();
     }
     ,createNewsletter: function(btn,e) {
-        var createPage = MODx.action ? MODx.action['resource/create'] : 'resource/create';
         if (GoodNews.config.mailingTemplate) {
             tpl = '&template='+GoodNews.config.mailingTemplate;
         }
-        location.href = 'index.php?a='+createPage+'&class_key=GoodNewsResourceMailing&parent='+GoodNews.config.userCurrentContainer+'&context_key='+GoodNews.config.contextKey+tpl;
+        MODx.loadPage('resource/create', 'class_key=GoodNewsResourceMailing&parent=' + GoodNews.config.userCurrentContainer + '&context_key=' + GoodNews.config.contextKey + tpl);
     }
     ,previewNewsletter: function(btn,e) {
         if (this.menu.record.richtext == true) {
@@ -674,8 +671,7 @@ Ext.extend(GoodNews.grid.Newsletters,MODx.grid.Grid,{
         });
     }
     ,updateNewsletter: function(btn,e) {
-        var editPage = MODx.action ? MODx.action['resource/update'] : 'resource/update';
-        location.href = 'index.php?a='+editPage+'&id='+this.menu.record.id;
+        MODx.loadPage('resource/update', 'id=' + this.menu.record.id);
     }
     ,removeNewsletter: function() {
         MODx.msg.confirm({

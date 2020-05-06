@@ -63,7 +63,7 @@ Ext.extend(GoodNews.ImportPanel,MODx.FormPanel,{
             ,listeners: {
                 'shutdown': {fn:function() {
                     //refresh page to reset fields
-                    //location.href = MODx.config.manager_url + '?a=' + MODx.request.a + '&action=import';
+                    //MODx.loadPage('import', 'namespace=goodnews');
                 }
                 ,scope:this}
             }
@@ -139,7 +139,7 @@ Ext.extend(GoodNews.ImportPanel,MODx.FormPanel,{
         return buttons;
     }
     ,closeImport: function(){
-        location.href = MODx.config.manager_url + '?a=' + MODx.request.a;
+        MODx.loadPage('index', 'namespace=goodnews');
     }
 });
 Ext.reg('goodnews-panel-import',GoodNews.ImportPanel);

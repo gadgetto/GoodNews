@@ -12,9 +12,9 @@ GoodNewsResource.page.UpdateGoodNewsResourceContainer = function(config) {
     Ext.applyIf(config,{
         panelXType: 'goodnewsresource-panel-container'
         ,actions: {
-            'new': MODx.action ? MODx.action['resource/create'] : 'resource/create'
-            ,'edit': MODx.action ? MODx.action['resource/update'] : 'resource/update'
-            ,'preview': MODx.action ? MODx.action['resource/preview'] : 'resource/preview'
+            'new': 'resource/create'
+            ,'edit': 'resource/update'
+            ,'preview': 'resource/preview'
         }
     });
     config.canDuplicate = false;
@@ -86,7 +86,7 @@ Ext.extend(GoodNewsResource.page.UpdateGoodNewsResourceContainer,MODx.page.Updat
         return btns;
     }
     ,loadGoodNewsManagement: function(btn,e) {
-        MODx.loadPage(''+MODx.action['goodnews:index'],'id='+MODx.request.id)
+        MODx.loadPage('index', 'namespace=goodnews&id=' + MODx.request.id);
     }
 });
 Ext.reg('goodnewsresource-page-container-update',GoodNewsResource.page.UpdateGoodNewsResourceContainer);

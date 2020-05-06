@@ -147,7 +147,7 @@ Ext.extend(GoodNews.SettingsPanel,MODx.FormPanel,{
         });
     }
     ,closeSettings: function(){
-        location.href = MODx.config.manager_url + '?a=' + MODx.request.a;
+        MODx.loadPage('index', 'namespace=goodnews');
     }
 });
 Ext.reg('goodnews-panel-settings',GoodNews.SettingsPanel);

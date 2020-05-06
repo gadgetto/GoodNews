@@ -161,7 +161,7 @@ Ext.extend(GoodNews.HomePanel,MODx.Panel,{
     }
     ,loadSettingsPanel: function() {
         if (GoodNews.config.isGoodNewsAdmin) {
-            location.href = MODx.config.manager_url + '?a=' + MODx.request.a + '&action=settings';
+            MODx.loadPage('settings', 'namespace=goodnews');
         }
     }
     ,setUserCurrentContainer: function(cb) {

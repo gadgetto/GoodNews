@@ -185,7 +185,7 @@ class GoodNewsResourceContainer extends modResource {
 		        var p = itm.usePk ? itm.usePk : at.pk;
 	
 	            Ext.getCmp('modx-resource-tree').loadAction(
-	                'a='+MODx.action['resource/create']
+	                'a=resource/create'
 	                + '&class_key='+((itm.classKey) ? itm.classKey : 'GoodNewsResourceMailing')
 	                + '&parent='+p
 	                + '&template=".$template_id."'
@@ -226,7 +226,7 @@ class GoodNewsResourceContainer extends modResource {
             'text' => $this->xpdo->lexicon('goodnews.manage_mailings'),
             'handler' => "function(itm,e) { 
 	            Ext.getCmp('modx-resource-tree').loadAction(
-	                'a='+MODx.action['goodnews:index']
+	                'a=index&namespace=goodnews'
                 );
         	}",
         );

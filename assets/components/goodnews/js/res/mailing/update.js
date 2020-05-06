@@ -83,12 +83,12 @@ Ext.extend(GoodNewsResource.page.UpdateGoodNewsResourceMailing,MODx.page.UpdateR
                     fp.warnUnsavedChanges = false;
                     MODx.releaseLock(MODx.request.id);
                     MODx.sleep(400);
-                    MODx.loadPage(''+MODx.action['goodnews:index'])
+                    MODx.loadPage('index', 'namespace=goodnews');
                 }
             },this);
         } else {
             MODx.releaseLock(MODx.request.id);
-            MODx.loadPage(''+MODx.action['goodnews:index'])
+            MODx.loadPage('index', 'namespace=goodnews');
         }
     }
 });

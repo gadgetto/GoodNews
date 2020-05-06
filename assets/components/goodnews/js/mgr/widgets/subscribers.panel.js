@@ -410,12 +410,11 @@ Ext.extend(GoodNews.grid.Subscribers,MODx.grid.Grid,{
         return this.selectedRecords[this.key].join();
     }
     ,createSubscriber: function(btn,e) {
-        var createUser = MODx.action ? MODx.action['security/user/create'] : 'security/user/create';
-        location.href = 'index.php?a='+createUser;
+        MODx.loadPage('security/user/create');
     }
     ,importSubscribers: function(btn,e) {
         if (GoodNews.config.isGoodNewsAdmin) {
-            location.href = MODx.config.manager_url + '?a=' + MODx.request.a + '&action=import';
+            MODx.loadPage('import', 'namespace=goodnews');
         }
     }
     ,exportSubscribers: function(btn,e) {
@@ -442,7 +441,7 @@ Ext.extend(GoodNews.grid.Subscribers,MODx.grid.Grid,{
         win.show(e.target);
     }
     ,updateUser: function(btn,e) {
-        location.href = 'index.php?a='+MODx.action['security/user/update']+'&id='+this.menu.record.id;
+        MODx.loadPage('security/user/update', 'id=' + this.menu.record.id);
     }
     ,resetBounceCounters: function() {
         MODx.msg.confirm({
@@ -1042,7 +1041,7 @@ GoodNews.window.SubscribersExport = function(config) {
                     	delay: 5
                 	});
         			if(o.a.result.object.total > 0){
-                        location.href = MODx.config.manager_url + '?a=' + MODx.request.a + '&action=export&f=' + o.a.result.object.file;
+                        MODx.loadPage('export', 'namespace=goodnews&f=' + o.a.result.object.file);
         			}
                 }
                 ,scope: this
