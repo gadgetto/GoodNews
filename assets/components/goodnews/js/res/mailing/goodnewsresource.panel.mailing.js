@@ -111,6 +111,7 @@ Ext.extend(GoodNewsResource.panel.Mailing,MODx.panel.Resource,{
         if (MODx.perm.resourcegroup_resource_list == 1) {
             it.push(this.getAccessPermissionsTab(config));
         }
+        
         var its = [];
         its.push(this.getPageHeader(config),{
             id:'modx-resource-tabs'
@@ -201,12 +202,9 @@ Ext.extend(GoodNewsResource.panel.Mailing,MODx.panel.Resource,{
     ,getPageHeader: function(config) {
         config = config || {record:{}};
         return {
-            html: '<h2>'+_('goodnews.mailing_new')+'</h2>'
+            html: _('goodnews.mailing_new')
             ,id: 'modx-resource-header'
-            ,cls: 'modx-page-header'
-            ,border: false
-            ,forceLayout: true
-            ,anchor: '100%'
+            ,xtype: 'modx-header'
         };
     }
     ,getMainLeftFields: function(config) {

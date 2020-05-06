@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Removed mgr.css (no longer needed with MODX > 2.3)
 - Removed legacyMode
 - Removed deprecated use of modAction in js files
+- Fixed page header in mailing editor
 
 ## [1.5.1-pl2] - 2018-07-26
 ### Fixed
