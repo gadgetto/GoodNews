@@ -19,49 +19,19 @@
  */
 
 /**
- * Adds modActions and modMenus into package
+ * Adds modMenus into package
  *
  * @package goodnews
  * @subpackage build
  */
 
-// Create action
-$action = $modx->newObject('modAction');
-$action->fromArray(array(
-    'id'          => 1,
-    'namespace'   => 'goodnews',
-    'parent'      => 0,
-    'controller'  => 'index',
-    'haslayout'   => true,
-    'lang_topics' => 'goodnews:default',
-    'assets'      => '',
-), '', true, true);
-
-// Load action into menu
-$menu = $modx->newObject('modMenu');
-$menu->fromArray(array(
-    'text'        => 'goodnews',
-    'parent'      => 'components',
-    'description' => 'goodnews.desc',
-    'icon'        => '',
-    'menuindex'   => 0,
-    'params'      => '',
-    'handler'     => '',
-), '', true, true);
-
-$menu->addOne($action);
-return $menu;
-
-
-
-/* As of MODX 2.3, all of the above will be replaced by something like this: */
-/* Note: will route to the first found of the following:
- [namespace-path]controllers/[manager-theme]/index.class.php
- [namespace-path]controllers/default/index.class.php
- [namespace-path]controllers/index.class.php
-*/
-
+// Create menu [MODX 2.3+ method]
 /*
+Note: will route to the first found of the following:
+[namespace-path]controllers/[manager-theme]/index.class.php
+[namespace-path]controllers/default/index.class.php
+[namespace-path]controllers/index.class.php
+*/
 $menu = $modx->newObject('modMenu');
 $menu->fromArray(array(
     'text'        => 'goodnews',
@@ -75,4 +45,3 @@ $menu->fromArray(array(
     'namespace'   => 'goodnews',
 ), '', true, true);
 return $menu;
-*/

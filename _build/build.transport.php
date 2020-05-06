@@ -99,26 +99,18 @@ $modx->log(modX::LOG_LEVEL_INFO, 'Prepared Transport Package and registered Name
 flush();
 
 
-/* Add menu and action */
+/* Add menu */
 $menu = include $sources['data'].'transport.menu.php';
 if (empty($menu)) {
-    $modx->log(modX::LOG_LEVEL_ERROR, 'Could not package in menu and action.');
+    $modx->log(modX::LOG_LEVEL_ERROR, 'Could not package in menu.');
 } else {
     $vehicle = $builder->createVehicle($menu, array(
         xPDOTransport::PRESERVE_KEYS => true,
         xPDOTransport::UPDATE_OBJECT => true,
         xPDOTransport::UNIQUE_KEY => 'text',
-        xPDOTransport::RELATED_OBJECTS => true,
-        xPDOTransport::RELATED_OBJECT_ATTRIBUTES => array(
-            'Action' => array(
-                xPDOTransport::PRESERVE_KEYS => false,
-                xPDOTransport::UPDATE_OBJECT => true,
-                xPDOTransport::UNIQUE_KEY => array('namespace', 'controller'),
-            ),
-        ),
     ));
     $builder->putVehicle($vehicle);
-    $modx->log(modX::LOG_LEVEL_INFO,'Packaged in menu and action.');
+    $modx->log(modX::LOG_LEVEL_INFO,'Packaged in menu.');
 }
 flush();
 unset($vehicle, $menu);

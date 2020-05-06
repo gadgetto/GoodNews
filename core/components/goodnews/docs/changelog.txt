@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleasd]
 ### Changed
 - Updated controllers to remove deprecated use of modAction
+- Updated installer and package builder to remove deprecated use of modAction
 
 ## [1.5.1-pl2] - 2018-07-26
 ### Fixed
