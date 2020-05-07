@@ -30,16 +30,8 @@ switch ($modx->event->name) {
 
     case 'OnManagerPageInit':
 
-        // Add css file to manager-page header based on Revo version (e.g. for custom resource type tree icon)
-        $version = $modx->getVersionData();
-        $fullVersion = $version['full_version'];
-        if (version_compare($fullVersion, '2.3.0-dev', '>=')) {
-            // We are on Revo >= 2.3.0
-            $cssFile = $modx->getOption('goodnews.assets_url', null, $modx->getOption('assets_url').'components/goodnews/').'css/res23.css';
-        } else {
-            // We are on Revo < 2.3.0
-            $cssFile = $modx->getOption('goodnews.assets_url', null, $modx->getOption('assets_url').'components/goodnews/').'css/res.css';
-        }
+        // Add css file to manager-page header (e.g. for custom resource type tree icon)
+        $cssFile = $modx->getOption('goodnews.assets_url', null, $modx->getOption('assets_url').'components/goodnews/').'css/res23.css';
         $modx->regClientCSS($cssFile);
         break;
         
