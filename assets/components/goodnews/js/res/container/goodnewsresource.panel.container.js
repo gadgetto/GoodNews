@@ -98,17 +98,16 @@ Ext.extend(GoodNewsResource.panel.Container,MODx.panel.Resource,{
         }
         return its;
     }
+    
     ,getPageHeader: function(config) {
         config = config || {record:{}};
         return {
-            html: '<h2>'+_('goodnews.container_new')+'</h2>'
+            html: _('goodnews.container_new')
             ,id: 'modx-resource-header'
-            ,cls: 'modx-page-header'
-            ,border: false
-            ,forceLayout: true
-            ,anchor: '100%'
+            ,xtype: 'modx-header'
         };
     }
+    
     ,getSettingLeftFields: function(config) {
         return [{
             xtype: 'hidden'

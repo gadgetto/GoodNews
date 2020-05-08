@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - [#65] Fixed group names of subscribers groups surrounded by spans
 - Added link_tag_scheme to GoodNewsGetNewsletters Snippet
 - Changed GoodNews help URL (new docs site)
+- Fixed some old ExtJS legacy code for resource panels (GoodNewsResourceContainer, GoodNewsResourceMailing)
 
 ## [1.5.1-pl2] - 2018-07-26
 ### Fixed

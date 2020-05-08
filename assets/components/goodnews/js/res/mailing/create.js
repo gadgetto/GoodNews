@@ -19,21 +19,23 @@ GoodNewsResource.page.CreateGoodNewsResourceMailing = function(config) {
 Ext.extend(GoodNewsResource.page.CreateGoodNewsResourceMailing,MODx.page.CreateResource,{
     getButtons: function(cfg) {
         var btns = [];
+        
         if (cfg.canSave == 1) {
             btns.push({
-                process: MODx.config.connector_url ? 'resource/create' : 'create'
-                ,id: 'modx-abtn-save'
+                process: 'resource/create'
+                ,reload: true
                 ,text: _('save')
+                ,id: 'modx-abtn-save'
+                ,cls:'primary-button'
                 ,method: 'remote'
-                ,cls: 'primary-button'
-                ,checkDirty: true
+                //,checkDirty: true
                 ,keys: [{
                     key: MODx.config.keymap_save || 's'
                     ,ctrl: true
                 }]
             });
-            btns.push('-');
         }
+        
         btns.push({
             process: 'cancel'
             ,text: _('cancel')
@@ -41,6 +43,13 @@ Ext.extend(GoodNewsResource.page.CreateGoodNewsResourceMailing,MODx.page.CreateR
             ,scope: this
             ,id: 'modx-abtn-cancel'
         });
+        
+        btns.push({
+            text: _('help_ex')
+            ,id: 'modx-abtn-help'
+            ,handler: MODx.loadHelpPane
+        });
+
         return btns;
     }
     ,cancel: function(btn,e) {

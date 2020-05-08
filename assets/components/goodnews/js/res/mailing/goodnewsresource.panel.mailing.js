@@ -29,7 +29,7 @@ Ext.extend(GoodNewsResource.panel.Mailing,MODx.panel.Resource,{
         if (ta) {
             this.cleanupEditor();
         }
-        if(this.getForm().baseParams.action == 'create') {
+        if(this.getForm().baseParams.action == 'resource/create') {
             var btn = Ext.getCmp('modx-abtn-save');
             if (btn) { btn.disable(); }
         }
@@ -123,9 +123,9 @@ Ext.extend(GoodNewsResource.panel.Mailing,MODx.panel.Resource,{
             ,itemId: 'tabs'
             ,items: it
         });
-
         if (MODx.config.tvs_below_content == 1) {
-            its.push(this.getTemplateVariablesPanel(config));
+            var tvs = this.getTemplateVariablesPanel(config);
+            its.push(tvs);
         }
         return its;
     }

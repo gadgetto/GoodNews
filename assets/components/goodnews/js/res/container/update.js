@@ -24,65 +24,64 @@ GoodNewsResource.page.UpdateGoodNewsResourceContainer = function(config) {
 Ext.extend(GoodNewsResource.page.UpdateGoodNewsResourceContainer,MODx.page.UpdateResource,{
     getButtons: function(cfg) {
         var btns = [];
+        
+        btns.push({
+            text: cfg.lockedText || _('locked')
+            ,id: 'modx-abtn-locked'
+            ,handler: Ext.emptyFn
+            ,hidden: (cfg.canSave == 1)
+            ,disabled: true
+        });
+
         btns.push({
             text: _('goodnews.manage_mailings')
             ,handler: this.loadGoodNewsManagement
             ,id: 'gon-abtn-management'
         });
-        btns.push('-');
-        if (cfg.canSave == 1) {
-            btns.push({
-                process: MODx.config.connector_url ? 'resource/update' : 'update'
-                ,text: _('save')
-                ,method: 'remote'
-                ,checkDirty: MODx.request.reload ? false : true
-                ,id: 'modx-abtn-save'
-                ,keys: [{
-                    key: MODx.config.keymap_save || 's'
-                    ,ctrl: true
-                }]
-            });
-            btns.push('-');
-        } else if (cfg.locked) {
-            btns.push({
-                text: cfg.lockedText || _('locked')
-                ,handler: Ext.emptyFn
-                ,id: 'modx-abtn-locked'
-                ,disabled: true
-            });
-            btns.push('-');
-        }
+        
+        btns.push({
+            process: 'resource/update'
+            ,text: _('save')
+            ,id: 'modx-abtn-save'
+            ,cls: 'primary-button'
+            ,method: 'remote'
+            ,hidden: !(cfg.canSave == 1)
+            //,checkDirty: MODx.request.reload ? false : true
+            ,keys: [{
+                key: MODx.config.keymap_save || 's'
+                ,ctrl: true
+            }]
+        });
+        
         if (cfg.canDelete == 1 && !cfg.locked) {
             btns.push({
-                process: 'delete'
-                ,text: _('delete')
+                text: _('delete')
+                ,id: 'modx-abtn-delete'
                 ,handler: this.deleteResource
                 ,scope:this
-                ,id: 'modx-abtn-delete'
             });
-            btns.push('-');
         }
+        
         btns.push({
-            process: 'preview'
-            ,text: _('view')
+            text: _('view')
+            ,id: 'modx-abtn-preview'
             ,handler: this.preview
             ,scope: this
-            ,id: 'modx-abtn-preview'
         });
-        btns.push('-');
+        
         btns.push({
-            process: 'cancel'
-            ,text: _('cancel')
+            text: _('cancel')
+            ,id: 'modx-abtn-cancel'
             ,handler: this.cancel
             ,scope: this
-            ,id: 'modx-abtn-cancel'
         });
-        btns.push('-');
+        
         btns.push({
             text: _('help_ex')
-            ,handler: MODx.loadHelpPane
             ,id: 'modx-abtn-help'
+            ,handler: MODx.loadHelpPane
         });
+        
         return btns;
     }
     ,loadGoodNewsManagement: function(btn,e) {
