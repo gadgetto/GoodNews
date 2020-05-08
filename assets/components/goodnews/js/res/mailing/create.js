@@ -45,11 +45,14 @@ Ext.extend(GoodNewsResource.page.CreateGoodNewsResourceMailing,MODx.page.CreateR
         });
         
         btns.push({
-            text: _('help_ex')
+            text: '<i class="icon icon-question-circle icon-lg"></i>&nbsp;' + _('help_ex')
             ,id: 'modx-abtn-help'
-            ,handler: MODx.loadHelpPane
+            ,handler: function(){
+                MODx.helpUrl = GoodNewsResource.helpUrl;
+                MODx.loadHelpPane();
+            }
         });
-
+        
         return btns;
     }
     ,cancel: function(btn,e) {

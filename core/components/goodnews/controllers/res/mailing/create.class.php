@@ -24,8 +24,8 @@
  * @package goodnews
  */
 
+require_once dirname(dirname(dirname(dirname(__FILE__)))) . '/model/goodnews/goodnews.class.php';
 require_once $modx->getOption('manager_path', null, MODX_MANAGER_PATH).'controllers/default/resource/create.class.php';
-
 
 /**
  * Loads the create GoodNewsResourceMailing page
@@ -74,6 +74,7 @@ class GoodNewsResourceMailingCreateManagerController extends ResourceCreateManag
         // <![CDATA[
         GoodNewsResource.assets_url = "'.$goodNewsAssetsUrl.'";
         GoodNewsResource.connector_url = "'.$connectorUrl.'";
+        GoodNewsResource.helpUrl = "'.GoodNews::HELP_URL.'";
         MODx.config.publish_document = "'.$this->canPublish.'";
         MODx.onDocFormRender = "'.$this->onDocFormRender.'";
         MODx.ctx = "'.$this->ctx.'";
