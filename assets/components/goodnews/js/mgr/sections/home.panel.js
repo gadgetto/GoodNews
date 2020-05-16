@@ -84,7 +84,7 @@ Ext.extend(GoodNews.HomePanel,MODx.Panel,{
                     }
                 });
             }
-            ,interval: 10000 // = 10 seconds
+            ,interval: 500 // milliseconds
         }
         cronPingTr.start(cronPingUpdate);
     }
