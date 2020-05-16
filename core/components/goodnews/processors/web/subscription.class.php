@@ -473,7 +473,6 @@ class GoodNewsSubscriptionSubscriptionProcessor extends GoodNewsSubscriptionProc
         unset(
             // users table
             $properties['id'],          // multiple occurrence; not needed
-            $properties['password'],    // security!
             $properties['cachepwd'],    // security!
             $properties['hash_class'],  // security!
             $properties['salt'],        // security!
