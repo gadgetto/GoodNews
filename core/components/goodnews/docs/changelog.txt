@@ -5,21 +5,27 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Added link_tag_scheme to GoodNewsGetNewsletters Snippet
+- Added help buttons in GoodNews resources (container, mailing)
+
 ### Changed
 - [#66] Updated controllers to remove deprecated use of modAction
 - Updated installer and package builder to remove deprecated use of modAction
+- Changed GoodNews help URL (new docs site)
+- [#79] Allow password placeholder to be used in GoodNewsSubscription snippet
+
+### Removed
 - Removed fileuploadfield.js utility (already included with MODX > 2.3)
 - Removed mgr.css (no longer needed with MODX > 2.3)
 - Removed legacyMode
 - Removed deprecated use of modAction in js files
+
+### Fixed
 - Fixed page header in mailing editor
 - Fixed undefined variable notice in cron.php
-- [#65] Fixed group names of subscribers groups surrounded by spans
-- Added link_tag_scheme to GoodNewsGetNewsletters Snippet
-- Changed GoodNews help URL (new docs site)
 - Fixed some old ExtJS legacy code for resource panels (GoodNewsResourceContainer, GoodNewsResourceMailing)
-- Added help buttons in GoodNews resources (container, mailing)
-- [#79] Allow password placeholder to be used in GoodNewsSubscription snippet
+- [#65] Fixed group names of subscribers groups surrounded by spans
 
 ## [1.5.1-pl2] - 2018-07-26
 ### Fixed
