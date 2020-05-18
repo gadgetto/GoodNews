@@ -34,7 +34,7 @@ class GoodNews {
     const DEV_NAME = 'bitego (Martin Gartner, Franz Gallei)';
     const DEV_URL  = 'http://www.bitego.com';
     
-    const MIN_PHP_VERSION = '5.3.0';
+    const MIN_PHP_VERSION = '5.6.0';
 
     /** @var modX A reference to the modX object */
     public $modx = null;
