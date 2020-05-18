@@ -12,7 +12,7 @@ Your contribution and pull requests are welcome!
 
 ## Copyright
 
-GoodNews is copyright 2014-2018 by bitego (@gadgetto).
+GoodNews is copyright 2014-2020 by bitego (@gadgetto).
 All rights reserved.
 
 ## License
