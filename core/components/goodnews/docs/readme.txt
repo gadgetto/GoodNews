@@ -24,8 +24,8 @@ based on bounce counters.
 
 Reqirements:
 
-- MODX 2.2.1 or later
-- PHP 5.3 or later
+- MODX 2.3 or later
+- PHP 5.6 or later
 - Cron
 - PHP Imap Extension (for automatic bounce handling)
 - pThumb add-on (for automatic image resizing)
