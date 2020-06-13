@@ -1,5 +1,6 @@
 {
   "editor.default_syntax" : "php",
+  "php.interpreter" : "\/usr\/bin\/php",
   "php.validate" : "onChange",
   "workspace.name" : "GoodNews"
 }
