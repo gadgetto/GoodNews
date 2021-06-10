@@ -116,8 +116,7 @@ class GoodNews {
 
         // This part is only used in 'mgr' context
         if ($this->modx->context->key == 'mgr') {
-
-            $fullVersion = $version['full_version'];
+            
             $this->debug              = $this->modx->getOption('goodnews.debug', null, false) ? true : false;
             $this->isMultiProcessing  = $this->isMultiProcessing();
             $this->imapExtension      = $this->imapExtension();
