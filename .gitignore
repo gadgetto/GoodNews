@@ -1,2 +1,4 @@
 .DS_Store
 .idea
+.nova
+config.core.php
