@@ -1,27 +1,25 @@
 <?php
 /**
- * This sample config.core.php assumes a directory structure like this:
+ * This config.core.sample.php includes the original config.core.php file
+ * from the MODX installation based on this folder structure:
  *
- * - modx/
+ * /modx/  (<- the MODX root)
  * - - assets/
- * - - core/
  * - - connectors/
+ * - - core/
  * - - manager/
- * - - config.core.php
- * - - index.php
- * - - - modxdev/
- * - - - - project1/
- * - - - - - config.core.php
+ * - - projects/  (<- your dev projects folder)
+ * - - - - goodnews/
+ * - - - - - - config.core.php  (<- we are here)
  * - - - - project2/
- * - - - - - config.core.php
+ * - - - - - - config.core.php
+ * - - - - project3/
+ * - - - - - - config.core.php
+ * - - index.php
+ * - - config.core.php  (<- the config.core.php from MODX)
  *
- * where modx/ is the MODX install used for developing various packages.
- * The config.core.php is set up to include the original modx/config.core.php file. The
- * various independent packages can then have their own config.core.php files with the contents
- * as shown below.
- *
- * Be sure to rename this config.core.sample.php file to config.core.php and to NOT include
- * it in the git repo.
+ * Be sure to modify this to your needs and rename this config.core.sample.php file
+ * to config.core.php and to NOT include it in the git repo.
  */
 
-include direname(dirname(dirname(__FILE__))) . '/config.core.php';
+include dirname(__FILE__, 3) . '/config.core.php';

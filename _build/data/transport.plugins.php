@@ -2,7 +2,7 @@
 /**
  * GoodNews
  *
- * Copyright 2012 by bitego <office@bitego.com>
+ * Copyright 2022 by bitego <office@bitego.com>
  *
  * GoodNews is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
@@ -20,7 +20,11 @@
 
 /**
  * Add plugins to package
- * 
+ *
+ * @var modX $modx
+ * @var array $sources
+ * @var array $plugins
+ *
  * @package goodnews
  * @subpackage build
  */
@@ -33,7 +37,18 @@ $plugins[$i]->fromArray(array(
     'id'          => $i,
     'name'        => 'GoodNews',
     'description' => 'Main GoodNews plugin. Do not change!',
-    'plugincode'  => getFileContent($sources['plugins'].'goodnews.plugin.php'),
+    'plugincode'  => getPHPFileContent($sources['plugins'] . 'goodnews.plugin.php'),
+    'category'    => 0,
 ), '', true, true);
 
+$events = include $sources['events'] . 'events.goodnews.php';
+if (!empty($events) && is_array($events)) {
+    $plugins[$i]->addMany($events);
+    $modx->log(xPDO::LOG_LEVEL_INFO, 'Packaged in <b>' . count($events) . '</b> plugin event(s) for GoodNews plugin.');
+} else {
+    $modx->log(xPDO::LOG_LEVEL_ERROR, 'Could not package in plugin event(s) for GoodNews plugin. Data missing.');
+}
+flush();
+
+unset($events, $i);
 return $plugins;

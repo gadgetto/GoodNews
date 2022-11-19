@@ -2,7 +2,7 @@
 /**
  * GoodNews
  *
- * Copyright 2012 by bitego <office@bitego.com>
+ * Copyright 2022 by bitego <office@bitego.com>
  *
  * GoodNews is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
@@ -21,7 +21,7 @@
 /**
  * Resolve setup options (only for system settings)
  *
- * @package goodnews 
+ * @package goodnews
  * @subpackage build
  */
 
@@ -31,8 +31,9 @@ $settings = array(
     //'setting3',
 );
 
+
 if ($object->xpdo) {
-    $modx =& $object->xpdo;
+    $modx = &$object->xpdo;
     
     switch ($options[xPDOTransport::PACKAGE_ACTION]) {
         case xPDOTransport::ACTION_INSTALL:
@@ -43,12 +44,12 @@ if ($object->xpdo) {
             if (!empty($settings) && is_array($settings)) {
                 foreach ($settings as $key) {
                     if (isset($options[$key])) {
-                        $setting = $modx->getObject('modSystemSetting', array('key' => 'goodnews.'.$key));
+                        $setting = $modx->getObject('modSystemSetting', array('key' => 'goodnews.' . $key));
                         if ($setting != null) {
                             $setting->set('value', $options[$key]);
                             $setting->save();
                         } else {
-                            $modx->log(xPDO::LOG_LEVEL_ERROR, $key.' setting could not be found');
+                            $modx->log(xPDO::LOG_LEVEL_ERROR, $key . ' setting could not be found.');
                         }
                     }
                 }
@@ -60,6 +61,6 @@ if ($object->xpdo) {
             break;
     }
 }
+
 unset($settings, $key);
 return true;
-

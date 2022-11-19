@@ -2,7 +2,7 @@
 /**
  * GoodNews
  *
- * Copyright 2012 by bitego <office@bitego.com>
+ * Copyright 2022 by bitego <office@bitego.com>
  *
  * GoodNews is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
@@ -19,7 +19,10 @@
  */
 
 /**
- * Adds modMenus into package
+ * Adds menus to package
+ *
+ * @var modX $modx
+ * @var array $menus
  *
  * @package goodnews
  * @subpackage build
@@ -32,8 +35,13 @@ Note: will route to the first found of the following:
 [namespace-path]controllers/default/index.class.php
 [namespace-path]controllers/index.class.php
 */
-$menu = $modx->newObject('modMenu');
-$menu->fromArray(array(
+
+$menus = array();
+$i = 0;
+
+$menus[++$i] = $modx->newObject('modMenu');
+$menus[$i]->fromArray(array(
+    'id'          => $i,
     'text'        => 'goodnews',
     'parent'      => 'components',
     'description' => 'goodnews.desc',
@@ -44,4 +52,6 @@ $menu->fromArray(array(
     'action'      => 'index',
     'namespace'   => 'goodnews',
 ), '', true, true);
-return $menu;
+
+unset($i);
+return $menus;

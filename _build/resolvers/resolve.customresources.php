@@ -2,7 +2,7 @@
 /**
  * GoodNews
  *
- * Copyright 2012 by bitego <office@bitego.com>
+ * Copyright 2022 by bitego <office@bitego.com>
  *
  * GoodNews is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
@@ -29,7 +29,7 @@ $customresources = array();
 $i = 0;
 $epoch = time();
 
-// GoodNews Mailing Container 
+// GoodNews Mailing Container
 $customresources[++$i] = array (
     'type'                  => 'document',
     'contentType'           => 'text/html',
@@ -75,7 +75,7 @@ $customresources[++$i] = array (
 
 /**
  * Creates a batch of custom MODX resources.
- * 
+ *
  * @param mixed &$modx A reference to the MODX object
  * @param array $resources An array of Resource properties
  * @return int $count Counter of installed MODx Resources
@@ -87,12 +87,12 @@ if (!function_exists('createCustomResources')) {
             return 0;
         }
 
-        $modx->log(modX::LOG_LEVEL_INFO, 'Custom Resource Resolver - installing custom Resource documents...');
+        $modx->log(modX::LOG_LEVEL_INFO, 'Custom resource resolver - installing custom resource documents...');
 
-        $corePath = $modx->getOption('core_path').'components/goodnews/';
-        $resourceElementsPath = $modx->getOption('goodnews.core_path', null, $corePath).'elements/resources/';
+        $corePath = $modx->getOption('core_path') . 'components/goodnews/';
+        $resourceElementsPath = $modx->getOption('goodnews.core_path', null, $corePath) . 'elements/resources/';
 
-        $count = 0;        
+        $count = 0;
         foreach ($resources as $key => $fieldvalues) {
 
             $upd = true;
@@ -105,12 +105,12 @@ if (!function_exists('createCustomResources')) {
             
             // Replace Resource template name with Resource template content
             if (!empty($fieldvalues['content'])) {
-                $filename = $resourceElementsPath.$fieldvalues['content'];
+                $filename = $resourceElementsPath . $fieldvalues['content'];
                 if (file_exists($filename)) {
                     $fieldvalues['content'] = file_get_contents($filename);
                 } else {
-                    $modx->log(modX::LOG_LEVEL_ERROR, 'Custom Resource Resolver - could not find content template: '.$fieldvalues['content']);
-                    $modx->log(modX::LOG_LEVEL_ERROR, '-> could not install custom Resource document: '.$fieldvalues['pagetitle']);
+                    $modx->log(modX::LOG_LEVEL_ERROR, '-> could not find content template: ' . $fieldvalues['content']);
+                    $modx->log(modX::LOG_LEVEL_ERROR, '-> could not install custom resource: ' . $fieldvalues['pagetitle']);
                     continue;
                 }
             }
@@ -124,7 +124,7 @@ if (!function_exists('createCustomResources')) {
                     if ($templateObj) {
                         $fieldvalues['template'] = $templateObj->get('id');
                     } else {
-                        $modx->log(modX::LOG_LEVEL_ERROR, 'Custom Resource Resolver - could not find template: '.$fieldvalues['template']);
+                        $modx->log(modX::LOG_LEVEL_ERROR, '-> could not find template: ' . $fieldvalues['template']);
                     }
                 }
             }
@@ -135,16 +135,16 @@ if (!function_exists('createCustomResources')) {
                 if ($parentObj) {
                     $fieldvalues['parent'] = $parentObj->get('id');
                 } else {
-                    $modx->log(modX::LOG_LEVEL_ERROR, 'Custom Resource Resolver - could not find parent: '.$fieldvalues['parent']);
+                    $modx->log(modX::LOG_LEVEL_ERROR, '-> could not find parent: ' . $fieldvalues['parent']);
                 }
             }
             
             $resource->fromArray($fieldvalues);
             
             if ($resource->save()) {
-                $modx->log(modX::LOG_LEVEL_INFO, '-> installed custom Resource document: '.$fieldvalues['pagetitle']);
+                $modx->log(modX::LOG_LEVEL_INFO, '-> installed custom resource: ' . $fieldvalues['pagetitle']);
             } else {
-                $modx->log(modX::LOG_LEVEL_ERROR, '-> could not install custom Resource document: '.$fieldvalues['pagetitle']);
+                $modx->log(modX::LOG_LEVEL_ERROR, '-> could not install custom resource: ' . $fieldvalues['pagetitle']);
             }
             
             ++$count;
@@ -167,9 +167,10 @@ if ($object->xpdo) {
             break;
  
         case xPDOTransport::ACTION_UNINSTALL:
-            $modx->log(modX::LOG_LEVEL_WARN, 'Custom Resource Resolver - custom Resource documents will not be uninstalled to prevent data loss. Please remove manually.');
+            $modx->log(modX::LOG_LEVEL_WARN, 'Custom resource resolver - custom resource documents will not be uninstalled to prevent data loss. Please remove manually.');
             break;
     }
 }
+
 unset($customresources, $resource, $templateObj, $parentObj);
 return true;

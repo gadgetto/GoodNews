@@ -2,7 +2,7 @@
 /**
  * GoodNews
  *
- * Copyright 2012 by bitego <office@bitego.com>
+ * Copyright 2022 by bitego <office@bitego.com>
  *
  * GoodNews is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
@@ -575,9 +575,10 @@ $resources[++$i] = array(
     'properties'            => NULL,
 );
 
+
 /**
  * Creates a batch of MODX resources.
- * 
+ *
  * @param mixed &$modx A reference to the MODX object
  * @param array $resources An array of Resource properties
  * @return int $count Counter of installed MODx Resources
@@ -589,12 +590,12 @@ if (!function_exists('createResources')) {
             return 0;
         }
 
-        $modx->log(modX::LOG_LEVEL_INFO, 'Resource Resolver - installing sample Resource documents...');
+        $modx->log(modX::LOG_LEVEL_INFO, 'Resource resolver - installing sample resource documents...');
 
         $corePath = $modx->getOption('core_path').'components/goodnews/';
-        $resourceElementsPath = $modx->getOption('goodnews.core_path', null, $corePath).'elements/resources/';
+        $resourceElementsPath = $modx->getOption('goodnews.core_path', null, $corePath) . 'elements/resources/';
 
-        $count = 0;        
+        $count = 0;
         foreach ($resources as $key => $fieldvalues) {
 
             $upd = true;
@@ -611,8 +612,8 @@ if (!function_exists('createResources')) {
                 if (file_exists($filename)) {
                     $fieldvalues['content'] = file_get_contents($filename);
                 } else {
-                    $modx->log(modX::LOG_LEVEL_ERROR, 'Resource Resolver - could not find content template: '.$fieldvalues['content']);
-                    $modx->log(modX::LOG_LEVEL_ERROR, '-> could not install sample Resource document: '.$fieldvalues['pagetitle']);
+                    $modx->log(modX::LOG_LEVEL_ERROR, '-> could not find content template: ' . $fieldvalues['content']);
+                    $modx->log(modX::LOG_LEVEL_ERROR, '-> could not install sample resource document: ' . $fieldvalues['pagetitle']);
                     continue;
                 }
             }
@@ -626,7 +627,7 @@ if (!function_exists('createResources')) {
                     if ($templateObj) {
                         $fieldvalues['template'] = $templateObj->get('id');
                     } else {
-                        $modx->log(modX::LOG_LEVEL_ERROR, 'Resource Resolver - could not find template: '.$fieldvalues['template']);
+                        $modx->log(modX::LOG_LEVEL_ERROR, '-> could not find template: ' . $fieldvalues['template']);
                     }
                 }
             }
@@ -637,16 +638,16 @@ if (!function_exists('createResources')) {
                 if ($parentObj) {
                     $fieldvalues['parent'] = $parentObj->get('id');
                 } else {
-                    $modx->log(modX::LOG_LEVEL_ERROR, 'Resource Resolver - could not find parent: '.$fieldvalues['parent']);
+                    $modx->log(modX::LOG_LEVEL_ERROR, '-> could not find parent resource: ' . $fieldvalues['parent']);
                 }
             }
             
             $resource->fromArray($fieldvalues);
             
             if ($resource->save()) {
-                $modx->log(modX::LOG_LEVEL_INFO, '-> installed sample Resource document: '.$fieldvalues['pagetitle']);
+                $modx->log(modX::LOG_LEVEL_INFO, '-> installed sample resource document: ' . $fieldvalues['pagetitle']);
             } else {
-                $modx->log(modX::LOG_LEVEL_ERROR, '-> could not install sample Resource document: '.$fieldvalues['pagetitle']);
+                $modx->log(modX::LOG_LEVEL_ERROR, '-> could not install sample resource document: ' . $fieldvalues['pagetitle']);
             }
             
             ++$count;
@@ -657,7 +658,7 @@ if (!function_exists('createResources')) {
 
 /**
  * Deletes a batch of MODX resources.
- * 
+ *
  * @param mixed &$modx A reference to the MODX object
  * @param array $resources An array of Resource properties
  * @return int $count Counter of deleted MODx Resources
@@ -669,19 +670,19 @@ if (!function_exists('deleteResources')) {
             return 0;
         }
 
-        $modx->log(modX::LOG_LEVEL_INFO, 'Resource Resolver - removing sample Resource documents...');
+        $modx->log(modX::LOG_LEVEL_INFO, 'Resource resolver - removing sample resource documents...');
 
-        $count = 0;        
+        $count = 0;
         foreach ($resources as $key => $fieldvalues) {
 
             /** @var modResource $resource */
             $resource = $modx->getObject('modResource', array('pagetitle' => $fieldvalues['pagetitle']));
             if (is_object($resource)) {
                 $resource->remove();
-                $modx->log(modX::LOG_LEVEL_INFO, '-> removed sample Resource document: '.$fieldvalues['pagetitle']);
+                $modx->log(modX::LOG_LEVEL_INFO, '-> removed sample resource document: ' . $fieldvalues['pagetitle']);
                 ++$count;
             } else {
-                $modx->log(modX::LOG_LEVEL_WARN, '-> could not find sample Resource document: '.$fieldvalues['pagetitle'].'. Please remove manually.');
+                $modx->log(modX::LOG_LEVEL_WARN, '-> could not find sample resource document: ' . $fieldvalues['pagetitle'] . '. Please remove manually.');
             }
         }
         return $count;
@@ -701,7 +702,7 @@ if ($object->xpdo) {
             
             // Should sample Resource documents be installed?
             if (!$installResources) {
-                $modx->log(modX::LOG_LEVEL_WARN, 'Resource Resolver - you decided to not install sample Resource documents.');
+                $modx->log(modX::LOG_LEVEL_INFO, 'Resource resolver - you decided to not install sample Resource documents.');
                 break;
             }
             $rescount = createResources($modx, $resources);
@@ -714,5 +715,6 @@ if ($object->xpdo) {
             break;
     }
 }
+
 unset($resources, $resource);
 return true;

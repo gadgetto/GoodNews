@@ -2,7 +2,7 @@
 /**
  * GoodNews
  *
- * Copyright 2012 by bitego <office@bitego.com>
+ * Copyright 2022 by bitego <office@bitego.com>
  *
  * GoodNews is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
@@ -27,7 +27,7 @@
 
 /**
  * Checks if a field in a specified database table exist
- * 
+ *
  * @param mixed &$modx A reference to the MODX object
  * @param string $xpdoTableClass xPDO schema class name for the database table
  * @param string $field Name of the field to check
@@ -39,7 +39,7 @@ if (!function_exists('existsField')) {
         $existsField = true;
         
         $table = $modx->getTableName($xpdoTableClass);
-        $sql = "SHOW COLUMNS FROM {$table} LIKE '".$field."'";
+        $sql = "SHOW COLUMNS FROM {$table} LIKE '" . $field . "'";
         $stmt = $modx->prepare($sql);
         $stmt->execute();
         $count = $stmt->rowCount();
@@ -55,7 +55,7 @@ if (!function_exists('existsField')) {
 /**
  * Checks if a field in a specified database table exist and creates it if not.
  * (this prevents the annoying erro messages in MODX install log)
- * 
+ *
  * @param mixed &$modx A reference to the MODX object
  * @param mixed &$manager A reference to the Manager object
  * @param string $xpdoTableClass xPDO schema class name for the database table
@@ -84,10 +84,10 @@ if ($object->xpdo) {
             
         case xPDOTransport::ACTION_UPGRADE:
 
-            $modx->log(modX::LOG_LEVEL_INFO, 'Database Changes Resolver - updating required database tables/fields...');
+            $modx->log(modX::LOG_LEVEL_INFO, 'Database changes resolver - updating required database tables/fields...');
 
             // Add GoodNews package
-            $modelPath = $modx->getOption('goodnews.core_path', null, $modx->getOption('core_path').'components/goodnews/').'model/';
+            $modelPath = $modx->getOption('goodnews.core_path', null, $modx->getOption('core_path') . 'components/goodnews/') . 'model/';
             $modx->addPackage('goodnews', $modelPath);
             $manager = $modx->getManager();
 
@@ -146,5 +146,6 @@ if ($object->xpdo) {
             break;
     }
 }
+
 unset($manager, $oldLogLevel);
 return true;

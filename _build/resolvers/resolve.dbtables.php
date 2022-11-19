@@ -2,7 +2,7 @@
 /**
  * GoodNews
  *
- * Copyright 2012 by bitego <office@bitego.com>
+ * Copyright 2022 by bitego <office@bitego.com>
  *
  * GoodNews is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
@@ -25,6 +25,19 @@
  * @subpackage build
  */
 
+$objects = array(
+    'GoodNewsMailingMeta',
+    'GoodNewsRecipient',
+    'GoodNewsSubscriberMeta',
+    'GoodNewsSubscriberLog',
+    'GoodNewsGroup',
+    'GoodNewsGroupMember',
+    'GoodNewsCategory',
+    'GoodNewsCategoryMember',
+    'GoodNewsProcess',
+);
+
+
 if ($object->xpdo) {
     $modx = &$object->xpdo;
     
@@ -32,30 +45,18 @@ if ($object->xpdo) {
         case xPDOTransport::ACTION_INSTALL:
         case xPDOTransport::ACTION_UPGRADE:
 
-            $modx->log(modX::LOG_LEVEL_INFO, 'Database Tables Resolver - creating database tables...');
+            $modx->log(modX::LOG_LEVEL_INFO, 'Database tables resolver - creating database tables...');
             $modx->log(modX::LOG_LEVEL_WARN, 'Existing tables will be skipped!');
 
             // Add GoodNews package
-            $modelPath = $modx->getOption('goodnews.core_path', null, $modx->getOption('core_path').'components/goodnews/').'model/';
+            $modelPath = $modx->getOption('goodnews.core_path', null, $modx->getOption('core_path') . 'components/goodnews/') . 'model/';
             $modx->addPackage('goodnews', $modelPath);
             $manager = $modx->getManager();
-
-            $objects = array(
-                'GoodNewsMailingMeta',
-                'GoodNewsRecipient',
-                'GoodNewsSubscriberMeta',
-                'GoodNewsSubscriberLog',
-                'GoodNewsGroup',
-                'GoodNewsGroupMember',
-                'GoodNewsCategory',
-                'GoodNewsCategoryMember',
-                'GoodNewsProcess',
-            );
     
             $count = 0;
             foreach ($objects as $obj) {
                 $tableName = $modx->getTableName($obj);
-                $modx->log(modX::LOG_LEVEL_INFO, '-> creating table: '.$tableName);
+                $modx->log(modX::LOG_LEVEL_INFO, '-> creating table: ' . $tableName);
                 $prevLogLevel = $modx->setLogLevel(modX::LOG_LEVEL_ERROR); // Do not detailed report tables creation in install-log
                 $manager->createObjectContainer($obj);
                 $modx->setLogLevel($prevLogLevel);                         // Set back previous log-level
@@ -65,7 +66,7 @@ if ($object->xpdo) {
             break;
  
         case xPDOTransport::ACTION_UNINSTALL:
-            $modx->log(modX::LOG_LEVEL_WARN, 'Database Tables Resolver - database tables will not be uninstalled to prevent data loss. Please remove manually.');
+            $modx->log(modX::LOG_LEVEL_WARN, 'Database tables resolver - database tables will not be uninstalled to prevent data loss. Please remove manually.');
             break;
     }
 }

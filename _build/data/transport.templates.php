@@ -2,7 +2,7 @@
 /**
  * GoodNews
  *
- * Copyright 2012 by bitego <office@bitego.com>
+ * Copyright 2022 by bitego <office@bitego.com>
  *
  * GoodNews is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
@@ -20,7 +20,11 @@
 
 /**
  * Add templates to package
- * 
+ *
+ * @var modX $modx
+ * @var array $sources
+ * @var array $templates
+ *
  * @package goodnews
  * @subpackage build
  */
@@ -61,4 +65,5 @@ $templates[$i]->fromArray(array(
     'content'      => file_get_contents($sources['templates'].'sample.goodnewsnewsletter2.template.tpl'),
 ));
 
+unset($i);
 return $templates;

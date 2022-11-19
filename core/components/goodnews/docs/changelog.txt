@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Changed
+- Reworked package builder and installation process
+
 ### Fixed
 - Fixed a warning in modx log (undefined variable in GoodNews class)
 
@@ -214,7 +217,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Refined some lexicon strings
 
 ### Removed
-- Removed/disabled Delete action (menu and button) from mailing when sending is in progress 
+- Removed/disabled Delete action (menu and button) from mailing when sending is in progress
 
 ### Fixed
 - Fixed a bug in combining filters on Subscribers grid

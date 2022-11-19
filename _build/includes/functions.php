@@ -2,7 +2,7 @@
 /**
  * GoodNews
  *
- * Copyright 2012 by bitego <office@bitego.com>
+ * Copyright 2022 by bitego <office@bitego.com>
  *
  * GoodNews is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
@@ -19,17 +19,19 @@
  */
 
 /**
- * Helper method for grabbing content of php files
+ * Helper functions for _build
  *
  * @package goodnews
  * @subpackage build
  */
 
 /**
+ * Get content of php file.
+ *
  * @param string $filename
  * @return mixed|string
  */
-function getFileContent($filename) {
+function getPHPFileContent($filename) {
     $o = file_get_contents($filename);
     $o = str_replace('<?php', '', $o);
     $o = str_replace('?>', '', $o);

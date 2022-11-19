@@ -2,7 +2,7 @@
 /**
  * GoodNews
  *
- * Copyright 2012 by bitego <office@bitego.com>
+ * Copyright 2022 by bitego <office@bitego.com>
  *
  * GoodNews is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
@@ -21,7 +21,7 @@
 /**
  * Setup options
  *
- * @package goodnews 
+ * @package goodnews
  * @subpackage build
  */
 
@@ -29,11 +29,12 @@ $output = '';
 
 // Default field values
 $fieldvalues = array(
+    'install_resources' => true,
     //'setting1' => 'value',
     //'setting2' => 'value',
     //'setting3' => 'value',
-    'install_resources' => true,
 );
+
 
 switch ($options[xPDOTransport::PACKAGE_ACTION]) {
     case xPDOTransport::ACTION_INSTALL:
@@ -81,7 +82,7 @@ switch ($options[xPDOTransport::PACKAGE_ACTION]) {
         
         $output .= '
         <label for="install_resources">
-            <input type="checkbox" name="install_resources" id="install_resources" value="1"'.$installResourcesChecked.' />
+            <input type="checkbox" name="install_resources" id="install_resources" value="1"' . $installResourcesChecked . ' />
             Install Sample Resources
         </label>
         <div class="field-desc">
@@ -95,4 +96,5 @@ switch ($options[xPDOTransport::PACKAGE_ACTION]) {
     case xPDOTransport::ACTION_UNINSTALL:
         break;
 }
+
 return $output;

@@ -2,7 +2,7 @@
 /**
  * GoodNews
  *
- * Copyright 2012 by bitego <office@bitego.com>
+ * Copyright 2022 by bitego <office@bitego.com>
  *
  * GoodNews is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
@@ -19,29 +19,30 @@
  */
 
 /**
- * Resolve Template Variables
+ * Resolve Template Variables (sample currently not in use)
  *
  * @package goodnews
  * @subpackage build
  */
 
+$templates = array(
+    'templateName',
+);
+
+
 if ($object->xpdo) {
-    $modx =& $object->xpdo;
+    $modx = &$object->xpdo;
     
     switch ($options[xPDOTransport::PACKAGE_ACTION]) {
         case xPDOTransport::ACTION_INSTALL:
         case xPDOTransport::ACTION_UPGRADE:
-
+        
             $tv = $modx->getObject('modTemplateVar',array(
                 'name' => 'tvName',
             ));
             
             if ($tv) {
             
-                $templates = array(
-                    'templateName',
-                );
-
                 foreach ($templates as $templateName) {
                 
                     $template = $modx->getObject('modTemplate',array('templatename' => $templateName));
@@ -66,5 +67,6 @@ if ($object->xpdo) {
             break;
     }
 }
+
 unset($tv, $templates, $templateName, $template, $templateVarTemplate);
 return true;

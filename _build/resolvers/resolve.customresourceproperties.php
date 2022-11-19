@@ -2,7 +2,7 @@
 /**
  * GoodNews
  *
- * Copyright 2012 by bitego <office@bitego.com>
+ * Copyright 2022 by bitego <office@bitego.com>
  *
  * GoodNews is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
@@ -20,7 +20,7 @@
 
 /**
  * Resolve properties of custom resources (assign property values after they are installed by the transport package).
- * (currently hardcoded - todo: rewrite for setting properties of multiple custom resources)
+ * (currently hardcoded - @todo: rewrite for setting properties of multiple custom resources)
  *
  * @package goodnews
  * @subpackage build
@@ -33,7 +33,8 @@ if ($object->xpdo) {
         case xPDOTransport::ACTION_INSTALL:
 
             // Set all initial properties for the "GoodNews" container resource
-            
+            $modx->log(modX::LOG_LEVEL_INFO, 'Custom resource properties resolver - set properties for GoodNews container...');
+
             // Check if resource exists
             $resource = $modx->getObject('modResource', array('pagetitle' => 'GoodNews', 'class_key' => 'GoodNewsResourceContainer'));
             if (!$resource) {
@@ -47,7 +48,7 @@ if ($object->xpdo) {
             if (is_object($templatesCategory)) {
                 $properties['templatesCategory'] = $templatesCategory->get('id');
             } else {
-                $modx->log(modX::LOG_LEVEL_ERROR, 'Custom Resource Properties Resolver - could not set templatesCategory property for GoodNews container.');
+                $modx->log(modX::LOG_LEVEL_ERROR, '-> could not set templatesCategory property for GoodNews container.');
             }
             
             // Set default mailing template
@@ -55,7 +56,7 @@ if ($object->xpdo) {
             if (is_object($mailingTemplate)) {
                 $properties['mailingTemplate'] = $mailingTemplate->get('id');
             } else {
-                $modx->log(modX::LOG_LEVEL_ERROR, 'Custom Resource Properties Resolver - could not set mailingTemplate property for GoodNews container.');
+                $modx->log(modX::LOG_LEVEL_ERROR, '-> could not set mailingTemplate property for GoodNews container.');
             }
 
             // Set default resource for 1-click unsubscription
@@ -63,7 +64,7 @@ if ($object->xpdo) {
             if (is_object($unsubscribeResource)) {
                 $properties['unsubscribeResource'] = $unsubscribeResource->get('id');
             } else {
-                $modx->log(modX::LOG_LEVEL_WARN, 'Custom Resource Properties Resolver - unsubscribeResource property for GoodNews container not set as Resource does not exist. Please set manually.');
+                $modx->log(modX::LOG_LEVEL_WARN, '-> unsubscribeResource property for GoodNews container not set as Resource does not exist. Please set manually.');
             }
             
             // Set default resource for updating subscription profile
@@ -71,7 +72,7 @@ if ($object->xpdo) {
             if (is_object($profileResource)) {
                 $properties['profileResource'] = $profileResource->get('id');
             } else {
-                $modx->log(modX::LOG_LEVEL_WARN, 'Custom Resource Properties Resolver - profileResource property for GoodNews container not set as Resource does not exist. Please set manually.');
+                $modx->log(modX::LOG_LEVEL_WARN, '-> profileResource property for GoodNews container not set as Resource does not exist. Please set manually.');
             }
             
             $properties['editorGroups'] = 'Administrator';
@@ -117,8 +118,10 @@ if ($object->xpdo) {
             $properties['collection3Parents']              = '';
 
             $resource->setProperties($properties, 'goodnews');
-            if (!$resource->save()) {
-                $this->modx->log(modX::LOG_LEVEL_ERROR, 'Custom Resource Properties Resolver - could not set properties for GoodNews container.');
+            if ($resource->save()) {
+                $modx->log(modX::LOG_LEVEL_INFO, '-> properties for GoodNews container set.');
+            } else {
+                $modx->log(modX::LOG_LEVEL_ERROR, '-> could not set properties for GoodNews container.');
             }
 
             break;
@@ -133,5 +136,6 @@ if ($object->xpdo) {
             break;
     }
 }
+
 unset($resource, $properties, $templatesCategory, $mailingTemplate, $unsubscribeResource, $profileResource);
 return true;

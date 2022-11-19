@@ -2,7 +2,7 @@
 /**
  * GoodNews
  *
- * Copyright 2012 by bitego <office@bitego.com>
+ * Copyright 2022 by bitego <office@bitego.com>
  *
  * GoodNews is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
@@ -20,7 +20,11 @@
 
 /**
  * Add chunks to package
- * 
+ *
+ * @var modX $modx
+ * @var array $sources
+ * @var array $chunks
+ *
  * @package goodnews
  * @subpackage build
  */
@@ -28,7 +32,7 @@
 $chunks = array();
 $i = 0;
 
-// For GoodNews subscriptions 
+// For GoodNews subscriptions
 
 $chunks[++$i] = $modx->newObject('modChunk');
 $chunks[$i]->fromArray(array(
@@ -151,7 +155,7 @@ $chunks[$i]->fromArray(array(
 ), '', true, true);
 
 
-// For GoodNews registrations 
+// For GoodNews registrations
 
 $chunks[++$i] = $modx->newObject('modChunk');
 $chunks[$i]->fromArray(array(
@@ -169,4 +173,5 @@ $chunks[$i]->fromArray(array(
     'snippet'     => file_get_contents($sources['chunks'].'sample.goodnewsreregistrationemail.chunk.tpl'),
 ), '', true, true);
 
+unset($i);
 return $chunks;

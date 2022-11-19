@@ -2,7 +2,7 @@
 /**
  * GoodNews
  *
- * Copyright 2012 by bitego <office@bitego.com>
+ * Copyright 2022 by bitego <office@bitego.com>
  *
  * GoodNews is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
@@ -20,6 +20,9 @@
 
 /**
  * Add system settings to package.
+ *
+ * @var modX $modx
+ * @var array $settings
  *
  * @package goodnews
  * @subpackage build

@@ -19,35 +19,25 @@
  */
 
 /**
- * Add TVs to package
+ * Add plugin events for GoodNews plugin
  *
  * @var modX $modx
- *
  * @package goodnews
  * @subpackage build
  */
 
-$tvs = array();
-$i = 0;
+$events['OnManagerPageInit']= $modx->newObject('modPluginEvent');
+$events['OnManagerPageInit']->fromArray([
+    'event' => 'OnManagerPageInit',
+    'priority' => 0,
+    'propertyset' => 0,
+], '', true, true);
 
-/*
-$tvs[++$i]= $modx->newObject('modTemplateVar');
-$tvs[$i]->fromArray(array(
-    'id'                => $i,
-    'type'              => 'checkbox',
-    'name'              => 'tvName',
-    'caption'           => 'Name of TV',
-    'description'       => 'A description...',
-    'display'           => 'delim',
-    'elements'          => '',
-    'locked'            => 0,
-    'rank'              => 1,
-    'default_text'      => '',
-    'input_properties'  => '',
-    'output_properties' => '',
-    'properties'        => array(),
-), '', true, true);
-*/
+$events['OnUserRemove']= $modx->newObject('modPluginEvent');
+$events['OnUserRemove']->fromArray([
+    'event' => 'OnUserRemove',
+    'priority' => 0,
+    'propertyset' => 0,
+], '', true, true);
 
-unset($i);
-return $tvs;
+return $events;
