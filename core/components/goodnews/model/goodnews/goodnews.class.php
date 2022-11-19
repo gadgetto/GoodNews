@@ -28,13 +28,14 @@ class GoodNews {
 
     const NAME     = 'GoodNews';
     const VERSION  = '1.6.0';
-    const RELEASE  = 'pl';
+    const RELEASE  = 'pl2';
     
     const HELP_URL = 'https://docs.bitego.com/goodnews/user-guide/';
     const DEV_NAME = 'bitego (Martin Gartner, Franz Gallei)';
     const DEV_URL  = 'http://www.bitego.com';
     
-    const MIN_PHP_VERSION = '5.6.0';
+    const MIN_PHP_VERSION = '7.0.0';
+    const MIN_MODX_VERSION = '2.3.0';
 
     /** @var modX A reference to the modX object */
     public $modx = null;
@@ -101,7 +102,7 @@ class GoodNews {
 
         $this->modx->lexicon->load('goodnews:default');
 
-        $this->config = array_merge(array(            
+        $this->config = array_merge(array(
             'corePath'       => $corePath,
             'modelPath'      => $corePath.'model/',
             'processorsPath' => $corePath.'processors/',
@@ -152,9 +153,9 @@ class GoodNews {
                 'isMultiProcessing'       => $this->isMultiProcessing,
                 'imapExtension'           => $this->imapExtension,
                 'pThumbAddOn'             => $this->pThumbAddOn,
-                'actualPhpVersion'        => $this->actualPhpVersion,   
-                'requiredPhpVersion'      => $this->requiredPhpVersion,   
-                'phpVersionOK'            => $this->phpVersionOK,   
+                'actualPhpVersion'        => $this->actualPhpVersion,
+                'requiredPhpVersion'      => $this->requiredPhpVersion,
+                'phpVersionOK'            => $this->phpVersionOK,
                 'isGoodNewsAdmin'         => $this->isGoodNewsAdmin,
                 'siteStatus'              => $this->siteStatus,
                 'workerProcessActive'     => $this->workerProcessActive,
@@ -167,7 +168,7 @@ class GoodNews {
                 'debug'                   => $this->debug,
             ), $this->config);
 
-        }        
+        }
         $this->modx->addPackage('goodnews', $this->config['modelPath']);
     }
 
@@ -292,7 +293,7 @@ class GoodNews {
      * @access public
      * @param integer $id The id of the resource container
      * @return boolean
-     */    
+     */
     public function isGoodNewsContainer($id) {
         $goncontainer = false;
         
@@ -317,7 +318,7 @@ class GoodNews {
      *
      * @access public
      * @return boolean
-     */    
+     */
     public function isMultiProcessing() {
         $enabled = true;
         
@@ -337,7 +338,7 @@ class GoodNews {
      *
      * @access public
      * @return boolean
-     */    
+     */
     public function imapExtension() {
         return function_exists('imap_open');
     }
@@ -348,7 +349,7 @@ class GoodNews {
      * @access private
      * @param string $name Name of transport package
      * @return boolean
-     */    
+     */
     private function isTransportPackageInstalled($tpname) {
         $installed = false;
         $package = $this->modx->getObject('transport.modTransportPackage', array(
@@ -449,7 +450,7 @@ class GoodNews {
             'statuscode'    => $statuscode,
             'description'   => $description,
             'stopexecution' => $stopexecution
-        );        
+        );
         if ($stopexecution) {
             ob_get_level() && @ob_end_flush();
             @include($this->config['modelPath'].'goodnews/error/stopexecution.include.php');
