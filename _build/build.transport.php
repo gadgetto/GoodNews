@@ -37,7 +37,7 @@ define('PKG_NAME', 'GoodNews');
 define('PKG_NAMESPACE', strtolower(PKG_NAME));
 
 /* Define build paths */
-$root = dirname(__FILE__, 2) . '/';
+$root = dirname(__DIR__, 1) . '/';
 $sources = array(
     'root'           => $root,
     'build'          => $root . '_build/',
@@ -78,6 +78,7 @@ flush();
 $modelPath = $modx->getOption('goodnews.core_path') . 'model/';
 if (!$modx->loadClass('goodnews.GoodNews', $modelPath, false, true)) {
     $modx->log(modX::LOG_LEVEL_ERROR, 'GoodNews class could not be loaded.');
+    flush();
     exit();
 }
 

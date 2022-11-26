@@ -20,12 +20,13 @@
 
 /**
  * Create database tables script
+ * (supports MODX version 2.3.0 up to 2.8.x)
  *
  * @package goodnews
  * @subpackage build
  */
 
-require_once dirname(dirname(__FILE__)) . '/config.core.php';
+require_once dirname(__DIR__, 1) . '/config.core.php';
 require_once MODX_CORE_PATH . 'model/modx/modx.class.php';
 
 $mtime = microtime();
@@ -36,7 +37,7 @@ set_time_limit(0);
 
 $modx = new modX();
 $modx->initialize('mgr');
-$modelPath = $modx->getOption('goodnews.core_path', null, $modx->getOption('core_path').'components/goodnews/').'model/';
+$modelPath = $modx->getOption('goodnews.core_path', null, $modx->getOption('core_path') . 'components/goodnews/') . 'model/';
 
 $modx->addPackage('goodnews', $modelPath);
 
@@ -69,5 +70,4 @@ $tend = $mtime;
 $totalTime = ($tend - $tstart);
 $totalTime = sprintf("%2.4f s", $totalTime);
 
-$modx->log(modX::LOG_LEVEL_INFO, "\n<br />{$count} Database tables created.<br />\nExecution time: {$totalTime}\n");
-?>
+$modx->log(modX::LOG_LEVEL_INFO, "\n<br>{$count} Database tables created.<br>\nExecution time: {$totalTime}\n");

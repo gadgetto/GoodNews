@@ -37,7 +37,7 @@ define('PKG_NAME', 'GoodNews');
 define('PKG_NAMESPACE', strtolower(PKG_NAME));
 
 /* Define paths */
-$root = dirname(__FILE__, 2) . '/';
+$root = dirname(__DIR__, 1) . '/';
 $sources = array(
     'root'             => $root,
     'bootstrap'        => $root . '_bootstrap/',
@@ -81,6 +81,7 @@ $modx->log(modX::LOG_LEVEL_INFO, 'MODX version: ' . $modXversion);
 if (isTransportPackageInstalled($modx, PKG_NAME)) {
     $modx->log(modX::LOG_LEVEL_WARN, PKG_NAME . ' is installed on this system.');
     $modx->log(modX::LOG_LEVEL_INFO, 'Building development environment stopped!');
+    flush();
     exit();
 }
 
@@ -88,6 +89,7 @@ if (isTransportPackageInstalled($modx, PKG_NAME)) {
 if (existsNamespace($modx, PKG_NAMESPACE)) {
     $modx->log(modX::LOG_LEVEL_WARN, 'It seems, that a development environment for ' . PKG_NAME . ' is already available on this system!');
     $modx->log(modX::LOG_LEVEL_INFO, 'Building development environment stopped!');
+    flush();
     exit();
 }
 
@@ -99,9 +101,9 @@ $class = PKG_NAME;
 if (!$goodnews instanceof $class) {
     $modx->log(modX::LOG_LEVEL_ERROR, PKG_NAME . ' service could not be loaded.');
     $modx->log(modX::LOG_LEVEL_INFO, 'Building development environment failed!');
+    flush();
     exit();
 }
-flush();
 unset($class);
 
 /* Create namespace */
@@ -115,9 +117,9 @@ if (createObject($modx, 'modNamespace', array(
 } else {
     $modx->log(modX::LOG_LEVEL_ERROR, '-> namespace ' . PKG_NAMESPACE . ' could not be added.');
     $modx->log(modX::LOG_LEVEL_INFO, 'Building development environment failed!');
+    flush();
     exit();
 }
-flush();
 
 /* Add menus (using sources from _build/data/ directory) */
 $menus = include $sources['build_data'] . 'transport.menus.php';
