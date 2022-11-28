@@ -235,7 +235,19 @@ if (!empty($chunks) && is_array($chunks)) {
         $chunk->set('source', 0);
         $chunk->set('static', true);
         $chunk->set('snippet', '');
-        $chunkPath = $sources['chunks'] . strtolower($chunkName) . '.chunk.php';
+        
+        // Quickfix: need to remove "Tpl" from chunk name, because the name of the
+        // files belonging to the chunks don't match:
+        //
+        // sample:
+        //
+        // chunk name: sample.GoodNewsActivationEmailTpl (<- "Tpl" needs to be removed)
+        // file name:  sample.goodnewsactivationemail.chunk.tpl
+        //
+        // @todo: match chunk names and file names (in MODX 3 version?)
+        $chunkName = str_replace('Tpl', '', $chunkName);
+        
+        $chunkPath = $sources['chunks'] . strtolower($chunkName) . '.chunk.tpl';
         $chunk->set('static_file', $chunkPath);
         if ($chunk->save()) {
             $modx->log(modX::LOG_LEVEL_INFO, '-> added chunk: ' . $chunkName);
@@ -265,7 +277,19 @@ if (!empty($templates) && is_array($templates)) {
         $template->set('source', 0);
         $template->set('static', true);
         $template->set('content', '');
-        $templatePath = $sources['templates'] . strtolower($templateName) . '.template.php';
+                
+        // Quickfix: need to remove "Template" from template name, because the name of the
+        // files belonging to the templates don't match:
+        //
+        // sample:
+        //
+        // template name: sample.GoodNewsNewsletterTemplate1 (<- "Template" needs to be removed)
+        // file name:     sample.goodnewsnewsletter1.template.tpl'
+        //
+        // @todo: match template names and file names (in MODX 3 version?)
+        $templateName = str_replace('Template', '', $templateName);
+                
+        $templatePath = $sources['templates'] . strtolower($templateName) . '.template.tpl';
         $template->set('static_file', $templatePath);
         if ($template->save()) {
             $modx->log(modX::LOG_LEVEL_INFO, '-> added template: ' . $templateName);
