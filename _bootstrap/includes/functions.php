@@ -141,7 +141,7 @@ function assignSettings(&$modx, $settingAttributes) {
     $count = 0;
     foreach ($settingAttributes as $attributes) {
         // Check if setting exists
-        $setting = $modx->getObject('modSystemSetting', array('key' => $attributes['key']));
+        $setting = $modx->getObject('modSystemSetting', ['key' => $attributes['key']]);
         if (!$setting) {
             $modx->log(modX::LOG_LEVEL_ERROR, '-> could not find setting: ' . $attributes['key']);
             continue;
@@ -150,7 +150,7 @@ function assignSettings(&$modx, $settingAttributes) {
         if ($attributes['xtype'] == 'modx-combo-template') {
             // Assign template id based on template name
             if (!empty($attributes['value'])) {
-                $templateObj = $modx->getObject('modTemplate', array('templatename' => $attributes['value']));
+                $templateObj = $modx->getObject('modTemplate', ['templatename' => $attributes['value']]);
                 if ($templateObj) {
                     $setting->set('value', $templateObj->get('id'));
                 } else {
@@ -306,7 +306,7 @@ function assignTemplateCategories(&$modx, $templateCategories) {
     $count = 0;
     foreach ($templateCategories as $templateName => $categoryName) {
         // Check if template exists
-        $template = $modx->getObject('modTemplate', array('templatename' => $templateName));
+        $template = $modx->getObject('modTemplate', ['templatename' => $templateName]);
         if (!$template) {
             $modx->log(modX::LOG_LEVEL_WARN, '-> template ' . $templateName . ' does not exist. No category assigned.');
             continue;
@@ -334,14 +334,14 @@ function assignTemplateCategories(&$modx, $templateCategories) {
  * @param bool $update
  * @return bool
  */
-function createObject(&$modx, $className = '', array $data = array(), $primaryField = '', $update = true) {
+function createObject(&$modx, $className = '', array $data = [], $primaryField = '', $update = true) {
     /* @var xPDOObject $object */
     $object = null;
 
     /* Attempt to get the existing object */
     if (!empty($primaryField)) {
         if (is_array($primaryField)) {
-            $condition = array();
+            $condition = [];
             foreach ($primaryField as $key) {
                 $condition[$key] = $data[$key];
             }
@@ -383,7 +383,7 @@ function createObject(&$modx, $className = '', array $data = array(), $primaryFi
  * @return boolean
  */
 function createSystemSetting(&$modx, $key, $value, $namespace, $xtype = 'textfield', $area = 'Development') {
-    $exists = $modx->getCount('modSystemSetting', array('key' => "{$namespace}.{$key}"));
+    $exists = $modx->getCount('modSystemSetting', ['key' => "{$namespace}.{$key}"]);
     $saved = false;
     if (!$exists) {
         $setting = $modx->newObject('modSystemSetting');
@@ -410,9 +410,9 @@ function createSystemSetting(&$modx, $key, $value, $namespace, $xtype = 'textfie
 function isTransportPackageInstalled(&$modx, $tpname) {
     $installed = false;
     /** @var transport.modTransportPackage $package */
-    $package = $modx->getObject('transport.modTransportPackage', array(
+    $package = $modx->getObject('transport.modTransportPackage', [
         'package_name' => $tpname,
-    ));
+    ]);
     if (is_object($package)) { $installed = true; }
     return $installed;
 }
@@ -427,7 +427,7 @@ function isTransportPackageInstalled(&$modx, $tpname) {
 function existsNamespace(&$modx, $nspace) {
     $exists = false;
     /** @var modNamespace $namespace */
-    $namespace = $modx->getObject('modNamespace', array('name' => $nspace,));
+    $namespace = $modx->getObject('modNamespace', ['name' => $nspace,]);
     if (is_object($namespace)) { $exists = true; }
     return $exists;
 }
@@ -441,7 +441,7 @@ function existsNamespace(&$modx, $nspace) {
  */
 function getCategoryID(&$modx, $name) {
     $id = 0;
-    $categoryObj = $modx->getObject('modCategory', array('category' => $name));
+    $categoryObj = $modx->getObject('modCategory', ['category' => $name]);
     if (is_object($categoryObj)) { $id = $categoryObj->get('id'); }
     return $id;
 }
