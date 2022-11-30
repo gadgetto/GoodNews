@@ -26,11 +26,11 @@
  */
 
 
-$resources = array();
+$resources = [];
 $i = 0;
 $epoch = time();
 
-$resources[++$i] = array(
+$resources[++$i] = [
     'type'                  => 'document',
     'contentType'           => 'text/html',
     'pagetitle'             => 'GoodNews Subscription Confirm',
@@ -71,9 +71,9 @@ $resources[++$i] = array(
     'hide_children_in_tree' => 0,
     'show_in_tree'          => 1,
     'properties'            => NULL,
-);
+];
 
-$resources[++$i] = array(
+$resources[++$i] = [
     'type'                  => 'document',
     'contentType'           => 'text/html',
     'pagetitle'             => 'GoodNews Subscription Mail Sent',
@@ -113,9 +113,9 @@ $resources[++$i] = array(
     'hide_children_in_tree' => 0,
     'show_in_tree'          => 1,
     'properties'            => NULL,
-);
+];
 
-$resources[++$i] = array(
+$resources[++$i] = [
     'type'                  => 'document',
     'contentType'           => 'text/html',
     'pagetitle'             => 'GoodNews Subscription Success',
@@ -155,9 +155,9 @@ $resources[++$i] = array(
     'hide_children_in_tree' => 0,
     'show_in_tree'          => 1,
     'properties'            => NULL,
-);
+];
 
-$resources[++$i] = array(
+$resources[++$i] = [
     'type'                  => 'document',
     'contentType'           => 'text/html',
     'pagetitle'             => 'GoodNews Subscription Update',
@@ -197,9 +197,9 @@ $resources[++$i] = array(
     'hide_children_in_tree' => 0,
     'show_in_tree'          => 1,
     'properties'            => NULL,
-);
+];
 
-$resources[++$i] = array(
+$resources[++$i] = [
     'type'                  => 'document',
     'contentType'           => 'text/html',
     'pagetitle'             => 'GoodNews Profile Update',
@@ -239,9 +239,9 @@ $resources[++$i] = array(
     'hide_children_in_tree' => 0,
     'show_in_tree'          => 1,
     'properties'            => NULL,
-);
+];
 
-$resources[++$i] = array(
+$resources[++$i] = [
     'type'                  => 'document',
     'contentType'           => 'text/html',
     'pagetitle'             => 'GoodNews Subscription',
@@ -281,9 +281,9 @@ $resources[++$i] = array(
     'hide_children_in_tree' => 0,
     'show_in_tree'          => 1,
     'properties'            => NULL,
-);
+];
 
-$resources[++$i] = array(
+$resources[++$i] = [
     'type'                  => 'document',
     'contentType'           => 'text/html',
     'pagetitle'             => 'GoodNews Unsubscribe',
@@ -323,9 +323,9 @@ $resources[++$i] = array(
     'hide_children_in_tree' => 0,
     'show_in_tree'          => 1,
     'properties'            => NULL,
-);
+];
 
-$resources[++$i] = array(
+$resources[++$i] = [
     'type'                  => 'document',
     'contentType'           => 'text/html',
     'pagetitle'             => 'GoodNews Request Links',
@@ -365,9 +365,9 @@ $resources[++$i] = array(
     'hide_children_in_tree' => 0,
     'show_in_tree'          => 1,
     'properties'            => NULL,
-);
+];
 
-$resources[++$i] = array(
+$resources[++$i] = [
     'type'                  => 'document',
     'contentType'           => 'text/html',
     'pagetitle'             => 'GoodNews Registration Confirm',
@@ -407,9 +407,9 @@ $resources[++$i] = array(
     'hide_children_in_tree' => 0,
     'show_in_tree'          => 1,
     'properties'            => NULL,
-);
+];
 
-$resources[++$i] = array(
+$resources[++$i] = [
     'type'                  => 'document',
     'contentType'           => 'text/html',
     'pagetitle'             => 'GoodNews Registration Mail Sent',
@@ -449,9 +449,9 @@ $resources[++$i] = array(
     'hide_children_in_tree' => 0,
     'show_in_tree'          => 1,
     'properties'            => NULL,
-);
+];
 
-$resources[++$i] = array(
+$resources[++$i] = [
     'type'                  => 'document',
     'contentType'           => 'text/html',
     'pagetitle'             => 'GoodNews Registration',
@@ -491,9 +491,9 @@ $resources[++$i] = array(
     'hide_children_in_tree' => 0,
     'show_in_tree'          => 1,
     'properties'            => NULL,
-);
+];
 
-$resources[++$i] = array(
+$resources[++$i] = [
     'type'                  => 'document',
     'contentType'           => 'text/html',
     'pagetitle'             => 'GoodNews Terms and Conditions',
@@ -533,9 +533,9 @@ $resources[++$i] = array(
     'hide_children_in_tree' => 0,
     'show_in_tree'          => 1,
     'properties'            => NULL,
-);
+];
 
-$resources[++$i] = array(
+$resources[++$i] = [
     'type'                  => 'document',
     'contentType'           => 'text/html',
     'pagetitle'             => 'GoodNews Privacy Policy',
@@ -575,7 +575,7 @@ $resources[++$i] = array(
     'hide_children_in_tree' => 0,
     'show_in_tree'          => 1,
     'properties'            => NULL,
-);
+];
 
 unset($epoch, $i);
 return $resources;

@@ -25,9 +25,9 @@
  * @subpackage bootstrap
  */
 
-$templateCategories = array(
+$templateCategories = [
     'sample.GoodNewsNewsletterTemplate1' => 'Newsletter Templates',
     'sample.GoodNewsNewsletterTemplate2' => 'Newsletter Templates',
-);
+];
 
 return $templateCategories;

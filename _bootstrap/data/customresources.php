@@ -25,11 +25,11 @@
  * @subpackage bootstrap
  */
 
-$customresources = array();
+$customresources = [];
 $epoch = time();
 
 // GoodNews Mailing Container
-$customresources['goodnews'] = array (
+$customresources['goodnews'] = [
     'type'                  => 'document',
     'contentType'           => 'text/html',
     'pagetitle'             => 'GoodNews',
@@ -69,13 +69,13 @@ $customresources['goodnews'] = array (
     'hide_children_in_tree' => 1,
     'show_in_tree'          => 1,
     'properties'            => NULL,
-);
+];
 
 // array key = later properties namespace
-$properties['goodnews'] = array();
+$properties['goodnews'] = [];
 
 // Set default mailing templates category
-$templatesCategory = $modx->getObject('modCategory', array('category' => 'Newsletter Templates'));
+$templatesCategory = $modx->getObject('modCategory', ['category' => 'Newsletter Templates']);
 if (is_object($templatesCategory)) {
     $properties['goodnews']['templatesCategory'] = $templatesCategory->get('id');
 } else {
@@ -84,7 +84,7 @@ if (is_object($templatesCategory)) {
 }
 
 // Set default mailing template
-$mailingTemplate = $modx->getObject('modTemplate', array('templatename' => 'sample.GoodNewsNewsletterTemplate1'));
+$mailingTemplate = $modx->getObject('modTemplate', ['templatename' => 'sample.GoodNewsNewsletterTemplate1']);
 if (is_object($mailingTemplate)) {
     $properties['goodnews']['mailingTemplate'] = $mailingTemplate->get('id');
 } else {
@@ -93,7 +93,7 @@ if (is_object($mailingTemplate)) {
 }
 
 // Set default resource for 1-click unsubscription
-$unsubscribeResource = $modx->getObject('modResource', array('pagetitle' => 'GoodNews Unsubscribe'));
+$unsubscribeResource = $modx->getObject('modResource', ['pagetitle' => 'GoodNews Unsubscribe']);
 if (is_object($unsubscribeResource)) {
     $properties['goodnews']['unsubscribeResource'] = $unsubscribeResource->get('id');
 } else {
@@ -102,7 +102,7 @@ if (is_object($unsubscribeResource)) {
 }
 
 // Set default resource for updating subscription profile
-$profileResource = $modx->getObject('modResource', array('pagetitle' => 'GoodNews Subscription Update'));
+$profileResource = $modx->getObject('modResource', ['pagetitle' => 'GoodNews Subscription Update']);
 if (is_object($profileResource)) {
     $properties['goodnews']['profileResource'] = $profileResource->get('id');
 } else {
@@ -157,12 +157,12 @@ $customresources['goodnews']['properties'] = $properties['goodnews'];
 
 /*
 // Another custom resource
-$customresources['namespace'] = array (
+$customresources['namespace'] = [
     'type'                  => 'document',
     'contentType'           => 'text/html',
     'pagetitle'             => 'Pagetitle',
     ...
-)
+];
 $properties['namespace'] = array();
 $properties['namespace']['myKey'] = 'myValue';
 ...

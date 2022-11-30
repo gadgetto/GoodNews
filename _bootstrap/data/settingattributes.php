@@ -25,20 +25,20 @@
  * @subpackage bootstrap
  */
 
-$settingAttributes = array();
+$settingAttributes = [];
 $i = 0;
 
-$settingAttributes[++$i] = array(
+$settingAttributes[++$i] = [
     'key'   => 'goodnews.default_container_template',
     'value' => 'sample.GoodNewsContainerTemplate', // value needs to be template name, not ID
     'xtype' => 'modx-combo-template',
-);
+];
 /*
-$settingAttributes[++$i] = array(
+$settingAttributes[++$i] = [
     'key'   => 'key_name',
     'value' => 'somevalue',
     'xtype' => 'modx-combo-boolean',
-);
+];
 */
 
 unset($i);

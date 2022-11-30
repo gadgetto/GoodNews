@@ -23,13 +23,11 @@
  *
  * @package goodnews
  * @subpackage bootstrap
- *
- *  @todo: this file is currently only used by bootstrap script; needs to be also implemented with build script (see resolve.tablescontent.php)
  */
 
 $epoch = time();
 
-$entries['GoodNewsGroup'] = array(
+$entries['GoodNewsGroup'] = [
     'name'          => 'Newsletters',
     'description'   => 'Default newsletters group',
     'modxusergroup' => 0,
@@ -37,7 +35,7 @@ $entries['GoodNewsGroup'] = array(
     'createdby'     => 0,
     'editedon'      => $epoch,
     'editedby'      => 0,
-);
+];
 
 unset($epoch);
 return $entries;

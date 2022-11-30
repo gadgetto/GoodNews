@@ -25,7 +25,7 @@
  * @subpackage bootstrap
  */
 
-$tables = array(
+$tables = [
     'GoodNewsMailingMeta',
     'GoodNewsRecipient',
     'GoodNewsSubscriberMeta',
@@ -35,6 +35,6 @@ $tables = array(
     'GoodNewsCategory',
     'GoodNewsCategoryMember',
     'GoodNewsProcess',
-);
+];
 
 return $tables;
