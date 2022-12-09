@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<model package="goodnews" baseClass="xPDOObject" platform="mysql" defaultEngine="MyISAM">
+<model package="GoodNews\Model\" baseClass="xPDO\Om\xPDOSimpleObject" platform="mysql" defaultEngine="InnoDB" phpdoc-package="goodnews" version="3.0">
 
     <object class="GoodNewsResourceContainer" table="site_content" extends="modResource">
         <composite alias="ResourceMailing" class="GoodNewsResourceMailing" local="id" foreign="parent" cardinality="many" owner="local" />
