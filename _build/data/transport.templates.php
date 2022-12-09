@@ -18,6 +18,8 @@
  * Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
+use MODX\Revolution\modTemplate;
+
 /**
  * Add templates to package
  *
@@ -29,41 +31,41 @@
  * @subpackage build
  */
 
-$templates = array();
+$templates = [];
 $i = 0;
 
 $templates[++$i]= $modx->newObject('modTemplate');
-$templates[$i]->fromArray(array(
+$templates[$i]->fromArray([
     'id'           => $i,
     'templatename' => 'sample.GoodNewsContainerTemplate',
     'description'  => 'A sample Template for GoodNews containers. Duplicate this to override it.',
-    'content'      => file_get_contents($sources['templates'].'sample.goodnewscontainer.template.tpl'),
+    'content'      => file_get_contents($sources['templates'] . 'sample.goodnewscontainer.template.tpl'),
     'icon'         => 'icon-envelope',
-));
+]);
 
 $templates[++$i]= $modx->newObject('modTemplate');
-$templates[$i]->fromArray(array(
+$templates[$i]->fromArray([
     'id'           => $i,
     'templatename' => 'sample.GoodNewsProfileTemplate',
     'description'  => 'A sample Template for GoodNews subscription pages (Subscription, Unsubscription, Update Subscription, Confirmation, ...). Duplicate this to override it.',
-    'content'      => file_get_contents($sources['templates'].'sample.goodnewsprofile.template.tpl'),
-));
+    'content'      => file_get_contents($sources['templates'] . 'sample.goodnewsprofile.template.tpl'),
+]);
 
 $templates[++$i]= $modx->newObject('modTemplate');
-$templates[$i]->fromArray(array(
+$templates[$i]->fromArray([
     'id'           => $i,
     'templatename' => 'sample.GoodNewsNewsletterTemplate1',
     'description'  => 'Single column. A sample Template for GoodNews newsletters. Duplicate this to override it.',
-    'content'      => file_get_contents($sources['templates'].'sample.goodnewsnewsletter1.template.tpl'),
-));
+    'content'      => file_get_contents($sources['templates'] . 'sample.goodnewsnewsletter1.template.tpl'),
+]);
 
 $templates[++$i]= $modx->newObject('modTemplate');
-$templates[$i]->fromArray(array(
+$templates[$i]->fromArray([
     'id'           => $i,
     'templatename' => 'sample.GoodNewsNewsletterTemplate2',
     'description'  => 'Single column with GoodNews content collection. A sample Template for GoodNews newsletters. Duplicate this to override it.',
-    'content'      => file_get_contents($sources['templates'].'sample.goodnewsnewsletter2.template.tpl'),
-));
+    'content'      => file_get_contents($sources['templates'] . 'sample.goodnewsnewsletter2.template.tpl'),
+]);
 
 unset($i);
 return $templates;

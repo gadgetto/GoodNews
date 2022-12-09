@@ -63,7 +63,7 @@ $properties = array(
         'desc'    => 'prop_goodnewsrequestlinks.requestlinksemailtpl_desc',
         'type'    => 'textfield',
         'options' => '',
-        'value'   => 'sample.GoodNewsRequestLinksEmailTpl',
+        'value'   => 'sample.GoodNewsRequestLinksEmailChunk',
         'lexicon' => 'goodnews:properties',
     ),
     array(

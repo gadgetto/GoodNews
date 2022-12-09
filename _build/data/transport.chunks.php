@@ -18,6 +18,8 @@
  * Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
+use MODX\Revolution\modChunk;
+
 /**
  * Add chunks to package
  *
@@ -29,149 +31,149 @@
  * @subpackage build
  */
 
-$chunks = array();
+$chunks = [];
 $i = 0;
 
 // For GoodNews subscriptions
 
 $chunks[++$i] = $modx->newObject('modChunk');
-$chunks[$i]->fromArray(array(
+$chunks[$i]->fromArray([
     'id'          => $i,
-    'name'        => 'sample.GoodNewsActivationEmailTpl',
+    'name'        => 'sample.GoodNewsActivationEmailChunk',
     'description' => 'The HTML content of the email body for activating GoodNews subscriptions. Duplicate this to override it.',
-    'snippet'     => file_get_contents($sources['chunks'].'sample.goodnewsactivationemail.chunk.tpl'),
-), '', true, true);
+    'snippet'     => file_get_contents($sources['chunks'] . 'sample.goodnewsactivationemail.chunk.tpl'),
+], '', true, true);
 
 $chunks[++$i] = $modx->newObject('modChunk');
-$chunks[$i]->fromArray(array(
+$chunks[$i]->fromArray([
     'id'          => $i,
-    'name'        => 'sample.GoodNewsCatFieldTpl',
+    'name'        => 'sample.GoodNewsCatFieldChunk',
     'description' => 'The template code for a GoodNews category checkbox form field. Duplicate this to override it.',
-    'snippet'     => file_get_contents($sources['chunks'].'sample.goodnewscatfield.chunk.tpl'),
-), '', true, true);
+    'snippet'     => file_get_contents($sources['chunks'] . 'sample.goodnewscatfield.chunk.tpl'),
+], '', true, true);
 
 $chunks[++$i] = $modx->newObject('modChunk');
-$chunks[$i]->fromArray(array(
+$chunks[$i]->fromArray([
     'id'          => $i,
-    'name'        => 'sample.GoodNewsCatFieldHiddenTpl',
+    'name'        => 'sample.GoodNewsCatFieldHiddenChunk',
     'description' => 'The template code for a GoodNews category input hidden form field. Duplicate this to override it.',
-    'snippet'     => file_get_contents($sources['chunks'].'sample.goodnewscatfieldhidden.chunk.tpl'),
-), '', true, true);
+    'snippet'     => file_get_contents($sources['chunks'] . 'sample.goodnewscatfieldhidden.chunk.tpl'),
+], '', true, true);
 
 $chunks[++$i] = $modx->newObject('modChunk');
-$chunks[$i]->fromArray(array(
+$chunks[$i]->fromArray([
     'id'          => $i,
-    'name'        => 'sample.GoodNewsGrpFieldTpl',
+    'name'        => 'sample.GoodNewsGrpFieldChunk',
     'description' => 'The template code for a GoodNews group checkbox form field. Duplicate this to override it.',
-    'snippet'     => file_get_contents($sources['chunks'].'sample.goodnewsgrpfield.chunk.tpl'),
-), '', true, true);
+    'snippet'     => file_get_contents($sources['chunks'] . 'sample.goodnewsgrpfield.chunk.tpl'),
+], '', true, true);
 
 $chunks[++$i] = $modx->newObject('modChunk');
-$chunks[$i]->fromArray(array(
+$chunks[$i]->fromArray([
     'id'          => $i,
-    'name'        => 'sample.GoodNewsGrpFieldHiddenTpl',
+    'name'        => 'sample.GoodNewsGrpFieldHiddenChunk',
     'description' => 'The template code for a GoodNews group input hidden form field. Duplicate this to override it.',
-    'snippet'     => file_get_contents($sources['chunks'].'sample.goodnewsgrpfieldhidden.chunk.tpl'),
-), '', true, true);
+    'snippet'     => file_get_contents($sources['chunks'] . 'sample.goodnewsgrpfieldhidden.chunk.tpl'),
+], '', true, true);
 
 $chunks[++$i] = $modx->newObject('modChunk');
-$chunks[$i]->fromArray(array(
+$chunks[$i]->fromArray([
     'id'          => $i,
-    'name'        => 'sample.GoodNewsGrpFieldsetTpl',
+    'name'        => 'sample.GoodNewsGrpFieldsetChunk',
     'description' => 'The template code for a GoodNews group form fieldset. Duplicate this to override it.',
-    'snippet'     => file_get_contents($sources['chunks'].'sample.goodnewsgrpfieldset.chunk.tpl'),
-), '', true, true);
+    'snippet'     => file_get_contents($sources['chunks'] . 'sample.goodnewsgrpfieldset.chunk.tpl'),
+], '', true, true);
 
 $chunks[++$i] = $modx->newObject('modChunk');
-$chunks[$i]->fromArray(array(
+$chunks[$i]->fromArray([
     'id'          => $i,
-    'name'        => 'sample.GoodNewsGrpNameTpl',
+    'name'        => 'sample.GoodNewsGrpNameChunk',
     'description' => 'The template code for a GoodNews group name only output. Duplicate this to override it.',
-    'snippet'     => file_get_contents($sources['chunks'].'sample.goodnewsgrpname.chunk.tpl'),
-), '', true, true);
+    'snippet'     => file_get_contents($sources['chunks'] . 'sample.goodnewsgrpname.chunk.tpl'),
+], '', true, true);
 
 $chunks[++$i] = $modx->newObject('modChunk');
-$chunks[$i]->fromArray(array(
+$chunks[$i]->fromArray([
     'id'          => $i,
-    'name'        => 'sample.GoodNewsNewsletterRowTpl',
+    'name'        => 'sample.GoodNewsNewsletterRowChunk',
     'description' => 'The template code for a GoodNews newsletter row in containers output. Duplicate this to override it.',
-    'snippet'     => file_get_contents($sources['chunks'].'sample.goodnewsnewsletterrow.chunk.tpl'),
-), '', true, true);
+    'snippet'     => file_get_contents($sources['chunks'] . 'sample.goodnewsnewsletterrow.chunk.tpl'),
+], '', true, true);
 
 $chunks[++$i] = $modx->newObject('modChunk');
-$chunks[$i]->fromArray(array(
+$chunks[$i]->fromArray([
     'id'          => $i,
-    'name'        => 'sample.GoodNewsContentCollectionWrapperTpl',
+    'name'        => 'sample.GoodNewsContentCollectionWrapperChunk',
     'description' => 'The template code for a GoodNews content collection wrapper for rows in mailing content output. Duplicate this to override it.',
-    'snippet'     => file_get_contents($sources['chunks'].'sample.goodnewscontentcollectionwrapper.chunk.tpl'),
-), '', true, true);
+    'snippet'     => file_get_contents($sources['chunks'] . 'sample.goodnewscontentcollectionwrapper.chunk.tpl'),
+], '', true, true);
 
 $chunks[++$i] = $modx->newObject('modChunk');
-$chunks[$i]->fromArray(array(
+$chunks[$i]->fromArray([
     'id'          => $i,
-    'name'        => 'sample.GoodNewsContentCollectionRowTpl',
+    'name'        => 'sample.GoodNewsContentCollectionRowChunk',
     'description' => 'The template code for a GoodNews content collection row in mailing content output. Duplicate this to override it.',
-    'snippet'     => file_get_contents($sources['chunks'].'sample.goodnewscontentcollectionrow.chunk.tpl'),
-), '', true, true);
+    'snippet'     => file_get_contents($sources['chunks'] . 'sample.goodnewscontentcollectionrow.chunk.tpl'),
+], '', true, true);
 
 $chunks[++$i] = $modx->newObject('modChunk');
-$chunks[$i]->fromArray(array(
+$chunks[$i]->fromArray([
     'id'          => $i,
-    'name'        => 'sample.GoodNewsSubscriptionBoxTpl',
+    'name'        => 'sample.GoodNewsSubscriptionBoxChunk',
     'description' => 'The template code for a GoodNews subscription box to be placed somewhere on you site. Duplicate this to override it.',
-    'snippet'     => file_get_contents($sources['chunks'].'sample.goodnewssubscriptionbox.chunk.tpl'),
-), '', true, true);
+    'snippet'     => file_get_contents($sources['chunks'] . 'sample.goodnewssubscriptionbox.chunk.tpl'),
+], '', true, true);
 
 $chunks[++$i] = $modx->newObject('modChunk');
-$chunks[$i]->fromArray(array(
+$chunks[$i]->fromArray([
     'id'          => $i,
-    'name'        => 'sample.GoodNewsSubscriptionEmailTpl',
+    'name'        => 'sample.GoodNewsSubscriptionEmailChunk',
     'description' => 'The HTML content of the GoodNews subscription success email body. Duplicate this to override it.',
-    'snippet'     => file_get_contents($sources['chunks'].'sample.goodnewssubscriptionemail.chunk.tpl'),
-), '', true, true);
+    'snippet'     => file_get_contents($sources['chunks'] . 'sample.goodnewssubscriptionemail.chunk.tpl'),
+], '', true, true);
 
 $chunks[++$i] = $modx->newObject('modChunk');
-$chunks[$i]->fromArray(array(
+$chunks[$i]->fromArray([
     'id'          => $i,
-    'name'        => 'sample.GoodNewsReSubscriptionEmailTpl',
+    'name'        => 'sample.GoodNewsReSubscriptionEmailChunk',
     'description' => 'The HTML content of the GoodNews renewal email body. Duplicate this to override it.',
-    'snippet'     => file_get_contents($sources['chunks'].'sample.goodnewsresubscriptionemail.chunk.tpl'),
-), '', true, true);
+    'snippet'     => file_get_contents($sources['chunks'] . 'sample.goodnewsresubscriptionemail.chunk.tpl'),
+], '', true, true);
 
 $chunks[++$i] = $modx->newObject('modChunk');
-$chunks[$i]->fromArray(array(
+$chunks[$i]->fromArray([
     'id'          => $i,
-    'name'        => 'sample.GoodNewsRequestLinksEmailTpl',
+    'name'        => 'sample.GoodNewsRequestLinksEmailChunk',
     'description' => 'The HTML content of the GoodNews request links email body. Duplicate this to override it.',
-    'snippet'     => file_get_contents($sources['chunks'].'sample.goodnewsrequestlinksemail.chunk.tpl'),
-), '', true, true);
+    'snippet'     => file_get_contents($sources['chunks'] . 'sample.goodnewsrequestlinksemail.chunk.tpl'),
+], '', true, true);
 
 $chunks[++$i] = $modx->newObject('modChunk');
-$chunks[$i]->fromArray(array(
+$chunks[$i]->fromArray([
     'id'          => $i,
-    'name'        => 'sample.GoodNewsStatusEmailTpl',
+    'name'        => 'sample.GoodNewsStatusEmailChunk',
     'description' => 'The HTML content of the GoodNews status email body. Duplicate this to override it.',
-    'snippet'     => file_get_contents($sources['chunks'].'sample.goodnewsstatusemail.chunk.tpl'),
-), '', true, true);
+    'snippet'     => file_get_contents($sources['chunks'] . 'sample.goodnewsstatusemail.chunk.tpl'),
+], '', true, true);
 
 
 // For GoodNews registrations
 
 $chunks[++$i] = $modx->newObject('modChunk');
-$chunks[$i]->fromArray(array(
+$chunks[$i]->fromArray([
     'id'          => $i,
-    'name'        => 'sample.GoodNewsActivationRegEmailTpl',
+    'name'        => 'sample.GoodNewsActivationRegEmailChunk',
     'description' => 'The HTML content of the email body for activating GoodNews registrations including newsletter subscriptions. Duplicate this to override it.',
-    'snippet'     => file_get_contents($sources['chunks'].'sample.goodnewsactivationregemail.chunk.tpl'),
-), '', true, true);
+    'snippet'     => file_get_contents($sources['chunks'] . 'sample.goodnewsactivationregemail.chunk.tpl'),
+], '', true, true);
 
 $chunks[++$i] = $modx->newObject('modChunk');
-$chunks[$i]->fromArray(array(
+$chunks[$i]->fromArray([
     'id'          => $i,
-    'name'        => 'sample.GoodNewsReRegistrationEmailTpl',
+    'name'        => 'sample.GoodNewsReRegistrationEmailChunk',
     'description' => 'The HTML content of the GoodNews registration/subscription renewal email body. Duplicate this to override it.',
-    'snippet'     => file_get_contents($sources['chunks'].'sample.goodnewsreregistrationemail.chunk.tpl'),
-), '', true, true);
+    'snippet'     => file_get_contents($sources['chunks'] . 'sample.goodnewsreregistrationemail.chunk.tpl'),
+], '', true, true);
 
 unset($i);
 return $chunks;

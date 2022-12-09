@@ -18,6 +18,22 @@
  * Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
+use MODX\Revolution\modX;
+use MODX\Revolution\modMenu;
+use MODX\Revolution\modCategory;
+use MODX\Revolution\modChunk;
+use MODX\Revolution\modNamespace;
+use MODX\Revolution\modPlugin;
+use MODX\Revolution\modPluginEvent;
+use MODX\Revolution\modSnippet;
+use MODX\Revolution\modSystemSetting;
+use MODX\Revolution\modTemplate;
+use MODX\Revolution\modTemplateVar;
+use MODX\Revolution\modTemplateVarTemplate;
+use MODX\Revolution\modResource;
+use MODX\Revolution\Transport\modTransportPackage;
+use MODX\Revolution\Error\modError;
+
 /**
  * Helper functions for _bootstrap
  *
@@ -249,7 +265,7 @@ function createDatabaseTables(&$modx, $tables) {
             ++$count;
             $modx->log(modX::LOG_LEVEL_INFO, '-> added database table: ' . $tableName);
         } else {
-            $modx->log(modX::LOG_LEVEL_INFO, '-> database table ' . $tableName , ' already exists - skipped!');
+            $modx->log(modX::LOG_LEVEL_INFO, '-> database table ' . $tableName . ' already exists - skipped!');
         }
     }
     

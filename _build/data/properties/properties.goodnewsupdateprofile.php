@@ -127,7 +127,7 @@ $properties = array(
         'desc'    => 'prop_goodnewsupdateprofile.grpfieldsettpl_desc',
         'type'    => 'textfield',
         'options' => '',
-        'value'   => 'sample.GoodNewsGrpFieldsetTpl',
+        'value'   => 'sample.GoodNewsGrpFieldsetChunk',
         'lexicon' => 'goodnews:properties',
     ),
     array(
@@ -135,7 +135,7 @@ $properties = array(
         'desc'    => 'prop_goodnewsupdateprofile.grpnametpl_desc',
         'type'    => 'textfield',
         'options' => '',
-        'value'   => 'sample.GoodNewsGrpNameTpl',
+        'value'   => 'sample.GoodNewsGrpNameChunk',
         'lexicon' => 'goodnews:properties',
     ),
     array(
@@ -143,7 +143,7 @@ $properties = array(
         'desc'    => 'prop_goodnewsupdateprofile.grpfieldtpl_desc',
         'type'    => 'textfield',
         'options' => '',
-        'value'   => 'sample.GoodNewsGrpFieldTpl',
+        'value'   => 'sample.GoodNewsGrpFieldChunk',
         'lexicon' => 'goodnews:properties',
     ),
     array(
@@ -151,7 +151,7 @@ $properties = array(
         'desc'    => 'prop_goodnewsupdateprofile.grpfieldhiddentpl_desc',
         'type'    => 'textfield',
         'options' => '',
-        'value'   => 'sample.GoodNewsGrpFieldHiddenTpl',
+        'value'   => 'sample.GoodNewsGrpFieldHiddenChunk',
         'lexicon' => 'goodnews:properties',
     ),
     array(
@@ -159,7 +159,7 @@ $properties = array(
         'desc'    => 'prop_goodnewsupdateprofile.catfieldtpl_desc',
         'type'    => 'textfield',
         'options' => '',
-        'value'   => 'sample.GoodNewsCatFieldTpl',
+        'value'   => 'sample.GoodNewsCatFieldChunk',
         'lexicon' => 'goodnews:properties',
     ),
     array(
@@ -167,7 +167,7 @@ $properties = array(
         'desc'    => 'prop_goodnewsupdateprofile.catfieldhiddentpl_desc',
         'type'    => 'textfield',
         'options' => '',
-        'value'   => 'sample.GoodNewsCatFieldHiddenTpl',
+        'value'   => 'sample.GoodNewsCatFieldHiddenChunk',
         'lexicon' => 'goodnews:properties',
     ),
     array(

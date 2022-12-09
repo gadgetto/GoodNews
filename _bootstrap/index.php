@@ -18,9 +18,25 @@
  * Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
+use MODX\Revolution\modX;
+use MODX\Revolution\modMenu;
+use MODX\Revolution\modCategory;
+use MODX\Revolution\modChunk;
+use MODX\Revolution\modNamespace;
+use MODX\Revolution\modPlugin;
+use MODX\Revolution\modPluginEvent;
+use MODX\Revolution\modSnippet;
+use MODX\Revolution\modSystemSetting;
+use MODX\Revolution\modTemplate;
+use MODX\Revolution\modTemplateVar;
+use MODX\Revolution\modTemplateVarTemplate;
+use MODX\Revolution\modResource;
+use MODX\Revolution\Transport\modTransportPackage;
+use MODX\Revolution\Error\modError;
+
 /**
  * Bootstrap script for setting up GoodNews development environment
- * (supports MODX version 2.3.0 up to 2.8.x)
+ * (supports MODX version 3.0.0 up to *)
  *
  * @package goodnews
  * @subpackage bootstrap
@@ -35,6 +51,11 @@ set_time_limit(0);
 /* Define package name and namespace */
 define('PKG_NAME', 'GoodNews');
 define('PKG_NAMESPACE', strtolower(PKG_NAME));
+define('MIN_MODX_VERSION', '3.0.0');
+define('MAX_MODX_VERSION', '');
+define('MIN_PHP_VERSION', '7.2');
+
+$className = PKG_NAME . '\\' . PKG_NAME;
 
 /* Define paths */
 $root = dirname(__DIR__, 1) . '/';
@@ -52,19 +73,25 @@ $sources = array(
     'snippets'         => $root . 'core/components/' . PKG_NAMESPACE . '/elements/snippets/',
     'templates'        => $root . 'core/components/' . PKG_NAMESPACE . '/elements/templates/',
     'source_core'      => $root . 'core/components/' . PKG_NAMESPACE . '/',
+    'source_src'       => $root . 'core/components/' . PKG_NAMESPACE . '/src/',
+    'source_model'     => $root . 'core/components/' . PKG_NAMESPACE . '/src/Model/',
     'source_assets'    => $root . 'assets/components/' . PKG_NAMESPACE . '/',
-    'source_model'     => $root . 'core/components/' . PKG_NAMESPACE . '/model/' . PKG_NAMESPACE . '/',
 );
 unset($root);
 
 require_once $sources['root'] . 'config.core.php';
-require_once MODX_CORE_PATH . 'model/modx/modx.class.php';
+require_once MODX_CORE_PATH . 'vendor/autoload.php';
 require_once $sources['includes'] . 'functions.php';
 
-/* Connect to MODX */
+/* Load MODX */
 $modx = new modX();
 $modx->initialize('mgr');
-$modx->getService('error','error.modError', '', '');
+if (!$modx->services->has('error')) {
+    $modx->services->add('error', function($c) use ($modx) {
+        return new modError($modx);
+    });
+}
+$modx->error = $modx->services->get('error');
 $modx->setLogLevel(modX::LOG_LEVEL_INFO);
 $modx->setLogTarget('ECHO');
 echo '<pre>';
@@ -72,7 +99,7 @@ flush();
 
 $modx->log(modX::LOG_LEVEL_INFO, 'Building development environment for <b>' . PKG_NAME . '</b>...');
 
-/* Get MODX version, eg. '2.8.4-pl' */
+/* Get MODX version, eg. '3.0.2-pl' */
 $modXversion = $modx->getVersionData();
 $modXversion = $modXversion['full_version'];
 $modx->log(modX::LOG_LEVEL_INFO, 'MODX version: ' . $modXversion);
@@ -93,18 +120,82 @@ if (existsNamespace($modx, PKG_NAMESPACE)) {
     exit();
 }
 
-/** @var GoodNews $goodnews */
-$goodnews = $modx->getService(PKG_NAMESPACE, PKG_NAME, $sources['source_model'], array(
-    PKG_NAMESPACE . '.core_path' => $sources['source_core'],
-));
-$class = PKG_NAME;
-if (!$goodnews instanceof $class) {
+/* Check system requirements */
+$modx->log(modX::LOG_LEVEL_WARN, 'Checking if system meets minimum requirements...');
+$success = true;
+
+/* Check min/max MODX version */
+if (!empty(MIN_MODX_VERSION)) {
+    $level = modX::LOG_LEVEL_INFO;
+    if (version_compare($modXversion, MIN_MODX_VERSION, '<=')) {
+        $level = modX::LOG_LEVEL_ERROR;
+        $success = false;
+    }
+    $modx->log($level, '-> min. required MODX Revo version: ' . MIN_MODX_VERSION . ' -- found: <b>' . $modXversion . '</b>');
+    if (!$success) {
+        $modx->log(modX::LOG_LEVEL_INFO, 'Building development environment stopped!');
+        flush();
+        exit();
+    }
+}
+if (!empty(MAX_MODX_VERSION)) {
+    $level = modX::LOG_LEVEL_INFO;
+    if (version_compare($modXversion, MAX_MODX_VERSION, '>=')) {
+        $level = modX::LOG_LEVEL_ERROR;
+        $success = false;
+    }
+    $modx->log($level, '-> max. required MODX Revo version: ' . MAX_MODX_VERSION . ' -- found: <b>' . $modXversion . '</b>');
+    if (!$success) {
+        $modx->log(modX::LOG_LEVEL_INFO, 'Building development environment stopped!');
+        flush();
+        exit();
+    }
+}
+
+/* Check PHP version */
+if (!empty(MIN_PHP_VERSION)) {
+    $level = modX::LOG_LEVEL_INFO;
+    if (version_compare(PHP_VERSION, MIN_PHP_VERSION, '<=')) {
+        $level = modX::LOG_LEVEL_ERROR;
+        $success = false;
+    }
+    $modx->log($level, '-> min. required PHP version: ' . MIN_PHP_VERSION . ' -- found: <b>' . PHP_VERSION . '</b>');
+    if (!$success) {
+        $modx->log(modX::LOG_LEVEL_INFO, 'Building development environment stopped!');
+        flush();
+        exit();
+    }
+}
+flush();
+unset($success, $level);
+
+/* Add package */
+if ($modx->addPackage(PKG_NAME . '\Model', $sources['source_src'], null, PKG_NAME . '\\')) {
+    $modx->log(modX::LOG_LEVEL_ERROR, PKG_NAME . ' package added.');
+} else {
+    $modx->log(modX::LOG_LEVEL_ERROR, PKG_NAME . ' package could not be added.');
+    $modx->log(modX::LOG_LEVEL_INFO, 'Building development environment failed!');
+    flush();
+    exit();
+}
+flush();
+
+/* Add package service */
+if (!$modx->services->has(PKG_NAMESPACE)) {
+    $modx->services->add(PKG_NAMESPACE, function($c) use ($modx, $className) {
+        return new $className($modx);
+    });
+}
+$service = $modx->services->get(PKG_NAMESPACE);
+if ($service instanceof $className) {
+    $modx->log(modX::LOG_LEVEL_ERROR, PKG_NAME . ' service loaded.');
+} else {
     $modx->log(modX::LOG_LEVEL_ERROR, PKG_NAME . ' service could not be loaded.');
     $modx->log(modX::LOG_LEVEL_INFO, 'Building development environment failed!');
     flush();
     exit();
 }
-unset($class);
+flush();
 
 /* Create namespace */
 $modx->log(modX::LOG_LEVEL_INFO, 'Adding namespace...');
@@ -120,6 +211,7 @@ if (createObject($modx, 'modNamespace', array(
     flush();
     exit();
 }
+flush();
 
 /* Add menus (using sources from _build/data/ directory) */
 $menus = include $sources['build_data'] . 'transport.menus.php';
@@ -200,7 +292,6 @@ if (!empty($plugins) && is_array($plugins)) {
 flush();
 unset($plugins, $plugin, $pluginPath, $pluginName);
 
-
 /* Add snippets (as static elements) (using sources from _build/data/ directory) */
 $snippets = include $sources['build_data'] . 'transport.snippets.php';
 $modx->log(modX::LOG_LEVEL_INFO, 'Adding snippets...');
@@ -230,23 +321,11 @@ $chunks = include $sources['build_data'] . 'transport.chunks.php';
 $modx->log(modX::LOG_LEVEL_INFO, 'Adding chunks...');
 if (!empty($chunks) && is_array($chunks)) {
     foreach ($chunks as $chunk) {
-        $chunkName = $chunk->get('name');
+        $chunkName = str_replace('Chunk', '', $chunk->get('name'));
         $chunk->set('category', $defaultCategoryId);
         $chunk->set('source', 0);
         $chunk->set('static', true);
         $chunk->set('snippet', '');
-        
-        // Quickfix: need to remove "Tpl" from chunk name, because the name of the
-        // files belonging to the chunks don't match:
-        //
-        // sample:
-        //
-        // chunk name: sample.GoodNewsActivationEmailTpl (<- "Tpl" needs to be removed)
-        // file name:  sample.goodnewsactivationemail.chunk.tpl
-        //
-        // @todo: match chunk names and file names (in MODX 3 version?)
-        $chunkName = str_replace('Tpl', '', $chunkName);
-        
         $chunkPath = $sources['chunks'] . strtolower($chunkName) . '.chunk.tpl';
         $chunk->set('static_file', $chunkPath);
         if ($chunk->save()) {
@@ -266,7 +345,7 @@ $templates = include $sources['build_data'] . 'transport.templates.php';
 $modx->log(modX::LOG_LEVEL_INFO, 'Adding templates...');
 if (!empty($templates) && is_array($templates)) {
     foreach ($templates as $template) {
-        $templateName = $template->get('templatename');
+        $templateName = str_replace('Template', '', $template->get('templatename'));
         $templateCategory = $template->get('category');
         if (!empty($templateCategory)) {
             $categoryId = getCategoryID($modx, $templateCategory);
@@ -276,19 +355,7 @@ if (!empty($templates) && is_array($templates)) {
         $template->set('category', $categoryId);
         $template->set('source', 0);
         $template->set('static', true);
-        $template->set('content', '');
-                
-        // Quickfix: need to remove "Template" from template name, because the name of the
-        // files belonging to the templates don't match:
-        //
-        // sample:
-        //
-        // template name: sample.GoodNewsNewsletterTemplate1 (<- "Template" needs to be removed)
-        // file name:     sample.goodnewsnewsletter1.template.tpl'
-        //
-        // @todo: match template names and file names (in MODX 3 version?)
-        $templateName = str_replace('Template', '', $templateName);
-                
+        $template->set('content', '');                
         $templatePath = $sources['templates'] . strtolower($templateName) . '.template.tpl';
         $template->set('static_file', $templatePath);
         if ($template->save()) {
@@ -310,12 +377,6 @@ unset($templates, $template, $templatePath, $templateName);
  * The following parts are equivalent to the resolvers/validators of build script
  */
 
-/* Add package to extension_packages (system setting) */
-$modx->log(modX::LOG_LEVEL_INFO, 'Adding package ' . PKG_NAME . ' to extension_packages system setting...');
-$modx->removeExtensionPackage(PKG_NAMESPACE);
-$modx->addExtensionPackage(PKG_NAMESPACE, $sources['source_core'] . 'model/');
-flush();
- 
 /* Add development path settings */
 $modx->log(modX::LOG_LEVEL_INFO, 'Adding development path settings...');
 if (createSystemSetting($modx, 'core_path', $sources['source_core'], PKG_NAMESPACE)) {
@@ -337,7 +398,7 @@ if (createSystemSetting($modx, 'assets_url', fetchAssetsUrl(PKG_NAMESPACE), PKG_
 }
 flush();
 
-/* Create database tables (using sources from _bootstrap/data/ directory) */
+/* Create custom database tables (using sources from _bootstrap/data/ directory) */
 $tables = include $sources['bootstrap_data'] . 'dbtables.php';
 createDatabaseTables($modx, $tables);
 flush();

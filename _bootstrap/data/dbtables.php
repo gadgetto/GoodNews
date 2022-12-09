@@ -26,15 +26,15 @@
  */
 
 $tables = [
-    'GoodNewsMailingMeta',
-    'GoodNewsRecipient',
-    'GoodNewsSubscriberMeta',
-    'GoodNewsSubscriberLog',
-    'GoodNewsGroup',
-    'GoodNewsGroupMember',
-    'GoodNewsCategory',
-    'GoodNewsCategoryMember',
-    'GoodNewsProcess',
+    'GoodNews\Model\GoodNewsMailingMeta',
+    'GoodNews\Model\GoodNewsRecipient',
+    'GoodNews\Model\GoodNewsSubscriberMeta',
+    'GoodNews\Model\GoodNewsSubscriberLog',
+    'GoodNews\Model\GoodNewsGroup',
+    'GoodNews\Model\GoodNewsGroupMember',
+    'GoodNews\Model\GoodNewsCategory',
+    'GoodNews\Model\GoodNewsCategoryMember',
+    'GoodNews\Model\GoodNewsProcess',
 ];
 
 return $tables;

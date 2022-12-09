@@ -18,6 +18,8 @@
  * Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
+use MODX\Revolution\modMenu;
+
 /**
  * Adds menus to package
  *
@@ -36,11 +38,11 @@ Note: will route to the first found of the following:
 [namespace-path]controllers/index.class.php
 */
 
-$menus = array();
+$menus = [];
 $i = 0;
 
 $menus[++$i] = $modx->newObject('modMenu');
-$menus[$i]->fromArray(array(
+$menus[$i]->fromArray([
     'id'          => $i,
     'text'        => 'goodnews',
     'parent'      => 'components',
@@ -51,7 +53,7 @@ $menus[$i]->fromArray(array(
     'handler'     => '',
     'action'      => 'index',
     'namespace'   => 'goodnews',
-), '', true, true);
+], '', true, true);
 
 unset($i);
 return $menus;

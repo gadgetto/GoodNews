@@ -63,7 +63,7 @@ $properties = array(
         'desc'    => 'prop_goodnewsconfirmsubscription.subscriptionemailtpl_desc',
         'type'    => 'textfield',
         'options' => '',
-        'value'   => 'sample.GoodNewsSubscriptionEmailTpl',
+        'value'   => 'sample.GoodNewsSubscriptionEmailChunk',
         'lexicon' => 'goodnews:properties',
     ),
     array(

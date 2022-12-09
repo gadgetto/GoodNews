@@ -27,7 +27,7 @@
 
 $epoch = time();
 
-$entries['GoodNewsGroup'] = [
+$entries['GoodNews\Model\GoodNewsGroup'] = [
     'name'          => 'Newsletters',
     'description'   => 'Default newsletters group',
     'modxusergroup' => 0,
