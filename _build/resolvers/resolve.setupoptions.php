@@ -25,11 +25,11 @@
  * @subpackage build
  */
 
-$settings = array(
+$settings = [
     //'setting1',
     //'setting2',
     //'setting3',
-);
+];
 
 
 if ($object->xpdo) {
@@ -44,7 +44,7 @@ if ($object->xpdo) {
             if (!empty($settings) && is_array($settings)) {
                 foreach ($settings as $key) {
                     if (isset($options[$key])) {
-                        $setting = $modx->getObject('modSystemSetting', array('key' => 'goodnews.' . $key));
+                        $setting = $modx->getObject('modSystemSetting', ['key' => 'goodnews.' . $key]);
                         if ($setting != null) {
                             $setting->set('value', $options[$key]);
                             $setting->save();

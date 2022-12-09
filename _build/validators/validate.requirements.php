@@ -35,7 +35,7 @@ switch ($options[xPDOTransport::PACKAGE_ACTION]) {
         $success = true;
 
         // Only check requirements if not already done
-        $setting = $modx->getObject('modSystemSetting', array('key' => 'goodnews.system_requirements_ok'));
+        $setting = $modx->getObject('modSystemSetting', ['key' => 'goodnews.system_requirements_ok']);
         if (is_object($setting) && !empty($setting->get('value'))) {
             break;
         }
@@ -60,18 +60,18 @@ switch ($options[xPDOTransport::PACKAGE_ACTION]) {
         if ($success) {
             // If OK create system setting to store requirements state
             $setting = $modx->newObject('modSystemSetting');
-            $setting->fromArray(array(
+            $setting->fromArray([
                 'key'       => 'goodnews.system_requirements_ok',
                 'value'     => 'MODX Revolution ' . $modxVersion['full_version'] . ', PHP ' . PHP_VERSION,
                 'xtype'     => 'textfield',
                 'namespace' => 'goodnews',
                 'area'      => '',
-            ), '', true, true);
+            ], '', true, true);
             $setting->save();
             $modx->log(modX::LOG_LEVEL_INFO, '<b style="color: green;">Minimum requirements for PHP and MODX versions reached!</b>');
         } else {
             // Remove system setting with requirements state (rollback)
-            $setting = $modx->getObject('modSystemSetting', array('key' => 'goodnews.system_requirements_ok'));
+            $setting = $modx->getObject('modSystemSetting', ['key' => 'goodnews.system_requirements_ok']);
             if (is_object($setting)) {
                 $setting->remove();
             }
@@ -84,7 +84,7 @@ switch ($options[xPDOTransport::PACKAGE_ACTION]) {
         $success = true;
         
         // Remove system setting which stores requirements state
-        $setting = $modx->getObject('modSystemSetting', array('key' => 'goodnews.system_requirements_ok'));
+        $setting = $modx->getObject('modSystemSetting', ['key' => 'goodnews.system_requirements_ok']);
         if (is_object($setting)) {
             $setting->remove();
         }

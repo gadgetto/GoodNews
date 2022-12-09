@@ -25,11 +25,11 @@
  * @subpackage build
  */
 
-$resources = array();
+$resources = [];
 $i = 0;
 $epoch = time();
 
-$resources[++$i] = array(
+$resources[++$i] = [
     'type'                  => 'document',
     'contentType'           => 'text/html',
     'pagetitle'             => 'GoodNews Subscription Confirm',
@@ -69,9 +69,9 @@ $resources[++$i] = array(
     'hide_children_in_tree' => 0,
     'show_in_tree'          => 1,
     'properties'            => NULL,
-);
+];
 
-$resources[++$i] = array(
+$resources[++$i] = [
     'type'                  => 'document',
     'contentType'           => 'text/html',
     'pagetitle'             => 'GoodNews Subscription Mail Sent',
@@ -111,9 +111,9 @@ $resources[++$i] = array(
     'hide_children_in_tree' => 0,
     'show_in_tree'          => 1,
     'properties'            => NULL,
-);
+];
 
-$resources[++$i] = array(
+$resources[++$i] = [
     'type'                  => 'document',
     'contentType'           => 'text/html',
     'pagetitle'             => 'GoodNews Subscription Success',
@@ -153,9 +153,9 @@ $resources[++$i] = array(
     'hide_children_in_tree' => 0,
     'show_in_tree'          => 1,
     'properties'            => NULL,
-);
+];
 
-$resources[++$i] = array(
+$resources[++$i] = [
     'type'                  => 'document',
     'contentType'           => 'text/html',
     'pagetitle'             => 'GoodNews Subscription Update',
@@ -195,9 +195,9 @@ $resources[++$i] = array(
     'hide_children_in_tree' => 0,
     'show_in_tree'          => 1,
     'properties'            => NULL,
-);
+];
 
-$resources[++$i] = array(
+$resources[++$i] = [
     'type'                  => 'document',
     'contentType'           => 'text/html',
     'pagetitle'             => 'GoodNews Profile Update',
@@ -237,9 +237,9 @@ $resources[++$i] = array(
     'hide_children_in_tree' => 0,
     'show_in_tree'          => 1,
     'properties'            => NULL,
-);
+];
 
-$resources[++$i] = array(
+$resources[++$i] = [
     'type'                  => 'document',
     'contentType'           => 'text/html',
     'pagetitle'             => 'GoodNews Subscription',
@@ -279,9 +279,9 @@ $resources[++$i] = array(
     'hide_children_in_tree' => 0,
     'show_in_tree'          => 1,
     'properties'            => NULL,
-);
+];
 
-$resources[++$i] = array(
+$resources[++$i] = [
     'type'                  => 'document',
     'contentType'           => 'text/html',
     'pagetitle'             => 'GoodNews Unsubscribe',
@@ -321,9 +321,9 @@ $resources[++$i] = array(
     'hide_children_in_tree' => 0,
     'show_in_tree'          => 1,
     'properties'            => NULL,
-);
+];
 
-$resources[++$i] = array(
+$resources[++$i] = [
     'type'                  => 'document',
     'contentType'           => 'text/html',
     'pagetitle'             => 'GoodNews Request Links',
@@ -363,9 +363,9 @@ $resources[++$i] = array(
     'hide_children_in_tree' => 0,
     'show_in_tree'          => 1,
     'properties'            => NULL,
-);
+];
 
-$resources[++$i] = array(
+$resources[++$i] = [
     'type'                  => 'document',
     'contentType'           => 'text/html',
     'pagetitle'             => 'GoodNews Registration Confirm',
@@ -405,9 +405,9 @@ $resources[++$i] = array(
     'hide_children_in_tree' => 0,
     'show_in_tree'          => 1,
     'properties'            => NULL,
-);
+];
 
-$resources[++$i] = array(
+$resources[++$i] = [
     'type'                  => 'document',
     'contentType'           => 'text/html',
     'pagetitle'             => 'GoodNews Registration Mail Sent',
@@ -447,9 +447,9 @@ $resources[++$i] = array(
     'hide_children_in_tree' => 0,
     'show_in_tree'          => 1,
     'properties'            => NULL,
-);
+];
 
-$resources[++$i] = array(
+$resources[++$i] = [
     'type'                  => 'document',
     'contentType'           => 'text/html',
     'pagetitle'             => 'GoodNews Registration',
@@ -489,9 +489,9 @@ $resources[++$i] = array(
     'hide_children_in_tree' => 0,
     'show_in_tree'          => 1,
     'properties'            => NULL,
-);
+];
 
-$resources[++$i] = array(
+$resources[++$i] = [
     'type'                  => 'document',
     'contentType'           => 'text/html',
     'pagetitle'             => 'GoodNews Terms and Conditions',
@@ -531,9 +531,9 @@ $resources[++$i] = array(
     'hide_children_in_tree' => 0,
     'show_in_tree'          => 1,
     'properties'            => NULL,
-);
+];
 
-$resources[++$i] = array(
+$resources[++$i] = [
     'type'                  => 'document',
     'contentType'           => 'text/html',
     'pagetitle'             => 'GoodNews Privacy Policy',
@@ -573,7 +573,7 @@ $resources[++$i] = array(
     'hide_children_in_tree' => 0,
     'show_in_tree'          => 1,
     'properties'            => NULL,
-);
+];
 
 
 /**
@@ -600,10 +600,10 @@ if (!function_exists('createResources')) {
 
             $upd = true;
             /** @var modResource $resource */
-            $resource = $modx->getObject('modResource', array('pagetitle' => $fieldvalues['pagetitle']));
+            $resource = $modx->getObject('modResource', ['pagetitle' => $fieldvalues['pagetitle']]);
             if (!is_object($resource)) {
                 $upd = false;
-                $resource = $modx->newObject('modResource', array('pagetitle' => $fieldvalues['pagetitle']));
+                $resource = $modx->newObject('modResource', ['pagetitle' => $fieldvalues['pagetitle']]);
             }
             
             // Replace Resource template name with Resource template content
@@ -623,7 +623,7 @@ if (!function_exists('createResources')) {
                 if ($fieldvalues['template'] == 'default') {
                     $fieldvalues['template'] = $modx->getOption('default_template');
                 } else {
-                    $templateObj = $modx->getObject('modTemplate', array('templatename' => $fieldvalues['template']));
+                    $templateObj = $modx->getObject('modTemplate', ['templatename' => $fieldvalues['template']]);
                     if ($templateObj) {
                         $fieldvalues['template'] = $templateObj->get('id');
                     } else {
@@ -634,7 +634,7 @@ if (!function_exists('createResources')) {
             
             // Replace parent Resource name with Resource ID in $fieldvalues
             if (!empty($fieldvalues['parent'])) {
-                $parentObj = $modx->getObject('modResource', array('pagetitle' => $fieldvalues['parent']));
+                $parentObj = $modx->getObject('modResource', ['pagetitle' => $fieldvalues['parent']]);
                 if ($parentObj) {
                     $fieldvalues['parent'] = $parentObj->get('id');
                 } else {
@@ -676,7 +676,7 @@ if (!function_exists('deleteResources')) {
         foreach ($resources as $key => $fieldvalues) {
 
             /** @var modResource $resource */
-            $resource = $modx->getObject('modResource', array('pagetitle' => $fieldvalues['pagetitle']));
+            $resource = $modx->getObject('modResource', ['pagetitle' => $fieldvalues['pagetitle']]);
             if (is_object($resource)) {
                 $resource->remove();
                 $modx->log(modX::LOG_LEVEL_INFO, '-> removed sample resource document: ' . $fieldvalues['pagetitle']);

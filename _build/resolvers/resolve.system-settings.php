@@ -26,17 +26,17 @@
  */
 
 $i = 0;
-$settingsAttributes[++$i] = array(
+$settingsAttributes[++$i] = [
     'key'   => 'goodnews.default_container_template',
     'value' => 'sample.GoodNewsContainerTemplate', // Literal name will be converted to ID later
     'xtype' => 'modx-combo-template',
-);
+];
  /*
- $settingsAttributes[++$i] = array(
+ $settingsAttributes[++$i] = [
      'key'   => 'key_name',
      'value' => 'somevalue',
      'xtype' => 'modx-combo-boolean',
- );
+ ];
  */
 
 
@@ -52,7 +52,7 @@ if ($object->xpdo) {
                     $modx->log(modX::LOG_LEVEL_INFO, 'System settings rersolver - assign settings...');
                     
                     // Check if setting exists
-                    $setting = $modx->getObject('modSystemSetting', array('key' => $attributes['key']));
+                    $setting = $modx->getObject('modSystemSetting', ['key' => $attributes['key']]);
                     if (!$setting) {
                         $modx->log(modX::LOG_LEVEL_ERROR, '-> could not find setting: ' . $attributes['key']);
                     } else {
@@ -60,7 +60,7 @@ if ($object->xpdo) {
                         if ($attributes['xtype'] == 'modx-combo-template') {
                             // Assign template id based on template name
                             if (!empty($attributes['value'])) {
-                                $templateObj = $modx->getObject('modTemplate', array('templatename' => $attributes['value']));
+                                $templateObj = $modx->getObject('modTemplate', ['templatename' => $attributes['value']]);
                                 if ($templateObj) {
                                     $setting->set('value', $templateObj->get('id'));
                                 } else {

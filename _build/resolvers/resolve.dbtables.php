@@ -25,7 +25,7 @@
  * @subpackage build
  */
 
-$objects = array(
+$objects = [
     'GoodNewsMailingMeta',
     'GoodNewsRecipient',
     'GoodNewsSubscriberMeta',
@@ -35,7 +35,7 @@ $objects = array(
     'GoodNewsCategory',
     'GoodNewsCategoryMember',
     'GoodNewsProcess',
-);
+];
 
 
 if ($object->xpdo) {

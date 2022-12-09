@@ -28,7 +28,7 @@
 $epoch = time();
 $i = 0;
 
-$grpAttributes[++$i] = array(
+$grpAttributes[++$i] = [
     'id'            => $i,
     'name'          => 'Newsletters',
     'description'   => 'Default newsletters group',
@@ -37,7 +37,7 @@ $grpAttributes[++$i] = array(
     'createdby'     => 0,
     'editedon'      => $epoch,
     'editedby'      => 0,
-);
+];
 
 
 if ($object->xpdo) {
@@ -57,7 +57,7 @@ if ($object->xpdo) {
                 foreach ($grpAttributes as $attributes) {
                     
                     // Check if group already exists
-                    $group = $modx->getObject('GoodNewsGroup', array('name' => $attributes['name']));
+                    $group = $modx->getObject('GoodNewsGroup', ['name' => $attributes['name']]);
                     if (!$group) {
                         // Create a GoodNews group
                         $group = $modx->newObject('GoodNewsGroup', $attributes);

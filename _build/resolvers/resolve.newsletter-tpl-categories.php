@@ -35,7 +35,7 @@
  */
 if (!function_exists('getCategoryID')) {
     function getCategoryID(&$modx, $name) {
-        $categoryObj = $modx->getObject('modCategory', array('category' => $name));
+        $categoryObj = $modx->getObject('modCategory', ['category' => $name]);
         if (!empty($categoryObj)) {
             return $categoryObj->get('id');
         } else {
@@ -57,14 +57,14 @@ if ($object->xpdo) {
             $packageName  = 'GoodNews';
             $categoryName = 'Newsletter Templates';
             
-            $newsletterTemplates = array(
+            $newsletterTemplates = [
                 'sample.GoodNewsNewsletterTemplate1',
                 'sample.GoodNewsNewsletterTemplate2',
-            );
+            ];
             
             
             // Check if category already exists
-            $category = $modx->getObject('modCategory', array('category' => $categoryName));
+            $category = $modx->getObject('modCategory', ['category' => $categoryName]);
             if ($category) {
                 $modx->log(modX::LOG_LEVEL_INFO, '-> category ' . $categoryName . ' already exists.');
             } else {
@@ -85,7 +85,7 @@ if ($object->xpdo) {
                 foreach ($newsletterTemplates as $templateName) {
                     
                     // Check if template exists
-                    $template = $modx->getObject('modTemplate', array('templatename' => $templateName));
+                    $template = $modx->getObject('modTemplate', ['templatename' => $templateName]);
                     if ($template) {
                         // Assign category
                         $template->set('category', getCategoryID($modx, $categoryName));

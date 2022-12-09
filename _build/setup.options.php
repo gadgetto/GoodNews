@@ -28,12 +28,12 @@
 $output = '';
 
 // Default field values
-$fieldvalues = array(
+$fieldvalues = [
     'install_resources' => true,
     //'setting1' => 'value',
     //'setting2' => 'value',
     //'setting3' => 'value',
-);
+];
 
 
 switch ($options[xPDOTransport::PACKAGE_ACTION]) {
@@ -41,11 +41,11 @@ switch ($options[xPDOTransport::PACKAGE_ACTION]) {
     case xPDOTransport::ACTION_UPGRADE:
         /*
         // Read system setting
-        $setting = $modx->getObject('modSystemSetting', array('key' => 'goodnews.setting1'));
+        $setting = $modx->getObject('modSystemSetting', ['key' => 'goodnews.setting1']);
         if ($setting != null) { $fieldvalues['setting1'] = $setting->get('value'); }
         unset($setting);
         
-        $setting = $modx->getObject('modSystemSetting', array('key' => 'goodnews.setting2'));
+        $setting = $modx->getObject('modSystemSetting', ['key' => 'goodnews.setting2']);
         if ($setting != null) { $fieldvalues['setting2'] = $setting->get('value'); }
         unset($setting);
         */

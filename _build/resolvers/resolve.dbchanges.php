@@ -68,7 +68,7 @@ if (!function_exists('checkAddField')) {
 
         if (existsField($modx, $xpdoTableClass, $field)) { return; }
 
-        $options = array();
+        $options = [];
         if (!empty($after)) $options['after'] = $after;
         $manager->addField($xpdoTableClass, $field, $options);
     }

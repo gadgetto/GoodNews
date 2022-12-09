@@ -61,7 +61,7 @@ switch ($options[xPDOTransport::PACKAGE_ACTION]) {
             
         // Check if GoodNews is already available in extension_packages
         // (using getObject method as we need uncached results)
-        $setting = $modx->getObject('modSystemSetting', array('key' => 'extension_packages'));
+        $setting = $modx->getObject('modSystemSetting', ['key' => 'extension_packages']);
         if (is_object($setting)) {
             $extPackages = $setting->get('value');
             $extPackages = $modx->fromJSON($extPackages);
@@ -72,7 +72,7 @@ switch ($options[xPDOTransport::PACKAGE_ACTION]) {
         
         // Add GoodNewsResource to Extension Packages system setting
         // (using getObject method as we need uncached results)
-        $setting = $modx->getObject('modSystemSetting', array('key' => 'goodnews.core_path'));
+        $setting = $modx->getObject('modSystemSetting', ['key' => 'goodnews.core_path']);
         $modelPath = '';
         if (is_object($setting)) {
             $modelPath = $setting->get('value');
@@ -91,7 +91,7 @@ switch ($options[xPDOTransport::PACKAGE_ACTION]) {
         
         // Check if GoodNews is available in extension_packages and remove it
         // (using getObject method as we need uncached results)
-        $setting = $modx->getObject('modSystemSetting', array('key' => 'extension_packages'));
+        $setting = $modx->getObject('modSystemSetting', ['key' => 'extension_packages']);
         if (is_object($setting)) {
             $extPackages = $setting->get('value');
             $extPackages = $modx->fromJSON($extPackages);
@@ -102,7 +102,7 @@ switch ($options[xPDOTransport::PACKAGE_ACTION]) {
         }
         
         // Set back all custom resources to modDocument resources
-        $resources = $modx->getIterator('modResource', array('class_key' => 'GoodNewsResourceContainer'));
+        $resources = $modx->getIterator('modResource', ['class_key' => 'GoodNewsResourceContainer']);
         foreach ($resources as $resource) {
             $resource->set('class_key', 'modDocument');
             $resource->set('hide_children_in_tree', false);
@@ -110,7 +110,7 @@ switch ($options[xPDOTransport::PACKAGE_ACTION]) {
         }
         unset($resources, $resource);
 
-        $resources = $modx->getIterator('modResource', array('class_key' => 'GoodNewsResourceMailing'));
+        $resources = $modx->getIterator('modResource', ['class_key' => 'GoodNewsResourceMailing']);
         foreach ($resources as $resource) {
             $resource->set('class_key', 'modDocument');
             $resource->set('show_in_tree', true);
