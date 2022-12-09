@@ -399,7 +399,7 @@
                                     <table border="0" cellpadding="0" cellspacing="0">
                                         <tr>
                                             <td>
-                                                [[!GoodNewsContentCollection? &collectionId=`collection1` &includeContent=`1` &tpl=`sample.GoodNewsContentCollectionRowTpl`]]
+                                                [[!GoodNewsContentCollection? &collectionId=`collection1` &includeContent=`1` &tpl=`sample.GoodNewsContentCollectionRowChunk`]]
                                             </td>
                                         </tr>
                                     </table>

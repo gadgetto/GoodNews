@@ -34,7 +34,7 @@ $output = array();
 
 // Default properties
 $parent          = !empty($parent) ? $parent : $modx->resource->get('id');
-$tpl             = !empty($tpl) ? $tpl : 'sample.GoodNewsNewsletterRowTpl';
+$tpl             = !empty($tpl) ? $tpl : 'sample.GoodNewsNewsletterRowChunk';
 $sortby          = isset($sortby) ? $sortby : 'publishedon';
 $sortdir         = isset($sortdir) ? $sortdir : 'DESC';
 $includeContent  = !empty($includeContent) ? true : false;
