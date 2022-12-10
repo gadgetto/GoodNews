@@ -1,4 +1,5 @@
 <?php
+
 /**
  * GoodNews
  *
@@ -66,13 +67,13 @@ $customresources['goodnews'] = [
     'privatemgr'            => 0,
     'content_dispo'         => 0,
     'hidemenu'              => 1,
-    'class_key'             => 'GoodNewsResourceContainer',
+    'class_key'             => 'GoodNews\Model\GoodNewsResourceContainer',
     'context_key'           => 'web',
     'content_type'          => 1,
     'uri_override'          => 0,
     'hide_children_in_tree' => 1,
     'show_in_tree'          => 1,
-    'properties'            => NULL,
+    'properties'            => null,
 ];
 
 // array key = later properties namespace
@@ -117,7 +118,7 @@ if (is_object($profileResource)) {
 $properties['goodnews']['editorGroups'] = 'Administrator';
 // default sender email address (this is also the mailbox for bounce messages)
 $properties['goodnews']['mailFrom']                        = $modx->getOption('emailsender', null, 'postmaster@mydomain.com');
-$properties['goodnews']['mailFromName']                    = $modx->getOption('site_name',   null, 'Sender Name');
+$properties['goodnews']['mailFromName']                    = $modx->getOption('site_name', null, 'Sender Name');
 $properties['goodnews']['mailReplyTo']                     = $modx->getOption('emailsender', null, 'replyto@mydomain.com');
 $properties['goodnews']['mailCharset']                     = 'UTF-8';
 $properties['goodnews']['mailEncoding']                    = '8bit';

@@ -26,15 +26,15 @@
  */
 
 $tables = [
-    'GoodNews\Model\GoodNewsMailingMeta',
-    'GoodNews\Model\GoodNewsRecipient',
-    'GoodNews\Model\GoodNewsSubscriberMeta',
-    'GoodNews\Model\GoodNewsSubscriberLog',
-    'GoodNews\Model\GoodNewsGroup',
-    'GoodNews\Model\GoodNewsGroupMember',
-    'GoodNews\Model\GoodNewsCategory',
-    'GoodNews\Model\GoodNewsCategoryMember',
-    'GoodNews\Model\GoodNewsProcess',
+    GoodNews\Model\GoodNewsMailingMeta::class,
+    GoodNews\Model\GoodNewsRecipient::class,
+    GoodNews\Model\GoodNewsSubscriberMeta::class,
+    GoodNews\Model\GoodNewsSubscriberLog::class,
+    GoodNews\Model\GoodNewsGroup::class,
+    GoodNews\Model\GoodNewsGroupMember::class,
+    GoodNews\Model\GoodNewsCategory::class,
+    GoodNews\Model\GoodNewsCategoryMember::class,
+    GoodNews\Model\GoodNewsProcess::class,
 ];
 
 return $tables;

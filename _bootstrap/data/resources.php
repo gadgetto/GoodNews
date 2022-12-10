@@ -1,4 +1,5 @@
 <?php
+
 /**
  * GoodNews
  *
@@ -64,13 +65,13 @@ $resources[++$i] = [
     'privatemgr'            => 0,
     'content_dispo'         => 0,
     'hidemenu'              => 1,
-    'class_key'             => 'modDocument',
+    'class_key'             => 'MODX\Revolution\modDocument',
     'context_key'           => 'web',
     'content_type'          => 1,
     'uri_override'          => 0,
     'hide_children_in_tree' => 0,
     'show_in_tree'          => 1,
-    'properties'            => NULL,
+    'properties'            => null,
 ];
 
 $resources[++$i] = [
@@ -106,13 +107,13 @@ $resources[++$i] = [
     'privatemgr'            => 0,
     'content_dispo'         => 0,
     'hidemenu'              => 1,
-    'class_key'             => 'modDocument',
+    'class_key'             => 'MODX\Revolution\modDocument',
     'context_key'           => 'web',
     'content_type'          => 1,
     'uri_override'          => 0,
     'hide_children_in_tree' => 0,
     'show_in_tree'          => 1,
-    'properties'            => NULL,
+    'properties'            => null,
 ];
 
 $resources[++$i] = [
@@ -148,13 +149,13 @@ $resources[++$i] = [
     'privatemgr'            => 0,
     'content_dispo'         => 0,
     'hidemenu'              => 1,
-    'class_key'             => 'modDocument',
+    'class_key'             => 'MODX\Revolution\modDocument',
     'context_key'           => 'web',
     'content_type'          => 1,
     'uri_override'          => 0,
     'hide_children_in_tree' => 0,
     'show_in_tree'          => 1,
-    'properties'            => NULL,
+    'properties'            => null,
 ];
 
 $resources[++$i] = [
@@ -190,13 +191,13 @@ $resources[++$i] = [
     'privatemgr'            => 0,
     'content_dispo'         => 0,
     'hidemenu'              => 1,
-    'class_key'             => 'modDocument',
+    'class_key'             => 'MODX\Revolution\modDocument',
     'context_key'           => 'web',
     'content_type'          => 1,
     'uri_override'          => 0,
     'hide_children_in_tree' => 0,
     'show_in_tree'          => 1,
-    'properties'            => NULL,
+    'properties'            => null,
 ];
 
 $resources[++$i] = [
@@ -232,13 +233,13 @@ $resources[++$i] = [
     'privatemgr'            => 0,
     'content_dispo'         => 0,
     'hidemenu'              => 1,
-    'class_key'             => 'modDocument',
+    'class_key'             => 'MODX\Revolution\modDocument',
     'context_key'           => 'web',
     'content_type'          => 1,
     'uri_override'          => 0,
     'hide_children_in_tree' => 0,
     'show_in_tree'          => 1,
-    'properties'            => NULL,
+    'properties'            => null,
 ];
 
 $resources[++$i] = [
@@ -274,13 +275,13 @@ $resources[++$i] = [
     'privatemgr'            => 0,
     'content_dispo'         => 0,
     'hidemenu'              => 1,
-    'class_key'             => 'modDocument',
+    'class_key'             => 'MODX\Revolution\modDocument',
     'context_key'           => 'web',
     'content_type'          => 1,
     'uri_override'          => 0,
     'hide_children_in_tree' => 0,
     'show_in_tree'          => 1,
-    'properties'            => NULL,
+    'properties'            => null,
 ];
 
 $resources[++$i] = [
@@ -316,13 +317,13 @@ $resources[++$i] = [
     'privatemgr'            => 0,
     'content_dispo'         => 0,
     'hidemenu'              => 1,
-    'class_key'             => 'modDocument',
+    'class_key'             => 'MODX\Revolution\modDocument',
     'context_key'           => 'web',
     'content_type'          => 1,
     'uri_override'          => 0,
     'hide_children_in_tree' => 0,
     'show_in_tree'          => 1,
-    'properties'            => NULL,
+    'properties'            => null,
 ];
 
 $resources[++$i] = [
@@ -358,13 +359,13 @@ $resources[++$i] = [
     'privatemgr'            => 0,
     'content_dispo'         => 0,
     'hidemenu'              => 1,
-    'class_key'             => 'modDocument',
+    'class_key'             => 'MODX\Revolution\modDocument',
     'context_key'           => 'web',
     'content_type'          => 1,
     'uri_override'          => 0,
     'hide_children_in_tree' => 0,
     'show_in_tree'          => 1,
-    'properties'            => NULL,
+    'properties'            => null,
 ];
 
 $resources[++$i] = [
@@ -400,13 +401,13 @@ $resources[++$i] = [
     'privatemgr'            => 0,
     'content_dispo'         => 0,
     'hidemenu'              => 1,
-    'class_key'             => 'modDocument',
+    'class_key'             => 'MODX\Revolution\modDocument',
     'context_key'           => 'web',
     'content_type'          => 1,
     'uri_override'          => 0,
     'hide_children_in_tree' => 0,
     'show_in_tree'          => 1,
-    'properties'            => NULL,
+    'properties'            => null,
 ];
 
 $resources[++$i] = [
@@ -442,13 +443,13 @@ $resources[++$i] = [
     'privatemgr'            => 0,
     'content_dispo'         => 0,
     'hidemenu'              => 1,
-    'class_key'             => 'modDocument',
+    'class_key'             => 'MODX\Revolution\modDocument',
     'context_key'           => 'web',
     'content_type'          => 1,
     'uri_override'          => 0,
     'hide_children_in_tree' => 0,
     'show_in_tree'          => 1,
-    'properties'            => NULL,
+    'properties'            => null,
 ];
 
 $resources[++$i] = [
@@ -484,13 +485,13 @@ $resources[++$i] = [
     'privatemgr'            => 0,
     'content_dispo'         => 0,
     'hidemenu'              => 1,
-    'class_key'             => 'modDocument',
+    'class_key'             => 'MODX\Revolution\modDocument',
     'context_key'           => 'web',
     'content_type'          => 1,
     'uri_override'          => 0,
     'hide_children_in_tree' => 0,
     'show_in_tree'          => 1,
-    'properties'            => NULL,
+    'properties'            => null,
 ];
 
 $resources[++$i] = [
@@ -526,13 +527,13 @@ $resources[++$i] = [
     'privatemgr'            => 0,
     'content_dispo'         => 0,
     'hidemenu'              => 1,
-    'class_key'             => 'modDocument',
+    'class_key'             => 'MODX\Revolution\modDocument',
     'context_key'           => 'web',
     'content_type'          => 1,
     'uri_override'          => 0,
     'hide_children_in_tree' => 0,
     'show_in_tree'          => 1,
-    'properties'            => NULL,
+    'properties'            => null,
 ];
 
 $resources[++$i] = [
@@ -568,13 +569,13 @@ $resources[++$i] = [
     'privatemgr'            => 0,
     'content_dispo'         => 0,
     'hidemenu'              => 1,
-    'class_key'             => 'modDocument',
+    'class_key'             => 'MODX\Revolution\modDocument',
     'context_key'           => 'web',
     'content_type'          => 1,
     'uri_override'          => 0,
     'hide_children_in_tree' => 0,
     'show_in_tree'          => 1,
-    'properties'            => NULL,
+    'properties'            => null,
 ];
 
 unset($epoch, $i);

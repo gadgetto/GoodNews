@@ -1,4 +1,5 @@
 <?php
+
 /**
  * GoodNews
  *
@@ -53,7 +54,7 @@ define('PKG_NAME', 'GoodNews');
 define('PKG_NAMESPACE', strtolower(PKG_NAME));
 define('MIN_MODX_VERSION', '3.0.0');
 define('MAX_MODX_VERSION', '');
-define('MIN_PHP_VERSION', '7.2');
+define('MIN_PHP_VERSION', '7.2.5');
 
 $className = PKG_NAME . '\\' . PKG_NAME;
 
@@ -87,7 +88,7 @@ require_once $sources['includes'] . 'functions.php';
 $modx = new modX();
 $modx->initialize('mgr');
 if (!$modx->services->has('error')) {
-    $modx->services->add('error', function($c) use ($modx) {
+    $modx->services->add('error', function ($c) use ($modx) {
         return new modError($modx);
     });
 }
@@ -182,7 +183,7 @@ flush();
 
 /* Add package service */
 if (!$modx->services->has(PKG_NAMESPACE)) {
-    $modx->services->add(PKG_NAMESPACE, function($c) use ($modx, $className) {
+    $modx->services->add(PKG_NAMESPACE, function ($c) use ($modx, $className) {
         return new $className($modx);
     });
 }
@@ -199,11 +200,11 @@ flush();
 
 /* Create namespace */
 $modx->log(modX::LOG_LEVEL_INFO, 'Adding namespace...');
-if (createObject($modx, 'modNamespace', array(
+if (createObject($modx, 'modNamespace', [
     'name' => PKG_NAMESPACE,
     'path' => $sources['source_core'],
     'assets_path' => $sources['source_assets'],
-), 'name', false)) {
+], 'name', false)) {
     $modx->log(modX::LOG_LEVEL_INFO, '-> added namespace: ' . PKG_NAMESPACE);
 } else {
     $modx->log(modX::LOG_LEVEL_ERROR, '-> namespace ' . PKG_NAMESPACE . ' could not be added.');
@@ -249,10 +250,10 @@ unset($settings, $setting, $obj);
 
 /* Create default elements category */
 $modx->log(modX::LOG_LEVEL_INFO, 'Adding default elements category...');
-if (createObject($modx, 'modCategory', array(
+if (createObject($modx, 'modCategory', [
     'category' => PKG_NAME,
     'parent' => 0,
-), 'category', false)) {
+], 'category', false)) {
     $modx->log(modX::LOG_LEVEL_INFO, '-> added default elements category: ' . PKG_NAME);
 } else {
     $modx->log(modX::LOG_LEVEL_ERROR, '-> default elements category ' . PKG_NAME . ' could not be added.');
@@ -355,7 +356,7 @@ if (!empty($templates) && is_array($templates)) {
         $template->set('category', $categoryId);
         $template->set('source', 0);
         $template->set('static', true);
-        $template->set('content', '');                
+        $template->set('content', '');
         $templatePath = $sources['templates'] . strtolower($templateName) . '.template.tpl';
         $template->set('static_file', $templatePath);
         if ($template->save()) {
