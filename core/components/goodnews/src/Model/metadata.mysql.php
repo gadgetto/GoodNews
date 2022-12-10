@@ -5,12 +5,12 @@ $xpdo_meta_map = array (
     'namespacePrefix' => 'GoodNews',
     'class_map' => 
     array (
-        'modResource' => 
+        'MODX\\Revolution\\modResource' => 
         array (
             0 => 'GoodNews\\Model\\GoodNewsResourceContainer',
             1 => 'GoodNews\\Model\\GoodNewsResourceMailing',
         ),
-        'xPDOSimpleObject' => 
+        'xPDO\\Om\\xPDOSimpleObject' => 
         array (
             0 => 'GoodNews\\Model\\GoodNewsMailingMeta',
             1 => 'GoodNews\\Model\\GoodNewsRecipient',

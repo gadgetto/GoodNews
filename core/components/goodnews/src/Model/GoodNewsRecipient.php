@@ -13,6 +13,6 @@ use xPDO\xPDO;
  *
  * @package GoodNews\Model
  */
-class GoodNewsRecipient extends \xPDOSimpleObject
+class GoodNewsRecipient extends \xPDO\Om\xPDOSimpleObject
 {
 }

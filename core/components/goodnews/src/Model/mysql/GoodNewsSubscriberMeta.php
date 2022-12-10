@@ -10,7 +10,7 @@ class GoodNewsSubscriberMeta extends \GoodNews\Model\GoodNewsSubscriberMeta
         'package' => 'GoodNews\\Model\\',
         'version' => '3.0',
         'table' => 'goodnews_subscriber_meta',
-        'extends' => 'xPDOSimpleObject',
+        'extends' => 'xPDO\\Om\\xPDOSimpleObject',
         'tableMeta' => 
         array (
             'engine' => 'InnoDB',
@@ -125,7 +125,7 @@ class GoodNewsSubscriberMeta extends \GoodNews\Model\GoodNewsSubscriberMeta
         array (
             'SubscriberLog' => 
             array (
-                'class' => 'GoodNewsSubscriberLog',
+                'class' => 'GoodNews\\Model\\GoodNewsSubscriberLog',
                 'local' => 'subscriber_id',
                 'foreign' => 'subscriber_id',
                 'cardinality' => 'many',
@@ -136,7 +136,7 @@ class GoodNewsSubscriberMeta extends \GoodNews\Model\GoodNewsSubscriberMeta
         array (
             'User' => 
             array (
-                'class' => 'modUser',
+                'class' => 'MODX\\Revolution\\modUser',
                 'local' => 'subscriber_id',
                 'foreign' => 'id',
                 'cardinality' => 'one',

@@ -10,7 +10,7 @@ class GoodNewsResourceMailing extends \GoodNews\Model\GoodNewsResourceMailing
         'package' => 'GoodNews\\Model\\',
         'version' => '3.0',
         'table' => 'site_content',
-        'extends' => 'modResource',
+        'extends' => 'MODX\\Revolution\\modResource',
         'tableMeta' => 
         array (
             'engine' => 'InnoDB',
@@ -25,7 +25,7 @@ class GoodNewsResourceMailing extends \GoodNews\Model\GoodNewsResourceMailing
         array (
             'MailingMeta' => 
             array (
-                'class' => 'GoodNewsMailingMeta',
+                'class' => 'GoodNews\\Model\\GoodNewsMailingMeta',
                 'local' => 'id',
                 'foreign' => 'mailing_id',
                 'cardinality' => 'one',
@@ -36,7 +36,7 @@ class GoodNewsResourceMailing extends \GoodNews\Model\GoodNewsResourceMailing
         array (
             'ResourceContainer' => 
             array (
-                'class' => 'GoodNewsResourceContainer',
+                'class' => 'GoodNews\\Model\\GoodNewsResourceContainer',
                 'local' => 'parent',
                 'foreign' => 'id',
                 'cardinality' => 'one',

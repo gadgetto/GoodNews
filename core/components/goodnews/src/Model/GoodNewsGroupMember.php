@@ -11,6 +11,6 @@ use xPDO\xPDO;
  *
  * @package GoodNews\Model
  */
-class GoodNewsGroupMember extends \xPDOSimpleObject
+class GoodNewsGroupMember extends \xPDO\Om\xPDOSimpleObject
 {
 }

@@ -10,7 +10,7 @@ class GoodNewsCategory extends \GoodNews\Model\GoodNewsCategory
         'package' => 'GoodNews\\Model\\',
         'version' => '3.0',
         'table' => 'goodnews_categories',
-        'extends' => 'xPDOSimpleObject',
+        'extends' => 'xPDO\\Om\\xPDOSimpleObject',
         'tableMeta' => 
         array (
             'engine' => 'InnoDB',
@@ -96,7 +96,7 @@ class GoodNewsCategory extends \GoodNews\Model\GoodNewsCategory
         array (
             'CategoryMember' => 
             array (
-                'class' => 'GoodNewsCategoryMember',
+                'class' => 'GoodNews\\Model\\GoodNewsCategoryMember',
                 'local' => 'id',
                 'foreign' => 'goodnewscategory_id',
                 'cardinality' => 'many',
@@ -107,7 +107,7 @@ class GoodNewsCategory extends \GoodNews\Model\GoodNewsCategory
         array (
             'CreatedBy' => 
             array (
-                'class' => 'modUser',
+                'class' => 'MODX\\Revolution\\modUser',
                 'local' => 'createdby',
                 'foreign' => 'id',
                 'cardinality' => 'one',
@@ -115,7 +115,7 @@ class GoodNewsCategory extends \GoodNews\Model\GoodNewsCategory
             ),
             'EditedBy' => 
             array (
-                'class' => 'modUser',
+                'class' => 'MODX\\Revolution\\modUser',
                 'local' => 'editedby',
                 'foreign' => 'id',
                 'cardinality' => 'one',
@@ -123,7 +123,7 @@ class GoodNewsCategory extends \GoodNews\Model\GoodNewsCategory
             ),
             'GoodNewsGroup' => 
             array (
-                'class' => 'GoodNewsGroup',
+                'class' => 'GoodNews\\Model\\GoodNewsGroup',
                 'local' => 'goodnewsgroup_id',
                 'foreign' => 'id',
                 'cardinality' => 'one',

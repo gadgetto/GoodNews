@@ -10,7 +10,7 @@ class GoodNewsGroupMember extends \GoodNews\Model\GoodNewsGroupMember
         'package' => 'GoodNews\\Model\\',
         'version' => '3.0',
         'table' => 'goodnews_group_members',
-        'extends' => 'xPDOSimpleObject',
+        'extends' => 'xPDO\\Om\\xPDOSimpleObject',
         'tableMeta' => 
         array (
             'engine' => 'InnoDB',
@@ -82,7 +82,7 @@ class GoodNewsGroupMember extends \GoodNews\Model\GoodNewsGroupMember
         array (
             'GoodNewsGroup' => 
             array (
-                'class' => 'GoodNewsGroup',
+                'class' => 'GoodNews\\Model\\GoodNewsGroup',
                 'local' => 'goodnewsgroup_id',
                 'foreign' => 'id',
                 'cardinality' => 'one',
@@ -90,7 +90,7 @@ class GoodNewsGroupMember extends \GoodNews\Model\GoodNewsGroupMember
             ),
             'User' => 
             array (
-                'class' => 'modUser',
+                'class' => 'MODX\\Revolution\\modUser',
                 'local' => 'member_id',
                 'foreign' => 'id',
                 'cardinality' => 'one',

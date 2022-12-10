@@ -22,10 +22,10 @@ use xPDO\xPDO;
  * @property integer $soft_bounces
  * @property integer $hard_bounces
  *
- * @property \GoodNewsRecipient[] $Recipient
+ * @property \GoodNews\Model\GoodNewsRecipient[] $Recipient
  *
  * @package GoodNews\Model
  */
-class GoodNewsMailingMeta extends \xPDOSimpleObject
+class GoodNewsMailingMeta extends \xPDO\Om\xPDOSimpleObject
 {
 }

@@ -10,7 +10,7 @@ class GoodNewsResourceContainer extends \GoodNews\Model\GoodNewsResourceContaine
         'package' => 'GoodNews\\Model\\',
         'version' => '3.0',
         'table' => 'site_content',
-        'extends' => 'modResource',
+        'extends' => 'MODX\\Revolution\\modResource',
         'tableMeta' => 
         array (
             'engine' => 'InnoDB',
@@ -25,7 +25,7 @@ class GoodNewsResourceContainer extends \GoodNews\Model\GoodNewsResourceContaine
         array (
             'ResourceMailing' => 
             array (
-                'class' => 'GoodNewsResourceMailing',
+                'class' => 'GoodNews\\Model\\GoodNewsResourceMailing',
                 'local' => 'id',
                 'foreign' => 'parent',
                 'cardinality' => 'many',

@@ -10,7 +10,7 @@ class GoodNewsMailingMeta extends \GoodNews\Model\GoodNewsMailingMeta
         'package' => 'GoodNews\\Model\\',
         'version' => '3.0',
         'table' => 'goodnews_mailing_meta',
-        'extends' => 'xPDOSimpleObject',
+        'extends' => 'xPDO\\Om\\xPDOSimpleObject',
         'tableMeta' => 
         array (
             'engine' => 'InnoDB',
@@ -184,7 +184,7 @@ class GoodNewsMailingMeta extends \GoodNews\Model\GoodNewsMailingMeta
         array (
             'Recipient' => 
             array (
-                'class' => 'GoodNewsRecipient',
+                'class' => 'GoodNews\\Model\\GoodNewsRecipient',
                 'local' => 'mailing_id',
                 'foreign' => 'mailing_id',
                 'cardinality' => 'many',
@@ -195,7 +195,7 @@ class GoodNewsMailingMeta extends \GoodNews\Model\GoodNewsMailingMeta
         array (
             'SentBy' => 
             array (
-                'class' => 'modUser',
+                'class' => 'MODX\\Revolution\\modUser',
                 'local' => 'sentby',
                 'foreign' => 'id',
                 'cardinality' => 'one',
@@ -203,7 +203,7 @@ class GoodNewsMailingMeta extends \GoodNews\Model\GoodNewsMailingMeta
             ),
             'ResourceMailing' => 
             array (
-                'class' => 'GoodNewsResourceMailing',
+                'class' => 'GoodNews\\Model\\GoodNewsResourceMailing',
                 'local' => 'mailing_id',
                 'foreign' => 'id',
                 'cardinality' => 'one',

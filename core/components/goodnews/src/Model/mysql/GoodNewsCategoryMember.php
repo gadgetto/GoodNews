@@ -10,7 +10,7 @@ class GoodNewsCategoryMember extends \GoodNews\Model\GoodNewsCategoryMember
         'package' => 'GoodNews\\Model\\',
         'version' => '3.0',
         'table' => 'goodnews_category_members',
-        'extends' => 'xPDOSimpleObject',
+        'extends' => 'xPDO\\Om\\xPDOSimpleObject',
         'tableMeta' => 
         array (
             'engine' => 'InnoDB',
@@ -82,7 +82,7 @@ class GoodNewsCategoryMember extends \GoodNews\Model\GoodNewsCategoryMember
         array (
             'GoodNewsCategory' => 
             array (
-                'class' => 'GoodNewsCategory',
+                'class' => 'GoodNews\\Model\\GoodNewsCategory',
                 'local' => 'goodnewscategory_id',
                 'foreign' => 'id',
                 'cardinality' => 'one',
@@ -90,7 +90,7 @@ class GoodNewsCategoryMember extends \GoodNews\Model\GoodNewsCategoryMember
             ),
             'User' => 
             array (
-                'class' => 'modUser',
+                'class' => 'MODX\\Revolution\\modUser',
                 'local' => 'member_id',
                 'foreign' => 'id',
                 'cardinality' => 'one',

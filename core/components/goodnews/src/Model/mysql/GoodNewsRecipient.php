@@ -10,7 +10,7 @@ class GoodNewsRecipient extends \GoodNews\Model\GoodNewsRecipient
         'package' => 'GoodNews\\Model\\',
         'version' => '3.0',
         'table' => 'goodnews_recipients',
-        'extends' => 'xPDOSimpleObject',
+        'extends' => 'xPDO\\Om\\xPDOSimpleObject',
         'tableMeta' => 
         array (
             'engine' => 'InnoDB',
@@ -101,7 +101,7 @@ class GoodNewsRecipient extends \GoodNews\Model\GoodNewsRecipient
         array (
             'MailingMeta' => 
             array (
-                'class' => 'GoodNewsMailingMeta',
+                'class' => 'GoodNews\\Model\\GoodNewsMailingMeta',
                 'local' => 'mailing_id',
                 'foreign' => 'mailing_id',
                 'cardinality' => 'one',

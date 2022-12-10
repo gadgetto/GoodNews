@@ -16,10 +16,10 @@ use xPDO\xPDO;
  * @property string $soft_bounces
  * @property string $hard_bounces
  *
- * @property \GoodNewsSubscriberLog[] $SubscriberLog
+ * @property \GoodNews\Model\GoodNewsSubscriberLog[] $SubscriberLog
  *
  * @package GoodNews\Model
  */
-class GoodNewsSubscriberMeta extends \xPDOSimpleObject
+class GoodNewsSubscriberMeta extends \xPDO\Om\xPDOSimpleObject
 {
 }

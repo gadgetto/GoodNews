@@ -10,7 +10,7 @@ class GoodNewsGroup extends \GoodNews\Model\GoodNewsGroup
         'package' => 'GoodNews\\Model\\',
         'version' => '3.0',
         'table' => 'goodnews_groups',
-        'extends' => 'xPDOSimpleObject',
+        'extends' => 'xPDO\\Om\\xPDOSimpleObject',
         'tableMeta' => 
         array (
             'engine' => 'InnoDB',
@@ -96,7 +96,7 @@ class GoodNewsGroup extends \GoodNews\Model\GoodNewsGroup
         array (
             'GoodNewsCategory' => 
             array (
-                'class' => 'GoodNewsCategory',
+                'class' => 'GoodNews\\Model\\GoodNewsCategory',
                 'local' => 'id',
                 'foreign' => 'goodnewsgroup_id',
                 'cardinality' => 'many',
@@ -104,7 +104,7 @@ class GoodNewsGroup extends \GoodNews\Model\GoodNewsGroup
             ),
             'GroupMember' => 
             array (
-                'class' => 'GoodNewsGroupMember',
+                'class' => 'GoodNews\\Model\\GoodNewsGroupMember',
                 'local' => 'id',
                 'foreign' => 'goodnewsgroup_id',
                 'cardinality' => 'many',
@@ -115,7 +115,7 @@ class GoodNewsGroup extends \GoodNews\Model\GoodNewsGroup
         array (
             'CreatedBy' => 
             array (
-                'class' => 'modUser',
+                'class' => 'MODX\\Revolution\\modUser',
                 'local' => 'createdby',
                 'foreign' => 'id',
                 'cardinality' => 'one',
@@ -123,7 +123,7 @@ class GoodNewsGroup extends \GoodNews\Model\GoodNewsGroup
             ),
             'EditedBy' => 
             array (
-                'class' => 'modUser',
+                'class' => 'MODX\\Revolution\\modUser',
                 'local' => 'editedby',
                 'foreign' => 'id',
                 'cardinality' => 'one',
@@ -131,7 +131,7 @@ class GoodNewsGroup extends \GoodNews\Model\GoodNewsGroup
             ),
             'UserGroup' => 
             array (
-                'class' => 'modUserGroup',
+                'class' => 'MODX\\Revolution\\modUserGroup',
                 'local' => 'modxusergroup',
                 'foreign' => 'id',
                 'cardinality' => 'one',

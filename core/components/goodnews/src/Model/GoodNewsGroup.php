@@ -15,11 +15,11 @@ use xPDO\xPDO;
  * @property string $editedon
  * @property integer $editedby
  *
- * @property \GoodNewsCategory[] $GoodNewsCategory
- * @property \GoodNewsGroupMember[] $GroupMember
+ * @property \GoodNews\Model\GoodNewsCategory[] $GoodNewsCategory
+ * @property \GoodNews\Model\GoodNewsGroupMember[] $GroupMember
  *
  * @package GoodNews\Model
  */
-class GoodNewsGroup extends \xPDOSimpleObject
+class GoodNewsGroup extends \xPDO\Om\xPDOSimpleObject
 {
 }

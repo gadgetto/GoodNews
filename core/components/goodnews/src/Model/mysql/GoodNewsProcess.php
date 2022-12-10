@@ -10,7 +10,7 @@ class GoodNewsProcess extends \GoodNews\Model\GoodNewsProcess
         'package' => 'GoodNews\\Model\\',
         'version' => '3.0',
         'table' => 'goodnews_processes',
-        'extends' => 'xPDOSimpleObject',
+        'extends' => 'xPDO\\Om\\xPDOSimpleObject',
         'tableMeta' => 
         array (
             'engine' => 'InnoDB',
