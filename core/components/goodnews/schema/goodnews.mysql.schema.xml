@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <model package="GoodNews\Model\" baseClass="xPDO\Om\xPDOSimpleObject" platform="mysql" defaultEngine="InnoDB" phpdoc-package="goodnews" version="3.0">
 
-    <object class="GoodNewsResourceContainer" table="site_content" extends="modResource">
-        <composite alias="ResourceMailing" class="GoodNewsResourceMailing" local="id" foreign="parent" cardinality="many" owner="local" />
+    <object class="GoodNewsResourceContainer" table="site_content" extends="MODX\Revolution\modResource">
+        <composite alias="ResourceMailing" class="GoodNews\Model\GoodNewsResourceMailing" local="id" foreign="parent" cardinality="many" owner="local" />
     </object>
     
-    <object class="GoodNewsResourceMailing" table="site_content" extends="modResource">
-        <aggregate alias="ResourceContainer" class="GoodNewsResourceContainer" local="parent" foreign="id" cardinality="one" owner="foreign" />
-        <composite alias="MailingMeta" class="GoodNewsMailingMeta" local="id" foreign="mailing_id" cardinality="one" owner="local" />
+    <object class="GoodNewsResourceMailing" table="site_content" extends="MODX\Revolution\modResource">
+        <aggregate alias="ResourceContainer" class="GoodNews\Model\GoodNewsResourceContainer" local="parent" foreign="id" cardinality="one" owner="foreign" />
+        <composite alias="MailingMeta" class="GoodNews\Model\GoodNewsMailingMeta" local="id" foreign="mailing_id" cardinality="one" owner="local" />
     </object>
 
-    <object class="GoodNewsMailingMeta" table="goodnews_mailing_meta" extends="xPDOSimpleObject">
+    <object class="GoodNewsMailingMeta" table="goodnews_mailing_meta" extends="xPDO\Om\xPDOSimpleObject">
         <field key="mailing_id" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="false" index="unique" />
         <field key="groups" dbtype="text" phptype="string" null="false" default="" />
         <field key="categories" dbtype="text" phptype="string" null="false" default="" />
@@ -31,12 +31,12 @@
             <column key="mailing_id" length="" collation="A" null="false" />
         </index>
 
-        <aggregate alias="SentBy" class="modUser" local="sentby" foreign="id" cardinality="one" owner="foreign" />
-        <aggregate alias="ResourceMailing" class="GoodNewsResourceMailing" local="mailing_id" foreign="id" cardinality="one" owner="foreign" />
-        <composite alias="Recipient" class="GoodNewsRecipient" local="mailing_id" foreign="mailing_id" cardinality="many" owner="local" />
+        <aggregate alias="SentBy" class="MODX\Revolution\modUser" local="sentby" foreign="id" cardinality="one" owner="foreign" />
+        <aggregate alias="ResourceMailing" class="GoodNews\Model\GoodNewsResourceMailing" local="mailing_id" foreign="id" cardinality="one" owner="foreign" />
+        <composite alias="Recipient" class="GoodNews\Model\GoodNewsRecipient" local="mailing_id" foreign="mailing_id" cardinality="many" owner="local" />
     </object>
 
-    <object class="GoodNewsRecipient" table="goodnews_recipients" extends="xPDOSimpleObject">
+    <object class="GoodNewsRecipient" table="goodnews_recipients" extends="xPDO\Om\xPDOSimpleObject">
         <field key="mailing_id" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="false" default="0" index="index" />
         <field key="recipient_id" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="false" default="0" index="index" />
         <field key="statustime" dbtype="int" precision="20" phptype="timestamp" null="false" default="0" />
@@ -49,10 +49,10 @@
             <column key="recipient_id" length="" collation="A" null="false" />
         </index>
 
-        <aggregate alias="MailingMeta" class="GoodNewsMailingMeta" local="mailing_id" foreign="mailing_id" cardinality="one" owner="foreign" />
+        <aggregate alias="MailingMeta" class="GoodNews\Model\GoodNewsMailingMeta" local="mailing_id" foreign="mailing_id" cardinality="one" owner="foreign" />
     </object>
 
-    <object class="GoodNewsSubscriberMeta" table="goodnews_subscriber_meta" extends="xPDOSimpleObject">
+    <object class="GoodNewsSubscriberMeta" table="goodnews_subscriber_meta" extends="xPDO\Om\xPDOSimpleObject">
         <field key="subscriber_id" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="false" index="unique" />
         <field key="sid" dbtype="varchar" precision="255" phptype="string" null="false" default="" />
         <field key="subscribedon" dbtype="int" precision="20" phptype="timestamp" null="false" default="0" />
@@ -67,11 +67,11 @@
             <column key="subscriber_id" length="" collation="A" null="false" />
         </index>
 
-        <aggregate alias="User" class="modUser" local="subscriber_id" foreign="id" cardinality="one" owner="foreign" />
-        <composite alias="SubscriberLog" class="GoodNewsSubscriberLog" local="subscriber_id" foreign="subscriber_id" cardinality="many" owner="local" />
+        <aggregate alias="User" class="MODX\Revolution\modUser" local="subscriber_id" foreign="id" cardinality="one" owner="foreign" />
+        <composite alias="SubscriberLog" class="GoodNews\Model\GoodNewsSubscriberLog" local="subscriber_id" foreign="subscriber_id" cardinality="many" owner="local" />
     </object>
     
-    <object class="GoodNewsSubscriberLog" table="goodnews_subscriber_log" extends="xPDOSimpleObject">
+    <object class="GoodNewsSubscriberLog" table="goodnews_subscriber_log" extends="xPDO\Om\xPDOSimpleObject">
         <field key="subscriber_id" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="false" default="0" index="index" />
         <field key="mailing_id" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="false" default="0" index="index" />
         <field key="statustime" dbtype="int" precision="20" phptype="timestamp" null="false" default="0" />
@@ -84,10 +84,10 @@
             <column key="mailing_id" length="" collation="A" null="false" />
         </index>
 
-        <aggregate alias="SubscriberMeta" class="GoodNewsSubscriberMeta" local="subscriber_id" foreign="subscriber_id" cardinality="one" owner="foreign" />
+        <aggregate alias="SubscriberMeta" class="GoodNews\Model\GoodNewsSubscriberMeta" local="subscriber_id" foreign="subscriber_id" cardinality="one" owner="foreign" />
     </object>
 
-    <object class="GoodNewsGroup" table="goodnews_groups" extends="xPDOSimpleObject">
+    <object class="GoodNewsGroup" table="goodnews_groups" extends="xPDO\Om\xPDOSimpleObject">
         <field key="name" dbtype="varchar" precision="255" phptype="string" null="false" default="" />
         <field key="description" dbtype="text" phptype="string" null="false" default="" />
         <field key="public" dbtype="int" precision="1" attributes="unsigned" phptype="boolean" null="false" default="1" />
@@ -96,14 +96,14 @@
         <field key="createdby" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="false" default="0" />
         <field key="editedon" dbtype="datetime" phptype="datetime" null="true" />
         <field key="editedby" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="false" default="0" />
-        <aggregate alias="CreatedBy" class="modUser" local="createdby" foreign="id" cardinality="one" owner="foreign" />
-        <aggregate alias="EditedBy" class="modUser" local="editedby" foreign="id" cardinality="one" owner="foreign" />
-        <aggregate alias="UserGroup" class="modUserGroup" local="modxusergroup" foreign="id" cardinality="one" owner="foreign" />
-        <composite alias="GoodNewsCategory" class="GoodNewsCategory" local="id" foreign="goodnewsgroup_id" cardinality="many" owner="local" /> 
-        <composite alias="GroupMember" class="GoodNewsGroupMember" local="id" foreign="goodnewsgroup_id" cardinality="many" owner="local" />
+        <aggregate alias="CreatedBy" class="MODX\Revolution\modUser" local="createdby" foreign="id" cardinality="one" owner="foreign" />
+        <aggregate alias="EditedBy" class="MODX\Revolution\modUser" local="editedby" foreign="id" cardinality="one" owner="foreign" />
+        <aggregate alias="UserGroup" class="MODX\Revolution\modUserGroup" local="modxusergroup" foreign="id" cardinality="one" owner="foreign" />
+        <composite alias="GoodNewsCategory" class="GoodNews\Model\GoodNewsCategory" local="id" foreign="goodnewsgroup_id" cardinality="many" owner="local" /> 
+        <composite alias="GroupMember" class="GoodNews\Model\GoodNewsGroupMember" local="id" foreign="goodnewsgroup_id" cardinality="many" owner="local" />
     </object>
 
-    <object class="GoodNewsGroupMember" table="goodnews_group_members" extends="xPDOSimpleObject">
+    <object class="GoodNewsGroupMember" table="goodnews_group_members" extends="xPDO\Om\xPDOSimpleObject">
         <field key="goodnewsgroup_id" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="false" default="0" index="index" />
         <field key="member_id" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="false" default="0" index="index" />
 
@@ -114,11 +114,11 @@
             <column key="member_id" length="" collation="A" null="false" />
         </index>
 
-        <aggregate alias="GoodNewsGroup" class="GoodNewsGroup" local="goodnewsgroup_id" foreign="id" cardinality="one" owner="foreign" />
-        <aggregate alias="User" class="modUser" local="member_id" foreign="id" cardinality="one" owner="foreign" />
+        <aggregate alias="GoodNewsGroup" class="GoodNews\Model\GoodNewsGroup" local="goodnewsgroup_id" foreign="id" cardinality="one" owner="foreign" />
+        <aggregate alias="User" class="MODX\Revolution\modUser" local="member_id" foreign="id" cardinality="one" owner="foreign" />
     </object>
 
-    <object class="GoodNewsCategory" table="goodnews_categories" extends="xPDOSimpleObject">
+    <object class="GoodNewsCategory" table="goodnews_categories" extends="xPDO\Om\xPDOSimpleObject">
         <field key="goodnewsgroup_id" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="false" default="0" />
         <field key="name" dbtype="varchar" precision="255" phptype="string" null="false" default="" />
         <field key="description" dbtype="text" phptype="string" null="false" default="" />
@@ -127,13 +127,13 @@
         <field key="createdby" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="false" default="0" />
         <field key="editedon" dbtype="datetime" phptype="datetime" null="true" />
         <field key="editedby" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="false" default="0" />
-        <aggregate alias="CreatedBy" class="modUser" local="createdby" foreign="id" cardinality="one" owner="foreign" />
-        <aggregate alias="EditedBy" class="modUser" local="editedby" foreign="id" cardinality="one" owner="foreign" />
-        <aggregate alias="GoodNewsGroup" class="GoodNewsGroup" local="goodnewsgroup_id" foreign="id" cardinality="one" owner="foreign" />
-        <composite alias="CategoryMember" class="GoodNewsCategoryMember" local="id" foreign="goodnewscategory_id" cardinality="many" owner="local" />
+        <aggregate alias="CreatedBy" class="MODX\Revolution\modUser" local="createdby" foreign="id" cardinality="one" owner="foreign" />
+        <aggregate alias="EditedBy" class="MODX\Revolution\modUser" local="editedby" foreign="id" cardinality="one" owner="foreign" />
+        <aggregate alias="GoodNewsGroup" class="GoodNews\Model\GoodNewsGroup" local="goodnewsgroup_id" foreign="id" cardinality="one" owner="foreign" />
+        <composite alias="CategoryMember" class="GoodNews\Model\GoodNewsCategoryMember" local="id" foreign="goodnewscategory_id" cardinality="many" owner="local" />
     </object>
 
-    <object class="GoodNewsCategoryMember" table="goodnews_category_members" extends="xPDOSimpleObject">
+    <object class="GoodNewsCategoryMember" table="goodnews_category_members" extends="xPDO\Om\xPDOSimpleObject">
         <field key="goodnewscategory_id" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="false" default="0" index="index" />
         <field key="member_id" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="false" default="0" index="index" />
 
@@ -144,11 +144,11 @@
             <column key="member_id" length="" collation="A" null="false" />
         </index>
 
-        <aggregate alias="GoodNewsCategory" class="GoodNewsCategory" local="goodnewscategory_id" foreign="id" cardinality="one" owner="foreign" />
-        <aggregate alias="User" class="modUser" local="member_id" foreign="id" cardinality="one" owner="foreign" />
+        <aggregate alias="GoodNewsCategory" class="GoodNews\Model\GoodNewsCategory" local="goodnewscategory_id" foreign="id" cardinality="one" owner="foreign" />
+        <aggregate alias="User" class="MODX\Revolution\modUser" local="member_id" foreign="id" cardinality="one" owner="foreign" />
     </object>
 
-    <object class="GoodNewsProcess" table="goodnews_processes" extends="xPDOSimpleObject">
+    <object class="GoodNewsProcess" table="goodnews_processes" extends="xPDO\Om\xPDOSimpleObject">
         <field key="pid" dbtype="varchar" precision="255" phptype="string" null="false" default="" />
         <field key="starttime" dbtype="varchar" precision="255" phptype="string" null="false" default="" />
     </object>
