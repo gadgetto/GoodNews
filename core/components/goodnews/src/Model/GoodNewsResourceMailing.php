@@ -1,26 +1,20 @@
 <?php
-namespace GoodNews\Model;
 
 /**
- * GoodNews
+ * This file is part of the GoodNews package.
  *
- * Copyright 2022 by bitego <office@bitego.com>
+ * @copyright bitego (Martin Gartner)
+ * @license GNU General Public License v2.0 (and later)
  *
- * GoodNews is free software; you can redistribute it and/or modify it under the
- * terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
- *
- * GoodNews is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this software; if not, write to the Free Software Foundation, Inc., 59 Temple
- * Place, Suite 330, Boston, MA 02111-1307 USA
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
+namespace GoodNews\Model;
+
 use xPDO\xPDO;
+use MODX\Revolution\modResource;
+use GoodNews\Model\GoodNewsResourceMailing;
 
 /**
  * Class GoodNewsResourceMailing
@@ -28,7 +22,7 @@ use xPDO\xPDO;
  * @property \GoodNewsMailingMeta $MailingMeta
  * @package GoodNews\Model
  */
-class GoodNewsResourceMailing extends \modResource
+class GoodNewsResourceMailing extends modResource
 {
     public $allowListingInClassKeyDropdown = false;
     public $showInContextMenu = false;
@@ -38,24 +32,30 @@ class GoodNewsResourceMailing extends \modResource
      *
      * @param xPDO $xpdo
      */
-    function __construct(xPDO &$xpdo) {
+    public function __construct(xPDO &$xpdo)
+    {
         parent::__construct($xpdo);
-        $this->set('class_key', 'GoodNewsResourceMailing');
+        $this->set('class_key', GoodNewsResourceMailing::class);
         $this->set('show_in_tree', false);
         $this->set('searchable', false);
     }
     
     /**
      * Get the controller path for our resource type.
-     * 
+     *
      * {@inheritDoc}
      *
      * @static
      * @param xPDO $modx
      * @return string
      */
-    public static function getControllerPath(xPDO &$modx) {
-        return $modx->getOption('goodnews.core_path', null, $modx->getOption('core_path') . 'components/goodnews/') . 'controllers/res/mailing/';
+    public static function getControllerPath(xPDO &$modx)
+    {
+        return $modx->getOption(
+            'goodnews.core_path',
+            null,
+            $modx->getOption('core_path') . 'components/goodnews/'
+        ) . 'controllers/res/mailing/';
     }
     
     /**
@@ -65,7 +65,8 @@ class GoodNewsResourceMailing extends \modResource
      *
      * @return string
      */
-    public function process() {
+    public function process()
+    {
         $this->xpdo->lexicon->load('goodnews:frontend');
         $settings = $this->getContainerSettings();
         foreach ($settings as $key => $value) {
@@ -80,7 +81,8 @@ class GoodNewsResourceMailing extends \modResource
      *
      * @return array $settings
      */
-    public function getContainerSettings() {
+    public function getContainerSettings()
+    {
         $container = $this->getOne('ResourceContainer');
         if ($container) {
             $settings = $container->getContainerSettings();
