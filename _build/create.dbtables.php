@@ -1,21 +1,13 @@
 <?php
+
 /**
- * GoodNews
+ * This file is part of the GoodNews package.
  *
- * Copyright 2022 by bitego <office@bitego.com>
+ * @copyright bitego (Martin Gartner)
+ * @license GNU General Public License v2.0 (and later)
  *
- * GoodNews is free software; you can redistribute it and/or modify it under the
- * terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
- *
- * GoodNews is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this software; if not, write to the Free Software Foundation, Inc., 59 Temple
- * Place, Suite 330, Boston, MA 02111-1307 USA
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
 use MODX\Revolution\modX;
@@ -55,7 +47,7 @@ require_once MODX_CORE_PATH . 'vendor/autoload.php';
 $modx = new modX();
 $modx->initialize('mgr');
 if (!$modx->services->has('error')) {
-    $modx->services->add('error', function($c) use ($modx) {
+    $modx->services->add('error', function ($c) use ($modx) {
         return new modError($modx);
     });
 }
@@ -80,7 +72,7 @@ flush();
 
 /* Add package service */
 if (!$modx->services->has(PKG_NAMESPACE)) {
-    $modx->services->add(PKG_NAMESPACE, function($c) use ($modx, $className) {
+    $modx->services->add(PKG_NAMESPACE, function ($c) use ($modx, $className) {
         return new $className($modx);
     });
 }
@@ -97,15 +89,15 @@ flush();
 
 $tables = [
     /*
-    'GoodNews\Model\GoodNewsMailingMeta',
-    'GoodNews\Model\GoodNewsRecipient',
-    'GoodNews\Model\GoodNewsSubscriberMeta',
-    'GoodNews\Model\GoodNewsSubscriberLog',
-    'GoodNews\Model\GoodNewsGroup',
-    'GoodNews\Model\GoodNewsGroupMember',
-    'GoodNews\Model\GoodNewsCategory',
-    'GoodNews\Model\GoodNewsCategoryMember',
-    'GoodNews\Model\GoodNewsProcess',
+    GoodNews\Model\GoodNewsMailingMeta::class,
+    GoodNews\Model\GoodNewsRecipient::class,
+    GoodNews\Model\GoodNewsSubscriberMeta::class,
+    GoodNews\Model\GoodNewsSubscriberLog::class,
+    GoodNews\Model\GoodNewsGroup::class,
+    GoodNews\Model\GoodNewsGroupMember::class,
+    GoodNews\Model\GoodNewsCategory::class,
+    GoodNews\Model\GoodNewsCategoryMember::class,
+    GoodNews\Model\GoodNewsProcess::class,
     */
 ];
 
