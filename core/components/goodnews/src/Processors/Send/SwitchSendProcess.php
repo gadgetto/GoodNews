@@ -1,45 +1,42 @@
 <?php
+
 /**
- * GoodNews
+ * This file is part of the GoodNews package.
  *
- * Copyright 2012 by bitego <office@bitego.com>
+ * @copyright bitego (Martin Gartner)
+ * @license GNU General Public License v2.0 (and later)
  *
- * GoodNews is free software; you can redistribute it and/or modify it under the
- * terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
- *
- * GoodNews is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this software; if not, write to the Free Software Foundation, Inc., 59 Temple
- * Place, Suite 330, Boston, MA 02111-1307 USA
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
+
+namespace GoodNews\Processors\Send;
+
+use MODX\Revolution\modSystemSetting;
+use MODX\Revolution\Processors\Processor;
 
 /**
  * Switch send process ON/OFF processor
  *
+ * @var \MODX\Revolution\modX $modx
  * @package goodnews
  * @subpackage processors
  */
-class GoodNewsSwitchSendProcessProcessor extends modObjectProcessor {
-
-    public $languageTopics = array('setting');
-
+class SwitchSendProcess extends Processor
+{
     /** @var string $emergencystop The state to switch the send process to (can be "true" "false") */
     public $emergencystop = null;
     
-    public function initialize() {
+    public function initialize()
+    {
         $this->emergencystop = $this->getProperty('emergencystop');
         return parent::initialize();
     }
     
-    public function process() {
- 
-        $worker_process_active = $this->modx->getObject('modSystemSetting', 'goodnews.worker_process_active');
-
+    public function process()
+    {
+        $worker_process_active = $this->modx->getObject(modSystemSetting::class, 'goodnews.worker_process_active');
+        
         // Toggle button is pressed (means emergency stopp for send process!)
         if ($this->emergencystop == "true") {
             $worker_process_active->set('value', '0');
@@ -47,7 +44,7 @@ class GoodNewsSwitchSendProcessProcessor extends modObjectProcessor {
         } else {
             $worker_process_active->set('value', '1');
         }
-
+        
         if ($worker_process_active->save()) {
             // refresh part of cache (MODx 2.1.x) so that settings change immediately takes effect
             $cacheRefreshOptions = array('system_settings' => array());
@@ -65,5 +62,9 @@ class GoodNewsSwitchSendProcessProcessor extends modObjectProcessor {
             }
         }
     }
+    
+    public function getLanguageTopics()
+    {
+        return ['setting'];
+    }
 }
-return 'GoodNewsSwitchSendProcessProcessor';
