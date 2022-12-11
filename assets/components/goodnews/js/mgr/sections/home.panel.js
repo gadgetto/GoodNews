@@ -73,7 +73,7 @@ Ext.extend(GoodNews.HomePanel,MODx.Panel,{
                 MODx.Ajax.request({
                     url: GoodNews.config.connectorUrl
                     ,params: {
-                        action: 'mgr/mailing/cron/ping'
+                        action: 'GoodNews\\Processors\\Mailing\\Cron\\Ping'
                     }
                     ,method: 'post'
                     ,scope: this
@@ -128,7 +128,7 @@ Ext.extend(GoodNews.HomePanel,MODx.Panel,{
             ,store: new Ext.data.JsonStore({
                 url: GoodNews.config.connectorUrl
                 ,baseParams: {
-                    action : 'mgr/settings/containers/getContList'
+                    action : 'GoodNews\\Processors\\Container\\SimpleGetList'
                     ,containerIDs: GoodNews.config.userAvailableContainers
                 }
                 ,fields: ['id','name']
@@ -168,7 +168,7 @@ Ext.extend(GoodNews.HomePanel,MODx.Panel,{
         MODx.Ajax.request({
             url: GoodNews.config.connectorUrl
             ,params: {
-                action: 'mgr/mailing/switchContainer'
+                action: 'GoodNews\\Processors\\Container\\SwitchContainer'
                 ,containerid: cb.getValue()
             }
             ,method: 'post'
