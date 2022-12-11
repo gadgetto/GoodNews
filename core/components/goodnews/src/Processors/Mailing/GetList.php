@@ -1,45 +1,49 @@
 <?php
-/**
- * GoodNews
- *
- * Copyright 2012 by bitego <office@bitego.com>
- *
- * GoodNews is free software; you can redistribute it and/or modify it under the
- * terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
- *
- * GoodNews is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this software; if not, write to the Free Software Foundation, Inc., 59 Temple
- * Place, Suite 330, Boston, MA 02111-1307 USA
- */
 
 /**
- * Newsletters list processor
+ * This file is part of the GoodNews package.
  *
+ * @copyright bitego (Martin Gartner)
+ * @license GNU General Public License v2.0 (and later)
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+namespace GoodNews\Processors\Mailing;
+
+use GoodNews\GoodNews;
+use GoodNews\Model\GoodNewsResourceContainer;
+use GoodNews\Model\GoodNewsResourceMailing;
+use GoodNews\Model\GoodNewsMailingMeta;
+use MODX\Revolution\modUser;
+use MODX\Revolution\Processors\Model\GetListProcessor;
+use xPDO\Om\xPDOObject;
+use xPDO\Om\xPDOQuery;
+
+/**
+ * Newsletters get list processor.
+ *
+ * @var \MODX\Revolution\modX $modx
  * @package goodnews
  * @subpackage processors
  */
 
-class NewsletterGetListProcessor extends modObjectGetListProcessor {
+class GetList extends GetListProcessor
+{
+    public const GON_NEWSLETTER_STATUS_NOT_PUBLISHED     = 0;
+    public const GON_NEWSLETTER_STATUS_NOT_READY_TO_SEND = 1;
+    public const GON_NEWSLETTER_STATUS_NOT_YET_SENT      = 2;
+    public const GON_NEWSLETTER_STATUS_STOPPED           = 3;
+    public const GON_NEWSLETTER_STATUS_IN_PROGRESS       = 4;
+    public const GON_NEWSLETTER_STATUS_SENT              = 5;
+    public const GON_NEWSLETTER_STATUS_SCHEDULED         = 6;
 
-    const GON_NEWSLETTER_STATUS_NOT_PUBLISHED     = 0;
-    const GON_NEWSLETTER_STATUS_NOT_READY_TO_SEND = 1;    
-    const GON_NEWSLETTER_STATUS_NOT_YET_SENT      = 2;
-    const GON_NEWSLETTER_STATUS_STOPPED           = 3;
-    const GON_NEWSLETTER_STATUS_IN_PROGRESS       = 4;
-    const GON_NEWSLETTER_STATUS_SENT              = 5;
-    const GON_NEWSLETTER_STATUS_SCHEDULED         = 6;
+    public const GON_IPC_STATUS_STOPPED         = 0;
+    public const GON_IPC_STATUS_STARTED         = 1;
 
-    const GON_IPC_STATUS_STOPPED         = 0;
-    const GON_IPC_STATUS_STARTED         = 1;
-
-    public $classKey = 'GoodNewsResourceMailing';
-    public $languageTopics = array('resource','goodnews:default');
+    public $classKey = GoodNewsResourceMailing::class;
+    public $languageTopics = ['resource', 'goodnews:default'];
     public $checkListPermission = true;
     public $defaultSortField = 'createdon';
     public $defaultSortDirection = 'DESC';
@@ -48,15 +52,17 @@ class NewsletterGetListProcessor extends modObjectGetListProcessor {
     /** @var GoodNewsResourceContainer $userCurrentContainer */
     public $userCurrentContainer = 0;
         
-    public function initialize() {
-        $this->userCurrentContainer = $this->modx->goodnews->config['userCurrentContainer'];
+    public function initialize()
+    {
+        $goodnews = new GoodNews($this->modx);
+        $this->userCurrentContainer = $goodnews->config['userCurrentContainer'];
         return parent::initialize();
     }
 
-    public function prepareQueryBeforeCount(xPDOQuery $c) {
-                    
+    public function prepareQueryBeforeCount(xPDOQuery $c)
+    {
         // GoodNewsResourceMailing object
-        $resourceColumns = array(
+        $resourceColumns = [
             'id',
             'parent',
             'pagetitle',
@@ -69,19 +75,27 @@ class NewsletterGetListProcessor extends modObjectGetListProcessor {
             'richtext',
             'deleted',
             'content',
+        ];
+        $c->select(
+            $this->modx->getSelectColumns(
+                $this->classKey,
+                'GoodNewsResourceMailing',
+                '',
+                $resourceColumns
+            )
         );
-        $c->select($this->modx->getSelectColumns('GoodNewsResourceMailing', 'GoodNewsResourceMailing', '', $resourceColumns));
 
         // modUser object CreatedBy
         $c->leftJoin('modUser', 'CreatedBy');
-        $c->select($this->modx->getSelectColumns('modUser', 'CreatedBy', 'createdby_'));
+        $c->select($this->modx->getSelectColumns(modUser::class, 'CreatedBy', 'createdby_'));
 
         // modUser object PublishedBy
         $c->leftJoin('modUser', 'PublishedBy');
-        $c->select($this->modx->getSelectColumns('modUser', 'PublishedBy', 'publishedby_'));
+        $c->select($this->modx->getSelectColumns(modUser::class, 'PublishedBy', 'publishedby_'));
 
         // GoodNewsMailingMeta object
-        $c->leftJoin('GoodNewsMailingMeta', 'MailingMeta', 'MailingMeta.mailing_id = GoodNewsResourceMailing.id');
+        $c->leftJoin(GoodNewsMailingMeta::class, 'MailingMeta', 'MailingMeta.mailing_id = GoodNewsResourceMailing.id');
+        
         $metaColumns = array(
             'recipients_total',
             'recipients_sent',
@@ -94,13 +108,13 @@ class NewsletterGetListProcessor extends modObjectGetListProcessor {
             'soft_bounces',
             'hard_bounces',
         );
-        $c->select($this->modx->getSelectColumns('GoodNewsMailingMeta', 'MailingMeta', '', $metaColumns));
+        $c->select($this->modx->getSelectColumns(GoodNewsMailingMeta::class, 'MailingMeta', '', $metaColumns));
 
         $c->where(array('parent' => $this->userCurrentContainer));
-        $c->where(array('class_key' => 'GoodNewsResourceMailing'));
+        $c->where(array('class_key' => $this->classKey));
         
         // filter combo
-        $filter = $this->getProperty('filter','');
+        $filter = $this->getProperty('filter', '');
         switch ($filter) {
             case 'scheduled':
                 $c->where(array(
@@ -136,7 +150,7 @@ class NewsletterGetListProcessor extends modObjectGetListProcessor {
         $query = $this->getProperty('query');
         if (!empty($query)) {
             $queryWhere = array(
-                'pagetitle:LIKE' => '%'.$query.'%',
+                'pagetitle:LIKE' => '%' . $query . '%',
             );
             $c->where($queryWhere);
         }
@@ -144,30 +158,28 @@ class NewsletterGetListProcessor extends modObjectGetListProcessor {
         return $c;
     }
 
-    public function prepareRow(xPDOObject $object) {
+    public function prepareRow(xPDOObject $object)
+    {
         $resourceArray = parent::prepareRow($object);
 
         $charset = $this->modx->getOption('modx_charset', null, 'UTF-8');
         $managerDateFormat = $this->modx->getOption('manager_date_format', null, 'Y-m-d');
         $managerTimeFormat = $this->modx->getOption('manager_time_format', null, 'H:i');
-        $dateTimeFormat = $managerDateFormat.' '.$managerTimeFormat;
+        $dateTimeFormat = $managerDateFormat . ' ' . $managerTimeFormat;
         
         $resourceArray['pagetitle'] = htmlentities($resourceArray['pagetitle'], ENT_COMPAT, $charset);
 
         $this->modx->getContext($resourceArray['context_key']);
         $resourceArray['preview_url'] = $this->modx->makeUrl($resourceArray['id'], $resourceArray['context_key']);
-        $resourceArray['recipients_total_sent'] = (int)$resourceArray['recipients_total'].' / '.(int)$resourceArray['recipients_sent'];
+        $resourceArray['recipients_total_sent'] = (int)$resourceArray['recipients_total'] . ' / ' . (int)$resourceArray['recipients_sent'];
         $resourceArray['recipients_open'] = (int)$resourceArray['recipients_total'] - (int)$resourceArray['recipients_sent'];
-        $resourceArray['test_recipients_total'] = $this->_countTestRecipients();
+        $resourceArray['test_recipients_total'] = $this->countTestRecipients();
 
         // Prepare status of each newsletter (for grid status display)
         if (!$resourceArray['published'] && empty($resourceArray['pub_date'])) {
-        
             $resourceArray['status'] = self::GON_NEWSLETTER_STATUS_NOT_PUBLISHED;
             $resourceArray['statusmessage'] = $this->modx->lexicon('goodnews.newsletter_status_not_published');
-
-        } elseif (!empty($resourceArray['pub_date'])) { 
-                   
+        } elseif (!empty($resourceArray['pub_date'])) {
             // No recipients selected
             if ((int)$resourceArray['recipients_total'] == 0) {
                 $resourceArray['status'] = self::GON_NEWSLETTER_STATUS_NOT_READY_TO_SEND;
@@ -176,17 +188,13 @@ class NewsletterGetListProcessor extends modObjectGetListProcessor {
                 $resourceArray['status'] = self::GON_NEWSLETTER_STATUS_SCHEDULED;
                 $resourceArray['statusmessage'] = $this->modx->lexicon('goodnews.newsletter_status_scheduled');
             }
-
         } else {
-            
             // No recipients selected
             if ((int)$resourceArray['recipients_total'] == 0) {
                 $resourceArray['status'] = self::GON_NEWSLETTER_STATUS_NOT_READY_TO_SEND;
                 $resourceArray['statusmessage'] = $this->modx->lexicon('goodnews.newsletter_status_not_ready_to_send');
-            
             // Sending finished
             } elseif ((int)$resourceArray['recipients_total'] == (int)$resourceArray['recipients_sent']) {
-    
                 if ((int)$resourceArray['ipc_status'] == self::GON_IPC_STATUS_STOPPED) {
                     $resourceArray['status'] = self::GON_NEWSLETTER_STATUS_SENT;
                     $resourceArray['statusmessage'] = $this->modx->lexicon('goodnews.newsletter_status_finished');
@@ -194,10 +202,8 @@ class NewsletterGetListProcessor extends modObjectGetListProcessor {
                     $resourceArray['status'] = self::GON_NEWSLETTER_STATUS_IN_PROGRESS;
                     $resourceArray['statusmessage'] = $this->modx->lexicon('goodnews.newsletter_status_in_progress');
                 }
-            
             // Sending in progress or not yet started
             } elseif ((int)$resourceArray['recipients_sent'] == 0) {
-    
                 if ((int)$resourceArray['ipc_status'] == self::GON_IPC_STATUS_STARTED) {
                     $resourceArray['status'] = self::GON_NEWSLETTER_STATUS_IN_PROGRESS;
                     $resourceArray['statusmessage'] = $this->modx->lexicon('goodnews.newsletter_status_in_progress');
@@ -205,10 +211,8 @@ class NewsletterGetListProcessor extends modObjectGetListProcessor {
                     $resourceArray['status'] = self::GON_NEWSLETTER_STATUS_NOT_YET_SENT;
                     $resourceArray['statusmessage'] = $this->modx->lexicon('goodnews.newsletter_status_not_yet_sent');
                 }
-            
             // Sending in progress or stopped
             } elseif ((int)$resourceArray['recipients_total'] != (int)$resourceArray['recipients_sent'] && (int)$resourceArray['recipients_sent'] != 0) {
-    
                 if ((int)$resourceArray['ipc_status'] == self::GON_IPC_STATUS_STOPPED) {
                     $resourceArray['status'] = self::GON_NEWSLETTER_STATUS_STOPPED;
                     $resourceArray['statusmessage'] = $this->modx->lexicon('goodnews.newsletter_status_stopped');
@@ -216,23 +220,18 @@ class NewsletterGetListProcessor extends modObjectGetListProcessor {
                     $resourceArray['status'] = self::GON_NEWSLETTER_STATUS_IN_PROGRESS;
                     $resourceArray['statusmessage'] = $this->modx->lexicon('goodnews.newsletter_status_in_progress');
                 }
-    
             }
-        
         }
 
         // Prepare action buttons
         $resourceArray['actions'] = array();
         
         if (!empty($resourceArray['deleted'])) {
-
             $resourceArray['actions'][] = array(
                 'className' => 'undelete',
                 'text'      => $this->modx->lexicon('undelete'),
             );
-
         } else {
-            
             if ($resourceArray['status'] == self::GON_NEWSLETTER_STATUS_NOT_PUBLISHED) {
                 $resourceArray['actions'][] = array(
                     'className' => 'start gon-ab-start',
@@ -484,8 +483,7 @@ class NewsletterGetListProcessor extends modObjectGetListProcessor {
                     'className' => 'log gon-ab-log',
                     'text'      => $this->modx->lexicon('goodnews.sendlog'),
                 );
-            }            
-            
+            }
         }
 
         $createdon = strtotime($resourceArray['createdon']);
@@ -495,18 +493,18 @@ class NewsletterGetListProcessor extends modObjectGetListProcessor {
         }
 
         if ($resourceArray['published']) {
-        	$publishedon = strtotime($resourceArray['publishedon']);
+            $publishedon = strtotime($resourceArray['publishedon']);
             $resourceArray['publishedon_formatted'] = date($dateTimeFormat, $publishedon);
             if (empty($resourceArray['publishedby_username'])) {
                 $resourceArray['publishedby_username'] = $resourceArray['publishedby'];
             }
         } else {
             $resourceArray['publishedon_formatted'] = '-';
-            $resourceArray['publishedby_username'] = '-';            
+            $resourceArray['publishedby_username'] = '-';
         }
 
         if ($resourceArray['pub_date']) {
-        	$pub_date = strtotime($resourceArray['pub_date']);
+            $pub_date = strtotime($resourceArray['pub_date']);
             $resourceArray['pub_date_formatted'] = date($dateTimeFormat, $pub_date);
         } else {
             if ($resourceArray['scheduled']) {
@@ -523,7 +521,7 @@ class NewsletterGetListProcessor extends modObjectGetListProcessor {
         }
 
         if ($resourceArray['sentby']) {
-            $user = $this->modx->getObject('modUser', $resourceArray['sentby']);
+            $user = $this->modx->getObject(modUser::class, $resourceArray['sentby']);
             if (is_object($user)) {
                 $resourceArray['sentby_username'] = $user->get('username');
             } else {
@@ -548,17 +546,16 @@ class NewsletterGetListProcessor extends modObjectGetListProcessor {
      *
      * @return integer $count
      */
-    private function _countTestRecipients() {
-
-        $c = $this->modx->newQuery('modUser');
-        $c->leftJoin('GoodNewsSubscriberMeta', 'SubscriberMeta', 'SubscriberMeta.subscriber_id = modUser.id');  
+    private function countTestRecipients()
+    {
+        $c = $this->modx->newQuery(modUser::class);
+        $c->leftJoin(GoodNewsSubscriberMeta::class, 'SubscriberMeta', 'SubscriberMeta.subscriber_id = modUser.id');
         $c->where(array(
             'modUser.active' => true,
             'SubscriberMeta.testdummy' => 1,
         ));
-        $count = $this->modx->getCount('modUser', $c);
+        $count = $this->modx->getCount(modUser::class, $c);
 
         return $count;
     }
 }
-return 'NewsletterGetListProcessor';
