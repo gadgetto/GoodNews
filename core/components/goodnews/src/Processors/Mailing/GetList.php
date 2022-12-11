@@ -49,13 +49,16 @@ class GetList extends GetListProcessor
     public $defaultSortDirection = 'DESC';
     public $objectType = 'goodnews';
 
+    /** @var GoodNews $goodnews A reference to the GoodNews object */
+    public $goodnews = null;
+
     /** @var GoodNewsResourceContainer $userCurrentContainer */
     public $userCurrentContainer = 0;
         
     public function initialize()
     {
-        $goodnews = new GoodNews($this->modx);
-        $this->userCurrentContainer = $goodnews->config['userCurrentContainer'];
+        $this->goodnews = new GoodNews($this->modx);
+        $this->userCurrentContainer = $this->goodnews->config['userCurrentContainer'];
         return parent::initialize();
     }
 
