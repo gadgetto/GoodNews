@@ -13,6 +13,8 @@
 namespace GoodNews\Processors\Mailing\Cron;
 
 use MODX\Revolution\Processors\Processor;
+use MODX\Revolution\Registry\modRegistry;
+use MODX\Revolution\Registry\modFileRegister;
 
 /**
  * Processor to read cron ping status.
@@ -34,8 +36,9 @@ class Ping extends Processor
     public function process()
     {
         // Read cron ping time from modRegistry
-        $this->modx->getService('registry', 'registry.modRegistry');
-        $this->modx->registry->addRegister('goodnewscron', 'registry.modFileRegister');
+        // @todo: replace getservice call with new MODX3 service->get() method
+        $this->modx->getService('registry', modRegistry::class);
+        $this->modx->registry->addRegister('goodnewscron', modFileRegister::class);
         $this->modx->registry->goodnewscron->connect();
         $this->modx->registry->goodnewscron->subscribe('/ping/time');
         $msg = $this->modx->registry->goodnewscron->read([
