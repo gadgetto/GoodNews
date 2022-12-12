@@ -1,110 +1,117 @@
 <?php
-/**
- * GoodNews
- *
- * Copyright 2012 by bitego <office@bitego.com>
- *
- * GoodNews is free software; you can redistribute it and/or modify it under the
- * terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
- *
- * GoodNews is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this software; if not, write to the Free Software Foundation, Inc., 59 Temple
- * Place, Suite 330, Boston, MA 02111-1307 USA
- */
 
 /**
- * Subscribers list processor
+ * This file is part of the GoodNews package.
+ *
+ * @copyright bitego (Martin Gartner)
+ * @license GNU General Public License v2.0 (and later)
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+namespace GoodNews\Processors\Subscribers;
+
+use GoodNews\Model\GoodNewsSubscriberMeta;
+use GoodNews\Model\GoodNewsGroupMember;
+use GoodNews\Model\GoodNewsCategoryMember;
+use MODX\Revolution\modUser;
+use MODX\Revolution\modUserProfile;
+use MODX\Revolution\Processors\Model\GetListProcessor;
+use xPDO\Om\xPDOObject;
+use xPDO\Om\xPDOQuery;
+
+/**
+ * Subscribers list processor.
  *
  * @package goodnews
  * @subpackage processors
  */
 
-class SubscribersGetListProcessor extends modObjectGetListProcessor {
-    public $classKey = 'modUser';
-    public $languageTopics = array('user', 'goodnews:default');
+class GetList extends GetListProcessor
+{
+    public $classKey = modUser::class;
+    public $languageTopics = ['user', 'goodnews:default'];
     public $defaultSortField = 'Profile.email';
     
-    public function initialize() {
+    public function initialize()
+    {
         $initialized = parent::initialize();
-        $this->setDefaultProperties(array(
+        $this->setDefaultProperties([
             'query' => '',
             'groupfilter' => '',
             'categoryfilter' => '',
             'testdummyfilter' => '',
             'activefilter' => '',
-        ));
-
+        ]);
+        
         if ($this->getProperty('sort') == 'subscribedon_formatted') {
             $this->setProperty('sort', 'SubscriberMeta.subscribedon');
         }
-  
+        
         return $initialized;
     }
     
-    public function prepareQueryBeforeCount(xPDOQuery $c) {
-        $c->leftJoin('modUserProfile', 'Profile');
-        $c->leftJoin('GoodNewsSubscriberMeta', 'SubscriberMeta', 'modUser.id = SubscriberMeta.subscriber_id');
+    public function prepareQueryBeforeCount(xPDOQuery $c)
+    {
+        $c->leftJoin(modUserProfile::class, 'Profile');
+        $c->leftJoin(GoodNewsSubscriberMeta::class, 'SubscriberMeta', 'modUser.id = SubscriberMeta.subscriber_id');
         
         $query = $this->getProperty('query', '');
         if (!empty($query)) {
-            $c->where(array('modUser.username:LIKE' => '%'.$query.'%'));
-            $c->orCondition(array('Profile.fullname:LIKE' => '%'.$query.'%'));
-            $c->orCondition(array('Profile.email:LIKE' => '%'.$query.'%'));
-            $c->orCondition(array('SubscriberMeta.ip:LIKE' => '%'.$query.'%'));
-            $c->orCondition(array('SubscriberMeta.ip_activated:LIKE' => '%'.$query.'%'));
+            $c->where(['modUser.username:LIKE' => '%' . $query . '%']);
+            $c->orCondition(['Profile.fullname:LIKE' => '%' . $query . '%']);
+            $c->orCondition(['Profile.email:LIKE' => '%' . $query . '%']);
+            $c->orCondition(['SubscriberMeta.ip:LIKE' => '%' . $query . '%']);
+            $c->orCondition(['SubscriberMeta.ip_activated:LIKE' => '%' . $query . '%']);
         }
-
+        
         $groupfilter = $this->getProperty('groupfilter', '');
         if (!empty($groupfilter)) {
-            $c->leftJoin('GoodNewsGroupMember', 'GroupMember', 'modUser.id = GroupMember.member_id');
+            $c->leftJoin(GoodNewsGroupMember::class, 'GroupMember', 'modUser.id = GroupMember.member_id');
             if ($groupfilter == 'nogroup') {
-                $c->where(array('GroupMember.goodnewsgroup_id' => NULL));
+                $c->where(['GroupMember.goodnewsgroup_id' => null]);
             } else {
-                $c->where(array('GroupMember.goodnewsgroup_id' => $groupfilter));
+                $c->where(['GroupMember.goodnewsgroup_id' => $groupfilter]);
             }
         }
-
+        
         $categoryfilter = $this->getProperty('categoryfilter', '');
         if (!empty($categoryfilter)) {
-            $c->leftJoin('GoodNewsCategoryMember', 'CategoryMember', 'modUser.id = CategoryMember.member_id');
+            $c->leftJoin(GoodNewsCategoryMember::class, 'CategoryMember', 'modUser.id = CategoryMember.member_id');
             if ($categoryfilter == 'nocategory') {
-                $c->where(array('CategoryMember.goodnewscategory_id' => NULL));
+                $c->where(['CategoryMember.goodnewscategory_id' => null]);
             } else {
-                $c->where(array('CategoryMember.goodnewscategory_id' => $categoryfilter));
+                $c->where(['CategoryMember.goodnewscategory_id' => $categoryfilter]);
             }
         }
-
+        
         $testdummyfilter = $this->getProperty('testdummyfilter', '');
         if (!empty($testdummyfilter)) {
             if ($testdummyfilter == 'isdummy') {
-                $c->where(array('SubscriberMeta.testdummy' => '1'));
+                $c->where(['SubscriberMeta.testdummy' => '1']);
             } else {
-                $c->where(array('SubscriberMeta.testdummy' => '0'));
+                $c->where(['SubscriberMeta.testdummy' => '0']);
             }
         }
-
+        
         $activefilter = $this->getProperty('activefilter', '');
         if (!empty($activefilter)) {
             if ($activefilter == 'active') {
-                $c->where(array('modUser.active' => '1'));
+                $c->where(['modUser.active' => '1']);
             } else {
-                $c->where(array('modUser.active' => '0'));
+                $c->where(['modUser.active' => '0']);
             }
         }
-
+        
         return $c;
     }
 
-    public function prepareQueryAfterCount(xPDOQuery $c) {
-        $c->select($this->modx->getSelectColumns('modUser', 'modUser'));
-        $c->select($this->modx->getSelectColumns('modUserProfile', 'Profile', '', array('fullname', 'email')));
-        $c->select($this->modx->getSelectColumns('GoodNewsSubscriberMeta', 'SubscriberMeta', '', array('testdummy', 'subscribedon', 'activatedon', 'ip', 'ip_activated', 'soft_bounces', 'hard_bounces')));
+    public function prepareQueryAfterCount(xPDOQuery $c)
+    {
+        $c->select($this->modx->getSelectColumns(modUser::class, 'modUser'));
+        $c->select($this->modx->getSelectColumns(modUserProfile::class, 'Profile', '', ['fullname', 'email']));
+        $c->select($this->modx->getSelectColumns(GoodNewsSubscriberMeta::class, 'SubscriberMeta', '', ['testdummy', 'subscribedon', 'activatedon', 'ip', 'ip_activated', 'soft_bounces', 'hard_bounces']));
         return $c;
     }
 
@@ -115,21 +122,20 @@ class SubscribersGetListProcessor extends modObjectGetListProcessor {
      * @param xPDOObject $object
      * @return array $userArray
      */
-    public function prepareRow(xPDOObject $object) {
+    public function prepareRow(xPDOObject $object)
+    {
         $userArray = $object->toArray();
-
+        
         $managerDateFormat = $this->modx->getOption('manager_date_format', null, 'Y-m-d');
         $managerTimeFormat = $this->modx->getOption('manager_time_format', null, 'H:i');
-        $dateTimeFormat = $managerDateFormat.' '.$managerTimeFormat;
-
+        $dateTimeFormat = $managerDateFormat . ' ' . $managerTimeFormat;
+        
         // @todo: remove this quickhack and get the counts in prepareQueryBeforeCount
         if (!empty($userArray['id'])) {
             // check if user has GoodNews meta data
-            $c = $this->modx->newQuery('GoodNewsSubscriberMeta');
-            $c->where(array(
-                'subscriber_id' => $userArray['id'],
-            ));
-            $hasmeta = $this->modx->getCount('GoodNewsSubscriberMeta', $c);
+            $c = $this->modx->newQuery(GoodNewsSubscriberMeta::class);
+            $c->where(['subscriber_id' => $userArray['id']]);
+            $hasmeta = $this->modx->getCount(GoodNewsSubscriberMeta::class, $c);
             if ($hasmeta) {
                 $userArray['hasmeta'] = true;
             } else {
@@ -137,19 +143,17 @@ class SubscribersGetListProcessor extends modObjectGetListProcessor {
             }
             
             // count groups where user is member
-            $c = $this->modx->newQuery('GoodNewsGroupMember');
-            $c->where(array(
+            $c = $this->modx->newQuery(GoodNewsGroupMember::class);
+            $c->where([
                 'member_id' => $userArray['id'],
-            ));
-            $grpcount = $this->modx->getCount('GoodNewsGroupMember', $c);
+            ]);
+            $grpcount = $this->modx->getCount(GoodNewsGroupMember::class, $c);
             $userArray['grpcount'] = (int)$grpcount;
             
             // count categories where user is member
-            $c = $this->modx->newQuery('GoodNewsCategoryMember');
-            $c->where(array(
-                'member_id' => $userArray['id'],
-            ));
-            $catcount = $this->modx->getCount('GoodNewsCategoryMember', $c);
+            $c = $this->modx->newQuery(GoodNewsCategoryMember::class);
+            $c->where(['member_id' => $userArray['id']]);
+            $catcount = $this->modx->getCount(GoodNewsCategoryMember::class, $c);
             $userArray['catcount'] = (int)$catcount;
         }
         
@@ -190,7 +194,7 @@ class SubscribersGetListProcessor extends modObjectGetListProcessor {
         } elseif ($userArray['ip_activated'] == 'manually') {
             $userArray['ip_activated'] = $this->modx->lexicon('goodnews.subscriber_ip_manually');
         }
-                
+        
         $softBounces = unserialize($userArray['soft_bounces']);
         if (!is_array($softBounces)) {
             $userArray['soft_bounces'] = 0;
@@ -207,9 +211,7 @@ class SubscribersGetListProcessor extends modObjectGetListProcessor {
         
         // security! (we dont want these values in our array)
         unset($userArray['password'], $userArray['cachepwd'], $userArray['salt']);
-
+        
         return $userArray;
     }
-
 }
-return 'SubscribersGetListProcessor';
