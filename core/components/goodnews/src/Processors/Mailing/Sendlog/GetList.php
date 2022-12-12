@@ -1,44 +1,45 @@
 <?php
-/**
- * GoodNews
- *
- * Copyright 2012 by bitego <office@bitego.com>
- *
- * GoodNews is free software; you can redistribute it and/or modify it under the
- * terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
- *
- * GoodNews is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this software; if not, write to the Free Software Foundation, Inc., 59 Temple
- * Place, Suite 330, Boston, MA 02111-1307 USA
- */
 
 /**
- * SendLog get list processor
+ * This file is part of the GoodNews package.
+ *
+ * @copyright bitego (Martin Gartner)
+ * @license GNU General Public License v2.0 (and later)
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+namespace GoodNews\Processors\Mailing\Sendlog;
+
+use MODX\Revolution\modUserProfile;
+use MODX\Revolution\Processors\Model\GetListProcessor;
+use xPDO\Om\xPDOObject;
+use xPDO\Om\xPDOQuery;
+use GoodNews\Model\GoodNewsSubscriberLog;
+
+/**
+ * SendLog get list processor.
  *
  * @package goodnews
  * @subpackage processors
  */
 
-class SendLogGetListProcessor extends modObjectGetListProcessor {
-    public $classKey = 'GoodNewsSubscriberLog';
+class GetList extends GetListProcessor
+{
+    public $classKey = GoodNewsSubscriberLog::class;
     public $languageTopics = array('goodnews:default');
     public $defaultSortField = 'statustime';
     public $defaultSortDirection = 'DESC';
     public $objectType = 'goodnews.sendlog';
 
-    const GON_USER_NOT_YET_SENT = 0;
-    const GON_USER_SENT         = 1;
-    const GON_USER_SEND_ERROR   = 2;
-    const GON_USER_RESERVED     = 4;
+    public const GON_USER_NOT_YET_SENT = 0;
+    public const GON_USER_SENT         = 1;
+    public const GON_USER_SEND_ERROR   = 2;
+    public const GON_USER_RESERVED     = 4;
 
-    public function prepareQueryBeforeCount(xPDOQuery $c) {
-
+    public function prepareQueryBeforeCount(xPDOQuery $c)
+    {
         $c->select(array(
             'GoodNewsSubscriberLog.id',
             'GoodNewsSubscriberLog.mailing_id',
@@ -67,20 +68,21 @@ class SendLogGetListProcessor extends modObjectGetListProcessor {
         $query = $this->getProperty('query', '');
         if (!empty($query)) {
             $c->where(array(
-                'Profile.email:LIKE' => '%'.$query.'%',
-                'OR:Profile.fullname:LIKE' => '%'.$query.'%',
+                'Profile.email:LIKE' => '%' . $query . '%',
+                'OR:Profile.fullname:LIKE' => '%' . $query . '%',
             ));
         }
 
         return $c;
     }
 
-    public function prepareRow(xPDOObject $object) {
+    public function prepareRow(xPDOObject $object)
+    {
         $resourceArray = parent::prepareRow($object);
 
         $managerDateFormat = $this->modx->getOption('manager_date_format', null, 'Y-m-d');
         $managerTimeFormat = $this->modx->getOption('manager_time_format', null, 'H:i');
-        $dateTimeFormat = $managerDateFormat.' '.$managerTimeFormat;
+        $dateTimeFormat = $managerDateFormat . ' ' . $managerTimeFormat;
 
         $statustime = strtotime($resourceArray['statustime']);
         $resourceArray['statustime'] = date($dateTimeFormat, $statustime);
@@ -98,4 +100,3 @@ class SendLogGetListProcessor extends modObjectGetListProcessor {
         return $resourceArray;
     }
 }
-return 'SendLogGetListProcessor';
