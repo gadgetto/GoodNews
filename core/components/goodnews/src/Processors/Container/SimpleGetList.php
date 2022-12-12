@@ -35,12 +35,12 @@ class SimpleGetList extends GetListProcessor
 
     public function prepareQueryBeforeCount(xPDOQuery $c)
     {
-        $columns = array(
+        $columns = [
             'id',
             'pagetitle',
             'class_key',
             'context_key',
-        );
+        ];
         $c->select(
             $this->modx->getSelectColumns(
                 $this->classKey,
@@ -49,13 +49,13 @@ class SimpleGetList extends GetListProcessor
                 $columns
             )
         );
-        $c->where(array('class_key' => $this->classKey));
-        $c->where(array('published' => 1));
-        $c->where(array('deleted' => 0));
+        $c->where(['class_key' => $this->classKey]);
+        $c->where(['published' => 1]);
+        $c->where(['deleted' => 0]);
         
         // only return containers the user is assigned to
         $containerIDs = explode(',', $this->getProperty('containerIDs', ''));
-        $c->where(array('id:IN' => $containerIDs));
+        $c->where(['id:IN' => $containerIDs]);
 
         return $c;
     }
