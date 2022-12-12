@@ -1,22 +1,22 @@
 <?php
+
 /**
- * GoodNews
+ * This file is part of the GoodNews package.
  *
- * Copyright 2012 by bitego <office@bitego.com>
+ * @copyright bitego (Martin Gartner)
+ * @license GNU General Public License v2.0 (and later)
  *
- * GoodNews is free software; you can redistribute it and/or modify it under the
- * terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
- *
- * GoodNews is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this software; if not, write to the Free Software Foundation, Inc., 59 Temple
- * Place, Suite 330, Boston, MA 02111-1307 USA
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
+
+namespace GoodNews\Processors\Mailing\Sendlog;
+
+use MODX\Revolution\modUserProfile;
+use MODX\Revolution\Processors\Processor;
+use xPDO\Om\xPDOObject;
+use xPDO\Om\xPDOQuery;
+use GoodNews\Model\GoodNewsSubscriberLog;
 
 /**
  * SendLog export processor
@@ -25,22 +25,21 @@
  * @subpackage processors
  */
 
-class SendLogExportProcessor extends modObjectProcessor {    
-    public $classKey = 'GoodNewsSubscriberLog';
-    public $languageTopics = array('goodnews:default');
-    public $objectType = 'goodnews.sendlog';
+class Export extends Processor
+{
+    public $classKey = GoodNewsSubscriberLog::class;
 
-    const GON_USER_NOT_YET_SENT = 0;
-    const GON_USER_SENT         = 1;
-    const GON_USER_SEND_ERROR   = 2;
-    const GON_USER_RESERVED     = 4;
+    public const GON_USER_NOT_YET_SENT = 0;
+    public const GON_USER_SENT         = 1;
+    public const GON_USER_SEND_ERROR   = 2;
+    public const GON_USER_RESERVED     = 4;
 
     /**
      * {@inheritDoc}
      * @return mixed
      */
-	public function process() {
-
+    public function process()
+    {
         $c = $this->modx->newQuery($this->classKey);
         $c->select(array(
             'GoodNewsSubscriberLog.id',
@@ -62,12 +61,12 @@ class SendLogExportProcessor extends modObjectProcessor {
             exit();
         }
         
-        $c->sortby('GoodNewsSubscriberLog.statustime','DESC');
+        $c->sortby('GoodNewsSubscriberLog.statustime', 'DESC');
         
-        // Get the send-log collection        
+        // Get the send-log collection
         $sendlog = $this->modx->getCollection($this->classKey, $c);
         
-        $exportfile = 'sendlog_'.$mailingid.'.csv';
+        $exportfile = 'sendlog_' . $mailingid . '.csv';
 
         // CSV header array (field names)
         $header = array(
@@ -109,10 +108,10 @@ class SendLogExportProcessor extends modObjectProcessor {
             );
         }
 
-		header('Pragma: public');
-		header('Expires: -1');
-		header('Cache-Control: public, must-revalidate, post-check=0, pre-check=0');
-		header('Content-Disposition: attachment; filename="'.$exportfile.'"');
+        header('Pragma: public');
+        header('Expires: -1');
+        header('Cache-Control: public, must-revalidate, post-check=0, pre-check=0');
+        header('Content-Disposition: attachment; filename="' . $exportfile . '"');
         header('Content-Type: application/octet-stream');
 
         // Generate CSV file in memory (no physical file operation)
@@ -128,6 +127,10 @@ class SendLogExportProcessor extends modObjectProcessor {
         
         fclose($out);
         die();
-	}
+    }
+    
+    public function getLanguageTopics()
+    {
+        return ['goodnews:default'];
+    }
 }
-return 'SendLogExportProcessor';
