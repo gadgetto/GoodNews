@@ -13,7 +13,7 @@
 namespace GoodNews\Processors\Send;
 
 use MODX\Revolution\Processors\Processor;
-use GoodNews\GoodNewsMailing;
+use GoodNews\Mailer;
 
 /**
  * Continue sending newsletters processor.
@@ -24,25 +24,25 @@ use GoodNews\GoodNewsMailing;
  */
 class ContinueSending extends Processor
 {
-    /** @var GoodNewsMailing $goodnewsmailing */
-    public $goodnewsmailing = null;
+    /** @var Mailer $mailer */
+    public $mailer = null;
     
     /** @var int $mailingid The resource id of the newsletter */
     public $mailingid = 0;
 
     public function initialize()
     {
-        $this->goodnewsmailing = new GoodNewsMailing($this->modx);
+        $this->mailer = new Mailer($this->modx);
         $this->mailingid = $this->getProperty('mailingid');
         return parent::initialize();
     }
     
     public function process()
     {
-        if (!$this->goodnewsmailing) {
-            return $this->failure('GoodNewsMailing class could not be instantiated.');
+        if (!$this->mailer) {
+            return $this->failure('Mailer class could not be instantiated.');
         }
-        $this->goodnewsmailing->setIPCcontinue($this->mailingid);
+        $this->mailer->setIPCcontinue($this->mailingid);
         return $this->success();
     }
 }
