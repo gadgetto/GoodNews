@@ -50,7 +50,7 @@ class Export extends Processor
             'Profile.email AS subscriber_email',
             'Profile.fullname AS subscriber_fullname',
         ));
-        $c->leftJoin('modUserProfile', 'Profile', 'GoodNewsSubscriberLog.subscriber_id = Profile.internalKey');
+        $c->leftJoin(modUserProfile::class, 'Profile', 'GoodNewsSubscriberLog.subscriber_id = Profile.internalKey');
 
         $mailingid = $this->getProperty('mailingid', 0);
         if (!empty($mailingid)) {
