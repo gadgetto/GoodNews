@@ -41,7 +41,7 @@ class Export extends Processor
     public function process()
     {
         $c = $this->modx->newQuery($this->classKey);
-        $c->select(array(
+        $c->select([
             'GoodNewsSubscriberLog.id',
             'GoodNewsSubscriberLog.mailing_id',
             'GoodNewsSubscriberLog.subscriber_id',
@@ -49,14 +49,14 @@ class Export extends Processor
             'GoodNewsSubscriberLog.status',
             'Profile.email AS subscriber_email',
             'Profile.fullname AS subscriber_fullname',
-        ));
+        ]);
         $c->leftJoin(modUserProfile::class, 'Profile', 'GoodNewsSubscriberLog.subscriber_id = Profile.internalKey');
 
         $mailingid = $this->getProperty('mailingid', 0);
         if (!empty($mailingid)) {
-            $c->where(array(
+            $c->where([
                 'GoodNewsSubscriberLog.mailing_id' => $mailingid,
-            ));
+            ]);
         } else {
             exit();
         }
@@ -69,17 +69,17 @@ class Export extends Processor
         $exportfile = 'sendlog_' . $mailingid . '.csv';
 
         // CSV header array (field names)
-        $header = array(
+        $header = [
             'idx',
             'subscriberid',
             'email',
             'fullname',
             'statustime',
             'status',
-        );
+        ];
         
         // Generate the rows array
-        $rows = array();
+        $rows = [];
         $idx = 0;
         
         foreach ($sendlog as $line) {
@@ -98,14 +98,14 @@ class Export extends Processor
                 default:
                     $status = $this->modx->lexicon('goodnews.sendlog_status_unknown');
             }
-            $rows[] = array(
+            $rows[] = [
                 $idx,
                 $subscriber_id,
                 $subscriber_email,
                 $subscriber_fullname,
                 $statustime,
                 $status,
-            );
+            ];
         }
 
         header('Pragma: public');

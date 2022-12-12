@@ -99,7 +99,7 @@ class GetList extends GetListProcessor
         // GoodNewsMailingMeta object
         $c->leftJoin(GoodNewsMailingMeta::class, 'MailingMeta', 'MailingMeta.mailing_id = GoodNewsResourceMailing.id');
         
-        $metaColumns = array(
+        $metaColumns = [
             'recipients_total',
             'recipients_sent',
             'recipients_error',
@@ -110,51 +110,51 @@ class GetList extends GetListProcessor
             'scheduled',
             'soft_bounces',
             'hard_bounces',
-        );
+        ];
         $c->select($this->modx->getSelectColumns(GoodNewsMailingMeta::class, 'MailingMeta', '', $metaColumns));
 
-        $c->where(array('parent' => $this->userCurrentContainer));
-        $c->where(array('class_key' => $this->classKey));
+        $c->where(['parent' => $this->userCurrentContainer]);
+        $c->where(['class_key' => $this->classKey]);
         
         // filter combo
         $filter = $this->getProperty('filter', '');
         switch ($filter) {
             case 'scheduled':
-                $c->where(array(
+                $c->where([
                     'pub_date:>' => 0,
                     'deleted' => 0,
-                ));
+                ]);
                 break;
             case 'published':
-                $c->where(array(
+                $c->where([
                     'published' => 1,
                     'deleted' => 0,
-                ));
+                ]);
                 break;
             case 'unpublished':
-                $c->where(array(
+                $c->where([
                     'published' => 0,
                     'deleted' => 0,
-                ));
+                ]);
                 break;
             case 'deleted':
-                $c->where(array(
+                $c->where([
                     'deleted' => 1,
-                ));
+                ]);
                 break;
             default:
-                $c->where(array(
+                $c->where([
                     'deleted' => 0,
-                ));
+                ]);
                 break;
         }
 
         // Search query
         $query = $this->getProperty('query');
         if (!empty($query)) {
-            $queryWhere = array(
+            $queryWhere = [
                 'pagetitle:LIKE' => '%' . $query . '%',
-            );
+            ];
             $c->where($queryWhere);
         }
         
@@ -227,265 +227,265 @@ class GetList extends GetListProcessor
         }
 
         // Prepare action buttons
-        $resourceArray['actions'] = array();
+        $resourceArray['actions'] = [];
         
         if (!empty($resourceArray['deleted'])) {
-            $resourceArray['actions'][] = array(
+            $resourceArray['actions'][] = [
                 'className' => 'undelete',
                 'text'      => $this->modx->lexicon('undelete'),
-            );
+            ];
         } else {
             if ($resourceArray['status'] == self::GON_NEWSLETTER_STATUS_NOT_PUBLISHED) {
-                $resourceArray['actions'][] = array(
+                $resourceArray['actions'][] = [
                     'className' => 'start gon-ab-start',
                     'text'      => '',
                     'disabled'  => ' disabled="disabled"',
-                );
-                $resourceArray['actions'][] = array(
+                ];
+                $resourceArray['actions'][] = [
                     'className' => 'stop gon-ab-stop',
                     'text'      => '',
                     'disabled'  => ' disabled="disabled"',
-                );
-                $resourceArray['actions'][] = array(
+                ];
+                $resourceArray['actions'][] = [
                     'className' => 'preview gon-ab-preview',
                     'text'      => $this->modx->lexicon('view'),
-                );
-                $resourceArray['actions'][] = array(
+                ];
+                $resourceArray['actions'][] = [
                     'className' => 'test gon-ab-test',
                     'text'      => $this->modx->lexicon('goodnews.test'),
-                );
-                $resourceArray['actions'][] = array(
+                ];
+                $resourceArray['actions'][] = [
                     'className' => 'edit gon-ab-edit',
                     'text'      => $this->modx->lexicon('edit'),
-                );
-                $resourceArray['actions'][] = array(
+                ];
+                $resourceArray['actions'][] = [
                     'className' => 'delete gon-ab-delete',
                     'text'      => $this->modx->lexicon('delete'),
-                );
-                $resourceArray['actions'][] = array(
+                ];
+                $resourceArray['actions'][] = [
                     'className' => 'publish orange gon-ab-publish',
                     'text'      => $this->modx->lexicon('publish'),
-                );
-                $resourceArray['actions'][] = array(
+                ];
+                $resourceArray['actions'][] = [
                     'className' => 'log gon-ab-log',
                     'text'      => $this->modx->lexicon('goodnews.sendlog'),
-                );
+                ];
             } elseif ($resourceArray['status'] == self::GON_NEWSLETTER_STATUS_NOT_READY_TO_SEND) {
-                $resourceArray['actions'][] = array(
+                $resourceArray['actions'][] = [
                     'className' => 'start gon-ab-start',
                     'text'      => '',
                     'disabled'  => ' disabled="disabled"',
-                );
-                $resourceArray['actions'][] = array(
+                ];
+                $resourceArray['actions'][] = [
                     'className' => 'stop gon-ab-stop',
                     'text'      => '',
                     'disabled'  => ' disabled="disabled"',
-                );
-                $resourceArray['actions'][] = array(
+                ];
+                $resourceArray['actions'][] = [
                     'className' => 'preview gon-ab-preview',
                     'text'      => $this->modx->lexicon('view'),
-                );
-                $resourceArray['actions'][] = array(
+                ];
+                $resourceArray['actions'][] = [
                     'className' => 'test gon-ab-test',
                     'text'      => $this->modx->lexicon('goodnews.test'),
-                );
-                $resourceArray['actions'][] = array(
+                ];
+                $resourceArray['actions'][] = [
                     'className' => 'edit gon-ab-edit',
                     'text'      => $this->modx->lexicon('edit'),
-                );
-                $resourceArray['actions'][] = array(
+                ];
+                $resourceArray['actions'][] = [
                     'className' => 'delete gon-ab-delete',
                     'text'      => $this->modx->lexicon('delete'),
-                );
-                $resourceArray['actions'][] = array(
+                ];
+                $resourceArray['actions'][] = [
                     'className' => 'unpublish gon-ab-unpublish',
                     'text'      => $this->modx->lexicon('unpublish'),
-                );
-                $resourceArray['actions'][] = array(
+                ];
+                $resourceArray['actions'][] = [
                     'className' => 'log gon-ab-log',
                     'text'      => $this->modx->lexicon('goodnews.sendlog'),
-                );
+                ];
             } elseif ($resourceArray['status'] == self::GON_NEWSLETTER_STATUS_NOT_YET_SENT) {
-                $resourceArray['actions'][] = array(
+                $resourceArray['actions'][] = [
                     'className' => 'start gon-ab-start',
                     'text'      => '',
-                );
-                $resourceArray['actions'][] = array(
+                ];
+                $resourceArray['actions'][] = [
                     'className' => 'stop gon-ab-stop',
                     'text'      => '',
                     'disabled'  => ' disabled="disabled"',
-                );
-                $resourceArray['actions'][] = array(
+                ];
+                $resourceArray['actions'][] = [
                     'className' => 'preview gon-ab-preview',
                     'text'      => $this->modx->lexicon('view'),
-                );
-                $resourceArray['actions'][] = array(
+                ];
+                $resourceArray['actions'][] = [
                     'className' => 'test gon-ab-test',
                     'text'      => $this->modx->lexicon('goodnews.test'),
-                );
-                $resourceArray['actions'][] = array(
+                ];
+                $resourceArray['actions'][] = [
                     'className' => 'edit gon-ab-edit',
                     'text'      => $this->modx->lexicon('edit'),
-                );
-                $resourceArray['actions'][] = array(
+                ];
+                $resourceArray['actions'][] = [
                     'className' => 'delete gon-ab-delete',
                     'text'      => $this->modx->lexicon('delete'),
-                );
-                $resourceArray['actions'][] = array(
+                ];
+                $resourceArray['actions'][] = [
                     'className' => 'unpublish gon-ab-unpublish',
                     'text'      => $this->modx->lexicon('unpublish'),
-                );
-                $resourceArray['actions'][] = array(
+                ];
+                $resourceArray['actions'][] = [
                     'className' => 'log gon-ab-log',
                     'text'      => $this->modx->lexicon('goodnews.sendlog'),
-                );
+                ];
             } elseif ($resourceArray['status'] == self::GON_NEWSLETTER_STATUS_STOPPED) {
-                $resourceArray['actions'][] = array(
+                $resourceArray['actions'][] = [
                     'className' => 'continue gon-ab-continue',
                     'text'      => '',
-                );
-                $resourceArray['actions'][] = array(
+                ];
+                $resourceArray['actions'][] = [
                     'className' => 'stop gon-ab-stop',
                     'text'      => '',
                     'disabled'  => ' disabled="disabled"',
-                );
-                $resourceArray['actions'][] = array(
+                ];
+                $resourceArray['actions'][] = [
                     'className' => 'preview gon-ab-preview',
                     'text'      => $this->modx->lexicon('view'),
-                );
-                $resourceArray['actions'][] = array(
+                ];
+                $resourceArray['actions'][] = [
                     'className' => 'test gon-ab-test',
                     'text'      => $this->modx->lexicon('goodnews.test'),
                     'disabled'  => ' disabled="disabled"',
-                );
-                $resourceArray['actions'][] = array(
+                ];
+                $resourceArray['actions'][] = [
                     'className' => 'edit gon-ab-edit',
                     'text'      => $this->modx->lexicon('edit'),
                     'disabled'  => ' disabled="disabled"',
-                );
-                $resourceArray['actions'][] = array(
+                ];
+                $resourceArray['actions'][] = [
                     'className' => 'delete gon-ab-delete',
                     'text'      => $this->modx->lexicon('delete'),
-                );
-                $resourceArray['actions'][] = array(
+                ];
+                $resourceArray['actions'][] = [
                     'className' => 'unpublish gon-ab-unpublish',
                     'text'      => $this->modx->lexicon('unpublish'),
                     'disabled'  => ' disabled="disabled"',
-                );
-                $resourceArray['actions'][] = array(
+                ];
+                $resourceArray['actions'][] = [
                     'className' => 'log gon-ab-log',
                     'text'      => $this->modx->lexicon('goodnews.sendlog'),
-                );
+                ];
             } elseif ($resourceArray['status'] == self::GON_NEWSLETTER_STATUS_IN_PROGRESS) {
-                $resourceArray['actions'][] = array(
+                $resourceArray['actions'][] = [
                     'className' => 'start gon-ab-start',
                     'text'      => '',
                     'disabled'  => ' disabled="disabled"',
-                );
-                $resourceArray['actions'][] = array(
+                ];
+                $resourceArray['actions'][] = [
                     'className' => 'stop gon-ab-stop',
                     'text'      => '',
-                );
-                $resourceArray['actions'][] = array(
+                ];
+                $resourceArray['actions'][] = [
                     'className' => 'preview gon-ab-preview',
                     'text'      => $this->modx->lexicon('view'),
-                );
-                $resourceArray['actions'][] = array(
+                ];
+                $resourceArray['actions'][] = [
                     'className' => 'test gon-ab-test',
                     'text'      => $this->modx->lexicon('goodnews.test'),
                     'disabled'  => ' disabled="disabled"',
-                );
-                $resourceArray['actions'][] = array(
+                ];
+                $resourceArray['actions'][] = [
                     'className' => 'edit gon-ab-edit',
                     'text'      => $this->modx->lexicon('edit'),
                     'disabled'  => ' disabled="disabled"',
-                );
-                $resourceArray['actions'][] = array(
+                ];
+                $resourceArray['actions'][] = [
                     'className' => 'delete gon-ab-delete',
                     'text'      => $this->modx->lexicon('delete'),
                     'disabled'  => ' disabled="disabled"',
-                );
-                $resourceArray['actions'][] = array(
+                ];
+                $resourceArray['actions'][] = [
                     'className' => 'unpublish gon-ab-unpublish',
                     'text'      => $this->modx->lexicon('unpublish'),
                     'disabled'  => ' disabled="disabled"',
-                );
-                $resourceArray['actions'][] = array(
+                ];
+                $resourceArray['actions'][] = [
                     'className' => 'log gon-ab-log',
                     'text'      => $this->modx->lexicon('goodnews.sendlog'),
-                );
+                ];
             } elseif ($resourceArray['status'] == self::GON_NEWSLETTER_STATUS_SENT) {
-                $resourceArray['actions'][] = array(
+                $resourceArray['actions'][] = [
                     'className' => 'start gon-ab-start',
                     'text'      => '',
                     'disabled'  => ' disabled="disabled"',
-                );
-                $resourceArray['actions'][] = array(
+                ];
+                $resourceArray['actions'][] = [
                     'className' => 'stop gon-ab-stop',
                     'text'      => '',
                     'disabled'  => ' disabled="disabled"',
-                );
-                $resourceArray['actions'][] = array(
+                ];
+                $resourceArray['actions'][] = [
                     'className' => 'preview gon-ab-preview',
                     'text'      => $this->modx->lexicon('view'),
-                );
-                $resourceArray['actions'][] = array(
+                ];
+                $resourceArray['actions'][] = [
                     'className' => 'test gon-ab-test',
                     'text'      => $this->modx->lexicon('goodnews.test'),
                     'disabled'  => ' disabled="disabled"',
-                );
-                $resourceArray['actions'][] = array(
+                ];
+                $resourceArray['actions'][] = [
                     'className' => 'edit gon-ab-edit',
                     'text'      => $this->modx->lexicon('edit'),
                     'disabled'  => ' disabled="disabled"',
-                );
-                $resourceArray['actions'][] = array(
+                ];
+                $resourceArray['actions'][] = [
                     'className' => 'delete gon-ab-delete',
                     'text'      => $this->modx->lexicon('delete'),
-                );
-                $resourceArray['actions'][] = array(
+                ];
+                $resourceArray['actions'][] = [
                     'className' => 'unpublish gon-ab-unpublish',
                     'text'      => $this->modx->lexicon('unpublish'),
-                );
-                $resourceArray['actions'][] = array(
+                ];
+                $resourceArray['actions'][] = [
                     'className' => 'log gon-ab-log',
                     'text'      => $this->modx->lexicon('goodnews.sendlog'),
-                );
+                ];
             } elseif ($resourceArray['status'] == self::GON_NEWSLETTER_STATUS_SCHEDULED) {
-                $resourceArray['actions'][] = array(
+                $resourceArray['actions'][] = [
                     'className' => 'start gon-ab-start',
                     'text'      => '',
                     'disabled'  => ' disabled="disabled"',
-                );
-                $resourceArray['actions'][] = array(
+                ];
+                $resourceArray['actions'][] = [
                     'className' => 'stop gon-ab-stop',
                     'text'      => '',
                     'disabled'  => ' disabled="disabled"',
-                );
-                $resourceArray['actions'][] = array(
+                ];
+                $resourceArray['actions'][] = [
                     'className' => 'preview gon-ab-preview',
                     'text'      => $this->modx->lexicon('view'),
-                );
-                $resourceArray['actions'][] = array(
+                ];
+                $resourceArray['actions'][] = [
                     'className' => 'test gon-ab-test',
                     'text'      => $this->modx->lexicon('goodnews.test'),
-                );
-                $resourceArray['actions'][] = array(
+                ];
+                $resourceArray['actions'][] = [
                     'className' => 'edit gon-ab-edit',
                     'text'      => $this->modx->lexicon('edit'),
-                );
-                $resourceArray['actions'][] = array(
+                ];
+                $resourceArray['actions'][] = [
                     'className' => 'delete gon-ab-delete',
                     'text'      => $this->modx->lexicon('delete'),
-                );
-                $resourceArray['actions'][] = array(
+                ];
+                $resourceArray['actions'][] = [
                     'className' => 'publish orange gon-ab-publish',
                     'text'      => $this->modx->lexicon('publish'),
-                );
-                $resourceArray['actions'][] = array(
+                ];
+                $resourceArray['actions'][] = [
                     'className' => 'log gon-ab-log',
                     'text'      => $this->modx->lexicon('goodnews.sendlog'),
-                );
+                ];
             }
         }
 
@@ -553,10 +553,10 @@ class GetList extends GetListProcessor
     {
         $c = $this->modx->newQuery(modUser::class);
         $c->leftJoin(GoodNewsSubscriberMeta::class, 'SubscriberMeta', 'SubscriberMeta.subscriber_id = modUser.id');
-        $c->where(array(
+        $c->where([
             'modUser.active' => true,
             'SubscriberMeta.testdummy' => 1,
-        ));
+        ]);
         $count = $this->modx->getCount(modUser::class, $c);
 
         return $count;
