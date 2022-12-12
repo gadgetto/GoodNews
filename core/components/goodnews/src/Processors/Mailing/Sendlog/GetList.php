@@ -28,7 +28,7 @@ use GoodNews\Model\GoodNewsSubscriberLog;
 class GetList extends GetListProcessor
 {
     public $classKey = GoodNewsSubscriberLog::class;
-    public $languageTopics = array('goodnews:default');
+    public $languageTopics = ['goodnews:default'];
     public $defaultSortField = 'statustime';
     public $defaultSortDirection = 'DESC';
     public $objectType = 'goodnews.sendlog';
@@ -40,7 +40,7 @@ class GetList extends GetListProcessor
 
     public function prepareQueryBeforeCount(xPDOQuery $c)
     {
-        $c->select(array(
+        $c->select([
             'GoodNewsSubscriberLog.id',
             'GoodNewsSubscriberLog.mailing_id',
             'GoodNewsSubscriberLog.subscriber_id',
@@ -48,29 +48,25 @@ class GetList extends GetListProcessor
             'GoodNewsSubscriberLog.status',
             'Profile.email AS subscriber_email',
             'Profile.fullname AS subscriber_fullname',
-        ));
-        $c->leftJoin('modUserProfile', 'Profile', 'GoodNewsSubscriberLog.subscriber_id = Profile.internalKey');
+        ]);
+        $c->leftJoin(modUserProfile::class, 'Profile', 'GoodNewsSubscriberLog.subscriber_id = Profile.internalKey');
 
         $mailingid = $this->getProperty('mailingid', 0);
         if (!empty($mailingid)) {
-            $c->where(array(
-                'GoodNewsSubscriberLog.mailing_id' => $mailingid,
-            ));
+            $c->where(['GoodNewsSubscriberLog.mailing_id' => $mailingid]);
         }
 
         $statusfilter = $this->getProperty('statusfilter', '');
         if (!empty($statusfilter)) {
-            $c->where(array(
-                'GoodNewsSubscriberLog.status' => $statusfilter,
-            ));
+            $c->where(['GoodNewsSubscriberLog.status' => $statusfilter]);
         }
 
         $query = $this->getProperty('query', '');
         if (!empty($query)) {
-            $c->where(array(
+            $c->where([
                 'Profile.email:LIKE' => '%' . $query . '%',
                 'OR:Profile.fullname:LIKE' => '%' . $query . '%',
-            ));
+            ]);
         }
 
         return $c;
