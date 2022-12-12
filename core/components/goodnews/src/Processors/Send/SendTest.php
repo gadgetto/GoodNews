@@ -12,7 +12,6 @@
 
 namespace GoodNews\Processors\Send;
 
-use MODX\Revolution\modSystemSetting;
 use MODX\Revolution\Processors\Processor;
 use GoodNews\GoodNewsMailing;
 
@@ -45,7 +44,6 @@ class SendTest extends Processor
         }
         // Send the test mails
         $this->goodnewsmailing->processTestMailing($this->mailingid);
-        
         return $this->success();
     }
 }
