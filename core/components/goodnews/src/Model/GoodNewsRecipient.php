@@ -1,5 +1,5 @@
 <?php
-namespace GoodNews\Model;
+namespace Bitego\GoodNews\Model;
 
 use xPDO\xPDO;
 
@@ -11,7 +11,7 @@ use xPDO\xPDO;
  * @property string $statustime
  * @property integer $status
  *
- * @package GoodNews\Model
+ * @package Bitego\GoodNews\Model
  */
 class GoodNewsRecipient extends \xPDO\Om\xPDOSimpleObject
 {

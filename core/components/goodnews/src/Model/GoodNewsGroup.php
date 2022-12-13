@@ -1,5 +1,5 @@
 <?php
-namespace GoodNews\Model;
+namespace Bitego\GoodNews\Model;
 
 use xPDO\xPDO;
 
@@ -15,10 +15,10 @@ use xPDO\xPDO;
  * @property string $editedon
  * @property integer $editedby
  *
- * @property \GoodNews\Model\GoodNewsCategory[] $GoodNewsCategory
- * @property \GoodNews\Model\GoodNewsGroupMember[] $GroupMember
+ * @property \Bitego\GoodNews\Model\GoodNewsCategory[] $GoodNewsCategory
+ * @property \Bitego\GoodNews\Model\GoodNewsGroupMember[] $GroupMember
  *
- * @package GoodNews\Model
+ * @package Bitego\GoodNews\Model
  */
 class GoodNewsGroup extends \xPDO\Om\xPDOSimpleObject
 {

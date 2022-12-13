@@ -1,13 +1,13 @@
 <?php
-namespace GoodNews\Model\mysql;
+namespace Bitego\GoodNews\Model\mysql;
 
 use xPDO\xPDO;
 
-class GoodNewsProcess extends \GoodNews\Model\GoodNewsProcess
+class GoodNewsProcess extends \Bitego\GoodNews\Model\GoodNewsProcess
 {
 
     public static $metaMap = array (
-        'package' => 'GoodNews\\Model\\',
+        'package' => 'Bitego\\GoodNews\\Model\\',
         'version' => '3.0',
         'table' => 'goodnews_processes',
         'extends' => 'xPDO\\Om\\xPDOSimpleObject',

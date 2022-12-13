@@ -1,5 +1,5 @@
 <?php
-namespace GoodNews\Model;
+namespace Bitego\GoodNews\Model;
 
 use xPDO\xPDO;
 
@@ -9,7 +9,7 @@ use xPDO\xPDO;
  * @property string $pid
  * @property string $starttime
  *
- * @package GoodNews\Model
+ * @package Bitego\GoodNews\Model
  */
 class GoodNewsProcess extends \xPDO\Om\xPDOSimpleObject
 {

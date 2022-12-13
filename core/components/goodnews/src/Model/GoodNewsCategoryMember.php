@@ -1,5 +1,5 @@
 <?php
-namespace GoodNews\Model;
+namespace Bitego\GoodNews\Model;
 
 use xPDO\xPDO;
 
@@ -9,7 +9,7 @@ use xPDO\xPDO;
  * @property integer $goodnewscategory_id
  * @property integer $member_id
  *
- * @package GoodNews\Model
+ * @package Bitego\GoodNews\Model
  */
 class GoodNewsCategoryMember extends \xPDO\Om\xPDOSimpleObject
 {

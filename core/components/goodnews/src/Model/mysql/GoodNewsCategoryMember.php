@@ -1,13 +1,13 @@
 <?php
-namespace GoodNews\Model\mysql;
+namespace Bitego\GoodNews\Model\mysql;
 
 use xPDO\xPDO;
 
-class GoodNewsCategoryMember extends \GoodNews\Model\GoodNewsCategoryMember
+class GoodNewsCategoryMember extends \Bitego\GoodNews\Model\GoodNewsCategoryMember
 {
 
     public static $metaMap = array (
-        'package' => 'GoodNews\\Model\\',
+        'package' => 'Bitego\\GoodNews\\Model\\',
         'version' => '3.0',
         'table' => 'goodnews_category_members',
         'extends' => 'xPDO\\Om\\xPDOSimpleObject',
@@ -82,7 +82,7 @@ class GoodNewsCategoryMember extends \GoodNews\Model\GoodNewsCategoryMember
         array (
             'GoodNewsCategory' => 
             array (
-                'class' => 'GoodNews\\Model\\GoodNewsCategory',
+                'class' => 'Bitego\\GoodNews\\Model\\GoodNewsCategory',
                 'local' => 'goodnewscategory_id',
                 'foreign' => 'id',
                 'cardinality' => 'one',

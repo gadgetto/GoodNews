@@ -1,5 +1,5 @@
 <?php
-namespace GoodNews\Model;
+namespace Bitego\GoodNews\Model;
 
 use xPDO\xPDO;
 
@@ -16,9 +16,9 @@ use xPDO\xPDO;
  * @property string $soft_bounces
  * @property string $hard_bounces
  *
- * @property \GoodNews\Model\GoodNewsSubscriberLog[] $SubscriberLog
+ * @property \Bitego\GoodNews\Model\GoodNewsSubscriberLog[] $SubscriberLog
  *
- * @package GoodNews\Model
+ * @package Bitego\GoodNews\Model
  */
 class GoodNewsSubscriberMeta extends \xPDO\Om\xPDOSimpleObject
 {

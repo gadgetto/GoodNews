@@ -1,5 +1,5 @@
 <?php
-namespace GoodNews\Model;
+namespace Bitego\GoodNews\Model;
 
 use xPDO\xPDO;
 
@@ -22,9 +22,9 @@ use xPDO\xPDO;
  * @property integer $soft_bounces
  * @property integer $hard_bounces
  *
- * @property \GoodNews\Model\GoodNewsRecipient[] $Recipient
+ * @property \Bitego\GoodNews\Model\GoodNewsRecipient[] $Recipient
  *
- * @package GoodNews\Model
+ * @package Bitego\GoodNews\Model
  */
 class GoodNewsMailingMeta extends \xPDO\Om\xPDOSimpleObject
 {

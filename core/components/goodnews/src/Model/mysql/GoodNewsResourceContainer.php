@@ -1,13 +1,13 @@
 <?php
-namespace GoodNews\Model\mysql;
+namespace Bitego\GoodNews\Model\mysql;
 
 use xPDO\xPDO;
 
-class GoodNewsResourceContainer extends \GoodNews\Model\GoodNewsResourceContainer
+class GoodNewsResourceContainer extends \Bitego\GoodNews\Model\GoodNewsResourceContainer
 {
 
     public static $metaMap = array (
-        'package' => 'GoodNews\\Model\\',
+        'package' => 'Bitego\\GoodNews\\Model\\',
         'version' => '3.0',
         'table' => 'site_content',
         'extends' => 'MODX\\Revolution\\modResource',
@@ -25,7 +25,7 @@ class GoodNewsResourceContainer extends \GoodNews\Model\GoodNewsResourceContaine
         array (
             'ResourceMailing' => 
             array (
-                'class' => 'GoodNews\\Model\\GoodNewsResourceMailing',
+                'class' => 'Bitego\\GoodNews\\Model\\GoodNewsResourceMailing',
                 'local' => 'id',
                 'foreign' => 'parent',
                 'cardinality' => 'many',
