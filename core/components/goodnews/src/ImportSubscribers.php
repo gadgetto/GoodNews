@@ -19,7 +19,7 @@
  * Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-namespace GoodNews;
+namespace Bitego\GoodNews;
 
 /**
  * GoodNewsImportSubscribers class handles batch import of users into MODX users database

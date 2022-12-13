@@ -10,12 +10,12 @@
  * file that was distributed with this source code.
  */
 
-namespace GoodNews\Processors\Mailing;
+namespace Bitego\GoodNews\Processors\Mailing;
 
-use GoodNews\GoodNews;
-use GoodNews\Model\GoodNewsResourceContainer;
-use GoodNews\Model\GoodNewsResourceMailing;
-use GoodNews\Model\GoodNewsMailingMeta;
+use Bitego\GoodNews\GoodNews;
+use Bitego\GoodNews\Model\GoodNewsResourceContainer;
+use Bitego\GoodNews\Model\GoodNewsResourceMailing;
+use Bitego\GoodNews\Model\GoodNewsMailingMeta;
 use MODX\Revolution\modUser;
 use MODX\Revolution\Processors\Model\GetListProcessor;
 use xPDO\Om\xPDOObject;

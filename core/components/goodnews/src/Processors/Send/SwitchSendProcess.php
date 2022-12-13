@@ -10,7 +10,7 @@
  * file that was distributed with this source code.
  */
 
-namespace GoodNews\Processors\Send;
+namespace Bitego\GoodNews\Processors\Send;
 
 use MODX\Revolution\modSystemSetting;
 use MODX\Revolution\Processors\Processor;

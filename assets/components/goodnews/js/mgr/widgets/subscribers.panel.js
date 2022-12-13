@@ -98,7 +98,7 @@ GoodNews.grid.Subscribers = function(config){
     Ext.applyIf(config,{
         id: 'goodnews-grid-subscribers'
         ,url: GoodNews.config.connectorUrl
-        ,baseParams: { action: 'mgr/subscribers/getList' }
+        ,baseParams: { action: 'Bitego\\GoodNews\\Processors\\Subscribers\\GetList' }
         ,fields: [
             'id'
             ,'email'
@@ -229,7 +229,7 @@ GoodNews.grid.Subscribers = function(config){
                     ,store: new Ext.data.JsonStore({
                         url: GoodNews.config.connectorUrl
                         ,baseParams: {
-                            action : 'mgr/groups/getGroupFilterList'
+                            action : 'Bitego\\GoodNews\\Processors\\Groups\\FilterGetList'
                             ,addNoGroupOption: true
                         }
                         ,fields: ['id','name']
@@ -249,7 +249,7 @@ GoodNews.grid.Subscribers = function(config){
                     ,store: new Ext.data.JsonStore({
                         url: GoodNews.config.connectorUrl
                         ,baseParams: {
-                            action : 'mgr/category/getCategoryFilterList'
+                            action : 'Bitego\\GoodNews\\Processors\\Category\\FilterGetList'
                             ,addNoCategoryOption: true
                         }
                         ,fields: ['id','name']
@@ -449,7 +449,7 @@ Ext.extend(GoodNews.grid.Subscribers,MODx.grid.Grid,{
             ,text: _('goodnews.subscriber_reset_bounce_counters_confirm')
             ,url: this.config.url
             ,params: {
-                action: 'mgr/subscribers/resetBounceCounters'
+                action: 'Bitego\\GoodNews\\Processors\\Subscribers\\ResetBounceCounters'
                 ,id: this.menu.record.id
             }
             ,listeners: {
@@ -521,7 +521,7 @@ Ext.extend(GoodNews.grid.Subscribers,MODx.grid.Grid,{
             ,text: _('goodnews.subscriber_reset_bounce_counters_confirm_multi')
             ,url: this.config.url
             ,params: {
-                action: 'mgr/subscribers/resetBounceCountersMulti'
+                action: 'Bitego\\GoodNews\\Processors\\Subscribers\\ResetBounceCountersMulti'
                 ,userIds: sel
             }
             ,listeners: {

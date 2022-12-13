@@ -10,10 +10,10 @@
  * file that was distributed with this source code.
  */
 
-namespace GoodNews\Processors\Container;
+namespace Bitego\GoodNews\Processors\Container;
  
 use MODX\Revolution\Processors\Processor;
-use GoodNews\GoodNews;
+use Bitego\GoodNews\GoodNews;
 
 /**
  * Switch current GoodNews container in CMP

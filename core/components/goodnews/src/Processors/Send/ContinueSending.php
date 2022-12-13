@@ -10,10 +10,10 @@
  * file that was distributed with this source code.
  */
 
-namespace GoodNews\Processors\Send;
+namespace Bitego\GoodNews\Processors\Send;
 
 use MODX\Revolution\Processors\Processor;
-use GoodNews\Mailer;
+use Bitego\GoodNews\Mailer;
 
 /**
  * Continue sending newsletters processor.

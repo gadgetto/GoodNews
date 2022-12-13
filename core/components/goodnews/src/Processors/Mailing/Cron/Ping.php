@@ -10,7 +10,7 @@
  * file that was distributed with this source code.
  */
 
-namespace GoodNews\Processors\Mailing\Cron;
+namespace Bitego\GoodNews\Processors\Mailing\Cron;
 
 use MODX\Revolution\Processors\Processor;
 use MODX\Revolution\Registry\modRegistry;

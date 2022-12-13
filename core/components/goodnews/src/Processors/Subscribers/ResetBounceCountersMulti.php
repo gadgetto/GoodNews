@@ -10,10 +10,10 @@
  * file that was distributed with this source code.
  */
 
-namespace GoodNews\Processors\Subscribers;
+namespace Bitego\GoodNews\Processors\Subscribers;
 
 use MODX\Revolution\Processors\Processor;
-use GoodNews\Model\GoodNewsSubscriberMeta;
+use Bitego\GoodNews\Model\GoodNewsSubscriberMeta;
 
 /**
  * GoodNews processor to reset the bounce counters (hardb., softb.) of a batch of users.

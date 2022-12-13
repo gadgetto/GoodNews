@@ -10,13 +10,13 @@
  * file that was distributed with this source code.
  */
 
-namespace GoodNews\Processors\Mailing\Sendlog;
+namespace Bitego\GoodNews\Processors\Mailing\Sendlog;
 
 use MODX\Revolution\modUserProfile;
 use MODX\Revolution\Processors\Processor;
 use xPDO\Om\xPDOObject;
 use xPDO\Om\xPDOQuery;
-use GoodNews\Model\GoodNewsSubscriberLog;
+use Bitego\GoodNews\Model\GoodNewsSubscriberLog;
 
 /**
  * SendLog export processor

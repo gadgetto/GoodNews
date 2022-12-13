@@ -10,11 +10,11 @@
  * file that was distributed with this source code.
  */
 
-namespace GoodNews\Processors\Subscribers;
+namespace Bitego\GoodNews\Processors\Subscribers;
 
-use GoodNews\Model\GoodNewsSubscriberMeta;
-use GoodNews\Model\GoodNewsGroupMember;
-use GoodNews\Model\GoodNewsCategoryMember;
+use Bitego\GoodNews\Model\GoodNewsSubscriberMeta;
+use Bitego\GoodNews\Model\GoodNewsGroupMember;
+use Bitego\GoodNews\Model\GoodNewsCategoryMember;
 use MODX\Revolution\modUser;
 use MODX\Revolution\modUserProfile;
 use MODX\Revolution\Processors\Model\GetListProcessor;
