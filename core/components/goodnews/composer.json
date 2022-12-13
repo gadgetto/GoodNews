@@ -18,5 +18,7 @@
             "email": "martin.gartner@bitego.com"
         }
     ],
-    "require": {}
+    "require": {
+        "tijsverkoyen/css-to-inline-styles": "^2.2"
+    }
 }
