@@ -1,11 +1,15 @@
 {
     "name": "bitego/goodnews",
     "description": "An integrated group and newsletter mailing system for MODX Revolution CMF",
-    "type": "project",
+    "type": "modx-plugin",
     "license": "GNU General Public License v2",
+    "keywords": [
+      "modx",
+      "GoodNews"
+    ],
     "autoload": {
         "psr-4": {
-            "Bitego\\Goodnews\\": "src/"
+            "Bitego\\GoodNews\\": "src/"
         }
     },
     "authors": [
