@@ -1,39 +1,43 @@
 <?php
+
 /**
- * GoodNews
+ * This file is part of the GoodNews package.
  *
- * Copyright 2012 by bitego <office@bitego.com>
+ * @copyright bitego (Martin Gartner)
+ * @license GNU General Public License v2.0 (and later)
  *
- * GoodNews is free software; you can redistribute it and/or modify it under the
- * terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
- *
- * GoodNews is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this software; if not, write to the Free Software Foundation, Inc., 59 Temple
- * Place, Suite 330, Boston, MA 02111-1307 USA
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
-require_once dirname(dirname(__FILE__)).'/csstoinlinestyles/Exception.php';
-require_once dirname(dirname(__FILE__)).'/csstoinlinestyles/CssToInlineStyles.php';
-require_once dirname(dirname(__FILE__)).'/html2text/html2text.php';
+namespace Bitego\GoodNews;
+
+use MODX\Revolution\modUser;
+use MODX\Revolution\modUserProfile;
+use MODX\Revolution\modResource;
+use MODX\Revolution\modChunk;
+use Bitego\GoodNews\ProcessHandler;
+use Bitego\GoodNews\RecipientsHandler;
+use Bitego\GoodNews\Model\GoodNewsResourceContainer;
+use Bitego\GoodNews\Model\GoodNewsResourceMailing;
+use Bitego\GoodNews\Model\GoodNewsSubscriberMeta;
+
+require_once dirname(dirname(__FILE__)) . '/csstoinlinestyles/Exception.php';
+require_once dirname(dirname(__FILE__)) . '/csstoinlinestyles/CssToInlineStyles.php';
+require_once dirname(dirname(__FILE__)) . '/html2text/html2text.php';
 
 /**
- * GoodNewsMailing class handles mailing/newsletter sending
+ * Mailer class handles mass-email sending.
  *
  * @package goodnews
  */
-class GoodNewsMailing {
+class Mailer
+{
+    public const GON_IPC_STATUS_STOPPED  = 0;
+    public const GON_IPC_STATUS_STARTED  = 1;
     
-    const GON_IPC_STATUS_STOPPED  = 0;
-    const GON_IPC_STATUS_STARTED  = 1;
-    
-    const GON_STATUS_REPORT_MAILING_STOPPED  = 1;
-    const GON_STATUS_REPORT_MAILING_FINISHED = 2;
+    public const GON_STATUS_REPORT_MAILING_STOPPED  = 1;
+    public const GON_STATUS_REPORT_MAILING_FINISHED = 2;
 
     /** @var modX $modx A reference to the modX object */
     public $modx = null;
@@ -41,12 +45,12 @@ class GoodNewsMailing {
     /** @var GoodNewsResourceMailing $mailing A mailing resource object */
     public $mailing = null;
 
-    /** @var GoodNewsProcessHandler $goodnewsprocesshandler A processhandler object */
-    public $goodnewsprocesshandler = null;
-        
-    /** @var GoodNewsRecipientHandler $goodnewsrecipienthandler A recipientshandler object */
-    public $goodnewsrecipienthandler = null;
-        
+    /** @var ProcessHandler $processhandler A processhandler object */
+    public $processhandler = null;
+    
+    /** @var RecipientsHandler $recipientshandler A recipientshandler object */
+    public $recipientshandler = null;
+    
     /** @var int $mailingid The id of the current mailing resource */
     public $mailingid = 0;
     
@@ -63,99 +67,116 @@ class GoodNewsMailing {
     public $subscriberFields = array();
 
     /**
-     * Constructor for GoodNewsMailing object
+     * Constructor for Mailer object
      *
      * @param modX $modx
      */
-    function __construct(modX &$modx) {
-        $this->modx      = &$modx;
-        $this->debug     = $this->modx->getOption('goodnews.debug', null, false) ? true : false;
-        $this->bulksize  = $this->modx->getOption('goodnews.mailing_bulk_size', null, 30);
-        
-        $corePath = $this->modx->getOption('goodnews.core_path', null, $this->modx->getOption('core_path').'components/goodnews/');
-
-        if (!$this->modx->loadClass('GoodNewsProcessHandler', $corePath.'model/goodnews/', true, true)) {
-            $this->modx->log(modX::LOG_LEVEL_ERROR,'[GoodNews] Could not load GoodNewsProcessHandler class. Processing aborted.');
-            exit();
-        }
-        $this->goodnewsprocesshandler = new GoodNewsProcessHandler($this->modx);
-        
-        if (!$this->goodnewsprocesshandler->createLockFileDir()) {
-            $this->modx->log(modX::LOG_LEVEL_ERROR,'[GoodNews] Lockfile directory missing! Processing aborted.');
-            exit();
-        }
-
-        if (!$this->modx->loadClass('GoodNewsRecipientHandler', $corePath.'model/goodnews/', true, true)) {
-            $this->modx->log(modX::LOG_LEVEL_ERROR,'[GoodNews] Could not load GoodNewsRecipientHandler class. Processing aborted.');
-            exit();
-        }
-        $this->goodnewsrecipienthandler = new GoodNewsRecipientHandler($this->modx);
-
+    public function __construct(modX &$modx)
+    {
+        $this->modx = &$modx;
+        $this->debug = $this->modx->getOption('goodnews.debug', null, false) ? true : false;
+        $this->bulksize = $this->modx->getOption('goodnews.mailing_bulk_size', null, 30);
         $this->modx->lexicon->load('goodnews:default');
+        
+        $this->processhandler = new ProcessHandler($this->modx);
+        if (!$this->processhandler->createLockFileDir()) {
+            $this->modx->log(modX::LOG_LEVEL_ERROR, '[GoodNews] Lockfile directory missing! Processing aborted.');
+            exit();
+        }
+        
+        $this->recipientshandler = new RecipientsHandler($this->modx);
         
         // Get the default fields for a subscriber (for later use as placeholders)
         $this->subscriberFields = array_merge(
-            $this->modx->getFields('GoodNewsSubscriberMeta'),
-            $this->modx->getFields('modUserProfile')
+            $this->modx->getFields(GoodNewsSubscriberMeta::class),
+            $this->modx->getFields(modUserProfile::class)
         );
-        $this->subscriberFields = $this->_cleanupKeys($this->subscriberFields);
+        $this->subscriberFields = $this->cleanupKeys($this->subscriberFields);
     }
 
     /**
      * Get the mail properties and collect in array.
-     * 
+     *
      * @access private
      * @return array $properties The collection of properties || false
      */
-    private function _getMailProperties() {
-        $this->_changeContext();
-
-        $properties = array();
-        $properties['subject']       = $this->_getMailSubject();
-        $properties['ishtml']        = $this->mailing->get('richtext') ? true : false;
+    private function getMailProperties()
+    {
+        $this->changeContext();
+        
+        $properties = [];
+        $properties['subject'] = $this->getMailSubject();
+        $properties['ishtml'] = $this->mailing->get('richtext') ? true : false;
         if ($properties['ishtml']) {
-            $properties['body']      = $this->_getHTMLMailBody();
-            $properties['altbody']   = ''; // This is filled later when subscriber placeholders are processed!
+            $properties['body'] = $this->getHTMLMailBody();
+            // This is filled later when subscriber placeholders are processed!
+            $properties['altbody'] = '';
         } else {
-            $properties['body']      = $this->_getPlainMailBody();
-            $properties['altbody']   = ''; // This stays empty when plain text mail is sent!
+            $properties['body'] = $this->getPlainMailBody();
+            // This stays empty when plain text mail is sent!
+            $properties['altbody'] = '';
         }
-        $properties['mailFrom']      = $this->mailing->getProperty('mailFrom',     'goodnews', $this->modx->getOption('emailsender'));   
-        $properties['mailFromName']  = $this->mailing->getProperty('mailFromName', 'goodnews', $this->modx->getOption('site_name'));
-        $properties['mailReplyTo']   = $this->mailing->getProperty('mailReplyTo',  'goodnews', $this->modx->getOption('emailsender'));   
-        $properties['mailCharset']   = $this->mailing->getProperty('mailCharset',  'goodnews', $this->modx->getOption('mail_charset',  null, 'UTF-8'));
-        $properties['mailEncoding']  = $this->mailing->getProperty('mailEncoding', 'goodnews', $this->modx->getOption('mail_encoding', null, '8bit'));
-
+        $properties['mailFrom'] = $this->mailing->getProperty(
+            'mailFrom',
+            'goodnews',
+            $this->modx->getOption('emailsender')
+        );
+        $properties['mailFromName'] = $this->mailing->getProperty(
+            'mailFromName',
+            'goodnews',
+            $this->modx->getOption('site_name')
+        );
+        $properties['mailReplyTo'] = $this->mailing->getProperty(
+            'mailReplyTo',
+            'goodnews',
+            $this->modx->getOption('emailsender')
+        );
+        $properties['mailCharset'] = $this->mailing->getProperty(
+            'mailCharset',
+            'goodnews',
+            $this->modx->getOption('mail_charset', null, 'UTF-8')
+        );
+        $properties['mailEncoding'] = $this->mailing->getProperty(
+            'mailEncoding',
+            'goodnews',
+            $this->modx->getOption('mail_encoding', null, '8bit')
+        );
+        
         return $properties;
     }
 
     /**
      * Get the subscriber properties and collect in array.
-     * 
+     *
      * @access private
      * @param integer $subscriberId The ID of the subscriber
      * @return mixed $properties The collection of properties || false
      */
-    private function _getSubscriberProperties($subscriberId) {
-        $meta = $this->modx->getObject('GoodNewsSubscriberMeta', array('subscriber_id' => $subscriberId));
-        if (!$meta) { return ''; }
-        $profile = $this->modx->getObject('modUserProfile', array('internalKey' => $subscriberId));
-        if (!$profile) { return ''; }
-                
+    private function getSubscriberProperties($subscriberId)
+    {
+        $meta = $this->modx->getObject(GoodNewsSubscriberMeta::class, ['subscriber_id' => $subscriberId]);
+        if (!$meta) {
+            return '';
+        }
+        $profile = $this->modx->getObject(modUserProfile::class, ['internalKey' => $subscriberId]);
+        if (!$profile) {
+            return '';
+        }
+        
         // Flatten extended fields:
         // extended.field1
         // extended.container1.field2
         // ...
-        $extended = $profile->get('extended') ? $profile->get('extended') : array();
+        $extended = $profile->get('extended') ? $profile->get('extended') : [];
         if (!empty($extended)) {
-            $extended = $this->_flattenExtended($extended, 'extended.');
+            $extended = $this->flattenExtended($extended, 'extended.');
         }
         $properties = array_merge(
             $meta->toArray(),
             $profile->toArray(),
             $extended
         );
-        $properties = $this->_cleanupKeys($properties);
+        $properties = $this->cleanupKeys($properties);
         return $properties;
     }
 
@@ -166,31 +187,33 @@ class GoodNewsMailing {
      * @param array $properties
      * @return array $properties
      */
-    private function _cleanupKeys(array $properties = array()) {
+    private function cleanupKeys(array $properties = array())
+    {
         unset(
             $properties['id'],          // multiple occurrence; not needed
             $properties['internalKey'], // not needed
             $properties['sessionid'],   // security!
             $properties['extended']     // not needed as its already flattened
-        );    
+        );
         return $properties;
     }
 
     /**
-     * Helper function to recursively flatten an array.
-     * 
+     * Helper function to recursively flatten an extended fields array.
+     *
      * @access private
      * @param array $array The array to be flattened.
      * @param string $prefix The prefix for each new array key.
      * @return array $result The flattened and prefixed array.
      */
-    private function _flattenExtended($array, $prefix = '') {
+    private function flattenExtended($array, $prefix = '')
+    {
         $result = array();
-        foreach($array as $key => $value) {
+        foreach ($array as $key => $value) {
             if (is_array($value)) {
-                $result = $result + $this->_flattenExtended($value, $prefix.$key.'.');
+                $result = $result + $this->flattenExtended($value, $prefix . $key . '.');
             } else {
-                $result[$prefix.$key] = $value;
+                $result[$prefix . $key] = $value;
             }
         }
         return $result;
@@ -203,56 +226,60 @@ class GoodNewsMailing {
      * @param integer $id The ID of the resource
      * @return string $subject The pagetitle of resource object
      */
-    private function _getMailSubject() {
+    private function getMailSubject()
+    {
         $subject = $this->mailing->get('pagetitle');
         if ($this->testMailing) {
-            $subject = $this->modx->getOption('goodnews.test_subject_prefix').$subject;
+            $subject = $this->modx->getOption('goodnews.test_subject_prefix') . $subject;
         }
         // Convert subject to charset of mailing
-        $mail_charset           = $this->modx->getOption('mail_charset', null, 'UTF-8');
-        $modx_charset           = $this->modx->getOption('modx_charset', null, 'UTF-8');
-        $mail_charset_goodnews  = $this->mailing->getProperty('mailCharset', 'goodnews', $mail_charset);
-        $subject = iconv($modx_charset, $mail_charset_goodnews.'//TRANSLIT', $subject);
+        $mail_charset = $this->modx->getOption('mail_charset', null, 'UTF-8');
+        $modx_charset = $this->modx->getOption('modx_charset', null, 'UTF-8');
+        $mail_charset_goodnews = $this->mailing->getProperty('mailCharset', 'goodnews', $mail_charset);
+        $subject = iconv($modx_charset, $mail_charset_goodnews . '//TRANSLIT', $subject);
         return $subject;
     }
     
     /**
-     * Get the full parsed HTML from resource
-     * 
+     * Get the full parsed HTML from a resource.
+     *
      * @access private
      * @return string $html The parsed html of the resource
      */
-    private function _getHTMLMailBody() {
+    private function getHTMLMailBody()
+    {
         // Store some values for later restoration
-        $currentResource           = $this->modx->resource;
+        $currentResource = $this->modx->resource;
         $currentResourceIdentifier = $this->modx->resourceIdentifier;
-        $currentElementCache       = $this->modx->elementCache;
+        $currentElementCache = $this->modx->elementCache;
         
         // Prepare to process the Resource
-        $this->modx->resource           = $this->mailing;
+        $this->modx->resource = $this->mailing;
         $this->modx->resourceIdentifier = $this->mailing->get('id');
-        $this->modx->elementCache       = array();
+        $this->modx->elementCache = [];
                 
-        // The Resource having access to itself via $this->modx->resource is critical 
-        // for getting resource fields, as well as for proper execution of Snippets 
+        // The Resource having access to itself via $this->modx->resource is critical
+        // for getting resource fields, as well as for proper execution of Snippets
         // that may appear in the content.
-
+        
         // Process and return the cacheable content of the Resource
         $html = $this->modx->resource->process();
-
+        
         // Determine how many passes the parser should take at a maximum
         $maxIterations = intval($this->modx->getOption('parser_max_iterations', null, 10));
          
-        if (!$this->modx->parser) { $this->modx->getParser(); }
-
+        if (!$this->modx->parser) {
+            $this->modx->getParser();
+        }
+        
         // Preserve GoodNews subscriber fields placeholders
         $phsArray = $this->subscriberFields;
-        $search = array();
-        $replace = array();
+        $search = [];
+        $replace = [];
         
         foreach ($phsArray as $phs => $values) {
-            $search[] = '[[+'.$phs;
-            $replace[] = '&#91;&#91;+'.$phs;
+            $search[] = '[[+' . $phs;
+            $replace[] = '&#91;&#91;+' . $phs;
         }
         $html = str_ireplace($search, $replace, $html);
         
@@ -261,20 +288,20 @@ class GoodNewsMailing {
             $replace[] = '&#91;&#91;+extended';
         }
         $html = str_ireplace($search, $replace, $html);
-
+        
         // Process the non-cacheable content of the Resource, but leave any unprocessed tags alone
-        $this->modx->parser->processElementTags('', $html, true, false, '[[', ']]', array(), $maxIterations);
+        $this->modx->parser->processElementTags('', $html, true, false, '[[', ']]', [], $maxIterations);
          
         // Process the non-cacheable content of the Resource, this time removing the unprocessed tags
-        $this->modx->parser->processElementTags('', $html, true, true, '[[', ']]', array(), $maxIterations);
-
+        $this->modx->parser->processElementTags('', $html, true, true, '[[', ']]', [], $maxIterations);
+        
         // Set back GoodNews subscriber fields placeholders to it's original form
-        $search = array();
-        $replace = array();
+        $search = [];
+        $replace = [];
         
         foreach ($phsArray as $phs => $value) {
-            $search[] = '&#91;&#91;+'.$phs;
-            $replace[] = '[[+'.$phs;
+            $search[] = '&#91;&#91;+' . $phs;
+            $replace[] = '[[+' . $phs;
         }
         $html = str_ireplace($search, $replace, $html);
         
@@ -283,29 +310,29 @@ class GoodNewsMailing {
             $replace[] = '[[+extended';
         }
         $html = str_ireplace($search, $replace, $html);
-
+        
         // Restore original values
-        $this->modx->elementCache       = $currentElementCache;
+        $this->modx->elementCache = $currentElementCache;
         $this->modx->resourceIdentifier = $currentResourceIdentifier;
-        $this->modx->resource           = $currentResource;
-
+        $this->modx->resource = $currentResource;
+        
         // AutoInline CSS styles from template header (<styles>...</styles>) if activated in settings
         if ($this->modx->getOption('goodnews.auto_inline_css', null, true)) {
-            $html = $this->_inlineCSS($html);
+            $html = $this->inlineCSS($html);
         }
         
         // AutoFixImageSizes if activated in settings
         if ($this->modx->getOption('goodnews.auto_fix_imagesizes', null, true)) {
             $base = $this->modx->getOption('site_url');
-            $html = $this->_autoFixImageSizes($base, $html);
+            $html = $this->autoFixImageSizes($base, $html);
         }
-
+        
         // Make full URLs if activated in settings
         if ($this->modx->getOption('goodnews.auto_full_urls', null, true)) {
             $base = $this->modx->getOption('site_url');
-            $html = $this->_fullURLs($base, $html);
+            $html = $this->fullURLs($base, $html);
         }
-
+        
         return $html;
     }
 
@@ -317,14 +344,14 @@ class GoodNewsMailing {
      * @param $id
      * @return mixed string $body || false
      */
-    private function _getPlainMailBody() {
+    private function getPlainMailBody()
+    {
         $mailingObj = $this->mailing;
         $mailingObj->set('cacheable', false);
         $mailingObj->set('_processed', false);
         $mailingObj->set('_content', false);
         $mailingObj->set('template', 0); // No template is used!
         $body = $mailingObj->process();
-
         return $body;
     }
 
@@ -336,15 +363,17 @@ class GoodNewsMailing {
      * @param array $subscriberProperties The placeholders.
      * @return string $output
      */
-    private function _processSubscriberPlaceholders($html, array $subscriberProperties = array()) {
-        if (empty($html)) { return false; }
-        $chunk = $this->modx->newObject('modChunk');
+    private function processSubscriberPlaceholders($html, array $subscriberProperties = array())
+    {
+        if (empty($html)) {
+            return false;
+        }
+        $chunk = $this->modx->newObject(modChunk::class);
         $chunk->setContent($html);
         $chunk->setCacheable(false);
         $chunk->_processed = false;
         $output = $chunk->process($subscriberProperties);
         $this->modx->parser->processElementTags('', $output, true, true);
-
         return $output;
     }
 
@@ -355,29 +384,34 @@ class GoodNewsMailing {
      * @access public
      * @return mixed integer $recipientId || false if empty
      */
-    public function getNextRecipient() {
+    public function getNextRecipient()
+    {
         if ($this->debug) {
             $mtime = microtime();
             $mtime = explode(' ', $mtime);
             $mtime = $mtime[1] + $mtime[0];
             $tstart = $mtime;
         }
-
-        $this->goodnewsprocesshandler->lock($this->mailingid);
-
+        
+        $this->processhandler->lock($this->mailingid);
+        
         // Find next unsent recipient
-        $recipientId = $this->goodnewsrecipienthandler->getRecipientUnsent($this->mailingid);
-
+        $recipientId = $this->recipientshandler->getRecipientUnsent($this->mailingid);
+        
         // No more recipients (or list is empty which shouldn't happen here)
         if (!$recipientId) {
-            if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsMailing::getNextRecipient - No unsent recipients found.'); }
-            $this->goodnewsprocesshandler->unlock($this->mailingid);
+            if ($this->debug) {
+                $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: ' . getmypid() . '] Mailer::getNextRecipient - No unsent recipients found.');
+            }
+            $this->processhandler->unlock($this->mailingid);
             return false;
         }
         // Habemus recipient!
-        if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsMailing::getNextRecipient - Unsent recipient [id: '.$recipientId.'] found.'); }
+        if ($this->debug) {
+            $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: ' . getmypid() . '] Mailer::getNextRecipient - Unsent recipient [id: ' . $recipientId . '] found.');
+        }
         
-        $this->goodnewsprocesshandler->unlock($this->mailingid);
+        $this->processhandler->unlock($this->mailingid);
         
         if ($this->debug) {
             $mtime = microtime();
@@ -386,9 +420,8 @@ class GoodNewsMailing {
             $tend = $mtime;
             $totalTime = ($tend - $tstart);
             $totalTime = sprintf("%2.4f s", $totalTime);
-            $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsMailing::getNextRecipient - Lock time: '.$totalTime);
+            $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: ' . getmypid() . '] Mailer::getNextRecipient - Lock time: ' . $totalTime);
         }
-
         return $recipientId;
     }
 
@@ -400,7 +433,8 @@ class GoodNewsMailing {
      * @param integer $status The status of the recipient
      * @return boolean
      */
-    public function updateRecipientStatus($recipientId, $status) {
+    public function updateRecipientStatus($recipientId, $status)
+    {
         if ($this->debug) {
             $mtime = microtime();
             $mtime = explode(' ', $mtime);
@@ -408,22 +442,26 @@ class GoodNewsMailing {
             $tstart = $mtime;
         }
         
-        $this->goodnewsprocesshandler->lock($this->mailingid);
+        $this->processhandler->lock($this->mailingid);
 
-        if (!$this->goodnewsrecipienthandler->cleanupRecipient($recipientId, $this->mailingid, $status)) {
-            if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsMailing::updateRecipientStatus - Status for recipient [id: '.$recipientId.'] could not be updated to: '.$status); }
-            $this->goodnewsprocesshandler->unlock($this->mailingid);
+        if (!$this->recipientshandler->cleanupRecipient($recipientId, $this->mailingid, $status)) {
+            if ($this->debug) {
+                $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: ' . getmypid() . '] Mailer::updateRecipientStatus - Status for recipient [id: ' . $recipientId . '] could not be updated to: ' . $status);
+            }
+            $this->processhandler->unlock($this->mailingid);
             return false;
         }
 
-        $meta = $this->modx->getObject('GoodNewsMailingMeta',  array('mailing_id'=>$this->mailingid));
-        if (!is_object($meta)) { return false; }
+        $meta = $this->modx->getObject(GoodNewsMailingMeta::class, ['mailing_id' => $this->mailingid]);
+        if (!is_object($meta)) {
+            return false;
+        }
 
         // Increase sent counter in mailing meta
         $recipientsSent = $meta->get('recipients_sent') + 1;
         $meta->set('recipients_sent', $recipientsSent);
         
-        if ($status == GoodNewsRecipientHandler::GON_USER_SEND_ERROR) {
+        if ($status == RecipientsHandler::GON_USER_SEND_ERROR) {
             // Increase error counter in mailing meta
             $recipientsError = $meta->get('recipients_error') + 1;
             $meta->set('recipients_error', $recipientsError);
@@ -431,7 +469,7 @@ class GoodNewsMailing {
         $meta->save();
         unset($meta);
         
-        $this->goodnewsprocesshandler->unlock($this->mailingid);
+        $this->processhandler->unlock($this->mailingid);
         
         if ($this->debug) {
             $mtime = microtime();
@@ -440,7 +478,7 @@ class GoodNewsMailing {
             $tend = $mtime;
             $totalTime = ($tend - $tstart);
             $totalTime = sprintf("%2.4f s", $totalTime);
-            $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsMailing::updateRecipientStatus - Lock time: '.$totalTime);
+            $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: ' . getmypid() . '] Mailer::updateRecipientStatus - Lock time: ' . $totalTime);
         }
         return true;
     }
@@ -452,21 +490,24 @@ class GoodNewsMailing {
      * @access public
      * @return mixed array $testrecipients || false if empty
      */
-    public function getTestRecipients() {
-        $c = $this->modx->newQuery('modUser');
-        $c->leftJoin('GoodNewsSubscriberMeta', 'SubscriberMeta', 'SubscriberMeta.subscriber_id = modUser.id');  
+    public function getTestRecipients()
+    {
+        $c = $this->modx->newQuery(modUser::class);
+        $c->leftJoin(GoodNewsSubscriberMeta::class, 'SubscriberMeta', 'SubscriberMeta.subscriber_id = modUser.id');
         $c->where(array(
             'modUser.active' => true,
             'SubscriberMeta.testdummy' => 1,
         ));
-        $recipients = $this->modx->getIterator('modUser', $c);
+        $recipients = $this->modx->getIterator(modUser::class, $c);
 
         $testrecipients = array();
         foreach ($recipients as $recipient) {
-            $testrecipients[] = $recipient->get('id');            
+            $testrecipients[] = $recipient->get('id');
         }
         if (count($testrecipients) == 0) {
-            if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsMailing::getTestRecipients - Test-recipients list is empty.'); }
+            if ($this->debug) {
+                $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: ' . getmypid() . '] Mailer::getTestRecipients - Test-recipients list is empty.');
+            }
             $testrecipients = false;
         }
         return $testrecipients;
@@ -478,31 +519,34 @@ class GoodNewsMailing {
      * @access public
      * @return array $mailingIDs or false
      */
-    public function getMailingsToSend() {
+    public function getMailingsToSend()
+    {
         $containerIDs = $this->getGoodNewsContainers();
         if (empty($containerIDs)) {
-            $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] No mailing containers found.');
+            $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews]  Mailer::getMailingsToSend - No mailing containers found.');
             return false;
         }
         // Check for scheduled mailings
-        $this->_startScheduledMailings();
+        $this->startScheduledMailings();
         
-        $c = $this->modx->newQuery('modResource');
-        $c->leftJoin('GoodNewsMailingMeta', 'MailingMeta', 'MailingMeta.mailing_id = modResource.id');
+        $c = $this->modx->newQuery(modResource::class);
+        $c->leftJoin(GoodNewsMailingMeta::class, 'MailingMeta', 'MailingMeta.mailing_id = modResource.id');
         $c->where(array(
             'modResource.published'  => true,
             'modResource.deleted'    => false,
             'modResource.parent:IN'  => $containerIDs,
             'MailingMeta.ipc_status' => self::GON_IPC_STATUS_STARTED,
         ));
-        $mailings = $this->modx->getIterator('modResource', $c);
+        $mailings = $this->modx->getIterator(modResource::class, $c);
         
         $mailingIDs = array();
         foreach ($mailings as $mailing) {
             $mailingIDs[] = $mailing->get('id');
         }
         if (count($mailingIDs) == 0) {
-            if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsMailing::getMailingsToSend - No mailing resources found for processing.'); }
+            if ($this->debug) {
+                $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: ' . getmypid() . '] Mailer::getMailingsToSend - No mailing resources found for processing.');
+            }
             $mailingIDs = false;
         }
         return $mailingIDs;
@@ -514,22 +558,25 @@ class GoodNewsMailing {
      * @access public
      * @return array $mailingIDs or false
      */
-    public function getMailingsFinished() {
-        $c = $this->modx->newQuery('GoodNewsMailingMeta');
+    public function getMailingsFinished()
+    {
+        $c = $this->modx->newQuery(GoodNewsMailingMeta::class);
         $c->where(array(
             'recipients_total > 0',
             'recipients_total = recipients_sent',
             'finishedon > 0',
             'ipc_status' => self::GON_IPC_STATUS_STOPPED,
         ));
-        $mailings = $this->modx->getIterator('GoodNewsMailingMeta', $c);
+        $mailings = $this->modx->getIterator(GoodNewsMailingMeta::class, $c);
         
         $mailingIDs = array();
         foreach ($mailings as $mailing) {
             $mailingIDs[] = $mailing->get('id');
         }
         if (count($mailingIDs) == 0) {
-            if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsMailing::getMailingsFinished - No mailing resources found for processing.'); }
+            if ($this->debug) {
+                $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: ' . getmypid() . '] Mailer::getMailingsFinished - No mailing resources found for processing.');
+            }
             $mailingIDs = false;
         }
         return $mailingIDs;
@@ -542,68 +589,72 @@ class GoodNewsMailing {
      * @param integer $id The ID of the mailing resource
      * @return boolean
      */
-    public function processMailing($id) {
-    
+    public function processMailing($id)
+    {
         $this->mailingid = $id;
-        $this->mailing   = $this->_getMailingObject();
-        if (!$this->mailing) { return false; }
+        $this->mailing = $this->getMailingObject();
+        if (!$this->mailing) {
+            return false;
+        }
 
-        if (!$this->goodnewsprocesshandler->createLockFile($this->mailingid)) {
-            $this->modx->log(modX::LOG_LEVEL_ERROR,'[GoodNews] Lockfile missing! Processing aborted.');
+        if (!$this->processhandler->createLockFile($this->mailingid)) {
+            $this->modx->log(modX::LOG_LEVEL_ERROR, '[GoodNews] Lockfile missing! Processing aborted.');
             exit();
         }
         
-        $mail = $this->_getMailProperties();
+        $mail = $this->getMailProperties();
         
         // Send a defined bulk of emails
         for ($n = 0; $n < $this->bulksize; $n++) {
-            
             $recipientId = $this->getNextRecipient();
             
             // There are no more recipients -> mailing has finished!
             if (!$recipientId) {
-                
-                if ($this->goodnewsrecipienthandler->getRecipientReserved($this->mailingid)) {
+                if ($this->recipientshandler->getRecipientReserved($this->mailingid)) {
                     // Before we stop, cleanup all timed out recipients!
-                    while ($timeoutRecipientId = $this->goodnewsrecipienthandler->getRecipientTimeout($this->mailingid)) {
-                        $this->updateRecipientStatus($timeoutRecipientId, GoodNewsRecipientHandler::GON_USER_SEND_ERROR);
-                        if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsMailing::processMailing - Sending for recipient [id: '.$timeoutRecipientId.'] timed out.'); }
+                    while ($timeoutRecipientId = $this->recipientshandler->getRecipientTimeout($this->mailingid)) {
+                        $this->updateRecipientStatus($timeoutRecipientId, RecipientsHandler::GON_USER_SEND_ERROR);
+                        if ($this->debug) {
+                            $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: ' . getmypid() . '] Mailer::processMailing - Sending for recipient [id: ' . $timeoutRecipientId . '] timed out.');
+                        }
                     }
                 } else {
                     // Stop this process and remove temp lockfile!
-                    $this->goodnewsprocesshandler->setPid(getmypid());
-                    $this->goodnewsprocesshandler->deleteProcessStatus();
-                    $this->goodnewsprocesshandler->removeTempLockFile($this->mailingid);
+                    $this->processhandler->setPid(getmypid());
+                    $this->processhandler->deleteProcessStatus();
+                    $this->processhandler->removeTempLockFile($this->mailingid);
                     
                     // Also we set the mailing to finished (= IPCstatus "stopped")
                     $this->setIPCstop($this->mailingid, true);
-                    if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsMailing::processMailing - Mailing [id: '.$this->mailingid.'] finished.'); }
+                    if ($this->debug) {
+                        $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: ' . getmypid() . '] Mailer::processMailing - Mailing [id: ' . $this->mailingid . '] finished.');
+                    }
                 }
                 break;
-            }            
-
-            $subscriber = $this->_getSubscriberProperties($recipientId);
+            }
+            
+            $subscriber = $this->getSubscriberProperties($recipientId);
             if ($subscriber) {
                 $temp_mail = $mail;
-                $temp_mail['body'] = $this->_processSubscriberPlaceholders($temp_mail['body'], $subscriber);
+                $temp_mail['body'] = $this->processSubscriberPlaceholders($temp_mail['body'], $subscriber);
                 if ($temp_mail['ishtml']) {
-                    // Convert HTML to plain text using "html2text" library from https://github.com/soundasleep/html2text
+                    // Convert HTML to plain text using "html2text" library
+                    // from https://github.com/soundasleep/html2text
                     $temp_mail['altbody'] = convert_html_to_text($temp_mail['body']);
                 }
                 if ($this->sendEmail($temp_mail, $subscriber)) {
-                    $status = GoodNewsRecipientHandler::GON_USER_SENT;
+                    $status = RecipientsHandler::GON_USER_SENT;
                 } else {
-                    $status = GoodNewsRecipientHandler::GON_USER_SEND_ERROR;
+                    $status = RecipientsHandler::GON_USER_SEND_ERROR;
                 }
-            
-            // this could happen, if a subscriber was deleted while mailing is processed
+            // this could happen, if a subscriber is deleted while mailing is processed
             } else {
-                $status = GoodNewsRecipientHandler::GON_USER_SEND_ERROR; // @todo: other status required eg. GON_USER_NOT_FOUND
+                // @todo: other status required eg. GON_USER_NOT_FOUND
+                $status = RecipientsHandler::GON_USER_SEND_ERROR;
             }
             
-            $this->updateRecipientStatus($recipientId, $status);            
+            $this->updateRecipientStatus($recipientId, $status);
         }
-
         return true;
     }
 
@@ -614,25 +665,31 @@ class GoodNewsMailing {
      * @param integer $id The ID of the mailing resource
      * @return boolean
      */
-    public function processTestMailing($id) {    
-        $this->mailingid   = $id;
+    public function processTestMailing($id)
+    {
+        $this->mailingid = $id;
         $this->testMailing = true;
-        $this->mailing     = $this->_getMailingObject();
-        if (!$this->mailing) { return false; }
+        $this->mailing = $this->getMailingObject();
+        if (!$this->mailing) {
+            return false;
+        }
         
-        $mail       = $this->_getMailProperties();
+        $mail = $this->getMailProperties();
         $recipients = $this->getTestRecipients();
-        if (empty($recipients)) { return false; }
+        if (empty($recipients)) {
+            return false;
+        }
 
         foreach ($recipients as $recipientId) {
-            $subscriber = $this->_getSubscriberProperties($recipientId);
+            $subscriber = $this->getSubscriberProperties($recipientId);
             $temp_mail = $mail;
-            $temp_mail['body'] = $this->_processSubscriberPlaceholders($temp_mail['body'], $subscriber);
+            $temp_mail['body'] = $this->processSubscriberPlaceholders($temp_mail['body'], $subscriber);
             if ($temp_mail['ishtml']) {
-                // Create altbody -> convert HTML to plain text using "html2text" library from https://github.com/soundasleep/html2text
+                // Create altbody -> convert HTML to plain text using "html2text" library
+                // from https://github.com/soundasleep/html2text
                 $temp_mail['altbody'] = convert_html_to_text($temp_mail['body']);
             }
-            $sent = $this->sendEmail($temp_mail, $subscriber);            
+            $sent = $this->sendEmail($temp_mail, $subscriber);
         }
         return true;
     }
@@ -645,41 +702,45 @@ class GoodNewsMailing {
      * @param array $subscriber
      * @return array
      */
-    public function sendEmail(array $mail, array $subscriber) {
-
+    public function sendEmail(array $mail, array $subscriber)
+    {
         $this->modx->getService('mail', 'mail.modPHPMailer');
 
         // Set SMTP params for modMail based on container settings
         // (this enables each container to have it's own set of SMTP settings - overriding the MODX system settings)
         if ($this->mailing->getProperty('mailUseSmtp', 'goodnews', $this->modx->getOption('mail_use_smtp', null, false))) {
             $this->modx->mail->set(modMail::MAIL_ENGINE, 'smtp');
-            $this->modx->mail->set(modMail::MAIL_SMTP_AUTH,   $this->mailing->getProperty('mailSmtpAuth',   'goodnews', $this->modx->getOption('mail_smtp_auth',   null, false)));
-            $this->modx->mail->set(modMail::MAIL_SMTP_USER,   $this->mailing->getProperty('mailSmtpUser',   'goodnews', $this->modx->getOption('mail_smtp_user',   null, '')));
-            $this->modx->mail->set(modMail::MAIL_SMTP_PASS,   $this->mailing->getProperty('mailSmtpPass',   'goodnews', $this->modx->getOption('mail_smtp_pass',   null, '')));
-            $this->modx->mail->set(modMail::MAIL_SMTP_HOSTS,  $this->mailing->getProperty('mailSmtpHosts',  'goodnews', $this->modx->getOption('mail_smtp_hosts',  null, 'localhost:25')));
-            $this->modx->mail->set(modMail::MAIL_SMTP_PORT,   $this->modx->getOption('mail_smtp_port', null, 25)); // this is from MODX system settings only (GoodNews containers settings only hold the [hostname:port] format)
+            $this->modx->mail->set(modMail::MAIL_SMTP_AUTH, $this->mailing->getProperty('mailSmtpAuth', 'goodnews', $this->modx->getOption('mail_smtp_auth', null, false)));
+            $this->modx->mail->set(modMail::MAIL_SMTP_USER, $this->mailing->getProperty('mailSmtpUser', 'goodnews', $this->modx->getOption('mail_smtp_user', null, '')));
+            $this->modx->mail->set(modMail::MAIL_SMTP_PASS, $this->mailing->getProperty('mailSmtpPass', 'goodnews', $this->modx->getOption('mail_smtp_pass', null, '')));
+            $this->modx->mail->set(modMail::MAIL_SMTP_HOSTS, $this->mailing->getProperty('mailSmtpHosts', 'goodnews', $this->modx->getOption('mail_smtp_hosts', null, 'localhost:25')));
+            // this is from MODX system settings only
+            // (GoodNews containers settings only holds the [hostname:port] format)
+            $this->modx->mail->set(modMail::MAIL_SMTP_PORT, $this->modx->getOption('mail_smtp_port', null, 25));
             $this->modx->mail->set(modMail::MAIL_SMTP_PREFIX, $this->mailing->getProperty('mailSmtpPrefix', 'goodnews', $this->modx->getOption('mail_smtp_prefix', null, '')));
             $helo = $this->mailing->getProperty('mailSmtpHelo', 'goodnews', $this->modx->getOption('mail_smtp_helo', null, ''));
             if (!empty($helo)) {
                 $this->modx->mail->set(modMail::MAIL_SMTP_HELO, $helo);
             }
             $this->modx->mail->set(modMail::MAIL_SMTP_KEEPALIVE, $this->mailing->getProperty('mailSmtpKeepalive', 'goodnews', $this->modx->getOption('mail_smtp_keepalive', null, false)));
-            $this->modx->mail->set(modMail::MAIL_SMTP_SINGLE_TO, $this->mailing->getProperty('mailSmtpSingleTo',  'goodnews', $this->modx->getOption('mail_smtp_single_to', null, false)));
-            $this->modx->mail->set(modMail::MAIL_SMTP_TIMEOUT,   $this->mailing->getProperty('mailSmtpTimeout',   'goodnews', $this->modx->getOption('mail_smtp_timeout',   null, 10)));
+            $this->modx->mail->set(modMail::MAIL_SMTP_SINGLE_TO, $this->mailing->getProperty('mailSmtpSingleTo', 'goodnews', $this->modx->getOption('mail_smtp_single_to', null, false)));
+            $this->modx->mail->set(modMail::MAIL_SMTP_TIMEOUT, $this->mailing->getProperty('mailSmtpTimeout', 'goodnews', $this->modx->getOption('mail_smtp_timeout', null, 10)));
         }
-        $this->modx->mail->header('X-goodnews-user-id: '.$subscriber['subscriber_id']);
-        $this->modx->mail->header('X-goodnews-mailing-id: '.$this->mailingid);
-        $this->modx->mail->set(modMail::MAIL_BODY,      $mail['body']);
+        $this->modx->mail->header('X-goodnews-user-id: ' . $subscriber['subscriber_id']);
+        $this->modx->mail->header('X-goodnews-mailing-id: ' . $this->mailingid);
+        $this->modx->mail->set(modMail::MAIL_BODY, $mail['body']);
         $this->modx->mail->set(modMail::MAIL_BODY_TEXT, $mail['altbody']);
-        $this->modx->mail->set(modMail::MAIL_FROM,      $mail['mailFrom']);
+        $this->modx->mail->set(modMail::MAIL_FROM, $mail['mailFrom']);
         $this->modx->mail->set(modMail::MAIL_FROM_NAME, $mail['mailFromName']);
-        $this->modx->mail->set(modMail::MAIL_SENDER,    $mail['mailFrom']);
-        $this->modx->mail->set(modMail::MAIL_SUBJECT,   $mail['subject']);
-        $this->modx->mail->set(modMail::MAIL_CHARSET,   $mail['mailCharset']);
-        $this->modx->mail->set(modMail::MAIL_ENCODING,  $mail['mailEncoding']);
+        $this->modx->mail->set(modMail::MAIL_SENDER, $mail['mailFrom']);
+        $this->modx->mail->set(modMail::MAIL_SUBJECT, $mail['subject']);
+        $this->modx->mail->set(modMail::MAIL_CHARSET, $mail['mailCharset']);
+        $this->modx->mail->set(modMail::MAIL_ENCODING, $mail['mailEncoding']);
 
         $this->modx->mail->address('reply-to', $mail['mailReplyTo']);
-        if (empty($subscriber['fullname'])) { $subscriber['fullname'] = $subscriber['email']; }
+        if (empty($subscriber['fullname'])) {
+            $subscriber['fullname'] = $subscriber['email'];
+        }
         $this->modx->mail->address('to', $subscriber['email'], $subscriber['fullname']);
         $this->modx->mail->setHTML($mail['ishtml']);
                 
@@ -687,9 +748,11 @@ class GoodNewsMailing {
         $this->modx->mail->reset();
 
         if (!$sent) {
-            $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] Email could not be sent to '.$subscriber['email'].' ('.$subscriber['subscriber_id'].') -- Error: '.$this->modx->mail->mailer->ErrorInfo);
+            $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] Email could not be sent to ' . $subscriber['email'] . ' (' . $subscriber['subscriber_id'] . ') -- Error: ' . $this->modx->mail->mailer->ErrorInfo);
         } else {
-            if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsMailing::sendEmail - Email sent to '.$subscriber['email'].' ('.$subscriber['subscriber_id'].').'); }
+            if ($this->debug) {
+                $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: ' . getmypid() . '] Mailer::sendEmail - Email sent to ' . $subscriber['email'] . ' (' . $subscriber['subscriber_id'] . ') . ');
+            }
         }
         return $sent;
     }
@@ -700,17 +763,18 @@ class GoodNewsMailing {
      * @access public
      * @return array $containerIDs
      */
-    public function getGoodNewsContainers() {
-        $c = $this->modx->newQuery('modResource');
+    public function getGoodNewsContainers()
+    {
+        $c = $this->modx->newQuery(modResource::class);
         $c->where(array(
             'published' => true,
             'deleted'   => false,
-            'class_key' => 'GoodNewsResourceContainer'
+            'class_key' => GoodNewsResourceContainer::class
         ));
-        $containers = $this->modx->getIterator('modResource', $c);
+        $containers = $this->modx->getIterator(modResource::class, $c);
 
         $containerIDs = array();
-        foreach ($containers as $container){
+        foreach ($containers as $container) {
             $containerIDs[] = $container->get('id');
         }
         return $containerIDs;
@@ -718,13 +782,16 @@ class GoodNewsMailing {
     
     /**
      * Get the mailing object and set member variable.
-     * 
+     *
      * @access private
      * @return boolean
      */
-    private function _getMailingObject() {
-        $this->mailing = $this->modx->getObject('GoodNewsResourceMailing', $this->mailingid);
-        if (!is_object($this->mailing)) { return false; }
+    private function getMailingObject()
+    {
+        $this->mailing = $this->modx->getObject(GoodNewsResourceMailing::class, $this->mailingid);
+        if (!is_object($this->mailing)) {
+            return false;
+        }
         return $this->mailing;
     }
 
@@ -734,7 +801,8 @@ class GoodNewsMailing {
      * @access private
      * @return boolean
      */
-    private function _changeContext() {
+    private function changeContext()
+    {
         $key = $this->mailing->get('context_key');
         $this->modx->switchContext($key);
         return true;
@@ -750,13 +818,15 @@ class GoodNewsMailing {
      * @param string $html
      * @return mixed $html The parsed string or false
      */
-    private function _autoFixImageSizes($base, $html) {
-        
+    private function autoFixImageSizes($base, $html)
+    {
         if (empty($html)) {
-            if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsMailing::_autoFixImageSizes - No HTML content provided for parsing.'); }
+            if ($this->debug) {
+                $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: ' . getmypid() . '] Mailer::autoFixImageSizes - No HTML content provided for parsing.');
+            }
             return false;
         }
-
+        
         $images = array();
         $phpthumb_nohotlink_enabled = $this->modx->getOption('phpthumb_nohotlink_enabled', null, true);
         $phpthumb_nohotlink_valid_domains = $this->modx->getOption('phpthumb_nohotlink_valid_domains');
@@ -765,23 +835,21 @@ class GoodNewsMailing {
         preg_match_all('|\<img.*?src=[",\'](.*?)[",\'].*?[^>]+\>|i', $html, $filenames);
         
         // loop through all found img elements
-        foreach($filenames[1] as $i => $filename) {
-        
+        foreach ($filenames[1] as $i => $filename) {
             $img_old = $filenames[0][$i];
             $allowcaching = false;
             
             // is file already cached?
             if (strpos($filename, '?') == false || strpos($filename, '/phpthumb') == false) {
-                
                 // check if external caching is allowed
-                if (substr($filename,0,7) == 'http://' || substr($filename, 0, 8) == 'https://') {
+                if (substr($filename, 0, 7) == 'http://' || substr($filename, 0, 8) == 'https://') {
                     $pre = '';
                     if ($phpthumb_nohotlink_enabled) {
                         foreach (explode(',', $phpthumb_nohotlink_valid_domains) as $alldomain) {
                             if (strpos(strtolower($filename), strtolower(trim($alldomain))) != false) {
                                 $allowcaching = true;
                             }
-                        } 
+                        }
                     } else {
                         $allowcaching = true;
                     }
@@ -792,9 +860,8 @@ class GoodNewsMailing {
             }
             
             // do we have physical access to the file?
-            $mypath = $pre.str_replace('%20', ' ', $filename);
+            $mypath = $pre . str_replace('%20', ' ', $filename);
             if ($allowcaching && $dimensions = @getimagesize($mypath, $info)) {
-                
                 // find width and height attribut and save value
                 preg_match_all('|width=[",\']([0-9]+?)[",\']|i', $filenames[0][$i], $widths);
                 if (isset($widths[1][0])) {
@@ -807,6 +874,7 @@ class GoodNewsMailing {
                         $width = false;
                     }
                 }
+                
                 preg_match_all('|height=[",\']([0-9]+?)[",\']|i', $filenames[0][$i], $heights);
                 if (isset($heights[1][0])) {
                     $height = $heights[1][0];
@@ -821,25 +889,23 @@ class GoodNewsMailing {
                 
                 // if resizing needed...
                 if (($width && $width != $dimensions[0]) || ($height && $height != $dimensions[1])) {
-                
                     // prepare resizing metadata
-                    $filetype = strtolower(substr($filename, strrpos($filename,".")+1));
+                    $filetype = strtolower(substr($filename, strrpos($filename, ".") + 1));
                     $image = array();
                     $image['input'] = $filename;
-                    $image['options'] = 'f='.$filetype.'&h='.$height.'&w='.$width.'&iar=1'; 
+                    $image['options'] = 'f=' . $filetype . '&h=' . $height . '&w=' . $width . '&iar=1';
                     
                     // perform physical resizing and caching via phpthumbof
                     $cacheurl = $this->modx->runSnippet('phpthumbof', $image);
                     
                     // set freshly cached image file location into old src attribute
-                    $img_new = str_replace($filename, $cacheurl, $img_old);  
+                    $img_new = str_replace($filename, $cacheurl, $img_old);
                     
                     // replace old image element with new one on whole page content
-                    $html = str_replace($img_old, $img_new, $html);  
+                    $html = str_replace($img_old, $img_new, $html);
                 }
             }
-        } // end: foreach
-        
+        }
         return $html;
     }
 
@@ -852,27 +918,32 @@ class GoodNewsMailing {
      * @param string $html The unparsed HTML
      * @return mixed $output The parsed HTML as string or false
      */
-    private function _fullURLs($base, $html) {
-        if (empty($html) || empty($base)) { return false; }
+    private function fullURLs($base, $html)
+    {
+        if (empty($html) || empty($base)) {
+            return false;
+        }
         
         // Preserve GoodNews subscriber fields placeholders (which aren't processed yet)
         $html = str_replace('[[', '%5B%5B', $html);
         $html = str_replace(']]', '%5D%5D', $html);
-
+        
         $document = new DOMDocument();
         // Ensure UTF-8 is respected by using 'mb_convert_encoding'
         $document->loadHTML(mb_convert_encoding($html, 'HTML-ENTITIES', 'UTF-8'));
         
         // Process all link tags
         $elements = $document->getElementsByTagName('a');
-    
-        foreach ($elements as $element){
+        
+        foreach ($elements as $element) {
             // Get the value of the href attribute
             $href = $element->getAttribute('href');
             
             // Check if we have a protocol-relative URL - if so, don't touch and continue!
-            // Sample:  //www.domain.com/page.html 
-            if (mb_substr($href, 0, 2) == '//') { continue; }
+            // Sample: //www.domain.com/page.html
+            if (mb_substr($href, 0, 2) == '//') {
+                continue;
+            }
             
             // Remove leading / from relative URLs
             $href = ltrim($href, '/');
@@ -890,54 +961,64 @@ class GoodNewsMailing {
             // ['fragment'] - (string) all after text anchor #
             
             // Check if UR(L|I) is completely invalid - if so, don't touch and continue!
-            if ($url_parts == false) { continue; }
+            if ($url_parts == false) {
+                continue;
+            }
             
             // Check if text anchor only - if so, don't touch and continue!
             // Sample: #textanchor
-            if (!empty($url_parts['fragment']) && empty($url_parts['scheme']) && empty($url_parts['host']) && empty($url_parts['path'])) { continue; }
-
+            if (!empty($url_parts['fragment']) && empty($url_parts['scheme']) && empty($url_parts['host']) && empty($url_parts['path'])) {
+                continue;
+            }
+            
             // Check if mailto: link - if so, don't touch and continue!
-            if (!empty($url_parts['scheme']) && $url_parts['scheme'] == "mailto") { continue; }
-
+            if (!empty($url_parts['scheme']) && $url_parts['scheme'] == "mailto") {
+                continue;
+            }
+            
             // Finally add base URL to href value
             if (empty($url_parts['host'])) {
-                $element->setAttribute('href', $base.$href);
+                $element->setAttribute('href', $base . $href);
             }
         }
-    
+        
         // Process all img tags
         $elements = $document->getElementsByTagName('img');
         
-        foreach ($elements as $element){
+        foreach ($elements as $element) {
             // Get the value of the img attribute
             $href = $element->getAttribute('src');
             
             // Check if we have a protocol-relative URL - if so, don't touch and continue!
-            // Sample:  //www.domain.com/page.html 
-            if (mb_substr($href, 0, 2) == '//') { continue; }
+            // Sample:  //www.domain.com/page.html
+            if (mb_substr($href, 0, 2) == '//') {
+                continue;
+            }
             
             // Remove / from relative URLs
             $href = ltrim($href, '/');
             
             // De-construct the UR(L|I)
             $url_parts = parse_url($href);
-    
+            
             // Check if UR(L|I) is completely invalid - if so, don't touch and continue!
-            if ($url_parts == false) { continue; }
+            if ($url_parts == false) {
+                continue;
+            }
             
             // Finally add base URL to href value
             if (empty($url_parts['host'])) {
-                $element->setAttribute('src', $base.$href);
+                $element->setAttribute('src', $base . $href);
             }
         }
             
         // Return the processed (X)HTML
         $html = $document->saveHTML();
-
+        
         // Set back GoodNews subscriber fields placeholders to it's original form
         $html = str_replace('%5B%5B', '[[', $html);
         $html = str_replace('%5D%5D', ']]', $html);
-
+        
         return $html;
     }
 
@@ -950,12 +1031,15 @@ class GoodNewsMailing {
      * @return string $html HTML content with inlined CSS
      * @author Original method by Josh Gulledge <jgulledge19@hotmail.com>
      */
-    private function _inlineCSS($html) {
+    private function inlineCSS($html)
+    {
         if (empty($html)) {
-            if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsMailing::_inlineCSS - No HTML content provided for parsing.'); }
+            if ($this->debug) {
+                $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: ' . getmypid() . '] Mailer::inlineCSS - No HTML content provided for parsing.');
+            }
             return false;
         }
-
+        
         // GoodNews templates are built with embedded CSS
         // (this can handle multiple <style></style> blocks)
         preg_match_all('|<style(.*)>(.*)</style>|isU', $html, $css);
@@ -966,7 +1050,7 @@ class GoodNewsMailing {
                 $css_rules .= $cssblock;
             }
         }
-
+        
         $cssToInlineStyles = new TijsVerkoyen\CSSToInlineStyles\CSSToInlineStyles($html, $css_rules);
         if (!($cssToInlineStyles instanceof TijsVerkoyen\CSSToInlineStyles\CSSToInlineStyles)) {
             $this->modx->log(modX::LOG_LEVEL_ERROR, '[GoodNews] CSSToInlineStyles class could not be instantiated.');
@@ -976,11 +1060,11 @@ class GoodNewsMailing {
         // Problem with converted chars in URL strings!!
         $cssToInlineStyles->setEncoding($this->modx->getOption('mail_charset', null, 'UTF-8'));
         $html = $cssToInlineStyles->convert();
-
+        
         // Workaround to preserve placeholder delimiters - as CSSToInlineStyles converts special chars within urls
         $html = str_replace('%5B%5B', '[[', $html);
         $html = str_replace('%5D%5D', ']]', $html);
-
+        
         return $html;
     }
     
@@ -992,9 +1076,10 @@ class GoodNewsMailing {
      * @access private
      * @return int $publishingResults The number of mailings affected by the sql statement.
      */
-    private function _startScheduledMailings() {
-        $tblResource = $this->modx->getTableName('modResource');
-        $tblMailingMeta = $this->modx->getTableName('GoodNewsMailingMeta');
+    private function startScheduledMailings()
+    {
+        $tblResource = $this->modx->getTableName(modResource::class);
+        $tblMailingMeta = $this->modx->getTableName(GoodNewsMailingMeta::class);
         $timeNow = time();
         $ipcStatus = self::GON_IPC_STATUS_STARTED;
         
@@ -1013,12 +1098,12 @@ class GoodNewsMailing {
                 AND {$tblResource}.pub_date < {$timeNow} 
                 AND {$tblResource}.pub_date > 0
                 AND {$tblMailingMeta}.recipients_total > 0";
-
+        
         $publishingResults = $this->modx->exec($sql);
         if ($this->debug) {
             if ($publishingResults) {
                 $mailings = $publishingResults / 2; // we always have two rows affected!
-                $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsMailing::autoPublish - autopublished mailings: '.$mailings);
+                $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: ' . getmypid() . '] Mailer::autoPublish - autopublished mailings: ' . $mailings);
             }
         }
         return $publishingResults;
@@ -1031,11 +1116,14 @@ class GoodNewsMailing {
      * @param integer $id The ID of the resource
      * @return boolean
      */
-    public function setIPCstart($id) {
+    public function setIPCstart($id)
+    {
         // Get resource mailing meta object
-        $meta = $this->modx->getObject('GoodNewsMailingMeta', array('mailing_id' => $id));
-        if (!is_object($meta)) { return false; }
-
+        $meta = $this->modx->getObject(GoodNewsMailingMeta::class, ['mailing_id' => $id]);
+        if (!is_object($meta)) {
+            return false;
+        }
+        
         $currentUser = $this->modx->user->get('id');
         
         // set mailing sender and send date
@@ -1057,11 +1145,14 @@ class GoodNewsMailing {
      * @param bool $finished
      * @return boolean
      */
-    public function setIPCstop($id, $finished = false) {
+    public function setIPCstop($id, $finished = false)
+    {
         // Get resource mailing meta object
-        $meta = $this->modx->getObject('GoodNewsMailingMeta', array('mailing_id' => $id));
-        if (!is_object($meta)) { return false; }
-
+        $meta = $this->modx->getObject(GoodNewsMailingMeta::class, array('mailing_id' => $id));
+        if (!is_object($meta)) {
+            return false;
+        }
+        
         if ($finished) {
             $meta->set('finishedon', time());
             $status = self::GON_STATUS_REPORT_MAILING_FINISHED;
@@ -1073,7 +1164,7 @@ class GoodNewsMailing {
             // Send status report to MODX user who initiated (sent) the mailing if enabled
             $statusemail = $this->modx->getOption('goodnews.statusemail_enabled', null, 1);
             if ($statusemail) {
-                $this->_statusReport($id, $status);
+                $this->statusReport($id, $status);
             }
             return true;
         } else {
@@ -1088,11 +1179,14 @@ class GoodNewsMailing {
      * @param integer $id The ID of the resource
      * @return boolean
      */
-    public function setIPCcontinue($id) {
+    public function setIPCcontinue($id)
+    {
         // Get resource mailing meta object
-        $meta = $this->modx->getObject('GoodNewsMailingMeta', array('mailing_id' => $id));
-        if (!is_object($meta)) { return false; }
-
+        $meta = $this->modx->getObject(GoodNewsMailingMeta::class, ['mailing_id' => $id]);
+        if (!is_object($meta)) {
+            return false;
+        }
+        
         $meta->set('ipc_status', self::GON_IPC_STATUS_STARTED);
         if ($meta->save()) {
             return true;
@@ -1109,56 +1203,60 @@ class GoodNewsMailing {
      * @param integer $status The status of the mailing to report (default: self::GON_STATUS_REPORT_MAILING_FINISHED)
      * @return array
      */
-    private function _statusReport($id, $status = self::GON_STATUS_REPORT_MAILING_FINISHED) {
-        $mailing = $this->modx->getObject('GoodNewsResourceMailing', $id);
-        if (!is_object($mailing)) { return false; }
-
+    private function statusReport($id, $status = self::GON_STATUS_REPORT_MAILING_FINISHED)
+    {
+        $mailing = $this->modx->getObject(GoodNewsResourceMailing::class, $id);
+        if (!is_object($mailing)) {
+            return false;
+        }
         $meta = $mailing->getOne('MailingMeta');
-        if (!is_object($meta)) { return false; }
+        if (!is_object($meta)) {
+            return false;
+        }
         
-        $profile = $this->modx->getObject('modUserProfile',  array('internalKey'=>$meta->get('sentby')));
-        if (!is_object($profile)) { return false; }
-
+        $profile = $this->modx->getObject(modUserProfile::class, ['internalKey' => $meta->get('sentby')]);
+        if (!is_object($profile)) {
+            return false;
+        }
+        
         $user = $profile->getOne('User');
-        
-        $properties = array();
+        $properties = [];
         
         // Properties for sending email
-        $properties['email']    = $profile->get('email');
-        $properties['name']     = $profile->get('fullname');
-        $properties['subject']  = $this->modx->lexicon('goodnews.newsletter_statusemail_subject_prefix').$mailing->get('pagetitle');
-        $properties['from']     = $this->modx->getOption('emailsender');
+        $properties['email'] = $profile->get('email');
+        $properties['name'] = $profile->get('fullname');
+        $properties['subject'] = $this->modx->lexicon('goodnews.newsletter_statusemail_subject_prefix') . $mailing->get('pagetitle');
+        $properties['from'] = $this->modx->getOption('emailsender');
         $properties['fromname'] = $this->modx->getOption('goodnews.statusemail_fromname');
-
-        $tpl     = $this->modx->getOption('goodnews.statusemail_chunk');    
-        $tplAlt  = '';         // @todo: alternative plaintext template
+        
+        $tpl = $this->modx->getOption('goodnews.statusemail_chunk');
+        $tplAlt = ''; // @todo: alternative plaintext template
         $tplType = 'modChunk'; // @todo: the type of tpl/chunk can be file
-
+        
         // Email body placeholders
-        $properties['mailing_title']    = $mailing->get('pagetitle');
+        $properties['mailing_title'] = $mailing->get('pagetitle');
         $properties['recipients_total'] = $meta->get('recipients_total');
-        $properties['recipients_sent']  = $meta->get('recipients_sent');
+        $properties['recipients_sent'] = $meta->get('recipients_sent');
         $properties['recipients_error'] = $meta->get('recipients_error');
-        $properties['senton']           = $meta->get('senton');
-        $properties['finishedon']       = $meta->get('finishedon');
-        $properties['sentby']           = $user->get('username');
+        $properties['senton'] = $meta->get('senton');
+        $properties['finishedon'] = $meta->get('finishedon');
+        $properties['sentby'] = $user->get('username');
         
         switch ($status) {
-            
-            case self::GON_STATUS_REPORT_MAILING_STOPPED;
+            case self::GON_STATUS_REPORT_MAILING_STOPPED:
                 $properties['mailingstatus'] = $this->modx->lexicon('goodnews.newsletter_status_stopped');
                 break;
                 
-            case self::GON_STATUS_REPORT_MAILING_FINISHED;
+            case self::GON_STATUS_REPORT_MAILING_FINISHED:
                 $properties['mailingstatus'] = $this->modx->lexicon('goodnews.newsletter_status_finished');
                 break;
         }
-
+        
         // Parsed email body
-        $properties['msg']      = $this->_getChunk($tpl, $properties, $tplType);
-        $properties['msgAlt']   = (!empty($tplAlt)) ? $this->_getChunk($tplAlt, $properties, $tplType) : '';
-
-        $this->_sendStatusEmail($properties);
+        $properties['msg'] = $this->getChunk($tpl, $properties, $tplType);
+        $properties['msgAlt'] = (!empty($tplAlt)) ? $this->getChunk($tplAlt, $properties, $tplType) : '';
+        
+        $this->sendStatusEmail($properties);
     }
 
     /**
@@ -1168,19 +1266,20 @@ class GoodNewsMailing {
      * @param array $properties A collection of mail properties.
      * @return boolean
      */
-    private function _sendStatusEmail($properties = array()) {
+    private function sendStatusEmail($properties = array())
+    {
         if (empty($properties['email']) || empty($properties['subject']) || empty($properties['msg']) || empty($properties['from'])) {
             return false;
         }
-        $email    = $properties['email'];
-        $name     = (!empty($properties['name'])) ? $properties['name'] : $properties['email'];
-        $subject  = $properties['subject'];
-        $from     = $properties['from'];
+        $email = $properties['email'];
+        $name = (!empty($properties['name'])) ? $properties['name'] : $properties['email'];
+        $subject = $properties['subject'];
+        $from = $properties['from'];
         $fromName = $properties['fromname'];
-        $sender   = $properties['from'];
-        $replyTo  = $properties['from'];
-        $msg      = $properties['msg'];
-        $msgAlt   = $properties['msgAlt'];
+        $sender = $properties['from'];
+        $replyTo = $properties['from'];
+        $msg = $properties['msg'];
+        $msgAlt = $properties['msgAlt'];
 
         $this->modx->getService('statusmail', 'mail.modPHPMailer');
         $this->modx->statusmail->set(modMail::MAIL_BODY, $msg);
@@ -1199,7 +1298,9 @@ class GoodNewsMailing {
         $this->modx->statusmail->reset();
         
         if (!$sent) {
-            if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_ERROR, '[GoodNews] GoodNewsMailing::_sendStatusEmail - Mailer error: '.$this->modx->statusmail->mailer->ErrorInfo); }
+            if ($this->debug) {
+                $this->modx->log(modX::LOG_LEVEL_ERROR, '[GoodNews] Mailer::sendStatusEmail - Mailer error: ' . $this->modx->statusmail->mailer->ErrorInfo);
+            }
         }
         return $sent;
     }
@@ -1213,7 +1314,8 @@ class GoodNewsMailing {
      * @param string $type The type of tpl/chunk. Can be modChunk or file. Defaults to modChunk.
      * @return string The processed tpl/chunk.
      */
-    private function _getChunk($name, $properties, $type = 'modChunk') {
+    private function getChunk($name, $properties, $type = 'modChunk')
+    {
         $output = '';
         switch ($type) {
             case 'modChunk':
@@ -1221,15 +1323,15 @@ class GoodNewsMailing {
                 break;
                 
             case 'file':
-                $name = str_replace(array(
+                $name = str_replace([
                     '{base_path}',
                     '{assets_path}',
                     '{core_path}',
-                ),array(
+                ], [
                     $this->modx->getOption('base_path'),
                     $this->modx->getOption('assets_path'),
                     $this->modx->getOption('core_path'),
-                ), $name);
+                ], $name);
                 $output .= file_get_contents($name);
                 $this->modx->setPlaceholders($properties);
                 break;
