@@ -34,7 +34,7 @@ class SwitchContainer extends Processor
     
     public function initialize()
     {
-        $this->goodnews = new GoodNews($this->modx);
+        $this->goodnews = $this->modx->services->get('goodnews');
         $this->containerid = $this->getProperty('containerid');
         return parent::initialize();
     }

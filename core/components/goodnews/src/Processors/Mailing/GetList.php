@@ -57,7 +57,7 @@ class GetList extends GetListProcessor
         
     public function initialize()
     {
-        $this->goodnews = new GoodNews($this->modx);
+        $this->goodnews = $this->modx->services->get('goodnews');
         $this->userCurrentContainer = $this->goodnews->config['userCurrentContainer'];
         return parent::initialize();
     }
