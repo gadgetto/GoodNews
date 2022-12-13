@@ -21,6 +21,6 @@ $modx->services->add('goodnews', function ($c) use ($modx) {
     return new \Bitego\GoodNews\GoodNews($modx);
 });
 
-if (!$modx->services->has('mail')) {
-    $modx->services->add('mail', new \MODX\Revolution\Mail\modPHPMailer($modx));
-}
+$modx->services->add('mail', function ($c) use ($modx) {
+    return new \MODX\Revolution\Mail\modPHPMailer($modx);
+});
