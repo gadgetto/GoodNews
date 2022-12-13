@@ -28,6 +28,7 @@ $tstart = $mtime;
 set_time_limit(0);
 
 /* Define package name and namespace */
+define('VENDOR_NAME', 'Bitego');
 define('PKG_NAME', 'GoodNews');
 define('PKG_NAMESPACE', strtolower(PKG_NAME));
 
@@ -73,7 +74,7 @@ if (is_file($schemaFile)) {
             'compile' => 0,
             'update' => 0,
             'regenerate' => 1,
-            'namespacePrefix' => 'GoodNews\\'
+            'namespacePrefix' => VENDOR_NAME . '\\' . PKG_NAME . '\\'
         ]
     );
 } else {

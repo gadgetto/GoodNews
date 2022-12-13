@@ -41,13 +41,14 @@ $tstart = $mtime;
 set_time_limit(0);
 
 /* Define package name and namespace */
+define('VENDOR_NAME', 'Bitego');
 define('PKG_NAME', 'GoodNews');
 define('PKG_NAMESPACE', strtolower(PKG_NAME));
 define('MIN_MODX_VERSION', '3.0.0');
 define('MAX_MODX_VERSION', '');
 define('MIN_PHP_VERSION', '7.2.5');
 
-$className = PKG_NAME . '\\' . PKG_NAME;
+$className = VENDOR_NAME . '\\' . PKG_NAME . '\\' . PKG_NAME;
 
 /* Define paths */
 $root = dirname(__DIR__, 1) . '/';
@@ -162,7 +163,7 @@ flush();
 unset($success, $level);
 
 /* Add package */
-if ($modx->addPackage(PKG_NAME . '\Model', $sources['source_src'], null, PKG_NAME . '\\')) {
+if ($modx->addPackage(VENDOR_NAME . '\\' . PKG_NAME . '\\Model', $sources['source_src'], null, VENDOR_NAME . '\\' . PKG_NAME . '\\')) {
     $modx->log(modX::LOG_LEVEL_ERROR, PKG_NAME . ' package added.');
 } else {
     $modx->log(modX::LOG_LEVEL_ERROR, PKG_NAME . ' package could not be added.');

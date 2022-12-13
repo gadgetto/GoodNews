@@ -19,7 +19,7 @@
 
 $epoch = time();
 
-$entries['GoodNews\Model\GoodNewsGroup'] = [
+$entries['Bitego\GoodNews\Model\GoodNewsGroup'] = [
     'name'          => 'Newsletters',
     'description'   => 'Default newsletters group',
     'modxusergroup' => 0,

@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<model package="GoodNews\Model\" baseClass="xPDO\Om\xPDOSimpleObject" platform="mysql" defaultEngine="InnoDB" phpdoc-package="goodnews" version="3.0">
+<model package="Bitego\GoodNews\Model\" baseClass="xPDO\Om\xPDOSimpleObject" platform="mysql" defaultEngine="InnoDB" phpdoc-package="goodnews" version="3.0">
 
     <object class="GoodNewsResourceContainer" table="site_content" extends="MODX\Revolution\modResource">
-        <composite alias="ResourceMailing" class="GoodNews\Model\GoodNewsResourceMailing" local="id" foreign="parent" cardinality="many" owner="local" />
+        <composite alias="ResourceMailing" class="Bitego\GoodNews\Model\GoodNewsResourceMailing" local="id" foreign="parent" cardinality="many" owner="local" />
     </object>
     
     <object class="GoodNewsResourceMailing" table="site_content" extends="MODX\Revolution\modResource">
-        <aggregate alias="ResourceContainer" class="GoodNews\Model\GoodNewsResourceContainer" local="parent" foreign="id" cardinality="one" owner="foreign" />
-        <composite alias="MailingMeta" class="GoodNews\Model\GoodNewsMailingMeta" local="id" foreign="mailing_id" cardinality="one" owner="local" />
+        <aggregate alias="ResourceContainer" class="Bitego\GoodNews\Model\GoodNewsResourceContainer" local="parent" foreign="id" cardinality="one" owner="foreign" />
+        <composite alias="MailingMeta" class="Bitego\GoodNews\Model\GoodNewsMailingMeta" local="id" foreign="mailing_id" cardinality="one" owner="local" />
     </object>
 
     <object class="GoodNewsMailingMeta" table="goodnews_mailing_meta" extends="xPDO\Om\xPDOSimpleObject">
@@ -32,8 +32,8 @@
         </index>
 
         <aggregate alias="SentBy" class="MODX\Revolution\modUser" local="sentby" foreign="id" cardinality="one" owner="foreign" />
-        <aggregate alias="ResourceMailing" class="GoodNews\Model\GoodNewsResourceMailing" local="mailing_id" foreign="id" cardinality="one" owner="foreign" />
-        <composite alias="Recipient" class="GoodNews\Model\GoodNewsRecipient" local="mailing_id" foreign="mailing_id" cardinality="many" owner="local" />
+        <aggregate alias="ResourceMailing" class="Bitego\GoodNews\Model\GoodNewsResourceMailing" local="mailing_id" foreign="id" cardinality="one" owner="foreign" />
+        <composite alias="Recipient" class="Bitego\GoodNews\Model\GoodNewsRecipient" local="mailing_id" foreign="mailing_id" cardinality="many" owner="local" />
     </object>
 
     <object class="GoodNewsRecipient" table="goodnews_recipients" extends="xPDO\Om\xPDOSimpleObject">
@@ -49,7 +49,7 @@
             <column key="recipient_id" length="" collation="A" null="false" />
         </index>
 
-        <aggregate alias="MailingMeta" class="GoodNews\Model\GoodNewsMailingMeta" local="mailing_id" foreign="mailing_id" cardinality="one" owner="foreign" />
+        <aggregate alias="MailingMeta" class="Bitego\GoodNews\Model\GoodNewsMailingMeta" local="mailing_id" foreign="mailing_id" cardinality="one" owner="foreign" />
     </object>
 
     <object class="GoodNewsSubscriberMeta" table="goodnews_subscriber_meta" extends="xPDO\Om\xPDOSimpleObject">
@@ -68,7 +68,7 @@
         </index>
 
         <aggregate alias="User" class="MODX\Revolution\modUser" local="subscriber_id" foreign="id" cardinality="one" owner="foreign" />
-        <composite alias="SubscriberLog" class="GoodNews\Model\GoodNewsSubscriberLog" local="subscriber_id" foreign="subscriber_id" cardinality="many" owner="local" />
+        <composite alias="SubscriberLog" class="Bitego\GoodNews\Model\GoodNewsSubscriberLog" local="subscriber_id" foreign="subscriber_id" cardinality="many" owner="local" />
     </object>
     
     <object class="GoodNewsSubscriberLog" table="goodnews_subscriber_log" extends="xPDO\Om\xPDOSimpleObject">
@@ -84,7 +84,7 @@
             <column key="mailing_id" length="" collation="A" null="false" />
         </index>
 
-        <aggregate alias="SubscriberMeta" class="GoodNews\Model\GoodNewsSubscriberMeta" local="subscriber_id" foreign="subscriber_id" cardinality="one" owner="foreign" />
+        <aggregate alias="SubscriberMeta" class="Bitego\GoodNews\Model\GoodNewsSubscriberMeta" local="subscriber_id" foreign="subscriber_id" cardinality="one" owner="foreign" />
     </object>
 
     <object class="GoodNewsGroup" table="goodnews_groups" extends="xPDO\Om\xPDOSimpleObject">
@@ -99,8 +99,8 @@
         <aggregate alias="CreatedBy" class="MODX\Revolution\modUser" local="createdby" foreign="id" cardinality="one" owner="foreign" />
         <aggregate alias="EditedBy" class="MODX\Revolution\modUser" local="editedby" foreign="id" cardinality="one" owner="foreign" />
         <aggregate alias="UserGroup" class="MODX\Revolution\modUserGroup" local="modxusergroup" foreign="id" cardinality="one" owner="foreign" />
-        <composite alias="GoodNewsCategory" class="GoodNews\Model\GoodNewsCategory" local="id" foreign="goodnewsgroup_id" cardinality="many" owner="local" /> 
-        <composite alias="GroupMember" class="GoodNews\Model\GoodNewsGroupMember" local="id" foreign="goodnewsgroup_id" cardinality="many" owner="local" />
+        <composite alias="GoodNewsCategory" class="Bitego\GoodNews\Model\GoodNewsCategory" local="id" foreign="goodnewsgroup_id" cardinality="many" owner="local" /> 
+        <composite alias="GroupMember" class="Bitego\GoodNews\Model\GoodNewsGroupMember" local="id" foreign="goodnewsgroup_id" cardinality="many" owner="local" />
     </object>
 
     <object class="GoodNewsGroupMember" table="goodnews_group_members" extends="xPDO\Om\xPDOSimpleObject">
@@ -114,7 +114,7 @@
             <column key="member_id" length="" collation="A" null="false" />
         </index>
 
-        <aggregate alias="GoodNewsGroup" class="GoodNews\Model\GoodNewsGroup" local="goodnewsgroup_id" foreign="id" cardinality="one" owner="foreign" />
+        <aggregate alias="GoodNewsGroup" class="Bitego\GoodNews\Model\GoodNewsGroup" local="goodnewsgroup_id" foreign="id" cardinality="one" owner="foreign" />
         <aggregate alias="User" class="MODX\Revolution\modUser" local="member_id" foreign="id" cardinality="one" owner="foreign" />
     </object>
 
@@ -129,8 +129,8 @@
         <field key="editedby" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="false" default="0" />
         <aggregate alias="CreatedBy" class="MODX\Revolution\modUser" local="createdby" foreign="id" cardinality="one" owner="foreign" />
         <aggregate alias="EditedBy" class="MODX\Revolution\modUser" local="editedby" foreign="id" cardinality="one" owner="foreign" />
-        <aggregate alias="GoodNewsGroup" class="GoodNews\Model\GoodNewsGroup" local="goodnewsgroup_id" foreign="id" cardinality="one" owner="foreign" />
-        <composite alias="CategoryMember" class="GoodNews\Model\GoodNewsCategoryMember" local="id" foreign="goodnewscategory_id" cardinality="many" owner="local" />
+        <aggregate alias="GoodNewsGroup" class="Bitego\GoodNews\Model\GoodNewsGroup" local="goodnewsgroup_id" foreign="id" cardinality="one" owner="foreign" />
+        <composite alias="CategoryMember" class="Bitego\GoodNews\Model\GoodNewsCategoryMember" local="id" foreign="goodnewscategory_id" cardinality="many" owner="local" />
     </object>
 
     <object class="GoodNewsCategoryMember" table="goodnews_category_members" extends="xPDO\Om\xPDOSimpleObject">
@@ -144,7 +144,7 @@
             <column key="member_id" length="" collation="A" null="false" />
         </index>
 
-        <aggregate alias="GoodNewsCategory" class="GoodNews\Model\GoodNewsCategory" local="goodnewscategory_id" foreign="id" cardinality="one" owner="foreign" />
+        <aggregate alias="GoodNewsCategory" class="Bitego\GoodNews\Model\GoodNewsCategory" local="goodnewscategory_id" foreign="id" cardinality="one" owner="foreign" />
         <aggregate alias="User" class="MODX\Revolution\modUser" local="member_id" foreign="id" cardinality="one" owner="foreign" />
     </object>
 

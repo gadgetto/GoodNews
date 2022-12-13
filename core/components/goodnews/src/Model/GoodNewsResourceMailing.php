@@ -10,17 +10,17 @@
  * file that was distributed with this source code.
  */
 
-namespace GoodNews\Model;
+namespace Bitego\GoodNews\Model;
 
 use xPDO\xPDO;
 use MODX\Revolution\modResource;
-use GoodNews\Model\GoodNewsResourceMailing;
+use Bitego\GoodNews\Model\GoodNewsResourceMailing;
 
 /**
  * Class GoodNewsResourceMailing
  *
  * @property \GoodNewsMailingMeta $MailingMeta
- * @package GoodNews\Model
+ * @package Bitego\GoodNews\Model
  */
 class GoodNewsResourceMailing extends modResource
 {

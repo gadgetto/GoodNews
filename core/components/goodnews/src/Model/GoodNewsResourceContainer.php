@@ -10,19 +10,19 @@
  * file that was distributed with this source code.
  */
 
-namespace GoodNews\Model;
+namespace Bitego\GoodNews\Model;
 
 use xPDO\xPDO;
 use MODX\Revolution\modX;
 use MODX\Revolution\modResource;
-use GoodNews\Model\GoodNewsResourceContainer;
-use GoodNews\Model\GoodNewsResourceMailing;
+use Bitego\GoodNews\Model\GoodNewsResourceContainer;
+use Bitego\GoodNews\Model\GoodNewsResourceMailing;
 
 /**
  * Class GoodNewsResourceContainer
  *
  * @property \GoodNewsResourceMailing[] $ResourceMailing
- * @package GoodNews\Model
+ * @package Bitego\GoodNews\Model
  */
 class GoodNewsResourceContainer extends modResource
 {
@@ -192,7 +192,7 @@ class GoodNewsResourceContainer extends modResource
     
                 Ext.getCmp('modx-resource-tree').loadAction(
                     'a=resource/create'
-                    + '&class_key='+((itm.classKey) ? itm.classKey : 'GoodNews\Model\GoodNewsResourceMailing')
+                    + '&class_key='+((itm.classKey) ? itm.classKey : 'Bitego\\GoodNews\\Model\\GoodNewsResourceMailing')
                     + '&parent='+p
                     + '&template=" . $template_id . "'
                     + (at.ctx ? '&context_key='+at.ctx : '')
