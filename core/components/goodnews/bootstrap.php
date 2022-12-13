@@ -5,9 +5,22 @@
  *
  * @var \MODX\Revolution\modX $modx
  * @var array $namespace
+ * @see \MODX\Revolution\modX::_initNamespaces()
  */
 
-$modx->addPackage('GoodNews\Model', $namespace['path'] . 'src/', null, 'GoodNews\\');
+require_once __DIR__ . '/vendor/autoload.php';
+
+$modx->addPackage(
+    'Bitego\\GoodNews\\Model',
+    $namespace['path'] . 'src/',
+    null,
+    'Bitego\\GoodNews\\'
+);
+
 $modx->services->add('goodnews', function ($c) use ($modx) {
-    return new GoodNews\GoodNews($modx);
+    return new \Bitego\GoodNews\GoodNews($modx);
 });
+
+if (!$modx->services->has('mail')) {
+    $modx->services->add('mail', new \MODX\Revolution\Mail\modPHPMailer($modx));
+}
