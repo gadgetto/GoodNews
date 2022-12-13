@@ -19,7 +19,7 @@
  */
 
 /**
- * GoodNewsRecipientHandler class
+ * RecipientsHandler class.
  *
  * Handles selection of recipients based on groups and categories
  * + database management of the recipients lists.
@@ -27,7 +27,7 @@
  * @package goodnews
  */
 
-class GoodNewsRecipientHandler {
+class RecipientsHandler {
     
     const GON_USER_NOT_YET_SENT = 0;
     const GON_USER_SENT         = 1;
