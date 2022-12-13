@@ -28,14 +28,14 @@ $i = 0;
 // Use literal category names in 'parent' keys. Will be converted to IDs later.
 // Use 'default' keyword in 'parent' keys if category should have default category as parent.
 
-$categories[++$i] = $modx->newObject('modCategory');
+$categories[++$i] = $modx->newObject(modCategory::class);
 $categories[$i]->fromArray([
     'parent'      => 'default',
     'category'    => 'Newsletter Templates',
 ], '', true, true);
 
 /*
-$categories[++$i] = $modx->newObject('modMenu');
+$categories[++$i] = $modx->newObject(modCategory::class);
 $categories[$i]->fromArray([
     'parent'      => 'Parent Category Name',
     'category'    => 'Another Category',

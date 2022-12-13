@@ -32,7 +32,7 @@ use MODX\Revolution\modSystemSetting;
 
 $settings = [];
 
-$settings['goodnews.test_subject_prefix'] = $modx->newObject('modSystemSetting');
+$settings['goodnews.test_subject_prefix'] = $modx->newObject(modSystemSetting::class);
 $settings['goodnews.test_subject_prefix']->fromArray([
     'key'       => 'goodnews.test_subject_prefix',
     'value'     => '[TESTMAILING] ',
@@ -41,7 +41,7 @@ $settings['goodnews.test_subject_prefix']->fromArray([
     'area'      => '',
 ], '', true, true);
 
-$settings['goodnews.statusemail_enabled'] = $modx->newObject('modSystemSetting');
+$settings['goodnews.statusemail_enabled'] = $modx->newObject(modSystemSetting::class);
 $settings['goodnews.statusemail_enabled']->fromArray([
     'key'       => 'goodnews.statusemail_enabled',
     'value'     => '1',
@@ -50,7 +50,7 @@ $settings['goodnews.statusemail_enabled']->fromArray([
     'area'      => '',
 ], '', true, true);
 
-$settings['goodnews.statusemail_fromname'] = $modx->newObject('modSystemSetting');
+$settings['goodnews.statusemail_fromname'] = $modx->newObject(modSystemSetting::class);
 $settings['goodnews.statusemail_fromname']->fromArray([
     'key'       => 'goodnews.statusemail_fromname',
     'value'     => 'GoodNews Reporter',
@@ -59,7 +59,7 @@ $settings['goodnews.statusemail_fromname']->fromArray([
     'area'      => '',
 ], '', true, true);
 
-$settings['goodnews.statusemail_chunk'] = $modx->newObject('modSystemSetting');
+$settings['goodnews.statusemail_chunk'] = $modx->newObject(modSystemSetting::class);
 $settings['goodnews.statusemail_chunk']->fromArray([
     'key'       => 'goodnews.statusemail_chunk',
     'value'     => 'sample.GoodNewsStatusEmailChunk',
@@ -68,7 +68,7 @@ $settings['goodnews.statusemail_chunk']->fromArray([
     'area'      => '',
 ], '', true, true);
 
-$settings['goodnews.auto_fix_imagesizes'] = $modx->newObject('modSystemSetting');
+$settings['goodnews.auto_fix_imagesizes'] = $modx->newObject(modSystemSetting::class);
 $settings['goodnews.auto_fix_imagesizes']->fromArray([
     'key'       => 'goodnews.auto_fix_imagesizes',
     'value'     => '0',
@@ -77,7 +77,7 @@ $settings['goodnews.auto_fix_imagesizes']->fromArray([
     'area'      => '',
 ], '', true, true);
 
-$settings['goodnews.auto_full_urls'] = $modx->newObject('modSystemSetting');
+$settings['goodnews.auto_full_urls'] = $modx->newObject(modSystemSetting::class);
 $settings['goodnews.auto_full_urls']->fromArray([
     'key'       => 'goodnews.auto_full_urls',
     'value'     => '1',
@@ -86,7 +86,7 @@ $settings['goodnews.auto_full_urls']->fromArray([
     'area'      => '',
 ], '', true, true);
 
-$settings['goodnews.auto_inline_css'] = $modx->newObject('modSystemSetting');
+$settings['goodnews.auto_inline_css'] = $modx->newObject(modSystemSetting::class);
 $settings['goodnews.auto_inline_css']->fromArray([
     'key'       => 'goodnews.auto_inline_css',
     'value'     => '1',
@@ -95,7 +95,7 @@ $settings['goodnews.auto_inline_css']->fromArray([
     'area'      => '',
 ], '', true, true);
 
-$settings['goodnews.auto_cleanup_subscriptions'] = $modx->newObject('modSystemSetting');
+$settings['goodnews.auto_cleanup_subscriptions'] = $modx->newObject(modSystemSetting::class);
 $settings['goodnews.auto_cleanup_subscriptions']->fromArray([
     'key'       => 'goodnews.auto_cleanup_subscriptions',
     'value'     => '0',
@@ -104,7 +104,7 @@ $settings['goodnews.auto_cleanup_subscriptions']->fromArray([
     'area'      => '',
 ], '', true, true);
 
-$settings['goodnews.auto_cleanup_subscriptions_ttl'] = $modx->newObject('modSystemSetting');
+$settings['goodnews.auto_cleanup_subscriptions_ttl'] = $modx->newObject(modSystemSetting::class);
 $settings['goodnews.auto_cleanup_subscriptions_ttl']->fromArray([
     'key'       => 'goodnews.auto_cleanup_subscriptions_ttl',
     'value'     => '360',
@@ -113,7 +113,7 @@ $settings['goodnews.auto_cleanup_subscriptions_ttl']->fromArray([
     'area'      => '',
 ], '', true, true);
 
-$settings['goodnews.mailing_bulk_size'] = $modx->newObject('modSystemSetting');
+$settings['goodnews.mailing_bulk_size'] = $modx->newObject(modSystemSetting::class);
 $settings['goodnews.mailing_bulk_size']->fromArray([
     'key'       => 'goodnews.mailing_bulk_size',
     'value'     => '30',
@@ -122,7 +122,7 @@ $settings['goodnews.mailing_bulk_size']->fromArray([
     'area'      => '',
 ], '', true, true);
 
-$settings['goodnews.worker_process_active'] = $modx->newObject('modSystemSetting');
+$settings['goodnews.worker_process_active'] = $modx->newObject(modSystemSetting::class);
 $settings['goodnews.worker_process_active']->fromArray([
     'key'       => 'goodnews.worker_process_active',
     'value'     => '1',
@@ -131,7 +131,7 @@ $settings['goodnews.worker_process_active']->fromArray([
     'area'      => '',
 ], '', true, true);
 
-$settings['goodnews.worker_process_limit'] = $modx->newObject('modSystemSetting');
+$settings['goodnews.worker_process_limit'] = $modx->newObject(modSystemSetting::class);
 $settings['goodnews.worker_process_limit']->fromArray([
     'key'       => 'goodnews.worker_process_limit',
     'value'     => '4',
@@ -140,7 +140,7 @@ $settings['goodnews.worker_process_limit']->fromArray([
     'area'      => '',
 ], '', true, true);
 
-$settings['goodnews.admin_groups'] = $modx->newObject('modSystemSetting');
+$settings['goodnews.admin_groups'] = $modx->newObject(modSystemSetting::class);
 $settings['goodnews.admin_groups']->fromArray([
     'key'       => 'goodnews.admin_groups',
     'value'     => 'Administrator',
@@ -149,7 +149,7 @@ $settings['goodnews.admin_groups']->fromArray([
     'area'      => '',
 ], '', true, true);
 
-$settings['goodnews.cron_security_key'] = $modx->newObject('modSystemSetting');
+$settings['goodnews.cron_security_key'] = $modx->newObject(modSystemSetting::class);
 $settings['goodnews.cron_security_key']->fromArray([
     'key'       => 'goodnews.cron_security_key',
     'value'     => '',
@@ -158,7 +158,7 @@ $settings['goodnews.cron_security_key']->fromArray([
     'area'      => '',
 ], '', true, true);
 
-$settings['goodnews.default_container_template'] = $modx->newObject('modSystemSetting');
+$settings['goodnews.default_container_template'] = $modx->newObject(modSystemSetting::class);
 $settings['goodnews.default_container_template']->fromArray([
     'key'       => 'goodnews.default_container_template',
     'value'     => '0',
@@ -167,7 +167,7 @@ $settings['goodnews.default_container_template']->fromArray([
     'area'      => '',
 ], '', true, true);
 
-$settings['goodnews.debug'] = $modx->newObject('modSystemSetting');
+$settings['goodnews.debug'] = $modx->newObject(modSystemSetting::class);
 $settings['goodnews.debug']->fromArray([
     'key'       => 'goodnews.debug',
     'value'     => '0',

@@ -34,7 +34,7 @@ $tvs = [];
 $i = 0;
 
 /*
-$tvs[++$i]= $modx->newObject('modTemplateVar');
+$tvs[++$i]= $modx->newObject(modTemplateVar::class);
 $tvs[$i]->fromArray([
     'id'                => $i,
     'type'              => 'checkbox',

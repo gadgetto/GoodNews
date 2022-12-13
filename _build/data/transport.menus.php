@@ -41,7 +41,7 @@ Note: will route to the first found of the following:
 $menus = [];
 $i = 0;
 
-$menus[++$i] = $modx->newObject('modMenu');
+$menus[++$i] = $modx->newObject(modMenu::class);
 $menus[$i]->fromArray([
     'id'          => $i,
     'text'        => 'goodnews',

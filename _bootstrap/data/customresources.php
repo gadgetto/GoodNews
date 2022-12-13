@@ -71,7 +71,7 @@ $customresources['goodnews'] = [
 $properties['goodnews'] = [];
 
 // Set default mailing templates category
-$templatesCategory = $modx->getObject('modCategory', ['category' => 'Newsletter Templates']);
+$templatesCategory = $modx->getObject(modCategory::class, ['category' => 'Newsletter Templates']);
 if (is_object($templatesCategory)) {
     $properties['goodnews']['templatesCategory'] = $templatesCategory->get('id');
 } else {
@@ -80,7 +80,7 @@ if (is_object($templatesCategory)) {
 }
 
 // Set default mailing template
-$mailingTemplate = $modx->getObject('modTemplate', ['templatename' => 'sample.GoodNewsNewsletterTemplate1']);
+$mailingTemplate = $modx->getObject(modTemplate::class, ['templatename' => 'sample.GoodNewsNewsletterTemplate1']);
 if (is_object($mailingTemplate)) {
     $properties['goodnews']['mailingTemplate'] = $mailingTemplate->get('id');
 } else {
@@ -89,7 +89,7 @@ if (is_object($mailingTemplate)) {
 }
 
 // Set default resource for 1-click unsubscription
-$unsubscribeResource = $modx->getObject('modResource', ['pagetitle' => 'GoodNews Unsubscribe']);
+$unsubscribeResource = $modx->getObject(modResource::class, ['pagetitle' => 'GoodNews Unsubscribe']);
 if (is_object($unsubscribeResource)) {
     $properties['goodnews']['unsubscribeResource'] = $unsubscribeResource->get('id');
 } else {
@@ -98,7 +98,7 @@ if (is_object($unsubscribeResource)) {
 }
 
 // Set default resource for updating subscription profile
-$profileResource = $modx->getObject('modResource', ['pagetitle' => 'GoodNews Subscription Update']);
+$profileResource = $modx->getObject(modResource::class, ['pagetitle' => 'GoodNews Subscription Update']);
 if (is_object($profileResource)) {
     $properties['goodnews']['profileResource'] = $profileResource->get('id');
 } else {

@@ -192,7 +192,7 @@ flush();
 
 /* Create namespace */
 $modx->log(modX::LOG_LEVEL_INFO, 'Adding namespace...');
-if (createObject($modx, 'modNamespace', [
+if (createObject($modx, modNamespace::class, [
     'name' => PKG_NAMESPACE,
     'path' => $sources['source_core'],
     'assets_path' => $sources['source_assets'],
@@ -242,7 +242,7 @@ unset($settings, $setting, $obj);
 
 /* Create default elements category */
 $modx->log(modX::LOG_LEVEL_INFO, 'Adding default elements category...');
-if (createObject($modx, 'modCategory', [
+if (createObject($modx, modCategory::class, [
     'category' => PKG_NAME,
     'parent' => 0,
 ], 'category', false)) {
@@ -254,7 +254,7 @@ if (createObject($modx, 'modCategory', [
 /* Get ID of default elements category for later use */
 $defaultCategoryId = 0;
 /** @var modCategory $obj */
-$obj = $modx->getObject('modCategory', array('category' => PKG_NAME));
+$obj = $modx->getObject(modCategory::class, ['category' => PKG_NAME]);
 if ($obj) {
     $defaultCategoryId = $obj->get('id');
 }

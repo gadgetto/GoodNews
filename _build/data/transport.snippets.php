@@ -35,7 +35,7 @@ use MODX\Revolution\modSnippet;
 $snippets = [];
 $i = 0;
 
-$snippets[++$i] = $modx->newObject('modSnippet');
+$snippets[++$i] = $modx->newObject(modSnippet::class);
 $snippets[$i]->fromArray([
     'id'          => $i,
     'name'        => 'GoodNewsConfirmSubscription',
@@ -46,7 +46,7 @@ $properties = include $sources['properties'] . 'properties.goodnewsconfirmsubscr
 $snippets[$i]->setProperties($properties);
 unset($properties);
 
-$snippets[++$i] = $modx->newObject('modSnippet');
+$snippets[++$i] = $modx->newObject(modSnippet::class);
 $snippets[$i]->fromArray([
     'id'          => $i,
     'name'        => 'GoodNewsSubscription',
@@ -57,7 +57,7 @@ $properties = include $sources['properties'] . 'properties.goodnewssubscription.
 $snippets[$i]->setProperties($properties);
 unset($properties);
 
-$snippets[++$i] = $modx->newObject('modSnippet');
+$snippets[++$i] = $modx->newObject(modSnippet::class);
 $snippets[$i]->fromArray([
     'id'          => $i,
     'name'        => 'GoodNewsUnSubscription',
@@ -68,7 +68,7 @@ $properties = include $sources['properties'] . 'properties.goodnewsunsubscriptio
 $snippets[$i]->setProperties($properties);
 unset($properties);
 
-$snippets[++$i] = $modx->newObject('modSnippet');
+$snippets[++$i] = $modx->newObject(modSnippet::class);
 $snippets[$i]->fromArray([
     'id'          => $i,
     'name'        => 'GoodNewsUpdateProfile',
@@ -79,7 +79,7 @@ $properties = include $sources['properties'] . 'properties.goodnewsupdateprofile
 $snippets[$i]->setProperties($properties);
 unset($properties);
 
-$snippets[++$i] = $modx->newObject('modSnippet');
+$snippets[++$i] = $modx->newObject(modSnippet::class);
 $snippets[$i]->fromArray([
     'id'          => $i,
     'name'        => 'GoodNewsGetResourceID',
@@ -90,7 +90,7 @@ $snippets[$i]->fromArray([
 //$snippets[$i]->setProperties($properties);
 //unset($properties);
 
-$snippets[++$i] = $modx->newObject('modSnippet');
+$snippets[++$i] = $modx->newObject(modSnippet::class);
 $snippets[$i]->fromArray([
     'id'          => $i,
     'name'        => 'GoodNewsGetNewsletters',
@@ -101,7 +101,7 @@ $properties = include $sources['properties'] . 'properties.goodnewsgetnewsletter
 $snippets[$i]->setProperties($properties);
 unset($properties);
 
-$snippets[++$i] = $modx->newObject('modSnippet');
+$snippets[++$i] = $modx->newObject(modSnippet::class);
 $snippets[$i]->fromArray([
     'id'          => $i,
     'name'        => 'GoodNewsContentCollection',
@@ -112,7 +112,7 @@ $properties = include $sources['properties'] . 'properties.goodnewscontentcollec
 $snippets[$i]->setProperties($properties);
 unset($properties);
 
-$snippets[++$i] = $modx->newObject('modSnippet');
+$snippets[++$i] = $modx->newObject(modSnippet::class);
 $snippets[$i]->fromArray([
     'id'          => $i,
     'name'        => 'GoodNewsRequestLinks',

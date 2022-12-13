@@ -63,11 +63,11 @@ function createModxResources(&$modx, $resources, $sources, $custom = false)
     foreach ($resources as $namespace => $fieldvalues) {
         $upd = true;
         /** @var modResource $resource */
-        $resource = $modx->getObject('modResource', ['pagetitle' => $fieldvalues['pagetitle']]);
+        $resource = $modx->getObject(modResource::class, ['pagetitle' => $fieldvalues['pagetitle']]);
         if (!is_object($resource)) {
             $upd = false;
             /* @var modResource $resource */
-            $resource = $modx->newObject('modResource', ['pagetitle' => $fieldvalues['pagetitle']]);
+            $resource = $modx->newObject(modResource::class, ['pagetitle' => $fieldvalues['pagetitle']]);
         }
         
         // Replace content-template file-name with content-template content
@@ -86,7 +86,7 @@ function createModxResources(&$modx, $resources, $sources, $custom = false)
                 $fieldvalues['template'] = $modx->getOption('default_template');
             } else {
                 /* @var modTemplate $templateObj */
-                $templateObj = $modx->getObject('modTemplate', ['templatename' => $fieldvalues['template']]);
+                $templateObj = $modx->getObject(modTemplate::class, ['templatename' => $fieldvalues['template']]);
                 if ($templateObj) {
                     $fieldvalues['template'] = $templateObj->get('id');
                 } else {
@@ -99,7 +99,7 @@ function createModxResources(&$modx, $resources, $sources, $custom = false)
         // Replace parent resource pagetitle with resource ID
         if (!empty($fieldvalues['parent'])) {
             /* @var modResource $parentObj */
-            $parentObj = $modx->getObject('modResource', ['pagetitle' => $fieldvalues['parent']]);
+            $parentObj = $modx->getObject(modResource::class, ['pagetitle' => $fieldvalues['parent']]);
             if ($parentObj) {
                 $fieldvalues['parent'] = $parentObj->get('id');
             } else {
@@ -150,7 +150,7 @@ function assignSettings(&$modx, $settingAttributes)
     $count = 0;
     foreach ($settingAttributes as $attributes) {
         // Check if setting exists
-        $setting = $modx->getObject('modSystemSetting', ['key' => $attributes['key']]);
+        $setting = $modx->getObject(modSystemSetting::class, ['key' => $attributes['key']]);
         if (!$setting) {
             $modx->log(modX::LOG_LEVEL_ERROR, '-> could not find setting: ' . $attributes['key']);
             continue;
@@ -159,7 +159,7 @@ function assignSettings(&$modx, $settingAttributes)
         if ($attributes['xtype'] == 'modx-combo-template') {
             // Assign template id based on template name
             if (!empty($attributes['value'])) {
-                $templateObj = $modx->getObject('modTemplate', ['templatename' => $attributes['value']]);
+                $templateObj = $modx->getObject(modTemplate::class, ['templatename' => $attributes['value']]);
                 if ($templateObj) {
                     $setting->set('value', $templateObj->get('id'));
                 } else {
@@ -314,7 +314,7 @@ function assignTemplateCategories(&$modx, $templateCategories)
     $count = 0;
     foreach ($templateCategories as $templateName => $categoryName) {
         // Check if template exists
-        $template = $modx->getObject('modTemplate', ['templatename' => $templateName]);
+        $template = $modx->getObject(modTemplate::class, ['templatename' => $templateName]);
         if (!$template) {
             $modx->log(modX::LOG_LEVEL_WARN, '-> template ' . $templateName . ' does not exist. No category assigned.');
             continue;
@@ -393,10 +393,10 @@ function createObject(&$modx, $className = '', array $data = [], $primaryField =
  */
 function createSystemSetting(&$modx, $key, $value, $namespace, $xtype = 'textfield', $area = 'Development')
 {
-    $exists = $modx->getCount('modSystemSetting', ['key' => "{$namespace}.{$key}"]);
+    $exists = $modx->getCount(modSystemSetting::class, ['key' => "{$namespace}.{$key}"]);
     $saved = false;
     if (!$exists) {
-        $setting = $modx->newObject('modSystemSetting');
+        $setting = $modx->newObject(modSystemSetting::class);
         $setting->set('key', "{$namespace}.{$key}");
         $setting->set('value', $value);
         $setting->set('xtype', $xtype);
@@ -421,7 +421,7 @@ function isTransportPackageInstalled(&$modx, $tpname)
 {
     $installed = false;
     /** @var transport.modTransportPackage $package */
-    $package = $modx->getObject('transport.modTransportPackage', [
+    $package = $modx->getObject(modTransportPackage::class, [
         'package_name' => $tpname,
     ]);
     if (is_object($package)) {
@@ -441,7 +441,7 @@ function existsNamespace(&$modx, $nspace)
 {
     $exists = false;
     /** @var modNamespace $namespace */
-    $namespace = $modx->getObject('modNamespace', ['name' => $nspace,]);
+    $namespace = $modx->getObject(modNamespace::class, ['name' => $nspace,]);
     if (is_object($namespace)) {
         $exists = true;
     }
@@ -458,7 +458,7 @@ function existsNamespace(&$modx, $nspace)
 function getCategoryID(&$modx, $name)
 {
     $id = 0;
-    $categoryObj = $modx->getObject('modCategory', ['category' => $name]);
+    $categoryObj = $modx->getObject(modCategory::class, ['category' => $name]);
     if (is_object($categoryObj)) {
         $id = $categoryObj->get('id');
     }

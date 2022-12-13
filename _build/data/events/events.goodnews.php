@@ -28,14 +28,14 @@ use MODX\Revolution\modPluginEvent;
  * @subpackage build
  */
 
-$events['OnManagerPageInit']= $modx->newObject('modPluginEvent');
+$events['OnManagerPageInit'] = $modx->newObject(modPluginEvent::class);
 $events['OnManagerPageInit']->fromArray([
     'event' => 'OnManagerPageInit',
     'priority' => 0,
     'propertyset' => 0,
 ], '', true, true);
 
-$events['OnUserRemove']= $modx->newObject('modPluginEvent');
+$events['OnUserRemove'] = $modx->newObject(modPluginEvent::class);
 $events['OnUserRemove']->fromArray([
     'event' => 'OnUserRemove',
     'priority' => 0,

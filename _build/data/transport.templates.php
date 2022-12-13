@@ -34,7 +34,7 @@ use MODX\Revolution\modTemplate;
 $templates = [];
 $i = 0;
 
-$templates[++$i]= $modx->newObject('modTemplate');
+$templates[++$i]= $modx->newObject(modTemplate::class);
 $templates[$i]->fromArray([
     'id'           => $i,
     'templatename' => 'sample.GoodNewsContainerTemplate',
@@ -43,7 +43,7 @@ $templates[$i]->fromArray([
     'icon'         => 'icon-envelope',
 ]);
 
-$templates[++$i]= $modx->newObject('modTemplate');
+$templates[++$i]= $modx->newObject(modTemplate::class);
 $templates[$i]->fromArray([
     'id'           => $i,
     'templatename' => 'sample.GoodNewsProfileTemplate',
@@ -51,7 +51,7 @@ $templates[$i]->fromArray([
     'content'      => file_get_contents($sources['templates'] . 'sample.goodnewsprofile.template.tpl'),
 ]);
 
-$templates[++$i]= $modx->newObject('modTemplate');
+$templates[++$i]= $modx->newObject(modTemplate::class);
 $templates[$i]->fromArray([
     'id'           => $i,
     'templatename' => 'sample.GoodNewsNewsletterTemplate1',
@@ -59,7 +59,7 @@ $templates[$i]->fromArray([
     'content'      => file_get_contents($sources['templates'] . 'sample.goodnewsnewsletter1.template.tpl'),
 ]);
 
-$templates[++$i]= $modx->newObject('modTemplate');
+$templates[++$i]= $modx->newObject(modTemplate::class);
 $templates[$i]->fromArray([
     'id'           => $i,
     'templatename' => 'sample.GoodNewsNewsletterTemplate2',

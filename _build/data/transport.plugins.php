@@ -35,7 +35,7 @@ use MODX\Revolution\modPluginEvent;
 $plugins = [];
 $i = 0;
 
-$plugins[++$i] = $modx->newObject('modPlugin');
+$plugins[++$i] = $modx->newObject(modPlugin::class);
 $plugins[$i]->fromArray([
     'id'          => $i,
     'name'        => 'GoodNews',

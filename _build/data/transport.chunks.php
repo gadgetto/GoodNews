@@ -36,7 +36,7 @@ $i = 0;
 
 // For GoodNews subscriptions
 
-$chunks[++$i] = $modx->newObject('modChunk');
+$chunks[++$i] = $modx->newObject(modChunk::class);
 $chunks[$i]->fromArray([
     'id'          => $i,
     'name'        => 'sample.GoodNewsActivationEmailChunk',
@@ -44,7 +44,7 @@ $chunks[$i]->fromArray([
     'snippet'     => file_get_contents($sources['chunks'] . 'sample.goodnewsactivationemail.chunk.tpl'),
 ], '', true, true);
 
-$chunks[++$i] = $modx->newObject('modChunk');
+$chunks[++$i] = $modx->newObject(modChunk::class);
 $chunks[$i]->fromArray([
     'id'          => $i,
     'name'        => 'sample.GoodNewsCatFieldChunk',
@@ -52,7 +52,7 @@ $chunks[$i]->fromArray([
     'snippet'     => file_get_contents($sources['chunks'] . 'sample.goodnewscatfield.chunk.tpl'),
 ], '', true, true);
 
-$chunks[++$i] = $modx->newObject('modChunk');
+$chunks[++$i] = $modx->newObject(modChunk::class);
 $chunks[$i]->fromArray([
     'id'          => $i,
     'name'        => 'sample.GoodNewsCatFieldHiddenChunk',
@@ -60,7 +60,7 @@ $chunks[$i]->fromArray([
     'snippet'     => file_get_contents($sources['chunks'] . 'sample.goodnewscatfieldhidden.chunk.tpl'),
 ], '', true, true);
 
-$chunks[++$i] = $modx->newObject('modChunk');
+$chunks[++$i] = $modx->newObject(modChunk::class);
 $chunks[$i]->fromArray([
     'id'          => $i,
     'name'        => 'sample.GoodNewsGrpFieldChunk',
@@ -68,7 +68,7 @@ $chunks[$i]->fromArray([
     'snippet'     => file_get_contents($sources['chunks'] . 'sample.goodnewsgrpfield.chunk.tpl'),
 ], '', true, true);
 
-$chunks[++$i] = $modx->newObject('modChunk');
+$chunks[++$i] = $modx->newObject(modChunk::class);
 $chunks[$i]->fromArray([
     'id'          => $i,
     'name'        => 'sample.GoodNewsGrpFieldHiddenChunk',
@@ -76,7 +76,7 @@ $chunks[$i]->fromArray([
     'snippet'     => file_get_contents($sources['chunks'] . 'sample.goodnewsgrpfieldhidden.chunk.tpl'),
 ], '', true, true);
 
-$chunks[++$i] = $modx->newObject('modChunk');
+$chunks[++$i] = $modx->newObject(modChunk::class);
 $chunks[$i]->fromArray([
     'id'          => $i,
     'name'        => 'sample.GoodNewsGrpFieldsetChunk',
@@ -84,7 +84,7 @@ $chunks[$i]->fromArray([
     'snippet'     => file_get_contents($sources['chunks'] . 'sample.goodnewsgrpfieldset.chunk.tpl'),
 ], '', true, true);
 
-$chunks[++$i] = $modx->newObject('modChunk');
+$chunks[++$i] = $modx->newObject(modChunk::class);
 $chunks[$i]->fromArray([
     'id'          => $i,
     'name'        => 'sample.GoodNewsGrpNameChunk',
@@ -92,7 +92,7 @@ $chunks[$i]->fromArray([
     'snippet'     => file_get_contents($sources['chunks'] . 'sample.goodnewsgrpname.chunk.tpl'),
 ], '', true, true);
 
-$chunks[++$i] = $modx->newObject('modChunk');
+$chunks[++$i] = $modx->newObject(modChunk::class);
 $chunks[$i]->fromArray([
     'id'          => $i,
     'name'        => 'sample.GoodNewsNewsletterRowChunk',
@@ -100,7 +100,7 @@ $chunks[$i]->fromArray([
     'snippet'     => file_get_contents($sources['chunks'] . 'sample.goodnewsnewsletterrow.chunk.tpl'),
 ], '', true, true);
 
-$chunks[++$i] = $modx->newObject('modChunk');
+$chunks[++$i] = $modx->newObject(modChunk::class);
 $chunks[$i]->fromArray([
     'id'          => $i,
     'name'        => 'sample.GoodNewsContentCollectionWrapperChunk',
@@ -108,7 +108,7 @@ $chunks[$i]->fromArray([
     'snippet'     => file_get_contents($sources['chunks'] . 'sample.goodnewscontentcollectionwrapper.chunk.tpl'),
 ], '', true, true);
 
-$chunks[++$i] = $modx->newObject('modChunk');
+$chunks[++$i] = $modx->newObject(modChunk::class);
 $chunks[$i]->fromArray([
     'id'          => $i,
     'name'        => 'sample.GoodNewsContentCollectionRowChunk',
@@ -116,7 +116,7 @@ $chunks[$i]->fromArray([
     'snippet'     => file_get_contents($sources['chunks'] . 'sample.goodnewscontentcollectionrow.chunk.tpl'),
 ], '', true, true);
 
-$chunks[++$i] = $modx->newObject('modChunk');
+$chunks[++$i] = $modx->newObject(modChunk::class);
 $chunks[$i]->fromArray([
     'id'          => $i,
     'name'        => 'sample.GoodNewsSubscriptionBoxChunk',
@@ -124,7 +124,7 @@ $chunks[$i]->fromArray([
     'snippet'     => file_get_contents($sources['chunks'] . 'sample.goodnewssubscriptionbox.chunk.tpl'),
 ], '', true, true);
 
-$chunks[++$i] = $modx->newObject('modChunk');
+$chunks[++$i] = $modx->newObject(modChunk::class);
 $chunks[$i]->fromArray([
     'id'          => $i,
     'name'        => 'sample.GoodNewsSubscriptionEmailChunk',
@@ -132,7 +132,7 @@ $chunks[$i]->fromArray([
     'snippet'     => file_get_contents($sources['chunks'] . 'sample.goodnewssubscriptionemail.chunk.tpl'),
 ], '', true, true);
 
-$chunks[++$i] = $modx->newObject('modChunk');
+$chunks[++$i] = $modx->newObject(modChunk::class);
 $chunks[$i]->fromArray([
     'id'          => $i,
     'name'        => 'sample.GoodNewsReSubscriptionEmailChunk',
@@ -140,7 +140,7 @@ $chunks[$i]->fromArray([
     'snippet'     => file_get_contents($sources['chunks'] . 'sample.goodnewsresubscriptionemail.chunk.tpl'),
 ], '', true, true);
 
-$chunks[++$i] = $modx->newObject('modChunk');
+$chunks[++$i] = $modx->newObject(modChunk::class);
 $chunks[$i]->fromArray([
     'id'          => $i,
     'name'        => 'sample.GoodNewsRequestLinksEmailChunk',
@@ -148,7 +148,7 @@ $chunks[$i]->fromArray([
     'snippet'     => file_get_contents($sources['chunks'] . 'sample.goodnewsrequestlinksemail.chunk.tpl'),
 ], '', true, true);
 
-$chunks[++$i] = $modx->newObject('modChunk');
+$chunks[++$i] = $modx->newObject(modChunk::class);
 $chunks[$i]->fromArray([
     'id'          => $i,
     'name'        => 'sample.GoodNewsStatusEmailChunk',
@@ -159,7 +159,7 @@ $chunks[$i]->fromArray([
 
 // For GoodNews registrations
 
-$chunks[++$i] = $modx->newObject('modChunk');
+$chunks[++$i] = $modx->newObject(modChunk::class);
 $chunks[$i]->fromArray([
     'id'          => $i,
     'name'        => 'sample.GoodNewsActivationRegEmailChunk',
@@ -167,7 +167,7 @@ $chunks[$i]->fromArray([
     'snippet'     => file_get_contents($sources['chunks'] . 'sample.goodnewsactivationregemail.chunk.tpl'),
 ], '', true, true);
 
-$chunks[++$i] = $modx->newObject('modChunk');
+$chunks[++$i] = $modx->newObject(modChunk::class);
 $chunks[$i]->fromArray([
     'id'          => $i,
     'name'        => 'sample.GoodNewsReRegistrationEmailChunk',
