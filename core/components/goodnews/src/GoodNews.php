@@ -1,30 +1,24 @@
 <?php
-namespace GoodNews;
 
 /**
- * GoodNews
+ * This file is part of the GoodNews package.
  *
- * Copyright 2022 by bitego <office@bitego.com>
+ * @copyright bitego (Martin Gartner)
+ * @license GNU General Public License v2.0 (and later)
  *
- * GoodNews is free software; you can redistribute it and/or modify it under the
- * terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
- *
- * GoodNews is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this software; if not, write to the Free Software Foundation, Inc., 59 Temple
- * Place, Suite 330, Boston, MA 02111-1307 USA
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
+
+namespace Bitego\GoodNews;
 
 use MODX\Revolution\modX;
 use MODX\Revolution\modResource;
 use MODX\Revolution\modUserSetting;
 use MODX\Revolution\modChunk;
 use MODX\Revolution\Transport\modTransportPackage;
+use Bitego\GoodNews\Model;
+use Bitego\GoodNews\Model\GoodNewsResourceContainer;
 
 /**
  * GoodNews main class
@@ -32,18 +26,18 @@ use MODX\Revolution\Transport\modTransportPackage;
  * @package goodnews
  */
 
-class GoodNews {
-
-    const NAME     = 'GoodNews';
-    const VERSION  = '2.0.0';
-    const RELEASE  = 'beta1';
+class GoodNews
+{
+    public const NAME     = 'GoodNews';
+    public const VERSION  = '2.0.0';
+    public const RELEASE  = 'beta1';
     
-    const HELP_URL = 'https://docs.bitego.com/goodnews/user-guide/';
-    const DEV_NAME = 'bitego (Martin Gartner, Franz Gallei)';
-    const DEV_URL  = 'http://www.bitego.com';
+    public const HELP_URL = 'https://docs.bitego.com/goodnews/user-guide/';
+    public const DEV_NAME = 'bitego (Martin Gartner, Franz Gallei)';
+    public const DEV_URL  = 'http://www.bitego.com';
     
-    const MIN_PHP_VERSION = '7.2.0';
-    const MIN_MODX_VERSION = '3.0.0';
+    public const MIN_PHP_VERSION = '7.2.5';
+    public const MIN_MODX_VERSION = '3.0.0';
 
     /** @var \MODX\Revolution\modX A reference to the modX object */
     public $modx = null;
@@ -102,7 +96,8 @@ class GoodNews {
      * @param \MODX\Revolution\modX &$modx A reference to the modX object
      * @param array $config An array of configuration options
      */
-    function __construct(modX &$modx, array $config = []) {
+    public function __construct(modX &$modx, array $config = [])
+    {
         $this->modx = &$modx;
  
         $corePath = $this->modx->getOption('goodnews.core_path', $config, $this->modx->getOption('core_path', null, MODX_CORE_PATH) . 'components/goodnews/');
@@ -113,9 +108,11 @@ class GoodNews {
         
         $this->config = array_merge([
             'corePath'       => $corePath,
-            'modelPath'      => $corePath . 'model/',
-            'processorsPath' => $corePath . 'processors/',
+            'srcPath'        => $corePath . 'src/',
+            'modelPath'      => $corePath . 'src/Model/',
+            'processorsPath' => $corePath . 'src/Processors/',
             'chunksPath'     => $corePath . 'elements/chunks/',
+            'includesPath'   => $corePath . 'includes/',
             'docsPath'       => $corePath . 'docs/',
             'assetsPath'     => $assetsPath,
             'assetsUrl'      => $assetsUrl,
@@ -127,14 +124,17 @@ class GoodNews {
 
         // This part is only used in 'mgr' context
         if ($this->modx->context->key == 'mgr') {
-            
-            $this->debug              = $this->modx->getOption('goodnews.debug', null, false) ? true : false;
+            $this->debug              = $this->modx->getOption('goodnews.debug', null, false)
+                ? true
+                : false;
             $this->isMultiProcessing  = $this->isMultiProcessing();
             $this->imapExtension      = $this->imapExtension();
             $this->pThumbAddOn        = $this->isTransportPackageInstalled('pThumb');
             $this->actualPhpVersion   = phpversion();
             $this->requiredPhpVersion = self::MIN_PHP_VERSION;
-            $this->phpVersionOK       = version_compare($this->actualPhpVersion, $this->requiredPhpVersion, '>=') ? true : false;
+            $this->phpVersionOK       = version_compare($this->actualPhpVersion, $this->requiredPhpVersion, '>=')
+                ? true
+                : false;
             
             // Only executed if we have a logged in user within MODX manager!
             if ($this->loggedInMgrUser()) {
@@ -144,7 +144,7 @@ class GoodNews {
                 $this->userAvailableContainers = $this->getUserAvailableContainers();
                 
                 if ($this->userAvailableContainers) {
-                    $this->_initializeMailingContainer();
+                    $this->initializeMailingContainer();
                 } else {
                     $this->addSetupError(
                         '503 Service Unavailable',
@@ -154,8 +154,12 @@ class GoodNews {
                 }
             }
             
-            $this->siteStatus          = $this->modx->getOption('site_status', null, false) ? true : false;
-            $this->workerProcessActive = $this->modx->getOption('goodnews.worker_process_active', null, 1) ? true : false;
+            $this->siteStatus = $this->modx->getOption('site_status', null, false)
+                ? true
+                : false;
+            $this->workerProcessActive = $this->modx->getOption('goodnews.worker_process_active', null, 1)
+                ? true
+                : false;
 
             $this->config = array_merge([
                 'setupErrors'             => $this->setupErrors,
@@ -189,7 +193,8 @@ class GoodNews {
      * @access private
      * @return void
      */
-    private function _initializeMailingContainer() {
+    private function initializeMailingContainer()
+    {
         // If request has a container ID - switch to this container
         if (isset($_GET['id'])) {
             $reqid = $_GET['id'];
@@ -207,7 +212,7 @@ class GoodNews {
             $this->setUserCurrentContainer($this->userCurrentContainer);
         }
         
-        $resource = $this->modx->getObject('modResource', $this->userCurrentContainer);
+        $resource = $this->modx->getObject(modResource::class, $this->userCurrentContainer);
         if ($resource) {
             // Get context key of actual GoodNews container
             $this->contextKey = $resource->get('context_key');
@@ -223,20 +228,20 @@ class GoodNews {
      * @access public
      * @return mixed Comma seperated list of container IDs || false.
      */
-    public function getUserAvailableContainers() {
-                
+    public function getUserAvailableContainers()
+    {
         if (!$this->modx->user || ($this->modx->user->get('id') < 1)) {
             return false;
         }
 
-        $c = $this->modx->newQuery('modResource');
+        $c = $this->modx->newQuery(modResource::class);
         $c->where([
             'published' => true,
             'deleted'   => false,
-            'class_key' => 'GoodNewsResourceContainer'
+            'class_key' => GoodNewsResourceContainer::class
         ]);
         $c->sortby('id', 'ASC');
-        $containers = $this->modx->getCollection('modResource', $c);
+        $containers = $this->modx->getCollection(modResource::class, $c);
         
         $containerIDs = false;
         
@@ -258,13 +263,15 @@ class GoodNews {
      * @access public
      * @return mixed Current container ID || false.
      */
-    public function getUserCurrentContainer() {
-        $usersetting = $this->modx->getObject('modUserSetting', [
+    public function getUserCurrentContainer()
+    {
+        $usersetting = $this->modx->getObject(modUserSetting::class, [
             'key' => 'goodnews.current_container',
             'user' => $this->modx->user->get('id')
         ]);
-        if (!is_object($usersetting)) { return false; }
-        
+        if (!is_object($usersetting)) {
+            return false;
+        }
         return $usersetting->get('value') ? $usersetting->get('value') : false;
     }
 
@@ -275,13 +282,14 @@ class GoodNews {
      * @param integer $containerId The container ID (= MODX resource ID)
      * @return boolean
      */
-    public function setUserCurrentContainer($containerId) {
-        $usersetting = $this->modx->getObject('modUserSetting', [
+    public function setUserCurrentContainer($containerId)
+    {
+        $usersetting = $this->modx->getObject(modUserSetting::class, [
             'key' => 'goodnews.current_container',
             'user' => $this->modx->user->get('id')
         ]);
         if (!is_object($usersetting)) {
-            $usersetting = $this->modx->newObject('modUserSetting');
+            $usersetting = $this->modx->newObject(modUserSetting::class);
             $usersetting->set('user', $this->modx->user->get('id'));
             $usersetting->set('key', 'goodnews.current_container');
             $usersetting->set('xtype', 'textfield');
@@ -305,17 +313,18 @@ class GoodNews {
      * @param integer $id The id of the resource container
      * @return boolean
      */
-    public function isGoodNewsContainer($id) {
+    public function isGoodNewsContainer($id)
+    {
         $goncontainer = false;
         
-        $c = $this->modx->newQuery('modResource');
+        $c = $this->modx->newQuery(modResource::class);
         $c->where([
             'id' => $id,
             'published' => true,
             'deleted'   => false,
-            'class_key' => 'GoodNewsResourceContainer'
+            'class_key' => GoodNewsResourceContainer::class
         ]);
-        $containers = $this->modx->getCollection('modResource', $c);
+        $containers = $this->modx->getCollection(modResource::class, $c);
         
         if (count($containers)) {
             $goncontainer = true;
@@ -330,7 +339,8 @@ class GoodNews {
      * @access public
      * @return boolean
      */
-    public function isMultiProcessing() {
+    public function isMultiProcessing()
+    {
         $enabled = true;
         
         $d = ini_get('disable_functions');
@@ -350,7 +360,8 @@ class GoodNews {
      * @access public
      * @return boolean
      */
-    public function imapExtension() {
+    public function imapExtension()
+    {
         return function_exists('imap_open');
     }
     
@@ -361,14 +372,16 @@ class GoodNews {
      * @param string $name Name of transport package
      * @return boolean
      */
-    private function isTransportPackageInstalled($tpname) {
+    private function isTransportPackageInstalled($tpname)
+    {
         $installed = false;
-        $package = $this->modx->getObject('transport.modTransportPackage', [
+        $package = $this->modx->getObject(modTransportPackage::class, [
             'package_name' => $tpname,
         ]);
-        if (is_object($package)) { $installed = true; }
+        if (is_object($package)) {
+            $installed = true;
+        }
         return $installed;
-
     }
     
     /**
@@ -377,7 +390,8 @@ class GoodNews {
      * @access public
      * @return boolean
      */
-    public function isGoodNewsAdmin() {
+    public function isGoodNewsAdmin()
+    {
         $gonadmin = false;
         
         if (!$this->modx->user || ($this->modx->user->get('id') < 1)) {
@@ -407,9 +421,11 @@ class GoodNews {
      * @param $container A GoodNews resource container object
      * @return boolean false || true
      */
-    public function isEditor($container) {
-        
-        if (!$container) { return false; }
+    public function isEditor($container)
+    {
+        if (!$container) {
+            return false;
+        }
         
         $iseditor = false;
         
@@ -437,7 +453,8 @@ class GoodNews {
      * @access public
      * @return mixed user ID || false
      */
-    public function loggedInMgrUser() {
+    public function loggedInMgrUser()
+    {
         $loggedInMgrUser = false;
         
         $user = &$this->modx->user;
@@ -455,8 +472,11 @@ class GoodNews {
      * @param string $description Verbose status/error description
      * @return void
      */
-    public function addSetupError($statuscode, $description, $stopexecution = false) {
-        if (empty($statuscode) || empty($description)) { return; }
+    public function addSetupError($statuscode, $description, $stopexecution = false)
+    {
+        if (empty($statuscode) || empty($description)) {
+            return;
+        }
         $this->setupErrors[] = [
             'statuscode'    => $statuscode,
             'description'   => $description,
@@ -464,7 +484,7 @@ class GoodNews {
         ];
         if ($stopexecution) {
             ob_get_level() && @ob_end_flush();
-            @include($this->config['modelPath'] . 'goodnews/error/stopexecution.include.php');
+            @include($this->config['includesPath'] . 'stopexecution.include.php');
             exit();
         }
     }
@@ -475,7 +495,8 @@ class GoodNews {
      * @access public
      * @return array $setupErrors The setup error stack.
      */
-    public function getSetupErrors() {
+    public function getSetupErrors()
+    {
         return $this->setupErrors;
     }
 
@@ -487,20 +508,22 @@ class GoodNews {
      * @param array $properties The properties for the Chunk
      * @return string The processed content of the Chunk
      */
-    public function getChunk($name, array $properties = []) {
-    
+    public function getChunk($name, array $properties = [])
+    {
         $chunk = null;
         
         if (!isset($this->chunks[$name])) {
             $chunk = $this->_getTplChunk($name);
             if (empty($chunk)) {
-                $chunk = $this->modx->getObject('modChunk', ['name' => $name]);
-                if ($chunk == false) return false;
+                $chunk = $this->modx->getObject(modChunk::class, ['name' => $name]);
+                if ($chunk == false) {
+                    return false;
+                }
             }
             $this->chunks[$name] = $chunk->getContent();
         } else {
             $o = $this->chunks[$name];
-            $chunk = $this->modx->newObject('modChunk');
+            $chunk = $this->modx->newObject(modChunk::class);
             $chunk->setContent($o);
         }
         $chunk->setCacheable(false);
@@ -516,14 +539,13 @@ class GoodNews {
      * @param string $postfix The default postfix to search for chunks at.
      * @return modChunk/boolean Returns the modChunk object if found, otherwise false.
      */
-    private function _getTplChunk($name, $postfix = '.chunk.tpl') {
-    
+    private function getTplChunk($name, $postfix = '.chunk.tpl')
+    {
         $chunk = false;
-        
         $f = $this->config['chunksPath'] . strtolower($name) . $postfix;
         if (file_exists($f)) {
             $o = file_get_contents($f);
-            $chunk = $this->modx->newObject('modChunk');
+            $chunk = $this->modx->newObject(modChunk::class);
             $chunk->set('name', $name);
             $chunk->setContent($o);
         }
@@ -542,7 +564,8 @@ class GoodNews {
      * @param mixed $properties (default: null)
      * @return string|void $output
      */
-    public function parseTpl($tpl, $properties = null) {
+    public function parseTpl($tpl, $properties = null)
+    {
         static $_tplCache;
         $_validTypes = [
             '@CHUNK'
@@ -567,11 +590,18 @@ class GoodNews {
                 }
             }
             if (is_array($bound) && isset($bound['type']) && isset($bound['value'])) {
-                $output = $this->parseTplElement($_tplCache, $_validTypes, $bound['type'], $bound['value'], $properties);
+                $output = $this->parseTplElement(
+                    $_tplCache,
+                    $_validTypes,
+                    $bound['type'],
+                    $bound['value'],
+                    $properties
+                );
             }
         }
-        if (empty($output) && $output !== '0') { // print_r the object fields that were returned if no tpl is provided
-            $chunk = $this->modx->newObject('modChunk');
+        // print_r the object fields that were returned if no tpl is provided
+        if (empty($output) && $output !== '0') {
+            $chunk = $this->modx->newObject(modChunk::class);
             $chunk->setCacheable(false);
             $output = $chunk->process(
                 [
@@ -598,15 +628,28 @@ class GoodNews {
      * @param mixed $properties (default: null)
      * @return void
      */
-    function parseTplElement(&$_cache, $_validTypes, $type, $source, $properties = null) {
+    public function parseTplElement(&$_cache, $_validTypes, $type, $source, $properties = null)
+    {
         $output = null;
-        if (!is_string($type) || !in_array($type, $_validTypes)) $type = $this->modx->getOption('tplType', $properties, '@CHUNK');
+        if (!is_string($type) || !in_array($type, $_validTypes)) {
+            $type = $this->modx->getOption('tplType', $properties, '@CHUNK');
+        }
         $content = false;
         switch ($type) {
             case '@FILE':
-                $path = $this->modx->getOption('tplPath', $properties, $this->modx->getOption('assets_path', $properties, MODX_ASSETS_PATH) . 'elements/chunks/');
+                $path = $this->modx->getOption(
+                    'tplPath',
+                    $properties,
+                    $this->modx->getOption(
+                        'assets_path',
+                        $properties,
+                        MODX_ASSETS_PATH
+                    ) . 'elements/chunks/'
+                );
                 $key = $path . $source;
-                if (!isset($_cache['@FILE'])) $_cache['@FILE'] = [];
+                if (!isset($_cache['@FILE'])) {
+                    $_cache['@FILE'] = [];
+                }
                 if (!array_key_exists($key, $_cache['@FILE'])) {
                     if (file_exists($key)) {
                         $content = file_get_contents($key);
@@ -616,29 +659,31 @@ class GoodNews {
                     $content = $_cache['@FILE'][$key];
                 }
                 if (!empty($content) && $content !== '0') {
-                    $chunk = $this->modx->newObject('modChunk', ['name' => $key]);
+                    $chunk = $this->modx->newObject(modChunk::class, ['name' => $key]);
                     $chunk->setCacheable(false);
                     $output = $chunk->process($properties, $content);
                 }
                 break;
             case '@INLINE':
                 $uniqid = uniqid();
-                $chunk = $this->modx->newObject('modChunk', ['name' => "{$type}-{$uniqid}"]);
+                $chunk = $this->modx->newObject(modChunk::class, ['name' => "{$type}-{$uniqid}"]);
                 $chunk->setCacheable(false);
                 $output = $chunk->process($properties, $source);
                 break;
             case '@CHUNK':
             default:
                 $chunk = null;
-                if (!isset($_cache['@CHUNK'])) $_cache['@CHUNK'] = [];
+                if (!isset($_cache['@CHUNK'])) {
+                    $_cache['@CHUNK'] = [];
+                }
                 if (!array_key_exists($source, $_cache['@CHUNK'])) {
-                    if ($chunk = $this->modx->getObject('modChunk', ['name' => $source])) {
+                    if ($chunk = $this->modx->getObject(modChunk::class, ['name' => $source])) {
                         $_cache['@CHUNK'][$source] = $chunk->toArray('', true);
                     } else {
                         $_cache['@CHUNK'][$source] = false;
                     }
                 } elseif (is_array($_cache['@CHUNK'][$source])) {
-                    $chunk = $this->modx->newObject('modChunk');
+                    $chunk = $this->modx->newObject(modChunk::class);
                     $chunk->fromArray($_cache['@CHUNK'][$source], '', true, true, true);
                 }
                 if (is_object($chunk)) {
