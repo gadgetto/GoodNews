@@ -19,6 +19,7 @@ class ComposerStaticInit2616ef43bd471a7b5750e1ffd64a04d4
         array (
             'Symfony\\Polyfill\\Php80\\' => 23,
             'Symfony\\Component\\CssSelector\\' => 30,
+            'Soundasleep\\' => 12,
         ),
         'B' => 
         array (
@@ -38,6 +39,10 @@ class ComposerStaticInit2616ef43bd471a7b5750e1ffd64a04d4
         'Symfony\\Component\\CssSelector\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/css-selector',
+        ),
+        'Soundasleep\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/soundasleep/html2text/src',
         ),
         'Bitego\\GoodNews\\' => 
         array (
