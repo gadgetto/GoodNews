@@ -27,7 +27,7 @@ class GoodNewsResource
     public $modx = null;
     
     /** @var array $config An array of configuration properties */
-    public $config = array();
+    public $config = [];
     
     /** @var array $chunks An array of cached chunks used for faster processing */
     public $chunks;
@@ -38,7 +38,7 @@ class GoodNewsResource
      * @param modX $modx A reference to the modX object
      * @param array $config A configuration array
      */
-    public function __construct(modX &$modx, array $config = array())
+    public function __construct(modX &$modx, array $config = [])
     {
         $this->modx = &$modx;
 
@@ -48,17 +48,17 @@ class GoodNewsResource
         $this->config = array_merge(array(
             'corePath'       => $corePath,
             'modelPath'      => $corePath . 'src/Model/',
+            'processorsPath' => $corePath . 'src/Processors/',
             'elementsPath'   => $corePath . 'elements/',
             'snippetsPath'   => $corePath . 'elements/snippets/',
             'tvsPath'        => $corePath . 'elements/tvs/',
             'chunksPath'     => $corePath . 'elements/chunks/',
-            'chunkSuffix'    => '.chunk.tpl',
-            'processorsPath' => $corePath . 'processors/',
             'assetsUrl'      => $assetsUrl,
             'cssUrl'         => $assetsUrl . 'css/',
             'jsUrl'          => $assetsUrl . 'js/',
             'imgUrl'         => $assetsUrl . 'img/',
             'connectorUrl'   => $assetsUrl . 'connector_res.php',
+            'chunkSuffix'    => '.chunk.tpl',
         ), $config);
         
         $this->modx->lexicon->load('goodnews:resource');
@@ -73,11 +73,11 @@ class GoodNewsResource
      * @param array $properties The properties for the Chunk
      * @return string The processed content of the Chunk
      */
-    public function getChunk($name, array $properties = array())
+    public function getChunk($name, array $properties = [])
     {
         $chunk = null;
         if (!isset($this->chunks[$name])) {
-            $chunk = $this->modx->getObject('modChunk', array('name' => $name), true);
+            $chunk = $this->modx->getObject(modChunk::class, ['name' => $name], true);
             if (empty($chunk)) {
                 $chunk = $this->getTplChunk($name, $this->config['chunkSuffix']);
                 if ($chunk == false) {
@@ -87,7 +87,7 @@ class GoodNewsResource
             $this->chunks[$name] = $chunk->getContent();
         } else {
             $o = $this->chunks[$name];
-            $chunk = $this->modx->newObject('modChunk');
+            $chunk = $this->modx->newObject(modChunk::class);
             $chunk->setContent($o);
         }
         $chunk->setCacheable(false);
@@ -110,7 +110,7 @@ class GoodNewsResource
         if (file_exists($f)) {
             $o = file_get_contents($f);
             /** @var modChunk $chunk */
-            $chunk = $this->modx->newObject('modChunk');
+            $chunk = $this->modx->newObject(modChunk::class);
             $chunk->set('name', $name);
             $chunk->setContent($o);
         }
