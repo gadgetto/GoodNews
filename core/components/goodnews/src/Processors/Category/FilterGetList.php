@@ -10,9 +10,9 @@
  * file that was distributed with this source code.
  */
 
-namespace GoodNews\Processors\Category;
+namespace Bitego\GoodNews\Processors\Category;
 
-use GoodNews\Model\GoodNewsCategory;
+use Bitego\GoodNews\Model\GoodNewsCategory;
 use MODX\Revolution\Processors\Model\GetListProcessor;
 use xPDO\Om\xPDOObject;
 use xPDO\Om\xPDOQuery;
