@@ -16,15 +16,14 @@ use MODX\Revolution\modUser;
 use MODX\Revolution\modUserProfile;
 use MODX\Revolution\modResource;
 use MODX\Revolution\modChunk;
+use MODX\Revolution\Mail\modMail;
 use Bitego\GoodNews\ProcessHandler;
 use Bitego\GoodNews\RecipientsHandler;
 use Bitego\GoodNews\Model\GoodNewsResourceContainer;
 use Bitego\GoodNews\Model\GoodNewsResourceMailing;
 use Bitego\GoodNews\Model\GoodNewsSubscriberMeta;
-
-require_once dirname(dirname(__FILE__)) . '/csstoinlinestyles/Exception.php';
-require_once dirname(dirname(__FILE__)) . '/csstoinlinestyles/CssToInlineStyles.php';
-require_once dirname(dirname(__FILE__)) . '/html2text/html2text.php';
+use TijsVerkoyen\CssToInlineStyles\CssToInlineStyles;
+use Soundasleep\Html2Text;
 
 /**
  * Mailer class handles mass-email sending.
@@ -77,13 +76,11 @@ class Mailer
         $this->debug = $this->modx->getOption('goodnews.debug', null, false) ? true : false;
         $this->bulksize = $this->modx->getOption('goodnews.mailing_bulk_size', null, 30);
         $this->modx->lexicon->load('goodnews:default');
-        
         $this->processhandler = new ProcessHandler($this->modx);
         if (!$this->processhandler->createLockFileDir()) {
             $this->modx->log(modX::LOG_LEVEL_ERROR, '[GoodNews] Lockfile directory missing! Processing aborted.');
             exit();
         }
-        
         $this->recipientshandler = new RecipientsHandler($this->modx);
         
         // Get the default fields for a subscriber (for later use as placeholders)
@@ -162,7 +159,6 @@ class Mailer
         if (!$profile) {
             return '';
         }
-        
         // Flatten extended fields:
         // extended.field1
         // extended.container1.field2
@@ -241,7 +237,7 @@ class Mailer
     }
     
     /**
-     * Get the full parsed HTML from a resource.
+     * Get the full parsed HTML from a resource document.
      *
      * @access private
      * @return string $html The parsed html of the resource
@@ -361,9 +357,9 @@ class Mailer
      * @access private
      * @param string $html
      * @param array $subscriberProperties The placeholders.
-     * @return string $output
+     * @return mixed string $output || boolean
      */
-    private function processSubscriberPlaceholders($html, array $subscriberProperties = array())
+    private function processSubscriberPlaceholders($html, array $subscriberProperties = [])
     {
         if (empty($html)) {
             return false;
@@ -443,7 +439,7 @@ class Mailer
         }
         
         $this->processhandler->lock($this->mailingid);
-
+        
         if (!$this->recipientshandler->cleanupRecipient($recipientId, $this->mailingid, $status)) {
             if ($this->debug) {
                 $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: ' . getmypid() . '] Mailer::updateRecipientStatus - Status for recipient [id: ' . $recipientId . '] could not be updated to: ' . $status);
@@ -451,12 +447,12 @@ class Mailer
             $this->processhandler->unlock($this->mailingid);
             return false;
         }
-
+        
         $meta = $this->modx->getObject(GoodNewsMailingMeta::class, ['mailing_id' => $this->mailingid]);
         if (!is_object($meta)) {
             return false;
         }
-
+        
         // Increase sent counter in mailing meta
         $recipientsSent = $meta->get('recipients_sent') + 1;
         $meta->set('recipients_sent', $recipientsSent);
@@ -517,7 +513,7 @@ class Mailer
      * Get all mailing resources to be sent.
      *
      * @access public
-     * @return array $mailingIDs or false
+     * @return array $mailingIDs || false
      */
     public function getMailingsToSend()
     {
@@ -596,7 +592,7 @@ class Mailer
         if (!$this->mailing) {
             return false;
         }
-
+        
         if (!$this->processhandler->createLockFile($this->mailingid)) {
             $this->modx->log(modX::LOG_LEVEL_ERROR, '[GoodNews] Lockfile missing! Processing aborted.');
             exit();
@@ -639,15 +635,17 @@ class Mailer
                 $temp_mail['body'] = $this->processSubscriberPlaceholders($temp_mail['body'], $subscriber);
                 if ($temp_mail['ishtml']) {
                     // Convert HTML to plain text using "html2text" library
-                    // from https://github.com/soundasleep/html2text
-                    $temp_mail['altbody'] = convert_html_to_text($temp_mail['body']);
+                    // (https://github.com/soundasleep/html2text)
+                    $temp_mail['altbody'] = Html2Text::convert($temp_mail['body'], [
+                        'ignore_errors' => true,
+                    ]);
                 }
                 if ($this->sendEmail($temp_mail, $subscriber)) {
                     $status = RecipientsHandler::GON_USER_SENT;
                 } else {
                     $status = RecipientsHandler::GON_USER_SEND_ERROR;
                 }
-            // this could happen, if a subscriber is deleted while mailing is processed
+            // This could happen, if a subscriber is deleted while mailing is processed
             } else {
                 // @todo: other status required eg. GON_USER_NOT_FOUND
                 $status = RecipientsHandler::GON_USER_SEND_ERROR;
@@ -679,15 +677,17 @@ class Mailer
         if (empty($recipients)) {
             return false;
         }
-
+        
         foreach ($recipients as $recipientId) {
             $subscriber = $this->getSubscriberProperties($recipientId);
             $temp_mail = $mail;
             $temp_mail['body'] = $this->processSubscriberPlaceholders($temp_mail['body'], $subscriber);
             if ($temp_mail['ishtml']) {
                 // Create altbody -> convert HTML to plain text using "html2text" library
-                // from https://github.com/soundasleep/html2text
-                $temp_mail['altbody'] = convert_html_to_text($temp_mail['body']);
+                // (https://github.com/soundasleep/html2text)
+                $temp_mail['altbody'] = Html2Text::convert($temp_mail['body'], [
+                    'ignore_errors' => true,
+                ]);
             }
             $sent = $this->sendEmail($temp_mail, $subscriber);
         }
@@ -698,62 +698,117 @@ class Mailer
      * Sends an email based on the specified parameters using phpMailer.
      *
      * @access public
-     * @param array $mail
+     * @param array $email
      * @param array $subscriber
      * @return array
      */
-    public function sendEmail(array $mail, array $subscriber)
+    public function sendEmail(array $email, array $subscriber)
     {
-        $this->modx->getService('mail', 'mail.modPHPMailer');
-
-        // Set SMTP params for modMail based on container settings
-        // (this enables each container to have it's own set of SMTP settings - overriding the MODX system settings)
-        if ($this->mailing->getProperty('mailUseSmtp', 'goodnews', $this->modx->getOption('mail_use_smtp', null, false))) {
-            $this->modx->mail->set(modMail::MAIL_ENGINE, 'smtp');
-            $this->modx->mail->set(modMail::MAIL_SMTP_AUTH, $this->mailing->getProperty('mailSmtpAuth', 'goodnews', $this->modx->getOption('mail_smtp_auth', null, false)));
-            $this->modx->mail->set(modMail::MAIL_SMTP_USER, $this->mailing->getProperty('mailSmtpUser', 'goodnews', $this->modx->getOption('mail_smtp_user', null, '')));
-            $this->modx->mail->set(modMail::MAIL_SMTP_PASS, $this->mailing->getProperty('mailSmtpPass', 'goodnews', $this->modx->getOption('mail_smtp_pass', null, '')));
-            $this->modx->mail->set(modMail::MAIL_SMTP_HOSTS, $this->mailing->getProperty('mailSmtpHosts', 'goodnews', $this->modx->getOption('mail_smtp_hosts', null, 'localhost:25')));
-            // this is from MODX system settings only
-            // (GoodNews containers settings only holds the [hostname:port] format)
-            $this->modx->mail->set(modMail::MAIL_SMTP_PORT, $this->modx->getOption('mail_smtp_port', null, 25));
-            $this->modx->mail->set(modMail::MAIL_SMTP_PREFIX, $this->mailing->getProperty('mailSmtpPrefix', 'goodnews', $this->modx->getOption('mail_smtp_prefix', null, '')));
-            $helo = $this->mailing->getProperty('mailSmtpHelo', 'goodnews', $this->modx->getOption('mail_smtp_helo', null, ''));
-            if (!empty($helo)) {
-                $this->modx->mail->set(modMail::MAIL_SMTP_HELO, $helo);
+        $mail = $this->modx->services->get('mail');
+        $mailUseSmtp = $this->mailing->getProperty(
+            'mailUseSmtp',
+            'goodnews',
+            $this->modx->getOption('mail_use_smtp', null, false)
+        );
+        
+        // SMTP params for modMail based on container settings
+        // (this enables each container to have it's own set of
+        // SMTP settings - overriding the MODX system settings)
+        
+        if ($mailUseSmtp) {
+            $mailSmtpAuth = $this->mailing->getProperty(
+                'mailSmtpAuth',
+                'goodnews',
+                $this->modx->getOption('mail_smtp_auth', null, false)
+            );
+            $mailSmtpUser = $this->mailing->getProperty(
+                'mailSmtpUser',
+                'goodnews',
+                $this->modx->getOption('mail_smtp_user', null, '')
+            );
+            $mailSmtpPass = $this->mailing->getProperty(
+                'mailSmtpPass',
+                'goodnews',
+                $this->modx->getOption('mail_smtp_pass', null, '')
+            );
+            $mailSmtpHosts = $this->mailing->getProperty(
+                'mailSmtpHosts',
+                'goodnews',
+                $this->modx->getOption('mail_smtp_hosts', null, 'localhost:25')
+            );
+            $mailSmtpPrefix = $this->mailing->getProperty(
+                'mailSmtpPrefix',
+                'goodnews',
+                $this->modx->getOption('mail_smtp_prefix', null, '')
+            );
+            $mailSmtpHelo = $this->mailing->getProperty(
+                'mailSmtpHelo',
+                'goodnews',
+                $this->modx->getOption('mail_smtp_helo', null, '')
+            );
+            $mailSmtpKeepalive = $this->mailing->getProperty(
+                'mailSmtpKeepalive',
+                'goodnews',
+                $this->modx->getOption('mail_smtp_keepalive', null, false)
+            );
+            $mailSmtpSingleTo = $this->mailing->getProperty(
+                'mailSmtpSingleTo',
+                'goodnews',
+                $this->modx->getOption('mail_smtp_single_to', null, false)
+            );
+            $mailSmtpTimeout = $this->mailing->getProperty(
+                'mailSmtpTimeout',
+                'goodnews',
+                $this->modx->getOption('mail_smtp_timeout', null, 10)
+            );
+            // This is from MODX system settings only
+            // (GoodNews containers settings has [hostname:port] format)
+            $mailSmtpPort = $this->modx->getOption('mail_smtp_port', null, 25);
+            
+            $mail->set(modMail::MAIL_ENGINE, 'smtp');
+            $mail->set(modMail::MAIL_SMTP_AUTH, $mailSmtpAuth);
+            $mail->set(modMail::MAIL_SMTP_USER, $mailSmtpUser);
+            $mail->set(modMail::MAIL_SMTP_PASS, $mailSmtpPass);
+            $mail->set(modMail::MAIL_SMTP_HOSTS, $mailSmtpHosts);
+            $mail->set(modMail::MAIL_SMTP_PORT, $mailSmtpPort);
+            $mail->set(modMail::MAIL_SMTP_PREFIX, $mailSmtpPrefix);
+            if (!empty($mailSmtpHelo)) {
+                $mail->set(modMail::MAIL_SMTP_HELO, $mailSmtpHelo);
             }
-            $this->modx->mail->set(modMail::MAIL_SMTP_KEEPALIVE, $this->mailing->getProperty('mailSmtpKeepalive', 'goodnews', $this->modx->getOption('mail_smtp_keepalive', null, false)));
-            $this->modx->mail->set(modMail::MAIL_SMTP_SINGLE_TO, $this->mailing->getProperty('mailSmtpSingleTo', 'goodnews', $this->modx->getOption('mail_smtp_single_to', null, false)));
-            $this->modx->mail->set(modMail::MAIL_SMTP_TIMEOUT, $this->mailing->getProperty('mailSmtpTimeout', 'goodnews', $this->modx->getOption('mail_smtp_timeout', null, 10)));
+            $mail->set(modMail::MAIL_SMTP_KEEPALIVE, $mailSmtpKeepalive);
+            $mail->set(modMail::MAIL_SMTP_SINGLE_TO, $mailSmtpSingleTo);
+            $mail->set(modMail::MAIL_SMTP_TIMEOUT, $mailSmtpTimeout);
         }
-        $this->modx->mail->header('X-goodnews-user-id: ' . $subscriber['subscriber_id']);
-        $this->modx->mail->header('X-goodnews-mailing-id: ' . $this->mailingid);
-        $this->modx->mail->set(modMail::MAIL_BODY, $mail['body']);
-        $this->modx->mail->set(modMail::MAIL_BODY_TEXT, $mail['altbody']);
-        $this->modx->mail->set(modMail::MAIL_FROM, $mail['mailFrom']);
-        $this->modx->mail->set(modMail::MAIL_FROM_NAME, $mail['mailFromName']);
-        $this->modx->mail->set(modMail::MAIL_SENDER, $mail['mailFrom']);
-        $this->modx->mail->set(modMail::MAIL_SUBJECT, $mail['subject']);
-        $this->modx->mail->set(modMail::MAIL_CHARSET, $mail['mailCharset']);
-        $this->modx->mail->set(modMail::MAIL_ENCODING, $mail['mailEncoding']);
-
-        $this->modx->mail->address('reply-to', $mail['mailReplyTo']);
+        
+        $mail->header('X-goodnews-user-id: ' . $subscriber['subscriber_id']);
+        $mail->header('X-goodnews-mailing-id: ' . $this->mailingid);
+        
+        $mail->set(modMail::MAIL_BODY, $email['body']);
+        $mail->set(modMail::MAIL_BODY_TEXT, $email['altbody']);
+        $mail->set(modMail::MAIL_FROM, $email['mailFrom']);
+        $mail->set(modMail::MAIL_FROM_NAME, $email['mailFromName']);
+        $mail->set(modMail::MAIL_SENDER, $email['mailFrom']);
+        $mail->set(modMail::MAIL_SUBJECT, $email['subject']);
+        $mail->set(modMail::MAIL_CHARSET, $email['mailCharset']);
+        $mail->set(modMail::MAIL_ENCODING, $email['mailEncoding']);
+        
+        $mail->address('reply-to', $email['mailReplyTo']);
         if (empty($subscriber['fullname'])) {
             $subscriber['fullname'] = $subscriber['email'];
         }
-        $this->modx->mail->address('to', $subscriber['email'], $subscriber['fullname']);
-        $this->modx->mail->setHTML($mail['ishtml']);
-                
-        $sent = $this->modx->mail->send();
-        $this->modx->mail->reset();
-
+        $mail->address('to', $subscriber['email'], $subscriber['fullname']);
+        $mail->setHTML($email['ishtml']);
+        
+        $sent = $mail->send();
         if (!$sent) {
-            $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] Email could not be sent to ' . $subscriber['email'] . ' (' . $subscriber['subscriber_id'] . ') -- Error: ' . $this->modx->mail->mailer->ErrorInfo);
+            $this->modx->log(modX::LOG_LEVEL_WARN, '[GoodNews] Email could not be sent to ' . $subscriber['email'] . ' (' . $subscriber['subscriber_id'] . ') -- Error: ' . $mail->mailer->ErrorInfo);
         } else {
             if ($this->debug) {
                 $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: ' . getmypid() . '] Mailer::sendEmail - Email sent to ' . $subscriber['email'] . ' (' . $subscriber['subscriber_id'] . ') . ');
             }
         }
+        $mail->reset();
+        
         return $sent;
     }
 
@@ -809,7 +864,7 @@ class Mailer
     }
 
     /**
-     * Automatically fix image sizes based on scr or style attributes.
+     * Automatically fix image sizes based on src or style attributes.
      * (Uses pThumb extra)
      *
      * based on AutoFixImagesize Plugin by Gerrit van Aaken <gerrit@praegnanz.de>
@@ -831,17 +886,17 @@ class Mailer
         $phpthumb_nohotlink_enabled = $this->modx->getOption('phpthumb_nohotlink_enabled', null, true);
         $phpthumb_nohotlink_valid_domains = $this->modx->getOption('phpthumb_nohotlink_valid_domains');
                 
-        // find all img elements with a src attribute
+        // Find all img elements with a src attribute
         preg_match_all('|\<img.*?src=[",\'](.*?)[",\'].*?[^>]+\>|i', $html, $filenames);
         
-        // loop through all found img elements
+        // Loop through all found img elements
         foreach ($filenames[1] as $i => $filename) {
             $img_old = $filenames[0][$i];
             $allowcaching = false;
             
-            // is file already cached?
+            // Is file already cached?
             if (strpos($filename, '?') == false || strpos($filename, '/phpthumb') == false) {
-                // check if external caching is allowed
+                //Check if external caching is allowed
                 if (substr($filename, 0, 7) == 'http://' || substr($filename, 0, 8) == 'https://') {
                     $pre = '';
                     if ($phpthumb_nohotlink_enabled) {
@@ -859,10 +914,10 @@ class Mailer
                 }
             }
             
-            // do we have physical access to the file?
+            // Do we have physical access to the file?
             $mypath = $pre . str_replace('%20', ' ', $filename);
             if ($allowcaching && $dimensions = @getimagesize($mypath, $info)) {
-                // find width and height attribut and save value
+                // Find width and height attribut and save value
                 preg_match_all('|width=[",\']([0-9]+?)[",\']|i', $filenames[0][$i], $widths);
                 if (isset($widths[1][0])) {
                     $width = $widths[1][0];
@@ -887,21 +942,21 @@ class Mailer
                     }
                 }
                 
-                // if resizing needed...
+                // If resizing needed...
                 if (($width && $width != $dimensions[0]) || ($height && $height != $dimensions[1])) {
-                    // prepare resizing metadata
+                    // Prepare resizing metadata
                     $filetype = strtolower(substr($filename, strrpos($filename, ".") + 1));
                     $image = array();
                     $image['input'] = $filename;
                     $image['options'] = 'f=' . $filetype . '&h=' . $height . '&w=' . $width . '&iar=1';
                     
-                    // perform physical resizing and caching via phpthumbof
+                    // Perform physical resizing and caching via phpthumbof
                     $cacheurl = $this->modx->runSnippet('phpthumbof', $image);
                     
-                    // set freshly cached image file location into old src attribute
+                    // Set freshly cached image file location into old src attribute
                     $img_new = str_replace($filename, $cacheurl, $img_old);
                     
-                    // replace old image element with new one on whole page content
+                    // Replace old image element with new one on whole page content
                     $html = str_replace($img_old, $img_new, $html);
                 }
             }
@@ -1051,17 +1106,19 @@ class Mailer
             }
         }
         
-        $cssToInlineStyles = new TijsVerkoyen\CSSToInlineStyles\CSSToInlineStyles($html, $css_rules);
-        if (!($cssToInlineStyles instanceof TijsVerkoyen\CSSToInlineStyles\CSSToInlineStyles)) {
-            $this->modx->log(modX::LOG_LEVEL_ERROR, '[GoodNews] CSSToInlineStyles class could not be instantiated.');
+        $cssToInlineStyles = new CssToInlineStyles();
+        $className = CssToInlineStyles::class;
+        if (!($cssToInlineStyles instanceof $className)) {
+            $this->modx->log(modX::LOG_LEVEL_ERROR, '[GoodNews] CssToInlineStyles class could not be instantiated.');
             return false;
         }
         
-        // Problem with converted chars in URL strings!!
-        $cssToInlineStyles->setEncoding($this->modx->getOption('mail_charset', null, 'UTF-8'));
-        $html = $cssToInlineStyles->convert();
+        $html = $cssToInlineStyles->convert(
+            $html,
+            $css_rules
+        );
         
-        // Workaround to preserve placeholder delimiters - as CSSToInlineStyles converts special chars within urls
+        // Workaround to preserve placeholder delimiters - as CssToInlineStyles converts special chars within urls
         $html = str_replace('%5B%5B', '[[', $html);
         $html = str_replace('%5D%5D', ']]', $html);
         
@@ -1213,12 +1270,10 @@ class Mailer
         if (!is_object($meta)) {
             return false;
         }
-        
         $profile = $this->modx->getObject(modUserProfile::class, ['internalKey' => $meta->get('sentby')]);
         if (!is_object($profile)) {
             return false;
         }
-        
         $user = $profile->getOne('User');
         $properties = [];
         
@@ -1266,7 +1321,7 @@ class Mailer
      * @param array $properties A collection of mail properties.
      * @return boolean
      */
-    private function sendStatusEmail($properties = array())
+    private function sendStatusEmail($properties = [])
     {
         if (empty($properties['email']) || empty($properties['subject']) || empty($properties['msg']) || empty($properties['from'])) {
             return false;
@@ -1280,28 +1335,26 @@ class Mailer
         $replyTo = $properties['from'];
         $msg = $properties['msg'];
         $msgAlt = $properties['msgAlt'];
-
-        $this->modx->getService('statusmail', 'mail.modPHPMailer');
-        $this->modx->statusmail->set(modMail::MAIL_BODY, $msg);
+        
+        $statusmail = $this->modx->services->get('mail');
+        $statusmail->set(modMail::MAIL_BODY, $msg);
         if (!empty($msgAlt)) {
-            $this->modx->statusmail->set(modMail::MAIL_BODY_TEXT, $msgAlt);
+            $statusmail->set(modMail::MAIL_BODY_TEXT, $msgAlt);
         }
-        $this->modx->statusmail->set(modMail::MAIL_FROM, $from);
-        $this->modx->statusmail->set(modMail::MAIL_FROM_NAME, $fromName);
-        $this->modx->statusmail->set(modMail::MAIL_SENDER, $sender);
-        $this->modx->statusmail->set(modMail::MAIL_SUBJECT, $subject);
-        $this->modx->statusmail->address('reply-to', $replyTo);
-        $this->modx->statusmail->address('to', $email, $name);
-        $this->modx->statusmail->setHTML(true);
-        
-        $sent = $this->modx->statusmail->send();
-        $this->modx->statusmail->reset();
-        
+        $statusmail->set(modMail::MAIL_FROM, $from);
+        $statusmail->set(modMail::MAIL_FROM_NAME, $fromName);
+        $statusmail->set(modMail::MAIL_SENDER, $sender);
+        $statusmail->set(modMail::MAIL_SUBJECT, $subject);
+        $statusmail->address('reply-to', $replyTo);
+        $statusmail->address('to', $email, $name);
+        $statusmail->setHTML(true);
+        $sent = $statusmail->send();
         if (!$sent) {
             if ($this->debug) {
-                $this->modx->log(modX::LOG_LEVEL_ERROR, '[GoodNews] Mailer::sendStatusEmail - Mailer error: ' . $this->modx->statusmail->mailer->ErrorInfo);
+                $this->modx->log(modX::LOG_LEVEL_ERROR, '[GoodNews] Mailer::sendStatusEmail - Mailer error: ' . $statusmail->mailer->ErrorInfo);
             }
         }
+        $statusmail->reset();
         return $sent;
     }
     
