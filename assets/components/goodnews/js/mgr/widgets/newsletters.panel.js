@@ -678,7 +678,7 @@ Ext.extend(GoodNews.grid.Newsletters,MODx.grid.Grid,{
         });
     }
     ,updateNewsletter: function(btn,e) {
-        MODx.loadPage('resource/update', 'id=' + this.menu.record.id);
+        MODx.loadPage('resource/update', 'id='+this.menu.record.id);
     }
     ,removeNewsletter: function() {
         MODx.msg.confirm({
