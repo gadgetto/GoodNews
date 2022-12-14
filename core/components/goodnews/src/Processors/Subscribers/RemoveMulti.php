@@ -12,6 +12,7 @@
 
 namespace Bitego\GoodNews\Processors\Subscribers;
 
+use MODX\Revolution\Processors\Processor;
 use Bitego\GoodNews\Model\GoodNewsCategoryMember;
 use Bitego\GoodNews\Model\GoodNewsGroupMember;
 

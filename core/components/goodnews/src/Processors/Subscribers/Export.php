@@ -12,14 +12,14 @@
 
 namespace Bitego\GoodNews\Processors\Subscribers;
 
+use MODX\Revolution\Processors\Model\GetListProcessor;
+use MODX\Revolution\modUser;
+use MODX\Revolution\modUserProfile;
+use xPDO\Om\xPDOObject;
+use xPDO\Om\xPDOQuery;
 use Bitego\GoodNews\Model\GoodNewsSubscriberMeta;
 use Bitego\GoodNews\Model\GoodNewsGroupMember;
 use Bitego\GoodNews\Model\GoodNewsCategoryMember;
-use MODX\Revolution\modUser;
-use MODX\Revolution\modUserProfile;
-use MODX\Revolution\Processors\Model\GetListProcessor;
-use xPDO\Om\xPDOObject;
-use xPDO\Om\xPDOQuery;
 
 /**
  * Subscribers export processor.
