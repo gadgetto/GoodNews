@@ -1,34 +1,31 @@
 <?php
 
 /**
- * GoodNews
+ * This file is part of the GoodNews package.
  *
- * Copyright 2012 by bitego <office@bitego.com>
+ * @copyright bitego (Martin Gartner)
+ * @license GNU General Public License v2.0 (and later)
  *
- * GoodNews is free software; you can redistribute it and/or modify it under the
- * terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
- *
- * GoodNews is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this software; if not, write to the Free Software Foundation, Inc., 59 Temple
- * Place, Suite 330, Boston, MA 02111-1307 USA
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
 namespace Bitego\GoodNews;
 
+use MODX\Revolution\modUser;
+use MODX\Revolution\modUserProfile;
+use Bitego\GoodNews\Model\GoodNewsSubscriberMeta;
+use Bitego\GoodNews\Model\GoodNewsGroupMember;
+use Bitego\GoodNews\Model\GoodNewsCategoryMember;
+
 /**
- * GoodNewsImportSubscribers class handles batch import of users into MODX users database
+ * ImportSubscribers class handles batch import of users into MODX users database
  * and make them GoodNews subscribers.
  *
  * @package goodnews
  */
 
-class GoodNewsImportSubscribers
+class ImportSubscribers
 {
     public const EMAIL    = 0;
     public const FULLNAME = 1;
@@ -37,7 +34,7 @@ class GoodNewsImportSubscribers
     public $modx = null;
 
     /** @var array $config An array of config values */
-    public $config = array();
+    public $config = [];
     
     /** @var boolean $update If import mode = update */
     public $update = false;
@@ -61,7 +58,7 @@ class GoodNewsImportSubscribers
     public $hasHeader;
 
     /** @var array $header The first row (field names) */
-    public $header = array();
+    public $header = [];
     
     /** @var int $batchSize Number of users to be imported in one batch */
     public $batchSize;
@@ -73,15 +70,15 @@ class GoodNewsImportSubscribers
      * @access public
      * @param modX &$modx A reference to the modX object
      */
-    public function __construct(modX &$modx, array $config = array())
+    public function __construct(modX &$modx, array $config = [])
     {
         $this->modx = &$modx;
         $this->modx->lexicon->load('goodnews:default');
         ini_set('auto_detect_line_endings', true);
-        $this->config = array_merge(array(
+        $this->config = array_merge([
             'use_multibyte' => (bool)$this->modx->getOption('use_multibyte', null, false),
             'encoding' => $this->modx->getOption('modx_charset', null, 'UTF-8'),
-        ), $config);
+        ], $config);
     }
 
     /**
@@ -187,8 +184,7 @@ class GoodNewsImportSubscribers
      */
     private function getImportUsers()
     {
-        $importUsers = array();
-        
+        $importUsers = [];
         if ($this->batchSize > 0) {
             $lineCount = 0;
         } else {
@@ -212,7 +208,7 @@ class GoodNewsImportSubscribers
      * @param array $gonCategories Array of GoodNews category ids
      * @return mixed int $importCount || bool
      */
-    public function importUsers($batchSize = 0, $gonGroups = array(), $gonCategories = array())
+    public function importUsers($batchSize = 0, $gonGroups = [], $gonCategories = [])
     {
         $this->batchSize = $batchSize;
         
@@ -265,7 +261,7 @@ class GoodNewsImportSubscribers
         // -> Normally this should't be necessary but it's possible that we have multiple
         //    users with the same email address (if enabled in MODX system settings)
         // If we finde multiple users -> the update can't be performed!
-        if ($this->modx->getCount('modUserProfile', array('email' => $fields[self::EMAIL])) > 1) {
+        if ($this->modx->getCount(modUserProfile::class, ['email' => $fields[self::EMAIL]]) > 1) {
             $this->modx->log(
                 modX::LOG_LEVEL_WARN,
                 '-> ' . $this->modx->lexicon(
@@ -275,7 +271,7 @@ class GoodNewsImportSubscribers
             return false;
         }
 
-        $subscriberProfile = $this->modx->getObject('modUserProfile', array('email' => $fields[self::EMAIL]));
+        $subscriberProfile = $this->modx->getObject(modUserProfile::class, array('email' => $fields[self::EMAIL]));
 
         // Update the subscribers Full name if provided
         if (!empty($fields[self::FULLNAME])) {
@@ -287,8 +283,8 @@ class GoodNewsImportSubscribers
             $id = $subscriberProfile->get('internalKey'); // preserve id of updated user for later use
 
             // New GoodNewsSubscriberMeta if not exists
-            if (!$this->modx->getObject('GoodNewsSubscriberMeta', array('subscriber_id' => $id))) {
-                $subscriberMeta = $this->modx->newObject('GoodNewsSubscriberMeta');
+            if (!$this->modx->getObject(GoodNewsSubscriberMeta::class, ['subscriber_id' => $id])) {
+                $subscriberMeta = $this->modx->newObject(GoodNewsSubscriberMeta::class);
                 $subscriberMeta->set('subscriber_id', $id);
                 $sid = md5(time() . $id);
                 $subscriberMeta->set('sid', $sid);
@@ -303,10 +299,10 @@ class GoodNewsImportSubscribers
             // Update GoodNewsGroupMember entries (preserve existing!)
             if ($subscriberUpdated) {
                 foreach ($groups as $groupid) {
-                    if ($this->modx->getObject('GoodNewsGroupMember', ['goodnewsgroup_id' => $groupid, 'member_id' => $id])) {
+                    if ($this->modx->getObject(GoodNewsGroupMember::class, ['goodnewsgroup_id' => $groupid, 'member_id' => $id])) {
                         continue;
                     }
-                    $groupmember = $this->modx->newObject('GoodNewsGroupMember');
+                    $groupmember = $this->modx->newObject(GoodNewsGroupMember::class);
                     $groupmember->set('goodnewsgroup_id', $groupid);
                     $groupmember->set('member_id', $id);
                     
@@ -320,10 +316,10 @@ class GoodNewsImportSubscribers
             // Update GoodNewsCategoryMember entries (preserve existing!)
             if ($subscriberUpdated) {
                 foreach ($categories as $categoryid) {
-                    if ($this->modx->getObject('GoodNewsCategoryMember', ['goodnewscategory_id' => $categoryid,'member_id' => $id])) {
+                    if ($this->modx->getObject(GoodNewsCategoryMember::class, ['goodnewscategory_id' => $categoryid,'member_id' => $id])) {
                         continue;
                     }
-                    $categorymember = $this->modx->newObject('GoodNewsCategoryMember');
+                    $categorymember = $this->modx->newObject(GoodNewsCategoryMember::class);
                     $categorymember->set('goodnewscategory_id', $categoryid);
                     $categorymember->set('member_id', $id);
                     
@@ -352,7 +348,7 @@ class GoodNewsImportSubscribers
      * @param array $categories The GoodNews category IDs for the new MODX user
      * @return boolean $subscriberSaved
      */
-    private function saveSubscriber($fields, $groups = array(), $categories = array())
+    private function saveSubscriber($fields, $groups = [], $categories = [])
     {
         if (!$this->validEmail($fields[self::EMAIL])) {
             $this->modx->log(modX::LOG_LEVEL_WARN, '-> ' . $this->modx->lexicon('goodnews.import_subscribers_log_err_email_invalid') . $fields[self::EMAIL]);
@@ -361,7 +357,7 @@ class GoodNewsImportSubscribers
         $subscriberSaved = false;
         
         // New modUser
-        $subscriber = $this->modx->newObject('modUser');
+        $subscriber = $this->modx->newObject(modUser::class);
         $password = $subscriber->generatePassword(8);
         $username = $this->generateUsername($fields[self::EMAIL]);
         $subscriber->set('username', $username);
@@ -370,7 +366,7 @@ class GoodNewsImportSubscribers
         $subscriber->set('blocked', 0);
         
         // Add modUserProfile
-        $subscriberProfile = $this->modx->newObject('modUserProfile');
+        $subscriberProfile = $this->modx->newObject(modUserProfile::class);
         $subscriberProfile->set('email', $fields[self::EMAIL]);
         $subscriberProfile->set('fullname', $fields[self::FULLNAME]);
         $subscriber->addOne($subscriberProfile);
@@ -378,7 +374,7 @@ class GoodNewsImportSubscribers
         if ($subscriber->save()) {
             $id = $subscriber->get('id'); // preserve id of new user for later use
             // New GoodNewsSubscriberMeta
-            $subscriberMeta = $this->modx->newObject('GoodNewsSubscriberMeta');
+            $subscriberMeta = $this->modx->newObject(GoodNewsSubscriberMeta::class);
             $subscriberMeta->set('subscriber_id', $id);
             $sid = md5(time() . $id);
             $subscriberMeta->set('sid', $sid);
@@ -390,7 +386,7 @@ class GoodNewsImportSubscribers
                 
                 foreach ($groups as $groupid) {
                     // New GoodNewsGroupMember entry
-                    $groupmember = $this->modx->newObject('GoodNewsGroupMember');
+                    $groupmember = $this->modx->newObject(GoodNewsGroupMember::class);
                     $groupmember->set('goodnewsgroup_id', $groupid);
                     $groupmember->set('member_id', $id);
                     
@@ -403,7 +399,7 @@ class GoodNewsImportSubscribers
                 if ($subscriberSaved) {
                     foreach ($categories as $categoryid) {
                         // New GoodNewsCategoryMember entry
-                        $categorymember = $this->modx->newObject('GoodNewsCategoryMember');
+                        $categorymember = $this->modx->newObject(GoodNewsCategoryMember::class);
                         $categorymember->set('goodnewscategory_id', $categoryid);
                         $categorymember->set('member_id', $id);
                         
@@ -418,12 +414,12 @@ class GoodNewsImportSubscribers
         if (!$subscriberSaved) {
             $this->modx->log(modX::LOG_LEVEL_WARN, '-> ' . $this->modx->lexicon('goodnews.import_subscribers_log_err_subscr_save') . $fields[self::EMAIL]);
             // Rollback if one of the savings failed!
-            $meta = $this->modx->getObject('GoodNewsSubscriberMeta', ['subscriber_id' => $id]);
+            $meta = $this->modx->getObject(GoodNewsSubscriberMeta::class, ['subscriber_id' => $id]);
             if ($meta) {
                 $meta->remove();
             }
-            $this->modx->removeCollection('GoodNewsGroupMember', ['member_id' => $id]);
-            $this->modx->removeCollection('GoodNewsCategoryMember', ['member_id' => $id]);
+            $this->modx->removeCollection(GoodNewsGroupMember::class, ['member_id' => $id]);
+            $this->modx->removeCollection(GoodNewsCategoryMember::class, ['member_id' => $id]);
         } else {
             $this->modx->log(modX::LOG_LEVEL_INFO, '-> ' . $this->modx->lexicon('goodnews.import_subscribers_log_subscr_imported') . $fields[self::EMAIL]);
         }
@@ -462,7 +458,7 @@ class GoodNewsImportSubscribers
     public function usernameExists($username)
     {
         $usernameExists = false;
-        $user = $this->modx->getObject('modUser', ['username' => $username]);
+        $user = $this->modx->getObject(modUser::class, ['username' => $username]);
         if (is_object($user)) {
             $usernameExists = true;
         }
@@ -478,7 +474,7 @@ class GoodNewsImportSubscribers
      */
     public function emailExists($email)
     {
-        $userProfile = $this->modx->getObject('modUserProfile', ['email' => $email]);
+        $userProfile = $this->modx->getObject(modUserProfile::class, ['email' => $email]);
         if (is_object($userProfile)) {
             return $userProfile->get('internalKey');
         } else {
