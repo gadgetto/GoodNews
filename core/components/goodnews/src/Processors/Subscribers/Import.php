@@ -1,24 +1,19 @@
 <?php
+
 /**
- * GoodNews
+ * This file is part of the GoodNews package.
  *
- * Copyright 2012 by bitego <office@bitego.com>
+ * @copyright bitego (Martin Gartner)
+ * @license GNU General Public License v2.0 (and later)
  *
- * GoodNews is free software; you can redistribute it and/or modify it under the
- * terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
- *
- * GoodNews is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this software; if not, write to the Free Software Foundation, Inc., 59 Temple
- * Place, Suite 330, Boston, MA 02111-1307 USA
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
-require_once dirname(dirname(dirname(dirname(__FILE__)))).'/model/goodnews/goodnewsimportsubscribers.class.php';
+namespace Bitego\GoodNews\Processors\Subscribers;
+
+use MODX\Revolution\Processors\Processor;
+use Bitego\GoodNews\ImportSubscribers;
 
 /**
  * Subscribers import processor
@@ -27,49 +22,54 @@ require_once dirname(dirname(dirname(dirname(__FILE__)))).'/model/goodnews/goodn
  * @subpackage processors
  */
 
-class SubscribersImportProcessor extends modProcessor {    
-
-    public $languageTopics = array('goodnews:default');
-
-    /** @var GoodNewsImportSubscribers $goodnewsimportsubscribers A reference to the GoodNewsImportSubscribers object */
-    public $goodnewsimportsubscribers = null;
+class Import extends Processor
+{
+    /** @var ImportSubscribers $importsubscribers A reference to the ImportSubscribers object */
+    public $importsubscribers = null;
 
     /**
      * {@inheritDoc}
      *
      * @return mixed
      */
-    public function initialize() {
+    public function initialize()
+    {
         set_time_limit(0);
-        $this->goodnewsimportsubscribers = new GoodNewsImportSubscribers($this->modx);
+        $this->importsubscribers = new ImportSubscribers($this->modx);
         return parent::initialize();
     }
 
-	/**
-	 * 
-     * 
+    /**
+     * {@inheritDoc}
+     *
      * @return mixed
-	 */    
-	public function process() {
-
+     */
+    public function process()
+    {
         $error = false;
         
         $this->modx->log(modX::LOG_LEVEL_INFO, $this->modx->lexicon('goodnews.import_subscribers_log_prep_csv_import'));
         sleep(1);
 
-        if (!($this->goodnewsimportsubscribers instanceof GoodNewsImportSubscribers)) {
-            $this->modx->log(modX::LOG_LEVEL_FATAL, $this->modx->lexicon('goodnews.import_subscribers_log_no_class'));
-            $error = true;
+        if (!$this->importsubscribers instanceof ImportSubscribers) {
+            $this->modx->log(modX::LOG_LEVEL_ERROR, $this->modx->lexicon('goodnews.import_subscribers_log_no_class'));
+            return $this->failure();
         }
 
         // Make sure a csv file was specified ($csvfile is an array!)
         $csvfile = $this->getProperty('csvfile');
         if (empty($csvfile['name'])) {
-            $this->addFieldError('csvfile', $this->modx->lexicon('goodnews.import_subscribers_log_ns_csvfile'));
+            $this->addFieldError(
+                'csvfile',
+                $this->modx->lexicon('goodnews.import_subscribers_log_ns_csvfile')
+            );
             $this->modx->log(modX::LOG_LEVEL_ERROR, $this->modx->lexicon('goodnews.import_subscribers_log_ns_csvfile'));
             sleep(1);
-        } elseif (!$this->goodnewsimportsubscribers->csvMimeType($csvfile['type'])) {
-            $this->addFieldError('csvfile', $this->modx->lexicon('goodnews.import_subscribers_log_wrong_filetype'));
+        } elseif (!$this->importsubscribers->csvMimeType($csvfile['type'])) {
+            $this->addFieldError(
+                'csvfile',
+                $this->modx->lexicon('goodnews.import_subscribers_log_wrong_filetype')
+            );
             $this->modx->log(modX::LOG_LEVEL_ERROR, $this->modx->lexicon('goodnews.import_subscribers_log_wrong_filetype'));
             sleep(1);
         }
@@ -77,7 +77,10 @@ class SubscribersImportProcessor extends modProcessor {
         // Make sure a batchsize was specified
         $batchsize = $this->getProperty('batchsize');
         if (empty($batchsize) && !is_numeric($batchsize)) {
-            $this->addFieldError('batchsize', $this->modx->lexicon('goodnews.import_subscribers_log_ns_batchsize'));
+            $this->addFieldError(
+                'batchsize',
+                $this->modx->lexicon('goodnews.import_subscribers_log_ns_batchsize')
+            );
             $this->modx->log(modX::LOG_LEVEL_ERROR, $this->modx->lexicon('goodnews.import_subscribers_log_ns_batchsize'));
             sleep(1);
         }
@@ -85,7 +88,10 @@ class SubscribersImportProcessor extends modProcessor {
         // Make sure a delimiter was specified
         $delimiter = $this->getProperty('delimiter');
         if (empty($delimiter)) {
-            $this->addFieldError('delimiter', $this->modx->lexicon('goodnews.import_subscribers_log_ns_delimiter'));
+            $this->addFieldError(
+                'delimiter',
+                $this->modx->lexicon('goodnews.import_subscribers_log_ns_delimiter')
+            );
             $this->modx->log(modX::LOG_LEVEL_ERROR, $this->modx->lexicon('goodnews.import_subscribers_log_ns_delimiter'));
             sleep(1);
         }
@@ -93,7 +99,10 @@ class SubscribersImportProcessor extends modProcessor {
         // Make sure an enclosure was specified */
         $enclosure = $this->getProperty('enclosure');
         if (empty($enclosure)) {
-            $this->addFieldError('enclosure', $this->modx->lexicon('goodnews.import_subscribers_log_ns_enclosure'));
+            $this->addFieldError(
+                'enclosure',
+                $this->modx->lexicon('goodnews.import_subscribers_log_ns_enclosure')
+            );
             $this->modx->log(modX::LOG_LEVEL_ERROR, $this->modx->lexicon('goodnews.import_subscribers_log_ns_enclosure'));
             sleep(1);
         }
@@ -113,9 +122,8 @@ class SubscribersImportProcessor extends modProcessor {
             // $nodeparts[3] = parent grpID (or empty)
             
             $nodes = explode(',', $groupscategories);
-            
-            $groups = array();
-            $categories = array();
+            $groups = [];
+            $categories = [];
             
             foreach ($nodes as $node) {
                 $nodeparts = explode('_', $node);
@@ -134,17 +142,17 @@ class SubscribersImportProcessor extends modProcessor {
         if ($error || $this->hasErrors()) {
             $this->modx->log(modX::LOG_LEVEL_ERROR, $this->modx->lexicon('goodnews.import_subscribers_log_failed'));
             sleep(2);
-            unset($this->goodnewsimportsubscribers);
+            unset($this->importsubscribers);
             return $this->failure();
         }
 
-        $this->modx->log(modX::LOG_LEVEL_INFO, $this->modx->lexicon('goodnews.import_subscribers_log_importing_csv').' '.$csvfile['name']);
+        $this->modx->log(modX::LOG_LEVEL_INFO, $this->modx->lexicon('goodnews.import_subscribers_log_importing_csv') . ' ' . $csvfile['name']);
         sleep(1);
-        $this->modx->log(modX::LOG_LEVEL_INFO, $this->modx->lexicon('goodnews.import_subscribers_log_batchsize').' '.$batchsize);
+        $this->modx->log(modX::LOG_LEVEL_INFO, $this->modx->lexicon('goodnews.import_subscribers_log_batchsize') . ' ' . $batchsize);
         sleep(1);
 
-        // Initialize the GoodNewsImportSubscribers object
-        if ($this->goodnewsimportsubscribers->init($update, $csvfile['tmp_name'], $delimiter, $enclosure) == false) {
+        // Initialize the ImportSubscribers object
+        if ($this->importsubscribers->init($update, $csvfile['tmp_name'], $delimiter, $enclosure) == false) {
             $this->modx->log(modX::LOG_LEVEL_ERROR, $this->modx->lexicon('goodnews.import_subscribers_err_open_csvfile'));
             sleep(1);
             $error = true;
@@ -152,17 +160,27 @@ class SubscribersImportProcessor extends modProcessor {
         
         // Only continue with processing if no errors occured
         if ($error) {
-            unset($this->goodnewsimportsubscribers);
+            unset($this->importsubscribers);
             $this->modx->log(modX::LOG_LEVEL_ERROR, $this->modx->lexicon('goodnews.import_subscribers_log_failed'));
             sleep(2);
             return $this->failure();
         }
         
-        $count = $this->goodnewsimportsubscribers->importUsers($batchsize, $groups, $categories);
-        unset($this->goodnewsimportsubscribers);
-        $this->modx->log(modX::LOG_LEVEL_INFO, $this->modx->lexicon('goodnews.import_subscribers_log_finished').$count);
+        $count = $this->importsubscribers->importUsers($batchsize, $groups, $categories);
+        unset($this->importsubscribers);
+        $this->modx->log(modX::LOG_LEVEL_INFO, $this->modx->lexicon('goodnews.import_subscribers_log_finished') . $count);
         sleep(2);
+        
         return $this->success();
-	}
+    }
+    
+    /**
+     * {@inheritDoc}
+     *
+     * @return array
+     */
+    public function getLanguageTopics()
+    {
+        return ['goodnews:default'];
+    }
 }
-return 'SubscribersImportProcessor';
