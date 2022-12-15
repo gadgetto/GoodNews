@@ -463,7 +463,7 @@ Ext.extend(GoodNews.grid.Subscribers,MODx.grid.Grid,{
             ,text: _('goodnews.subscriber_remove_subscriptions_confirm')
             ,url: this.config.url
             ,params: {
-                action: 'mgr/subscribers/removeSubscriptions'
+                action: 'Bitego\\GoodNews\\Processors\\Subscribers\\RemoveSubscriptions'
                 ,id: this.menu.record.id
             }
             ,listeners: {
@@ -477,7 +477,7 @@ Ext.extend(GoodNews.grid.Subscribers,MODx.grid.Grid,{
             ,text: _('goodnews.subscriber_remove_meta_data_confirm')
             ,url: this.config.url
             ,params: {
-                action: 'mgr/subscribers/removeMeta'
+                action: 'Bitego\\GoodNews\\Processors\\Subscribers\\RemoveMeta'
                 ,id: this.menu.record.id
             }
             ,listeners: {
@@ -545,7 +545,7 @@ Ext.extend(GoodNews.grid.Subscribers,MODx.grid.Grid,{
             ,text: _('goodnews.subscriber_remove_subscriptions_confirm_multi')
             ,url: this.config.url
             ,params: {
-                action: 'mgr/subscribers/removeSubscriptionsMulti'
+                action: 'Bitego\\GoodNews\\Processors\\Subscribers\\RemoveSubscriptionsMulti'
                 ,userIds: sel
             }
             ,listeners: {
@@ -569,7 +569,7 @@ Ext.extend(GoodNews.grid.Subscribers,MODx.grid.Grid,{
             ,text: _('goodnews.subscriber_remove_meta_data_confirm_multi')
             ,url: this.config.url
             ,params: {
-                action: 'mgr/subscribers/removeMetaMulti'
+                action: 'Bitego\\GoodNews\\Processors\\Subscribers\\RemoveMetaMulti'
                 ,userIds: sel
             }
             ,listeners: {
@@ -621,7 +621,7 @@ Ext.extend(GoodNews.grid.Subscribers,MODx.grid.Grid,{
     }
     ,clearFilter: function() {
     	this.getStore().baseParams = {
-            action: 'mgr/subscribers/getList'
+            action: 'Bitego\\GoodNews\\Processors\\Subscribers\\GetList'
     	};
         Ext.getCmp('goodnews-subscribers-group-filter').reset();
         Ext.getCmp('goodnews-subscribers-category-filter').reset();
@@ -649,7 +649,7 @@ GoodNews.tree.GroupsCategories = function(config) {
     Ext.applyIf(config,{
         id: 'goodnews-tree-groupscategories'
         ,url: GoodNews.config.connectorUrl
-        ,action: 'mgr/groups/getGroupCatNodes'
+        ,action: 'Bitego\\GoodNews\\Processors\\Groups\\GroupCategoryGetNodes'
         ,autoHeight: false
         ,height: Ext.getBody().getViewSize().height*.30
         ,root_id: 'n_gongrp_0'
@@ -709,7 +709,7 @@ GoodNews.window.UpdateSubscriptions = function(config) {
         ,closeAction: 'close'
         ,url: GoodNews.config.connectorUrl
         ,baseParams: {
-            action: 'mgr/subscribers/update'
+            action: 'Bitego\\GoodNews\\Processors\\Subscribers\\Update'
         }
         ,fields: [{
             xtype: 'hidden'
@@ -788,7 +788,7 @@ GoodNews.window.SubscribersAssignMulti = function(config) {
         ,closeAction: 'close'
         ,url: GoodNews.config.connectorUrl
         ,baseParams: {
-            action: 'mgr/subscribers/assignmulti'
+            action: 'Bitego\\GoodNews\\Processors\\Subscribers\\AssignMulti'
         }
         ,fields: [{
             xtype: 'hidden'
@@ -891,7 +891,7 @@ GoodNews.window.SubscribersRemoveMulti = function(config) {
         ,closeAction: 'close'
         ,url: GoodNews.config.connectorUrl
         ,baseParams: {
-            action: 'mgr/subscribers/removemulti'
+            action: 'Bitego\\GoodNews\\Processors\\Subscribers\\RemoveMulti'
         }
         ,fields: [{
             xtype: 'hidden'
@@ -971,7 +971,7 @@ GoodNews.window.SubscribersExport = function(config) {
         ,closeAction: 'close'
         ,url: GoodNews.config.connectorUrl
         ,baseParams: {
-            action: 'mgr/subscribers/export'
+            action: 'Bitego\\GoodNews\\Processors\\Subscribers\\Export'
         }
         ,items:[{
             html: '<p>'+_('goodnews.export_subscribers_desc',{ count: config.exportcount })+'</p>'
