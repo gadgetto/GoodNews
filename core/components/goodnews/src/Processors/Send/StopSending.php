@@ -26,7 +26,7 @@ class StopSending extends Processor
 {
     /** @var Mailer $mailer */
     public $mailer = null;
-    
+
     /** @var int $mailingid The resource id of the newsletter */
     public $mailingid = 0;
 
@@ -36,7 +36,7 @@ class StopSending extends Processor
         $this->mailingid = $this->getProperty('mailingid');
         return parent::initialize();
     }
-    
+
     public function process()
     {
         if (!$this->mailer) {

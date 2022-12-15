@@ -26,17 +26,17 @@ class SendTest extends Processor
 {
     /** @var Mailer $mailer */
     public $mailer = null;
-    
+
     /** @var int $mailingid The resource id of the newsletter */
     public $mailingid = 0;
-    
+
     public function initialize()
     {
         $this->mailer = new Mailer($this->modx);
         $this->mailingid = $this->getProperty('mailingid');
         return parent::initialize();
     }
-    
+
     public function process()
     {
         if (!$this->mailer) {
