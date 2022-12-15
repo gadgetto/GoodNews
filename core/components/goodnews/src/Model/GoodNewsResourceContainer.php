@@ -32,18 +32,18 @@ class GoodNewsResourceContainer extends modResource
     public $showInContextMenu = true;
     public $allowChildrenResources = false;
     public $oldAlias = null;
-    
+
     /**
      * Override modResource::__construct to ensure specific fields are forced to be set.
      * @param xPDO $xpdo
      */
     public function __construct(xPDO &$xpdo)
     {
-        parent :: __construct($xpdo);
+        parent::__construct($xpdo);
         $this->set('class_key', GoodNewsResourceContainer::class);
         $this->set('hide_children_in_tree', true);
     }
-    
+
     /**
      * Get the controller path for our resource type.
      *
@@ -60,7 +60,7 @@ class GoodNewsResourceContainer extends modResource
             $modx->getOption('core_path') . 'components/goodnews/'
         ) . 'controllers/res/container/';
     }
-    
+
     /**
      * Provide the custom context menu for GoodNews container creation.
      *
@@ -75,7 +75,7 @@ class GoodNewsResourceContainer extends modResource
             'text_create_here' => $this->xpdo->lexicon('goodnews.container_create_here'),
         ];
     }
-    
+
     /**
      * Provide the translated name of this CRT
      * {@inheritDoc}
@@ -86,7 +86,7 @@ class GoodNewsResourceContainer extends modResource
         $this->xpdo->lexicon->load('goodnews:resource');
         return $this->xpdo->lexicon('goodnews.container');
     }
-    
+
     /**
      *
      * @return object
@@ -103,7 +103,7 @@ class GoodNewsResourceContainer extends modResource
         }
         return $set;
     }
-    
+
     /**
      * Save new GoodNewsResourceContainer instances to the database.
      *
@@ -120,7 +120,7 @@ class GoodNewsResourceContainer extends modResource
         }
         return $saved;
     }
-    
+
     /**
      * Update all child resource URIs to reflect the new container alias
      *
@@ -132,10 +132,10 @@ class GoodNewsResourceContainer extends modResource
     {
         $useMultiByte = $this->getOption('use_multibyte', null, false) && function_exists('mb_strlen');
         $encoding = $this->getOption('modx_charset', null, 'UTF-8');
-        
+
         $oldAliasLength = ($useMultiByte ? mb_strlen($oldAlias, $encoding) : strlen($oldAlias)) + 1;
         $uriField = $this->xpdo->escape('uri');
-    
+
         $sql = 'UPDATE ' . $this->xpdo->getTableName(GoodNewsResourceMailing::class) . '
             SET ' . $uriField . ' = CONCAT("' . $newAlias . '",SUBSTRING(' . $uriField . ',' . $oldAliasLength . '))
             WHERE
@@ -143,10 +143,10 @@ class GoodNewsResourceContainer extends modResource
             AND SUBSTRING(' . $uriField . ',1,' . $oldAliasLength . ') = "' . $oldAlias . '/"';
         $this->xpdo->log(xPDO::LOG_LEVEL_DEBUG, $sql);
         $this->xpdo->exec($sql);
-        
+
         return true;
     }
-    
+
     /**
      * This runs each time the tree is drawn.
      *
@@ -156,11 +156,11 @@ class GoodNewsResourceContainer extends modResource
     public function prepareTreeNode(array $node = array())
     {
         $this->xpdo->lexicon->load('goodnews:resource');
-    
+
         $idNote = $this->xpdo->hasPermission('tree_show_resource_ids')
             ? ' <span dir="ltr">(' . $this->id . ')</span>'
             : '';
-        
+
         // get default mailing template from container properties
         $container = $this->xpdo->getObject('modResource', $this->id);
         $template_id = 0;
@@ -172,7 +172,7 @@ class GoodNewsResourceContainer extends modResource
                 }
             }
         }
-        
+
         // customized tree node menu
         $menu = [];
         $menu[] = [
@@ -236,14 +236,14 @@ class GoodNewsResourceContainer extends modResource
                 );
             }",
         ];
-    
+
         $node['menu'] = ['items' => $menu];
         $node['hasChildren'] = true;
-        
+
         return $node;
     }
-    
-    
+
+
     /**
      * Prevent isLazy error - needed ???
      *
@@ -254,7 +254,7 @@ class GoodNewsResourceContainer extends modResource
     {
         return false;
     }
-    
+
     /**
      * Override modResource::process to set custom placeholders for the Resource when rendering it in front-end.
      *
@@ -271,7 +271,7 @@ class GoodNewsResourceContainer extends modResource
         $this->_content = parent::process();
         return $this->_content;
     }
-    
+
     /**
      * Get an array of settings for the container (read from modResource properties field -> MODx 2.2+).
      *

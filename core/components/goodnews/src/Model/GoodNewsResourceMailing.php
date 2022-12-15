@@ -26,7 +26,7 @@ class GoodNewsResourceMailing extends modResource
 {
     public $allowListingInClassKeyDropdown = false;
     public $showInContextMenu = false;
-    
+
     /**
      * Override modResource::__construct to ensure specific fields are forced to be set.
      *
@@ -39,7 +39,7 @@ class GoodNewsResourceMailing extends modResource
         $this->set('show_in_tree', false);
         $this->set('searchable', false);
     }
-    
+
     /**
      * Get the controller path for our resource type.
      *
@@ -57,7 +57,7 @@ class GoodNewsResourceMailing extends modResource
             $modx->getOption('core_path') . 'components/goodnews/'
         ) . 'controllers/res/mailing/';
     }
-    
+
     /**
      * Override modResource::process to set custom placeholders for the Resource when rendering it in front-end.
      *
@@ -75,7 +75,7 @@ class GoodNewsResourceMailing extends modResource
         $this->_content = parent::process();
         return $this->_content;
     }
-    
+
     /**
      * Get an array of settings from the container (read from modResource properties field -> MODx 2.2+).
      *
