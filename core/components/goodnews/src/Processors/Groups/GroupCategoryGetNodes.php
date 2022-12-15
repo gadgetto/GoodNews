@@ -32,22 +32,22 @@ class GroupCategoryGetNodes extends Processor
 {
     /** @var string $userID */
     public $userID;
-    
+
     /** @var string $resourceID */
     public $resourceID;
-    
+
     /** @var array $metaGroups */
-    public $metaGroups = array();
-    
+    public $metaGroups = [];
+
     /** @var array $metaCategories */
-    public $metaCategories = array();
-    
+    public $metaCategories = [];
+
     /** @var string $id The id of the current GoodNewsGroup node */
     public $id;
-    
+
     /** @var GoodNewsGroup $gonGroup The current GoodNewsGroup object */
     public $gonGroup;
-    
+
     /**
      * {@inheritDoc}
      *
@@ -55,11 +55,11 @@ class GroupCategoryGetNodes extends Processor
      */
     public function initialize()
     {
-        $this->setDefaultProperties(array(
-            'id'         => 0,
-            'sort'       => 'name',
-            'dir'        => 'ASC',
-        ));
+        $this->setDefaultProperties([
+            'id' => 0,
+            'sort' => 'name',
+            'dir' => 'ASC',
+        ]);
         return true;
     }
 
@@ -72,21 +72,21 @@ class GroupCategoryGetNodes extends Processor
     {
         $this->userID = $this->getProperty('userID', 0);
         $this->resourceID = $this->getProperty('resourceID', 0);
-                
+
         if (!empty($this->resourceID)) {
-            $meta = $this->modx->getObject(GoodNewsMailingMeta::class, array('mailing_id' => $this->resourceID));
+            $meta = $this->modx->getObject(GoodNewsMailingMeta::class, ['mailing_id' => $this->resourceID]);
             if ($meta) {
                 $this->metaGroups = unserialize($meta->get('groups'));
                 $this->metaCategories = unserialize($meta->get('categories'));
             }
         }
-        
+
         // Parse the ID to get the parent group
         $this->id = str_replace('n_gongrp_', '', $this->getProperty('id'));
         $this->setGonGroup();
 
-        $list = array();
-        
+        $list = [];
+
         // We have a flat list of groups so this is needed only in first iteration
         if ($this->id == '0') {
             $groups = $this->getGonGroups();
@@ -125,10 +125,10 @@ class GroupCategoryGetNodes extends Processor
                 }
             }
         }
-        
+
         return $this->toJSON($list);
     }
-    
+
     /**
      * Setter for selected GoodNews group node.
      * @return GoodNewsGroup||null
@@ -148,13 +148,13 @@ class GroupCategoryGetNodes extends Processor
      */
     public function getGonGroups()
     {
-        $data = array();
+        $data = [];
         $c = $this->modx->newQuery(GoodNewsGroup::class);
         // Filter out additional tree nodes -> groups with assigned MODx user groups
         if (!$this->getProperty('addModxGroups', false)) {
-            $c->where(array(
+            $c->where([
                 'modxusergroup' => 0,
-            ));
+            ]);
         }
         $data['total'] = $this->modx->getCount(GoodNewsGroup::class, $c);
         $c->sortby($this->getProperty('sort'), $this->getProperty('dir'));
@@ -170,11 +170,11 @@ class GroupCategoryGetNodes extends Processor
      */
     public function getGonCategories()
     {
-        $data = array();
+        $data = [];
         $c = $this->modx->newQuery(GoodNewsCategory::class);
-        $c->where(array(
+        $c->where([
             'goodnewsgroup_id' => $this->gonGroup->get('id'),
-        ));
+        ]);
         $data['total'] = $this->modx->getCount(GoodNewsCategory::class, $c);
         $c->sortby('name', 'ASC');
         $data['results'] = $this->modx->getCollection(GoodNewsCategory::class, $c);
@@ -190,23 +190,23 @@ class GroupCategoryGetNodes extends Processor
     public function prepareGonGroupUser(GoodNewsGroup $group)
     {
         $c = $this->modx->newQuery(GoodNewsGroupMember::class);
-        $c->where(array(
+        $c->where([
             'member_id' => $this->userID,
             'goodnewsgroup_id' => $group->get('id'),
-        ));
+        ]);
         if ($this->modx->getCount(GoodNewsGroupMember::class, $c) > 0) {
             $checked = true;
         } else {
             $checked = false;
         }
-        
+
         if ($group->get('modxusergroup')) {
             $cssClass = 'gonr-modx-group-assigned';
         } else {
             $cssClass = '';
         }
         $iconCls = 'icon-tags';
-        return array(
+        return [
             'text'    => $group->get('name'),
             'id'      => 'n_gongrp_' . $group->get('id'),
             'leaf'    => false,
@@ -215,7 +215,7 @@ class GroupCategoryGetNodes extends Processor
             'checked' => $checked,
             'iconCls' => $iconCls,
             'cls'     => $cssClass,
-        );
+        ];
     }
 
     /**
@@ -227,17 +227,17 @@ class GroupCategoryGetNodes extends Processor
     public function prepareGonCategoryUser(GoodNewsCategory $category)
     {
         $c = $this->modx->newQuery(GoodNewsCategoryMember::class);
-        $c->where(array(
+        $c->where([
             'member_id' => $this->userID,
             'goodnewscategory_id' => $category->get('id'),
-        ));
+        ]);
         if ($this->modx->getCount(GoodNewsCategoryMember::class, $c) > 0) {
             $checked = true;
         } else {
             $checked = false;
         }
         $iconCls = 'icon-tag';
-        return array(
+        return [
             'text'    => $category->get('name'),
             'id'      => 'n_goncat_' . $category->get('id') . '_' . $this->gonGroup->get('id'),
             'leaf'    => true,
@@ -245,7 +245,7 @@ class GroupCategoryGetNodes extends Processor
             'qtip'    => $category->get('description'),
             'checked' => $checked,
             'iconCls' => $iconCls,
-        );
+        ];
     }
 
     /**
@@ -261,14 +261,14 @@ class GroupCategoryGetNodes extends Processor
         } else {
             $checked = false;
         }
-        
+
         if ($group->get('modxusergroup')) {
             $cssClass = 'gonr-modx-group-assigned';
         } else {
             $cssClass = '';
         }
         $iconCls = 'icon-tags';
-        return array(
+        return [
             'text'    => $group->get('name'),
             'id'      => 'n_gongrp_' . $group->get('id'),
             'leaf'    => false,
@@ -277,7 +277,7 @@ class GroupCategoryGetNodes extends Processor
             'checked' => $checked,
             'iconCls' => $iconCls,
             'cls'     => $cssClass,
-        );
+        ];
     }
 
     /**
@@ -294,7 +294,7 @@ class GroupCategoryGetNodes extends Processor
             $checked = false;
         }
         $iconCls = 'icon-tag';
-        return array(
+        return [
             'text'    => $category->get('name'),
             'id'      => 'n_goncat_' . $category->get('id') . '_' . $this->gonGroup->get('id'),
             'leaf'    => true,
@@ -302,7 +302,7 @@ class GroupCategoryGetNodes extends Processor
             'qtip'    => $category->get('description'),
             'checked' => $checked,
             'iconCls' => $iconCls,
-        );
+        ];
     }
 
     /**
@@ -319,7 +319,7 @@ class GroupCategoryGetNodes extends Processor
             $cssClass = '';
         }
         $iconCls = 'icon-tags';
-        return array(
+        return [
             'text'    => $group->get('name'),
             'id'      => 'n_gongrp_' . $group->get('id'),
             'leaf'    => false,
@@ -328,7 +328,7 @@ class GroupCategoryGetNodes extends Processor
             'checked' => false,
             'iconCls' => $iconCls,
             'cls'     => $cssClass,
-        );
+        ];
     }
 
     /**
@@ -340,7 +340,7 @@ class GroupCategoryGetNodes extends Processor
     public function prepareGonCategory(GoodNewsCategory $category)
     {
         $iconCls = 'icon-tag';
-        return array(
+        return [
             'text'    => $category->get('name'),
             'id'      => 'n_goncat_' . $category->get('id') . '_' . $this->gonGroup->get('id'),
             'leaf'    => true,
@@ -348,6 +348,6 @@ class GroupCategoryGetNodes extends Processor
             'qtip'    => $category->get('description'),
             'checked' => false,
             'iconCls' => $iconCls,
-        );
+        ];
     }
 }
