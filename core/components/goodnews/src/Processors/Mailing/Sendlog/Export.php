@@ -60,12 +60,12 @@ class Export extends Processor
         } else {
             exit();
         }
-        
+
         $c->sortby('GoodNewsSubscriberLog.statustime', 'DESC');
-        
+
         // Get the send-log collection
         $sendlog = $this->modx->getCollection($this->classKey, $c);
-        
+
         $exportfile = 'sendlog_' . $mailingid . '.csv';
 
         // CSV header array (field names)
@@ -77,11 +77,11 @@ class Export extends Processor
             'statustime',
             'status',
         ];
-        
+
         // Generate the rows array
         $rows = [];
         $idx = 0;
-        
+
         foreach ($sendlog as $line) {
             $idx += 1;
             $subscriber_id       = $line->get('subscriber_id');
@@ -116,19 +116,19 @@ class Export extends Processor
 
         // Generate CSV file in memory (no physical file operation)
         $out = fopen('php://output', 'w');
-        
+
         // Add header line
         fputcsv($out, $header);
-        
+
         // Add export rows
         foreach ($rows as $row) {
             fputcsv($out, $row);
         }
-        
+
         fclose($out);
         die();
     }
-    
+
     public function getLanguageTopics()
     {
         return ['goodnews:default'];
