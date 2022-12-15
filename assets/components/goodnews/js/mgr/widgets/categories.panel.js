@@ -55,7 +55,7 @@ GoodNews.grid.Categories = function(config) {
     Ext.applyIf(config,{
         id: 'goodnews-grid-categories'
         ,url: GoodNews.config.connectorUrl
-        ,baseParams: { action: 'mgr/category/getList' }
+        ,baseParams: { action: 'Bitego\\GoodNews\\Processors\\Category\\GetList' }
         ,fields: [
             'id'
             ,'name'
@@ -76,7 +76,7 @@ GoodNews.grid.Categories = function(config) {
         ,paging: true
         ,remoteSort: true
         ,emptyText: _('goodnews.categories_none')
-        ,save_action: 'mgr/category/updateFromGrid'
+        ,save_action: 'Bitego\\GoodNews\\Processors\\Category\\UpdateFromGrid'
         ,autosave: true
         ,autoExpandColumn: 'description'
         ,collapseFirst: false
@@ -141,7 +141,7 @@ GoodNews.grid.Categories = function(config) {
             ,store: new Ext.data.JsonStore({
                 url: GoodNews.config.connectorUrl
                 ,baseParams: {
-                    action : 'mgr/groups/getGroupFilterList'
+                    action : 'Bitego\\GoodNews\\Processors\\Groups\\FilterGetList'
                 }
                 ,fields: ['id','name']
                 ,root: 'results'
@@ -226,7 +226,7 @@ Ext.extend(GoodNews.grid.Categories,MODx.grid.Grid,{
             ,url: this.config.url
             ,defaultButton: 'no'
             ,params: {
-                action: 'mgr/category/remove'
+                action: 'Bitego\\GoodNews\\Processors\\Category\\Remove'
                 ,id: this.menu.record.id
             }
             ,listeners: {
@@ -248,7 +248,7 @@ Ext.extend(GoodNews.grid.Categories,MODx.grid.Grid,{
     }
     ,clearFilter: function() {
     	this.getStore().baseParams = {
-            action: 'mgr/category/getList'
+            action: 'Bitego\\GoodNews\\Processors\\Category\\GetList'
     	};
         Ext.getCmp('goodnews-categories-search-filter').reset();
         Ext.getCmp('goodnews-categories-group-filter').reset();
@@ -278,8 +278,8 @@ GoodNews.window.Category = function(config) {
         ,url: GoodNews.config.connectorUrl
         ,baseParams: {
             action: (config.isUpdate) ?
-                'mgr/category/update' :
-                'mgr/category/create'
+                'Bitego\\GoodNews\\Processors\\Category\\Update' :
+                'Bitego\\GoodNews\\Processors\\Category\\Create'
         }
         ,closeAction: 'close'
         ,fields: [{
@@ -308,7 +308,7 @@ GoodNews.window.Category = function(config) {
             ,store: new Ext.data.JsonStore({
                 url: GoodNews.config.connectorUrl
                 ,baseParams: {
-                    action : 'mgr/groups/getlist'
+                    action : 'Bitego\\GoodNews\\Processors\\Groups\\GetList'
                     ,noModxGroups: true
                 }
                 ,fields: ['id','name']
