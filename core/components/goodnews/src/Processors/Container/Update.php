@@ -16,7 +16,8 @@ use MODX\Revolution\modX;
 use MODX\Revolution\Processors\Resource\Update;
 
 /**
- * Overrides the MODX\Revolution\Processors\Resource\Update to provide custom processor functionality
+ * Overrides the MODX\Revolution\Processors\Resource\Update processor
+ * to provide custom processor functionality
  *
  * @package goodnews
  */
