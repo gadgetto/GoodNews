@@ -31,50 +31,50 @@ class GoodNews
     public const NAME     = 'GoodNews';
     public const VERSION  = '2.0.0';
     public const RELEASE  = 'beta1';
-    
+
     public const HELP_URL = 'https://docs.bitego.com/goodnews/user-guide/';
     public const DEV_NAME = 'bitego (Martin Gartner, Franz Gallei)';
     public const DEV_URL  = 'http://www.bitego.com';
-    
+
     public const MIN_PHP_VERSION = '7.2.5';
     public const MIN_MODX_VERSION = '3.0.0';
 
     /** @var \MODX\Revolution\modX A reference to the modX object */
     public $modx = null;
-    
+
     /** @var array $config GoodNews config array */
     public $config = [];
-    
+
     /** @var boolean $multiProcessing Is multi processing available? (depends on server settings/features) */
     public $isMultiProcessing = false;
-    
+
     /** @var boolean $imapExtension Is the php IMAP extension available? (required for automatic bounce handling) */
     public $imapExtension = false;
-    
+
     /** @var boolean $pThumbAddOn Is the pThumb MODX Revo Add-On installed? (required for auto-fixing image sizes) */
     public $pThumbAddOn = false;
-    
+
     /** @var string $actualPhpVersion The current PHP version */
     public $actualPhpVersion = null;
-    
+
     /** @var string $requiredPhpVersion The required PHP version */
     public $requiredPhpVersion = null;
-    
+
     /** @var boolean $phpVersionOK Is the php version sufficient? */
     public $phpVersionOK = false;
-    
+
     /** @var boolean $isGoodNewsAdmin Is the current user a GoodNews admin? */
     public $isGoodNewsAdmin = false;
-    
+
     /** @var string $userAvailableContainers Comma separated list of GoodNews containers the actual user has access to */
     public $userAvailableContainers = '';
 
     /** @var integer $userCurrentContainer The current GoodNews resource container for actual user */
     public $userCurrentContainer = 0;
-    
+
     /** @var string $contextKey The context key of the current GoodNews resource container */
     public $contextKey = '';
-    
+
     /** @var integer $mailingTemplate The mailing template for the current GoodNews resource container */
     public $mailingTemplate = 0;
 
@@ -86,10 +86,10 @@ class GoodNews
 
     /** @var array $setupErrors The setup error stack */
     public $setupErrors = [];
-    
+
     /** @var boolean $debug Debug mode on/off */
     public $debug = false;
-    
+
     /**
      * Constructor for GoodNews object
      *
@@ -99,13 +99,25 @@ class GoodNews
     public function __construct(modX &$modx, array $config = [])
     {
         $this->modx = &$modx;
- 
-        $corePath = $this->modx->getOption('goodnews.core_path', $config, $this->modx->getOption('core_path', null, MODX_CORE_PATH) . 'components/goodnews/');
-        $assetsPath = $this->modx->getOption('goodnews.assets_path', $config, $this->modx->getOption('assets_path', null, MODX_ASSETS_PATH) . 'components/goodnews/');
-        $assetsUrl = $this->modx->getOption('goodnews.assets_url', $config, $this->modx->getOption('assets_url', null, MODX_ASSETS_URL) . 'components/goodnews/');
-        
+
+        $corePath = $this->modx->getOption(
+            'goodnews.core_path',
+            $config,
+            $this->modx->getOption('core_path', null, MODX_CORE_PATH) . 'components/goodnews/'
+        );
+        $assetsPath = $this->modx->getOption(
+            'goodnews.assets_path',
+            $config,
+            $this->modx->getOption('assets_path', null, MODX_ASSETS_PATH) . 'components/goodnews/'
+        );
+        $assetsUrl = $this->modx->getOption(
+            'goodnews.assets_url',
+            $config,
+            $this->modx->getOption('assets_url', null, MODX_ASSETS_URL) . 'components/goodnews/'
+        );
+
         $this->modx->lexicon->load('goodnews:default');
-        
+
         $this->config = array_merge([
             'corePath'       => $corePath,
             'srcPath'        => $corePath . 'src/',
@@ -135,14 +147,14 @@ class GoodNews
             $this->phpVersionOK       = version_compare($this->actualPhpVersion, $this->requiredPhpVersion, '>=')
                 ? true
                 : false;
-            
+
             // Only executed if we have a logged in user within MODX manager!
             if ($this->loggedInMgrUser()) {
                 $this->isGoodNewsAdmin = $this->isGoodNewsAdmin();
-                
+
                 // Get all GoodNews mailing containers the user has access to
                 $this->userAvailableContainers = $this->getUserAvailableContainers();
-                
+
                 if ($this->userAvailableContainers) {
                     $this->initializeMailingContainer();
                 } else {
@@ -153,7 +165,7 @@ class GoodNews
                     );
                 }
             }
-            
+
             $this->siteStatus = $this->modx->getOption('site_status', null, false)
                 ? true
                 : false;
@@ -203,7 +215,7 @@ class GoodNews
             }
         }
         $this->userCurrentContainer = $this->getUserCurrentContainer();
-        
+
         // Ensure the current container is set
         if (empty($this->userCurrentContainer) || !$this->isGoodNewsContainer($this->userCurrentContainer)) {
             // If no container is preselected, set default container (= first container based on ID)
@@ -211,12 +223,12 @@ class GoodNews
             $this->userCurrentContainer = reset($containers);
             $this->setUserCurrentContainer($this->userCurrentContainer);
         }
-        
+
         $resource = $this->modx->getObject(modResource::class, $this->userCurrentContainer);
         if ($resource) {
             // Get context key of actual GoodNews container
             $this->contextKey = $resource->get('context_key');
-    
+
             // Read template setting for child resources (mailings) of actual GoodNews container
             $this->mailingTemplate = $resource->getProperty('mailingTemplate', 'goodnews');
         }
@@ -242,9 +254,9 @@ class GoodNews
         ]);
         $c->sortby('id', 'ASC');
         $containers = $this->modx->getCollection(modResource::class, $c);
-        
+
         $containerIDs = false;
-        
+
         foreach ($containers as $container) {
             if ($this->isEditor($container)) {
                 if ($containerIDs != '') {
@@ -316,7 +328,7 @@ class GoodNews
     public function isGoodNewsContainer($id)
     {
         $goncontainer = false;
-        
+
         $c = $this->modx->newQuery(modResource::class);
         $c->where([
             'id' => $id,
@@ -325,7 +337,7 @@ class GoodNews
             'class_key' => GoodNewsResourceContainer::class
         ]);
         $containers = $this->modx->getCollection(modResource::class, $c);
-        
+
         if (count($containers)) {
             $goncontainer = true;
         }
@@ -342,7 +354,7 @@ class GoodNews
     public function isMultiProcessing()
     {
         $enabled = true;
-        
+
         $d = ini_get('disable_functions');
         $s = ini_get('suhosin.executor.func.blacklist');
         if ("$d$s") {
@@ -364,7 +376,7 @@ class GoodNews
     {
         return function_exists('imap_open');
     }
-    
+
     /**
      * Cecks if a MODX transport package is installed.
      *
@@ -383,7 +395,7 @@ class GoodNews
         }
         return $installed;
     }
-    
+
     /**
      * Checks if the current logged in user has permissions to administrate GoodNews system.
      *
@@ -393,7 +405,7 @@ class GoodNews
     public function isGoodNewsAdmin()
     {
         $gonadmin = false;
-        
+
         if (!$this->modx->user || ($this->modx->user->get('id') < 1)) {
             $gonadmin = false;
         }
@@ -426,13 +438,13 @@ class GoodNews
         if (!$container) {
             return false;
         }
-        
+
         $iseditor = false;
-        
+
         // Read GoodNews editor groups from container properties
         $groups = explode(',', $container->getProperty('editorGroups', 'goodnews', 'Administrator'));
         $groups = array_map('trim', $groups);
-             
+
         // Check if user is a specific MODX group member
         if ($this->modx->user->isMember($groups)) {
             $iseditor = true;
@@ -456,7 +468,7 @@ class GoodNews
     public function loggedInMgrUser()
     {
         $loggedInMgrUser = false;
-        
+
         $user = &$this->modx->user;
         if ($user->hasSessionContext('mgr')) {
             $loggedInMgrUser = $user->get('id');
@@ -511,7 +523,7 @@ class GoodNews
     public function getChunk($name, array $properties = [])
     {
         $chunk = null;
-        
+
         if (!isset($this->chunks[$name])) {
             $chunk = $this->_getTplChunk($name);
             if (empty($chunk)) {
@@ -527,7 +539,7 @@ class GoodNews
             $chunk->setContent($o);
         }
         $chunk->setCacheable(false);
-        
+
         return $chunk->process($properties);
     }
 
