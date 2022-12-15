@@ -28,10 +28,10 @@ class ProcessHandler
 
     /** @var modX $modx A reference to the modX object */
     public $modx;
- 
+
     /** @var string $pid GoodNews worker process id */
     private $pid = '';
-    
+
     /** @var string $command The nohup command for the GoodNews worker process */
     private $command = '';
 
@@ -198,7 +198,7 @@ class ProcessHandler
         $pr = $this->collectProcessStatuses();
         foreach ($pr as $key => $value) {
             $this->setPid($value->get('pid'));
-            
+
             // If process isn't running
             if (!$this->status()) {
                 $this->deleteProcessStatus();
@@ -264,7 +264,7 @@ class ProcessHandler
         if (!$process) {
             return false;
         }
-        
+
         if ($process->remove() == false) {
             return false;
         } else {
@@ -303,7 +303,7 @@ class ProcessHandler
             return true;
         }
     }
-    
+
     /**
      * Read startTime from a temporary entry in the process status table.
      *
@@ -322,7 +322,7 @@ class ProcessHandler
             return $process->get('starttime');
         }
     }
-    
+
     /**
      * Read all temporary entries from the process status table.
      *
@@ -386,7 +386,7 @@ class ProcessHandler
         $tempfile = $this->lockDir . $mailingId . '.temp';
         $lockfilepattern = $this->lockDir . $mailingId . '.*';
         $file = false;
-        
+
         $ary = glob($lockfilepattern);
         if (!empty($ary)) {
             $file = true;
@@ -431,7 +431,7 @@ class ProcessHandler
     {
         $tempfile = $this->lockDir . $mailingId . '.temp';
         $lockfile = $this->lockDir . $mailingId . '.' . getmypid();
-        
+
         while (!file_exists($lockfile)) {
             while (!file_exists($tempfile)) {
                 if ($this->debug) {
