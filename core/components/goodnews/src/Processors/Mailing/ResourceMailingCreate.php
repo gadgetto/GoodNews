@@ -24,6 +24,7 @@ use Bitego\GoodNews\RecipientsHandler;
  * to provide custom processor functionality.
  *
  * @package goodnews
+ * @subpackage processors
  */
 class ResourceMailingCreate extends Create
 {
