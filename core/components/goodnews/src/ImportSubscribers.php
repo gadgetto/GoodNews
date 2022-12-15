@@ -36,13 +36,13 @@ class ImportSubscribers
 
     /** @var array $config An array of config values */
     public $config = [];
-    
+
     /** @var boolean $update If import mode = update */
     public $update = false;
 
     /** @var resource $fileHandle A valid file pointer to a file successfully opened */
     public $fileHandle = false;
-    
+
     /** @var int $lineLength Must be greater than the longest line (in characters) to be found in the CSV file */
     public $lineLength;
 
@@ -60,7 +60,7 @@ class ImportSubscribers
 
     /** @var array $header The first row (field names) */
     public $header = [];
-    
+
     /** @var int $batchSize Number of users to be imported in one batch */
     public $batchSize;
 
@@ -191,7 +191,16 @@ class ImportSubscribers
         } else {
             $lineCount = -1; // loop limit is ignored
         }
-        while ($lineCount < $this->batchSize && $row = fgetcsv($this->fileHandle, $this->lineLength, $this->delimiter, $this->enclosure, $this->escape) !== false) {
+        while (
+            $lineCount < $this->batchSize &&
+            $row = fgetcsv(
+                $this->fileHandle,
+                $this->lineLength,
+                $this->delimiter,
+                $this->enclosure,
+                $this->escape
+            ) !== false
+        ) {
             $importUsers[] = $row;
             if ($this->batchSize > 0) {
                 $lineCount++;
@@ -212,12 +221,12 @@ class ImportSubscribers
     public function importUsers($batchSize = 0, $gonGroups = [], $gonCategories = [])
     {
         $this->batchSize = $batchSize;
-        
+
         // At least 1 group is required (both needs to be arrays)
         if (empty($gonGroups) || !is_array($gonGroups) || !is_array($gonCategories)) {
             return false;
         }
-        
+
         $importUsers = $this->getImportUsers();
         $importCount = 0;
         foreach ($importUsers as $importUser) {
@@ -255,9 +264,8 @@ class ImportSubscribers
      */
     private function updateSubscriber($fields, $groups = array(), $categories = array())
     {
-        
         $subscriberUpdated = false;
-        
+
         // Check if we have more than 1 modUserProfiles based on this email
         // -> Normally this should't be necessary but it's possible that we have multiple
         //    users with the same email address (if enabled in MODX system settings)
@@ -278,7 +286,7 @@ class ImportSubscribers
         if (!empty($fields[self::FULLNAME])) {
             $subscriberProfile->set('fullname', $fields[self::FULLNAME]);
         }
-        
+
         if ($subscriberProfile->save()) {
             $subscriberUpdated = true;
             $id = $subscriberProfile->get('internalKey'); // preserve id of updated user for later use
@@ -291,22 +299,27 @@ class ImportSubscribers
                 $subscriberMeta->set('sid', $sid);
                 $subscriberMeta->set('subscribedon', time());
                 $subscriberMeta->set('ip', 'imported'); // Set IP field to string 'imported' for later reference
-                
+
                 if (!$subscriberMeta->save()) {
                     $subscriberUpdated = false;
                 }
             }
-            
+
             // Update GoodNewsGroupMember entries (preserve existing!)
             if ($subscriberUpdated) {
                 foreach ($groups as $groupid) {
-                    if ($this->modx->getObject(GoodNewsGroupMember::class, ['goodnewsgroup_id' => $groupid, 'member_id' => $id])) {
+                    if (
+                        $this->modx->getObject(
+                            GoodNewsGroupMember::class,
+                            ['goodnewsgroup_id' => $groupid, 'member_id' => $id]
+                        )
+                    ) {
                         continue;
                     }
                     $groupmember = $this->modx->newObject(GoodNewsGroupMember::class);
                     $groupmember->set('goodnewsgroup_id', $groupid);
                     $groupmember->set('member_id', $id);
-                    
+
                     if (!$groupmember->save()) {
                         $subscriberUpdated = false;
                         break;
@@ -317,13 +330,18 @@ class ImportSubscribers
             // Update GoodNewsCategoryMember entries (preserve existing!)
             if ($subscriberUpdated) {
                 foreach ($categories as $categoryid) {
-                    if ($this->modx->getObject(GoodNewsCategoryMember::class, ['goodnewscategory_id' => $categoryid,'member_id' => $id])) {
+                    if (
+                        $this->modx->getObject(
+                            GoodNewsCategoryMember::class,
+                            ['goodnewscategory_id' => $categoryid,'member_id' => $id]
+                        )
+                    ) {
                         continue;
                     }
                     $categorymember = $this->modx->newObject(GoodNewsCategoryMember::class);
                     $categorymember->set('goodnewscategory_id', $categoryid);
                     $categorymember->set('member_id', $id);
-                    
+
                     if (!$categorymember->save()) {
                         $subscriberUpdated = false;
                         break;
@@ -333,9 +351,19 @@ class ImportSubscribers
         }
         if (!$subscriberUpdated) {
             // @todo: rollback if upd failed
-            $this->modx->log(modX::LOG_LEVEL_WARN, '-> ' . $this->modx->lexicon('goodnews.import_subscribers_log_err_subscr_update') . $fields[self::EMAIL]);
+            $this->modx->log(
+                modX::LOG_LEVEL_WARN,
+                '-> ' .
+                $this->modx->lexicon('goodnews.import_subscribers_log_err_subscr_update') .
+                $fields[self::EMAIL]
+            );
         } else {
-            $this->modx->log(modX::LOG_LEVEL_INFO, '-> ' . $this->modx->lexicon('goodnews.import_subscribers_log_subscr_updated') . $fields[self::EMAIL]);
+            $this->modx->log(
+                modX::LOG_LEVEL_INFO,
+                '-> ' .
+                $this->modx->lexicon('goodnews.import_subscribers_log_subscr_updated') .
+                $fields[self::EMAIL]
+            );
         }
         return $subscriberUpdated;
     }
@@ -352,11 +380,16 @@ class ImportSubscribers
     private function saveSubscriber($fields, $groups = [], $categories = [])
     {
         if (!$this->validEmail($fields[self::EMAIL])) {
-            $this->modx->log(modX::LOG_LEVEL_WARN, '-> ' . $this->modx->lexicon('goodnews.import_subscribers_log_err_email_invalid') . $fields[self::EMAIL]);
+            $this->modx->log(
+                modX::LOG_LEVEL_WARN,
+                '-> ' .
+                $this->modx->lexicon('goodnews.import_subscribers_log_err_email_invalid') .
+                $fields[self::EMAIL]
+            );
             return false;
         }
         $subscriberSaved = false;
-        
+
         // New modUser
         $subscriber = $this->modx->newObject(modUser::class);
         $password = $subscriber->generatePassword(8);
@@ -365,13 +398,13 @@ class ImportSubscribers
         $subscriber->set('password', $password);
         $subscriber->set('active', 1);
         $subscriber->set('blocked', 0);
-        
+
         // Add modUserProfile
         $subscriberProfile = $this->modx->newObject(modUserProfile::class);
         $subscriberProfile->set('email', $fields[self::EMAIL]);
         $subscriberProfile->set('fullname', $fields[self::FULLNAME]);
         $subscriber->addOne($subscriberProfile);
-        
+
         if ($subscriber->save()) {
             $id = $subscriber->get('id'); // preserve id of new user for later use
             // New GoodNewsSubscriberMeta
@@ -381,16 +414,16 @@ class ImportSubscribers
             $subscriberMeta->set('sid', $sid);
             $subscriberMeta->set('subscribedon', time());
             $subscriberMeta->set('ip', 'imported'); // Set IP field to string 'imported' for later reference
-            
+
             if ($subscriberMeta->save()) {
                 $subscriberSaved = true;
-                
+
                 foreach ($groups as $groupid) {
                     // New GoodNewsGroupMember entry
                     $groupmember = $this->modx->newObject(GoodNewsGroupMember::class);
                     $groupmember->set('goodnewsgroup_id', $groupid);
                     $groupmember->set('member_id', $id);
-                    
+
                     if (!$groupmember->save()) {
                         $subscriberSaved = false;
                         break;
@@ -403,7 +436,7 @@ class ImportSubscribers
                         $categorymember = $this->modx->newObject(GoodNewsCategoryMember::class);
                         $categorymember->set('goodnewscategory_id', $categoryid);
                         $categorymember->set('member_id', $id);
-                        
+
                         if (!$categorymember->save()) {
                             $subscriberSaved = false;
                             break;
@@ -413,7 +446,12 @@ class ImportSubscribers
             }
         }
         if (!$subscriberSaved) {
-            $this->modx->log(modX::LOG_LEVEL_WARN, '-> ' . $this->modx->lexicon('goodnews.import_subscribers_log_err_subscr_save') . $fields[self::EMAIL]);
+            $this->modx->log(
+                modX::LOG_LEVEL_WARN,
+                '-> ' .
+                $this->modx->lexicon('goodnews.import_subscribers_log_err_subscr_save') .
+                $fields[self::EMAIL]
+            );
             // Rollback if one of the savings failed!
             $meta = $this->modx->getObject(GoodNewsSubscriberMeta::class, ['subscriber_id' => $id]);
             if ($meta) {
@@ -422,11 +460,16 @@ class ImportSubscribers
             $this->modx->removeCollection(GoodNewsGroupMember::class, ['member_id' => $id]);
             $this->modx->removeCollection(GoodNewsCategoryMember::class, ['member_id' => $id]);
         } else {
-            $this->modx->log(modX::LOG_LEVEL_INFO, '-> ' . $this->modx->lexicon('goodnews.import_subscribers_log_subscr_imported') . $fields[self::EMAIL]);
+            $this->modx->log(
+                modX::LOG_LEVEL_INFO,
+                '-> ' .
+                $this->modx->lexicon('goodnews.import_subscribers_log_subscr_imported') .
+                $fields[self::EMAIL]
+            );
         }
         return $subscriberSaved;
     }
-    
+
     /**
      * Generate a new unique username based on email address.
      *
@@ -510,7 +553,7 @@ class ImportSubscribers
         }
         return false;
     }
-    
+
     /**
      * Checks if we have a valid email address.
      *
