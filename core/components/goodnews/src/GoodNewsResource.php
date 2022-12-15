@@ -25,10 +25,10 @@ class GoodNewsResource
 {
     /** @var modX $modx A reference to the modX instance */
     public $modx = null;
-    
+
     /** @var array $config An array of configuration properties */
     public $config = [];
-    
+
     /** @var array $chunks An array of cached chunks used for faster processing */
     public $chunks;
 
@@ -68,7 +68,7 @@ class GoodNewsResource
             'connectorUrl'   => $assetsUrl . 'connector_res.php',
             'chunkSuffix'    => '.chunk.tpl',
         ), $config);
-        
+
         $this->modx->lexicon->load('goodnews:resource');
     }
 
