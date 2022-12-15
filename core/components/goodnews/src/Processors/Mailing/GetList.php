@@ -54,7 +54,7 @@ class GetList extends GetListProcessor
 
     /** @var GoodNewsResourceContainer $userCurrentContainer */
     public $userCurrentContainer = 0;
-        
+
     public function initialize()
     {
         $this->goodnews = $this->modx->services->get('goodnews');
@@ -98,7 +98,7 @@ class GetList extends GetListProcessor
 
         // GoodNewsMailingMeta object
         $c->leftJoin(GoodNewsMailingMeta::class, 'MailingMeta', 'MailingMeta.mailing_id = GoodNewsResourceMailing.id');
-        
+
         $metaColumns = [
             'recipients_total',
             'recipients_sent',
@@ -115,7 +115,7 @@ class GetList extends GetListProcessor
 
         $c->where(['parent' => $this->userCurrentContainer]);
         $c->where(['class_key' => $this->classKey]);
-        
+
         // filter combo
         $filter = $this->getProperty('filter', '');
         switch ($filter) {
@@ -157,7 +157,7 @@ class GetList extends GetListProcessor
             ];
             $c->where($queryWhere);
         }
-        
+
         return $c;
     }
 
@@ -169,7 +169,7 @@ class GetList extends GetListProcessor
         $managerDateFormat = $this->modx->getOption('manager_date_format', null, 'Y-m-d');
         $managerTimeFormat = $this->modx->getOption('manager_time_format', null, 'H:i');
         $dateTimeFormat = $managerDateFormat . ' ' . $managerTimeFormat;
-        
+
         $resourceArray['pagetitle'] = htmlentities($resourceArray['pagetitle'], ENT_COMPAT, $charset);
 
         $this->modx->getContext($resourceArray['context_key']);
@@ -205,7 +205,7 @@ class GetList extends GetListProcessor
                     $resourceArray['status'] = self::GON_NEWSLETTER_STATUS_IN_PROGRESS;
                     $resourceArray['statusmessage'] = $this->modx->lexicon('goodnews.newsletter_status_in_progress');
                 }
-            // Sending in progress or not yet started
+                // Sending in progress or not yet started
             } elseif ((int)$resourceArray['recipients_sent'] == 0) {
                 if ((int)$resourceArray['ipc_status'] == self::GON_IPC_STATUS_STARTED) {
                     $resourceArray['status'] = self::GON_NEWSLETTER_STATUS_IN_PROGRESS;
@@ -214,8 +214,11 @@ class GetList extends GetListProcessor
                     $resourceArray['status'] = self::GON_NEWSLETTER_STATUS_NOT_YET_SENT;
                     $resourceArray['statusmessage'] = $this->modx->lexicon('goodnews.newsletter_status_not_yet_sent');
                 }
-            // Sending in progress or stopped
-            } elseif ((int)$resourceArray['recipients_total'] != (int)$resourceArray['recipients_sent'] && (int)$resourceArray['recipients_sent'] != 0) {
+                // Sending in progress or stopped
+            } elseif (
+                (int)$resourceArray['recipients_total'] != (int)$resourceArray['recipients_sent'] &&
+                (int)$resourceArray['recipients_sent'] != 0
+            ) {
                 if ((int)$resourceArray['ipc_status'] == self::GON_IPC_STATUS_STOPPED) {
                     $resourceArray['status'] = self::GON_NEWSLETTER_STATUS_STOPPED;
                     $resourceArray['statusmessage'] = $this->modx->lexicon('goodnews.newsletter_status_stopped');
@@ -228,7 +231,7 @@ class GetList extends GetListProcessor
 
         // Prepare action buttons
         $resourceArray['actions'] = [];
-        
+
         if (!empty($resourceArray['deleted'])) {
             $resourceArray['actions'][] = [
                 'className' => 'undelete',
