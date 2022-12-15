@@ -12,6 +12,7 @@
 
 namespace Bitego\GoodNews;
 
+use MODX\Revolution\modX;
 use MODX\Revolution\modUser;
 use MODX\Revolution\modUserProfile;
 use Bitego\GoodNews\Model\GoodNewsSubscriberMeta;
