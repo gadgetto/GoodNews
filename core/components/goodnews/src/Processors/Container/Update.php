@@ -64,7 +64,7 @@ class ResourceContainerUpdate extends Update
     }
 
     /**
-     * Override modResourceUpdateProcessor::afterSave to provide custom functionality
+     * Override Update::afterSave to provide custom functionality
      *
      * {@inheritDoc}
      * @return boolean
