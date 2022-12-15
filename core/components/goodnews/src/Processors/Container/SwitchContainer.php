@@ -11,7 +11,7 @@
  */
 
 namespace Bitego\GoodNews\Processors\Container;
- 
+
 use MODX\Revolution\Processors\Processor;
 use Bitego\GoodNews\GoodNews;
 
@@ -31,14 +31,14 @@ class SwitchContainer extends Processor
 
     /** @var int $containerid The resource id of the container */
     public $containerid = 0;
-    
+
     public function initialize()
     {
         $this->goodnews = $this->modx->services->get('goodnews');
         $this->containerid = $this->getProperty('containerid');
         return parent::initialize();
     }
-    
+
     public function process()
     {
         if (!$this->goodnews) {

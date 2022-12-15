@@ -52,7 +52,7 @@ class SimpleGetList extends GetListProcessor
         $c->where(['class_key' => $this->classKey]);
         $c->where(['published' => 1]);
         $c->where(['deleted' => 0]);
-        
+
         // only return containers the user is assigned to
         $containerIDs = explode(',', $this->getProperty('containerIDs', ''));
         $c->where(['id:IN' => $containerIDs]);
