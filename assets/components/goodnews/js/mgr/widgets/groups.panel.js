@@ -55,7 +55,7 @@ GoodNews.grid.Groups = function(config) {
     Ext.applyIf(config,{
         id: 'goodnews-grid-groups'
         ,url: GoodNews.config.connectorUrl
-        ,baseParams: { action: 'mgr/groups/getList' }
+        ,baseParams: { action: 'Bitego\\GoodNews\\Processors\\Groups\\GetList' }
         ,fields: [
             'id'
             ,'name'
@@ -69,7 +69,7 @@ GoodNews.grid.Groups = function(config) {
         ,emptyText: _('goodnews.groups_none')
         ,paging: true
         ,remoteSort: true
-        ,save_action: 'mgr/groups/updateFromGrid'
+        ,save_action: 'Bitego\\GoodNews\\Processors\\Groups\\UpdateFromGrid'
         ,autosave: true
         ,autoExpandColumn: 'description'
         /*
@@ -212,7 +212,7 @@ Ext.extend(GoodNews.grid.Groups,MODx.grid.Grid,{
             ,text: _('goodnews.group_remove_confirm')
             ,url: this.config.url
             ,params: {
-                action: 'mgr/groups/remove'
+                action: 'Bitego\\GoodNews\\Processors\\Groups\\Remove'
                 ,id: this.menu.record.id
             }
             ,listeners: {
@@ -228,7 +228,7 @@ Ext.extend(GoodNews.grid.Groups,MODx.grid.Grid,{
     }
     ,clearFilter: function() {
     	this.getStore().baseParams = {
-            action: 'mgr/groups/getList'
+            action: 'Bitego\\GoodNews\\Processors\\Groups\\GetList'
     	};
         Ext.getCmp('goodnews-groups-search-filter').reset();
     	this.getBottomToolbar().changePage(1);
@@ -257,8 +257,8 @@ GoodNews.window.Group = function(config) {
         ,url: GoodNews.config.connectorUrl
         ,baseParams: {
             action: (config.isUpdate) ?
-                'mgr/groups/update' :
-                'mgr/groups/create'
+                'Bitego\\GoodNews\\Processors\\Groups\\Update' :
+                'Bitego\\GoodNews\\Processors\\Groups\\Create'
         }
         ,closeAction: 'close'
         ,fields: [{
@@ -277,7 +277,7 @@ GoodNews.window.Group = function(config) {
         },{
             xtype: 'modx-combo-usergroup'
             ,baseParams: {
-                action: 'security/group/getList'
+                action: 'Security/Group/GetList'
                 ,addNone: true
             }
             ,fieldLabel: _('goodnews.group_belongs_to_modx_usergroup')
