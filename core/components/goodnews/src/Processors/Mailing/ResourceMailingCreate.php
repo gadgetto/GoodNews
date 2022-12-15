@@ -1,42 +1,44 @@
 <?php
-/**
- * GoodNews
- *
- * Copyright 2022 by bitego <office@bitego.com>
- *
- * GoodNews is free software; you can redistribute it and/or modify it under the
- * terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
- *
- * GoodNews is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this software; if not, write to the Free Software Foundation, Inc., 59 Temple
- * Place, Suite 330, Boston, MA 02111-1307 USA
- */
 
 /**
- * Overrides the modResourceCreateProcessor to provide custom processor functionality
+ * This file is part of the GoodNews package.
+ *
+ * @copyright bitego (Martin Gartner)
+ * @license GNU General Public License v2.0 (and later)
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+namespace Bitego\GoodNews\Processors\Mailing;
+
+use MODX\Revolution\modX;
+use MODX\Revolution\Processors\Resource\Create;
+use Bitego\GoodNews\Model\GoodNewsResourceContainer;
+use Bitego\GoodNews\Model\GoodNewsResourceMailing;
+use Bitego\GoodNews\Model\GoodNewsMailingMeta;
+use Bitego\GoodNews\RecipientsHandler;
+
+/**
+ * Overrides the MODX\Revolution\Processors\Resource\Create processor
+ * to provide custom processor functionality.
  *
  * @package goodnews
  */
-class GoodNewsResourceMailingCreateProcessor extends modResourceCreateProcessor {
-
-    public $classKey = 'GoodNewsResourceMailing';
-    public $languageTopics = array('resource','goodnews:resource');
+class ResourceMailingCreate extends Create
+{
+    public $classKey = GoodNewsResourceMailing::class;
+    public $languageTopics = ['resource', 'goodnews:resource'];
 
     /** @var GoodNewsResourceMailing $object */
     public $object;
 
-    /** @var GoodNewsMailingMeta $object */
+    /** @var GoodNewsMailingMeta $meta */
     public $meta;
 
-    /** @var GoodnewsRecipientHandler $object */
-    public $goodnewsrecipienthandler;
-    
+    /** @var RecipientsHandler $recipientshandler */
+    public $recipientshandler;
+
     /** @var boolean $isPublishing */
     public $isPublishing = false;
 
@@ -47,60 +49,56 @@ class GoodNewsResourceMailingCreateProcessor extends modResourceCreateProcessor 
      *
      * @return string|modResource
      */
-    public function initialize() {
+    public function initialize()
+    {
         $initialized = parent::initialize();
 
-        $corePath = $this->modx->getOption('goodnews.core_path', null, $this->modx->getOption('core_path').'components/goodnews/');
-        
-        $this->meta = $this->modx->newObject('GoodNewsMailingMeta');
+        $this->meta = $this->modx->newObject(GoodNewsMailingMeta::class);
         if (!is_object($this->meta)) {
             return $this->modx->lexicon('resource_err_create');
         }
-        
-        if (!$this->modx->loadClass('GoodNewsRecipientHandler', $corePath.'model/goodnews/', true, true)) {
-            $this->modx->log(modX::LOG_LEVEL_ERROR,'[GoodNews] Could not load GoodNewsRecipientHandler class.');
-            return $this->modx->lexicon('resource_err_create');
-        }
-        $this->goodnewsrecipienthandler = new GoodNewsRecipientHandler($this->modx);
+
+        $this->recipientshandler = new RecipientsHandler($this->modx);
 
         return $initialized;
     }
 
-    public function beforeSet() {
-        $this->setProperty('class_key', 'GoodNewsResourceMailing');
+    public function beforeSet()
+    {
+        $this->setProperty('class_key', GoodNewsResourceMailing::class);
         $this->setProperty('searchable', false);
         $this->setProperty('isfolder', false);
         $this->setProperty('cacheable', true);
-        $this->setProperty('clearCache', true);        
+        $this->setProperty('clearCache', true);
         return parent::beforeSet();
     }
-    
+
     /**
-     * Override modResourceCreateProcessor::beforeSave
+     * Override Create::beforeSave
      *
      * {@inheritDoc}
      *
      * @return boolean
      */
-    public function beforeSave() {
-        
+    public function beforeSave()
+    {
         $this->prepareGroupsCategories();
         $groups      = $this->getProperty('groups');
         $categories  = $this->getProperty('categories');
         $collection1 = array_filter(explode(',', $this->getProperty('collection1')));
         $collection2 = array_filter(explode(',', $this->getProperty('collection2')));
         $collection3 = array_filter(explode(',', $this->getProperty('collection3')));
-        $collections = array();
+        $collections = [];
         $collections['collection1'] = $collection1;
         $collections['collection2'] = $collection2;
         $collections['collection3'] = $collection3;
-        
+
         $this->meta->set('groups', $groups);
         $this->meta->set('categories', $categories);
         $this->meta->set('collections', serialize($collections));
 
-        $this->goodnewsrecipienthandler->collect(unserialize($groups), unserialize($categories));
-        $this->meta->set('recipients_total', $this->goodnewsrecipienthandler->getRecipientsTotal());
+        $this->recipientshandler->collect(unserialize($groups), unserialize($categories));
+        $this->meta->set('recipients_total', $this->recipientshandler->getRecipientsTotal());
         $this->object->addOne($this->meta);
 
         if (!$this->parentResource) {
@@ -108,30 +106,31 @@ class GoodNewsResourceMailingCreateProcessor extends modResourceCreateProcessor 
         }
 
         // Copy container properties to mailing object properties
-        $container = $this->modx->getObject('GoodNewsResourceContainer', $this->object->get('parent'));
+        $container = $this->modx->getObject(GoodNewsResourceContainer::class, $this->object->get('parent'));
         if ($container) {
             $settings = $container->getProperties('goodnews');
             $this->object->setProperties($settings, 'goodnews');
         }
-        
+
         $this->isPublishing = $this->object->isDirty('published') && $this->object->get('published');
-                
+
         return parent::beforeSave();
     }
 
 
     /**
-     * Override modResourceCreateProcessor::afterSave
+     * Override Create::afterSave
      *
      * {@inheritDoc}
      *
      * @return boolean
      */
-    public function afterSave() {
+    public function afterSave()
+    {
         $this->clearContainerCache();
-        
+
         // save recipients list
-        $this->goodnewsrecipienthandler->saveRecipientsCollection($this->object->get('id'));
+        $this->recipientshandler->saveRecipientsCollection($this->object->get('id'));
 
         return parent::afterSave();
     }
@@ -141,12 +140,13 @@ class GoodNewsResourceMailingCreateProcessor extends modResourceCreateProcessor 
      *
      * @return void
      */
-    public function clearContainerCache() {
+    public function clearContainerCache()
+    {
         $this->modx->cacheManager->refresh(array(
-            'db' => array(),
-            'auto_publish' => array('contexts' => array($this->object->get('context_key'))),
-            'context_settings' => array('contexts' => array($this->object->get('context_key'))),
-            'resource' => array('contexts' => array($this->object->get('context_key'))),
+            'db' => [],
+            'auto_publish' => ['contexts' => [$this->object->get('context_key')]],
+            'context_settings' => ['contexts' => [$this->object->get('context_key')]],
+            'resource' => ['contexts' => [$this->object->get('context_key')]],
         ));
     }
 
@@ -160,13 +160,13 @@ class GoodNewsResourceMailingCreateProcessor extends modResourceCreateProcessor 
      *
      * @return void
      */
-    public function prepareGroupsCategories() {
-
+    public function prepareGroupsCategories()
+    {
         $nodes = explode(',', $this->getProperty('groupscategories'));
-        
-        $groups = array();
-        $categories = array();
-      
+
+        $groups = [];
+        $categories = [];
+
         foreach ($nodes as $node) {
             $nodeparts = explode('_', $node);
             if ($nodeparts[1] == 'gongrp') {
