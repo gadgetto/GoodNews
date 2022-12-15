@@ -28,23 +28,23 @@ class ResetBounceCounters extends Processor
     public function process()
     {
         $this->modx->lexicon->load('user');
-        
+
         $id = $this->getProperty('id');
-        
-        $meta = $this->modx->getObject(GoodNewsSubscriberMeta::class, array('subscriber_id' => $id));
+
+        $meta = $this->modx->getObject(GoodNewsSubscriberMeta::class, ['subscriber_id' => $id]);
         if (!is_object($meta)) {
-            // todo: return specific error message
+            // @todo: return specific error message
             return $this->modx->error->failure($this->modx->lexicon('user_err_save'));
         }
-        
+
         $meta->set('soft_bounces', '');
         $meta->set('hard_bounces', '');
-        
+
         if (!$meta->save()) {
             // todo: return specific error message
             return $this->modx->error->failure($this->modx->lexicon('user_err_save'));
         }
-        
+
         return $this->modx->error->success('');
     }
 }

@@ -27,10 +27,10 @@ class RemoveMulti extends Processor
 {
     /** @var mixed $userIds Array/Comma separated list of user ids */
     public $userIds = 0;
-    
+
     /** @var string $groupscategories Comma separated list of group and category tags */
     public $groupscategories = '';
-    
+
     /**
      * {@inheritDoc}
      *
@@ -42,7 +42,7 @@ class RemoveMulti extends Processor
         $this->groupscategories = $this->getProperty('groupscategories', '');
         return parent::initialize();
     }
-    
+
     /**
      * {@inheritDoc}
      *
@@ -59,17 +59,17 @@ class RemoveMulti extends Processor
         $nodes = is_array($this->groupscategories)
             ? $this->groupscategories
             : explode(',', $this->groupscategories);
-        
+
         // Extract group and category IDs
         // (e.g. n_gongrp_5,n_goncat_6_5,n_goncat_5_5,n_gongrp_6,n_gongrp_7 )
         // $nodeparts[0] = 'n'
         // $nodeparts[1] = 'gongrp' || 'goncat'
         // $nodeparts[2] = grpID || catID
         // $nodeparts[3] = parent grpID (or empty)
-        
+
         $groups = array();
         $categories = array();
-        
+
         foreach ($nodes as $node) {
             $nodeparts = explode('_', $node);
             if (!empty($nodeparts[1])) {
@@ -80,15 +80,15 @@ class RemoveMulti extends Processor
                 }
             }
         }
-        
+
         $groupslist     = implode(',', $groups);
         $categorieslist = implode(',', $categories);
-        
+
         foreach ($this->userIds as $id) {
             if (empty($id)) {
                 continue;
             }
-            
+
             // Remove selected categories from this user
             if (!empty($categorieslist)) {
                 $result = $this->modx->removeCollection(
@@ -115,7 +115,7 @@ class RemoveMulti extends Processor
         }
         return $this->success();
     }
-    
+
     /**
      * {@inheritDoc}
      *

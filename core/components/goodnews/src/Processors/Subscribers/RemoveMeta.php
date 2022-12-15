@@ -33,25 +33,25 @@ class RemoveMeta extends Processor
         $id = $this->getProperty('id');
 
         // Remove subscriber meta entry
-        $meta = $this->modx->getObject(GoodNewsSubscriberMeta::class, array('subscriber_id' => $id));
+        $meta = $this->modx->getObject(GoodNewsSubscriberMeta::class, ['subscriber_id' => $id]);
         if ($meta) {
             $meta->remove();
         }
-        
+
         // Remove all categories of this user
-        $result = $this->modx->removeCollection(GoodNewsCategoryMember::class, array('member_id' => $id));
+        $result = $this->modx->removeCollection(GoodNewsCategoryMember::class, ['member_id' => $id]);
         if ($result == false && $result != 0) {
             // @todo: return specific error message
             return $this->modx->error->failure($this->modx->lexicon('user_err_save'));
         }
-        
+
         // Remove all groups of this user
-        $result = $this->modx->removeCollection(GoodNewsGroupMember::class, array('member_id' => $id));
+        $result = $this->modx->removeCollection(GoodNewsGroupMember::class, ['member_id' => $id]);
         if ($result == false && $result != 0) {
             // @todo: return specific error message
             return $this->modx->error->failure($this->modx->lexicon('user_err_save'));
         }
-        
+
         return $this->modx->error->success('');
     }
 }

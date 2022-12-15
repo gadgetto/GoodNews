@@ -41,14 +41,14 @@ class RemoveSubscriptionsMulti extends Processor
             }
 
             // Remove all categories of this user
-            $result = $this->modx->removeCollection(GoodNewsCategoryMember::class, array('member_id' => $id));
+            $result = $this->modx->removeCollection(GoodNewsCategoryMember::class, ['member_id' => $id]);
             if ($result == false && $result != 0) {
                 // @todo: return specific error message
                 return $this->failure($this->modx->lexicon('user_err_save'));
             }
-            
+
             // Remove all groups of this user
-            $result = $this->modx->removeCollection(GoodNewsGroupMember::class, array('member_id' => $id));
+            $result = $this->modx->removeCollection(GoodNewsGroupMember::class, ['member_id' => $id]);
             if ($result == false && $result != 0) {
                 // @todo: return specific error message
                 return $this->failure($this->modx->lexicon('user_err_save'));

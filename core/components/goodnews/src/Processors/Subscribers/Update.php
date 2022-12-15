@@ -28,13 +28,13 @@ class Update extends Processor
 {
     /** @var int $userid The resource id of the user */
     public $userid = 0;
-    
+
     /** @var string $groupscategories Comma separated list of group and category tags */
     public $groupscategories = '';
-    
+
     /** @var boolean $testdummy Is user a testdummy? */
     public $testdummy = false;
-    
+
     /**
      * {@inheritDoc}
      *
@@ -47,7 +47,7 @@ class Update extends Processor
         $this->testdummy = (bool)$this->getProperty('testdummy');
         return parent::initialize();
     }
-    
+
     /**
      * {@inheritDoc}
      *
@@ -61,11 +61,11 @@ class Update extends Processor
         // $nodeparts[1] = 'gongrp' || 'goncat'
         // $nodeparts[2] = grpID || catID
         // $nodeparts[3] = parent grpID (or empty)
-        
+
         $nodes = explode(',', $this->groupscategories);
-        $groups = array();
-        $categories = array();
-        
+        $groups = [];
+        $categories = [];
+
         foreach ($nodes as $node) {
             $nodeparts = explode('_', $node);
             if ($nodeparts[1] == 'gongrp') {
@@ -74,21 +74,21 @@ class Update extends Processor
                 $categories[] = $nodeparts[2];
             }
         }
-        
+
         // Remove all prior categories of this user
         $result = $this->modx->removeCollection(GoodNewsCategoryMember::class, array('member_id' => $this->userid));
         if ($result == false && $result != 0) {
             // @todo: return specific error message
             return $this->failure($this->modx->lexicon('user_err_save'));
         }
-        
+
         // Remove all prior groups of this user
         $result = $this->modx->removeCollection(GoodNewsGroupMember::class, array('member_id' => $this->userid));
         if ($result == false && $result != 0) {
             // @todo: return specific error message
             return $this->failure($this->modx->lexicon('user_err_save'));
         }
-        
+
         // Add new groups for this user
         $grpupdate = true;
         foreach ($groups as $group) {
@@ -103,7 +103,7 @@ class Update extends Processor
             // @todo: return specific error message
             return $this->failure($this->modx->lexicon('user_err_save'));
         }
-        
+
         // Add new categories for this user
         $catupdate = true;
         foreach ($categories as $category) {
@@ -118,9 +118,9 @@ class Update extends Processor
             // @todo: return specific error message
             return $this->failure($this->modx->lexicon('user_err_save'));
         }
-        
+
         // Write subscriber meta data
-        $meta = $this->modx->getObject(GoodNewsSubscriberMeta::class, array('subscriber_id' => $this->userid));
+        $meta = $this->modx->getObject(GoodNewsSubscriberMeta::class, ['subscriber_id' => $this->userid]);
         if (!is_object($meta)) {
             $meta = $this->modx->newObject(GoodNewsSubscriberMeta::class);
             $meta->set('subscriber_id', $this->userid);
@@ -131,14 +131,14 @@ class Update extends Processor
             $meta->set('ip', 'manually');
         }
         $meta->set('testdummy', $this->testdummy);
-        
+
         if (!$meta->save()) {
             // @todo: return specific error message
             return $this->failure($this->modx->lexicon('user_err_save'));
         }
         return $this->success();
     }
-    
+
     /**
      * {@inheritDoc}
      *

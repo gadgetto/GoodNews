@@ -28,13 +28,13 @@ class AssignMulti extends Processor
 {
     /** @var mixed $userIds Array/Comma separated list of user ids */
     public $userIds = 0;
-    
+
     /** @var string $groupscategories Comma separated list of group and category tags */
     public $groupscategories = '';
-    
+
     /** @var boolean $testdummy Should user receive test emails? */
     public $testdummy = false;
-    
+
     /**
      * {@inheritDoc}
      *
@@ -91,51 +91,51 @@ class AssignMulti extends Processor
             if (empty($id)) {
                 continue;
             }
-            
+
             $groupsToAdd = [];
             $categoriesToAdd = [];
             $prevGroupsMember = [];
             $prevCategoriesMember = [];
-            
+
             // Ignore previous groups and categories (REPLACE)
             if ($this->replaceGrpsCats) {
                 $groupsToAdd = $groups;
                 $categoriesToAdd = $categories;
             // Merge previous groups and categories (ADD)
             } else {
-                $grpObj = $this->modx->getIterator(GoodNewsGroupMember::class, array('member_id' => $id));
+                $grpObj = $this->modx->getIterator(GoodNewsGroupMember::class, ['member_id' => $id]);
                 foreach ($grpObj as $idx => $grp) {
                     $prevGroupsMember[] .= $grp->get('goodnewsgroup_id');
                 }
-                
-                $catObj = $this->modx->getIterator(GoodNewsCategoryMember::class, array('member_id' => $id));
+
+                $catObj = $this->modx->getIterator(GoodNewsCategoryMember::class, ['member_id' => $id]);
                 foreach ($catObj as $idx => $cat) {
                     $prevCategoriesMember[] .= $cat->get('goodnewscategory_id');
                 }
-                
+
                 $groupsToAdd = array_merge($prevGroupsMember, $groups);
                 // remove duplicates
                 $groupsToAdd = array_keys(array_flip($groupsToAdd));
-                
+
                 $categoriesToAdd = array_merge($prevCategoriesMember, $categories);
                 // remove duplicates
                 $categoriesToAdd = array_keys(array_flip($categoriesToAdd));
             }
 
             // Remove all prior categories of this user
-            $result = $this->modx->removeCollection(GoodNewsCategoryMember::class, array('member_id' => $id));
+            $result = $this->modx->removeCollection(GoodNewsCategoryMember::class, ['member_id' => $id]);
             if ($result == false && $result != 0) {
                 // @todo: return specific error message
                 return $this->failure($this->modx->lexicon('user_err_save'));
             }
-            
+
             // Remove all prior groups of this user
-            $result = $this->modx->removeCollection(GoodNewsGroupMember::class, array('member_id' => $id));
+            $result = $this->modx->removeCollection(GoodNewsGroupMember::class, ['member_id' => $id]);
             if ($result == false && $result != 0) {
                 // @todo: return specific error message
                 return $this->failure($this->modx->lexicon('user_err_save'));
             }
-    
+
             // Add new groups for this user
             $grpupdate = true;
             foreach ($groupsToAdd as $group) {
@@ -150,7 +150,7 @@ class AssignMulti extends Processor
                 // @todo: return specific error message
                 return $this->failure($this->modx->lexicon('user_err_save'));
             }
-            
+
             // Add new categories for this user
             $catupdate = true;
             foreach ($categoriesToAdd as $category) {
@@ -165,9 +165,9 @@ class AssignMulti extends Processor
                 // @todo: return specific error message
                 return $this->failure($this->modx->lexicon('user_err_save'));
             }
-            
+
             // Write subscriber meta data
-            $meta = $this->modx->getObject(GoodNewsSubscriberMeta::class, array('subscriber_id' => $id));
+            $meta = $this->modx->getObject(GoodNewsSubscriberMeta::class, ['subscriber_id' => $id]);
             if (!is_object($meta)) {
                 $meta = $this->modx->newObject(GoodNewsSubscriberMeta::class);
                 $meta->set('subscriber_id', $id);
@@ -178,7 +178,7 @@ class AssignMulti extends Processor
                 $meta->set('ip', 'manually');
             }
             $meta->set('testdummy', $this->testdummy);
-            
+
             if (!$meta->save()) {
                 // @todo: return specific error message
                 return $this->failure($this->modx->lexicon('user_err_save'));
@@ -186,7 +186,7 @@ class AssignMulti extends Processor
         }
         return $this->success();
     }
-    
+
     /**
      * {@inheritDoc}
      *

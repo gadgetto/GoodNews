@@ -39,16 +39,16 @@ class ResetBounceCountersMulti extends Processor
             if (empty($id)) {
                 continue;
             }
-            
+
             $meta = $this->modx->getObject(GoodNewsSubscriberMeta::class, array('subscriber_id' => $id));
             if (!is_object($meta)) {
                 // @todo: return specific error message
                 return $this->failure($this->modx->lexicon('user_err_save'));
             }
-    
+
             $meta->set('soft_bounces', '');
             $meta->set('hard_bounces', '');
-            
+
             if (!$meta->save()) {
                 // @todo: return specific error message
                 return $this->failure($this->modx->lexicon('user_err_save'));
