@@ -34,7 +34,7 @@ class Mailer
 {
     public const GON_IPC_STATUS_STOPPED  = 0;
     public const GON_IPC_STATUS_STARTED  = 1;
-    
+
     public const GON_STATUS_REPORT_MAILING_STOPPED  = 1;
     public const GON_STATUS_REPORT_MAILING_FINISHED = 2;
 
@@ -46,22 +46,22 @@ class Mailer
 
     /** @var ProcessHandler $processhandler A processhandler object */
     public $processhandler = null;
-    
+
     /** @var RecipientsHandler $recipientshandler A recipientshandler object */
     public $recipientshandler = null;
-    
+
     /** @var int $mailingid The id of the current mailing resource */
     public $mailingid = 0;
-    
+
     /** @var int $bulksize The maximum value of mails to send by one task */
     public $bulksize = 30;
-    
+
     /** @var boolean $testMailing Is this a test mailing? */
     public $testMailing = false;
 
     /** @var boolean $debug Debug mode on/off */
     public $debug = false;
-    
+
     /** @var array $subscriberFields The object fields of modUser + modUserProfile + GoodNewsSubscriberMeta */
     public $subscriberFields = array();
 
@@ -82,7 +82,7 @@ class Mailer
             exit();
         }
         $this->recipientshandler = new RecipientsHandler($this->modx);
-        
+
         // Get the default fields for a subscriber (for later use as placeholders)
         $this->subscriberFields = array_merge(
             $this->modx->getFields(GoodNewsSubscriberMeta::class),
@@ -100,7 +100,7 @@ class Mailer
     private function getMailProperties()
     {
         $this->changeContext();
-        
+
         $properties = [];
         $properties['subject'] = $this->getMailSubject();
         $properties['ishtml'] = $this->mailing->get('richtext') ? true : false;
@@ -138,7 +138,7 @@ class Mailer
             'goodnews',
             $this->modx->getOption('mail_encoding', null, '8bit')
         );
-        
+
         return $properties;
     }
 
@@ -235,7 +235,7 @@ class Mailer
         $subject = iconv($modx_charset, $mail_charset_goodnews . '//TRANSLIT', $subject);
         return $subject;
     }
-    
+
     /**
      * Get the full parsed HTML from a resource document.
      *
@@ -248,87 +248,87 @@ class Mailer
         $currentResource = $this->modx->resource;
         $currentResourceIdentifier = $this->modx->resourceIdentifier;
         $currentElementCache = $this->modx->elementCache;
-        
+
         // Prepare to process the Resource
         $this->modx->resource = $this->mailing;
         $this->modx->resourceIdentifier = $this->mailing->get('id');
         $this->modx->elementCache = [];
-                
+
         // The Resource having access to itself via $this->modx->resource is critical
         // for getting resource fields, as well as for proper execution of Snippets
         // that may appear in the content.
-        
+
         // Process and return the cacheable content of the Resource
         $html = $this->modx->resource->process();
-        
+
         // Determine how many passes the parser should take at a maximum
         $maxIterations = intval($this->modx->getOption('parser_max_iterations', null, 10));
-         
+
         if (!$this->modx->parser) {
             $this->modx->getParser();
         }
-        
+
         // Preserve GoodNews subscriber fields placeholders
         $phsArray = $this->subscriberFields;
         $search = [];
         $replace = [];
-        
+
         foreach ($phsArray as $phs => $values) {
             $search[] = '[[+' . $phs;
             $replace[] = '&#91;&#91;+' . $phs;
         }
         $html = str_ireplace($search, $replace, $html);
-        
+
         foreach ($phsArray as $phs => $values) {
             $search[] = '[[+extended';
             $replace[] = '&#91;&#91;+extended';
         }
         $html = str_ireplace($search, $replace, $html);
-        
+
         // Process the non-cacheable content of the Resource, but leave any unprocessed tags alone
         $this->modx->parser->processElementTags('', $html, true, false, '[[', ']]', [], $maxIterations);
-         
+
         // Process the non-cacheable content of the Resource, this time removing the unprocessed tags
         $this->modx->parser->processElementTags('', $html, true, true, '[[', ']]', [], $maxIterations);
-        
+
         // Set back GoodNews subscriber fields placeholders to it's original form
         $search = [];
         $replace = [];
-        
+
         foreach ($phsArray as $phs => $value) {
             $search[] = '&#91;&#91;+' . $phs;
             $replace[] = '[[+' . $phs;
         }
         $html = str_ireplace($search, $replace, $html);
-        
+
         foreach ($phsArray as $phs => $value) {
             $search[] = '&#91;&#91;+extended';
             $replace[] = '[[+extended';
         }
         $html = str_ireplace($search, $replace, $html);
-        
+
         // Restore original values
         $this->modx->elementCache = $currentElementCache;
         $this->modx->resourceIdentifier = $currentResourceIdentifier;
         $this->modx->resource = $currentResource;
-        
+
         // AutoInline CSS styles from template header (<styles>...</styles>) if activated in settings
         if ($this->modx->getOption('goodnews.auto_inline_css', null, true)) {
             $html = $this->inlineCSS($html);
         }
-        
+
         // AutoFixImageSizes if activated in settings
         if ($this->modx->getOption('goodnews.auto_fix_imagesizes', null, true)) {
             $base = $this->modx->getOption('site_url');
             $html = $this->autoFixImageSizes($base, $html);
         }
-        
+
         // Make full URLs if activated in settings
         if ($this->modx->getOption('goodnews.auto_full_urls', null, true)) {
             $base = $this->modx->getOption('site_url');
             $html = $this->fullURLs($base, $html);
         }
-        
+
         return $html;
     }
 
@@ -388,27 +388,39 @@ class Mailer
             $mtime = $mtime[1] + $mtime[0];
             $tstart = $mtime;
         }
-        
+
         $this->processhandler->lock($this->mailingid);
-        
+
         // Find next unsent recipient
         $recipientId = $this->recipientshandler->getRecipientUnsent($this->mailingid);
-        
+
         // No more recipients (or list is empty which shouldn't happen here)
         if (!$recipientId) {
             if ($this->debug) {
-                $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: ' . getmypid() . '] Mailer::getNextRecipient - No unsent recipients found.');
+                $this->modx->log(
+                    modX::LOG_LEVEL_INFO,
+                    '[GoodNews] [pid: ' .
+                    getmypid() .
+                    '] Mailer::getNextRecipient - No unsent recipients found.'
+                );
             }
             $this->processhandler->unlock($this->mailingid);
             return false;
         }
         // Habemus recipient!
         if ($this->debug) {
-            $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: ' . getmypid() . '] Mailer::getNextRecipient - Unsent recipient [id: ' . $recipientId . '] found.');
+            $this->modx->log(
+                modX::LOG_LEVEL_INFO,
+                '[GoodNews] [pid: ' .
+                getmypid() .
+                '] Mailer::getNextRecipient - Unsent recipient [id: ' .
+                $recipientId .
+                '] found.'
+            );
         }
-        
+
         $this->processhandler->unlock($this->mailingid);
-        
+
         if ($this->debug) {
             $mtime = microtime();
             $mtime = explode(" ", $mtime);
@@ -416,7 +428,13 @@ class Mailer
             $tend = $mtime;
             $totalTime = ($tend - $tstart);
             $totalTime = sprintf("%2.4f s", $totalTime);
-            $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: ' . getmypid() . '] Mailer::getNextRecipient - Lock time: ' . $totalTime);
+            $this->modx->log(
+                modX::LOG_LEVEL_INFO,
+                '[GoodNews] [pid: ' .
+                getmypid() .
+                '] Mailer::getNextRecipient - Lock time: ' .
+                $totalTime
+            );
         }
         return $recipientId;
     }
@@ -437,26 +455,34 @@ class Mailer
             $mtime = $mtime[1] + $mtime[0];
             $tstart = $mtime;
         }
-        
+
         $this->processhandler->lock($this->mailingid);
-        
+
         if (!$this->recipientshandler->cleanupRecipient($recipientId, $this->mailingid, $status)) {
             if ($this->debug) {
-                $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: ' . getmypid() . '] Mailer::updateRecipientStatus - Status for recipient [id: ' . $recipientId . '] could not be updated to: ' . $status);
+                $this->modx->log(
+                    modX::LOG_LEVEL_INFO,
+                    '[GoodNews] [pid: ' .
+                    getmypid() .
+                    '] Mailer::updateRecipientStatus - Status for recipient [id: ' .
+                    $recipientId .
+                    '] could not be updated to: ' .
+                    $status
+                );
             }
             $this->processhandler->unlock($this->mailingid);
             return false;
         }
-        
+
         $meta = $this->modx->getObject(GoodNewsMailingMeta::class, ['mailing_id' => $this->mailingid]);
         if (!is_object($meta)) {
             return false;
         }
-        
+
         // Increase sent counter in mailing meta
         $recipientsSent = $meta->get('recipients_sent') + 1;
         $meta->set('recipients_sent', $recipientsSent);
-        
+
         if ($status == RecipientsHandler::GON_USER_SEND_ERROR) {
             // Increase error counter in mailing meta
             $recipientsError = $meta->get('recipients_error') + 1;
@@ -464,9 +490,9 @@ class Mailer
         }
         $meta->save();
         unset($meta);
-        
+
         $this->processhandler->unlock($this->mailingid);
-        
+
         if ($this->debug) {
             $mtime = microtime();
             $mtime = explode(' ', $mtime);
@@ -474,7 +500,13 @@ class Mailer
             $tend = $mtime;
             $totalTime = ($tend - $tstart);
             $totalTime = sprintf("%2.4f s", $totalTime);
-            $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: ' . getmypid() . '] Mailer::updateRecipientStatus - Lock time: ' . $totalTime);
+            $this->modx->log(
+                modX::LOG_LEVEL_INFO,
+                '[GoodNews] [pid: ' .
+                getmypid() .
+                '] Mailer::updateRecipientStatus - Lock time: ' .
+                $totalTime
+            );
         }
         return true;
     }
@@ -502,7 +534,12 @@ class Mailer
         }
         if (count($testrecipients) == 0) {
             if ($this->debug) {
-                $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: ' . getmypid() . '] Mailer::getTestRecipients - Test-recipients list is empty.');
+                $this->modx->log(
+                    modX::LOG_LEVEL_INFO,
+                    '[GoodNews] [pid: ' .
+                    getmypid() .
+                    '] Mailer::getTestRecipients - Test-recipients list is empty.'
+                );
             }
             $testrecipients = false;
         }
@@ -519,12 +556,15 @@ class Mailer
     {
         $containerIDs = $this->getGoodNewsContainers();
         if (empty($containerIDs)) {
-            $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews]  Mailer::getMailingsToSend - No mailing containers found.');
+            $this->modx->log(
+                modX::LOG_LEVEL_INFO,
+                '[GoodNews]  Mailer::getMailingsToSend - No mailing containers found.'
+            );
             return false;
         }
         // Check for scheduled mailings
         $this->startScheduledMailings();
-        
+
         $c = $this->modx->newQuery(modResource::class);
         $c->leftJoin(GoodNewsMailingMeta::class, 'MailingMeta', 'MailingMeta.mailing_id = modResource.id');
         $c->where(array(
@@ -534,14 +574,19 @@ class Mailer
             'MailingMeta.ipc_status' => self::GON_IPC_STATUS_STARTED,
         ));
         $mailings = $this->modx->getIterator(modResource::class, $c);
-        
+
         $mailingIDs = array();
         foreach ($mailings as $mailing) {
             $mailingIDs[] = $mailing->get('id');
         }
         if (count($mailingIDs) == 0) {
             if ($this->debug) {
-                $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: ' . getmypid() . '] Mailer::getMailingsToSend - No mailing resources found for processing.');
+                $this->modx->log(
+                    modX::LOG_LEVEL_INFO,
+                    '[GoodNews] [pid: ' .
+                    getmypid() .
+                    '] Mailer::getMailingsToSend - No mailing resources found for processing.'
+                );
             }
             $mailingIDs = false;
         }
@@ -564,14 +609,19 @@ class Mailer
             'ipc_status' => self::GON_IPC_STATUS_STOPPED,
         ));
         $mailings = $this->modx->getIterator(GoodNewsMailingMeta::class, $c);
-        
+
         $mailingIDs = array();
         foreach ($mailings as $mailing) {
             $mailingIDs[] = $mailing->get('id');
         }
         if (count($mailingIDs) == 0) {
             if ($this->debug) {
-                $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: ' . getmypid() . '] Mailer::getMailingsFinished - No mailing resources found for processing.');
+                $this->modx->log(
+                    modX::LOG_LEVEL_INFO,
+                    '[GoodNews] [pid: ' .
+                    getmypid() .
+                    '] Mailer::getMailingsFinished - No mailing resources found for processing.'
+                );
             }
             $mailingIDs = false;
         }
@@ -592,18 +642,18 @@ class Mailer
         if (!$this->mailing) {
             return false;
         }
-        
+
         if (!$this->processhandler->createLockFile($this->mailingid)) {
             $this->modx->log(modX::LOG_LEVEL_ERROR, '[GoodNews] Lockfile missing! Processing aborted.');
             exit();
         }
-        
+
         $mail = $this->getMailProperties();
-        
+
         // Send a defined bulk of emails
         for ($n = 0; $n < $this->bulksize; $n++) {
             $recipientId = $this->getNextRecipient();
-            
+
             // There are no more recipients -> mailing has finished!
             if (!$recipientId) {
                 if ($this->recipientshandler->getRecipientReserved($this->mailingid)) {
@@ -611,7 +661,14 @@ class Mailer
                     while ($timeoutRecipientId = $this->recipientshandler->getRecipientTimeout($this->mailingid)) {
                         $this->updateRecipientStatus($timeoutRecipientId, RecipientsHandler::GON_USER_SEND_ERROR);
                         if ($this->debug) {
-                            $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: ' . getmypid() . '] Mailer::processMailing - Sending for recipient [id: ' . $timeoutRecipientId . '] timed out.');
+                            $this->modx->log(
+                                modX::LOG_LEVEL_INFO,
+                                '[GoodNews] [pid: ' .
+                                getmypid() .
+                                '] Mailer::processMailing - Sending for recipient [id: ' .
+                                $timeoutRecipientId .
+                                '] timed out.'
+                            );
                         }
                     }
                 } else {
@@ -619,16 +676,23 @@ class Mailer
                     $this->processhandler->setPid(getmypid());
                     $this->processhandler->deleteProcessStatus();
                     $this->processhandler->removeTempLockFile($this->mailingid);
-                    
+
                     // Also we set the mailing to finished (= IPCstatus "stopped")
                     $this->setIPCstop($this->mailingid, true);
                     if ($this->debug) {
-                        $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: ' . getmypid() . '] Mailer::processMailing - Mailing [id: ' . $this->mailingid . '] finished.');
+                        $this->modx->log(
+                            modX::LOG_LEVEL_INFO,
+                            '[GoodNews] [pid: ' .
+                            getmypid() .
+                            '] Mailer::processMailing - Mailing [id: ' .
+                            $this->mailingid .
+                            '] finished.'
+                        );
                     }
                 }
                 break;
             }
-            
+
             $subscriber = $this->getSubscriberProperties($recipientId);
             if ($subscriber) {
                 $temp_mail = $mail;
@@ -645,12 +709,12 @@ class Mailer
                 } else {
                     $status = RecipientsHandler::GON_USER_SEND_ERROR;
                 }
-            // This could happen, if a subscriber is deleted while mailing is processed
+                // This could happen, if a subscriber is deleted while mailing is processed
             } else {
                 // @todo: other status required eg. GON_USER_NOT_FOUND
                 $status = RecipientsHandler::GON_USER_SEND_ERROR;
             }
-            
+
             $this->updateRecipientStatus($recipientId, $status);
         }
         return true;
@@ -671,13 +735,13 @@ class Mailer
         if (!$this->mailing) {
             return false;
         }
-        
+
         $mail = $this->getMailProperties();
         $recipients = $this->getTestRecipients();
         if (empty($recipients)) {
             return false;
         }
-        
+
         foreach ($recipients as $recipientId) {
             $subscriber = $this->getSubscriberProperties($recipientId);
             $temp_mail = $mail;
@@ -710,11 +774,11 @@ class Mailer
             'goodnews',
             $this->modx->getOption('mail_use_smtp', null, false)
         );
-        
+
         // SMTP params for modMail based on container settings
         // (this enables each container to have it's own set of
         // SMTP settings - overriding the MODX system settings)
-        
+
         if ($mailUseSmtp) {
             $mailSmtpAuth = $this->mailing->getProperty(
                 'mailSmtpAuth',
@@ -764,7 +828,7 @@ class Mailer
             // This is from MODX system settings only
             // (GoodNews containers settings has [hostname:port] format)
             $mailSmtpPort = $this->modx->getOption('mail_smtp_port', null, 25);
-            
+
             $mail->set(modMail::MAIL_ENGINE, 'smtp');
             $mail->set(modMail::MAIL_SMTP_AUTH, $mailSmtpAuth);
             $mail->set(modMail::MAIL_SMTP_USER, $mailSmtpUser);
@@ -779,10 +843,10 @@ class Mailer
             $mail->set(modMail::MAIL_SMTP_SINGLE_TO, $mailSmtpSingleTo);
             $mail->set(modMail::MAIL_SMTP_TIMEOUT, $mailSmtpTimeout);
         }
-        
+
         $mail->header('X-goodnews-user-id: ' . $subscriber['subscriber_id']);
         $mail->header('X-goodnews-mailing-id: ' . $this->mailingid);
-        
+
         $mail->set(modMail::MAIL_BODY, $email['body']);
         $mail->set(modMail::MAIL_BODY_TEXT, $email['altbody']);
         $mail->set(modMail::MAIL_FROM, $email['mailFrom']);
@@ -791,24 +855,40 @@ class Mailer
         $mail->set(modMail::MAIL_SUBJECT, $email['subject']);
         $mail->set(modMail::MAIL_CHARSET, $email['mailCharset']);
         $mail->set(modMail::MAIL_ENCODING, $email['mailEncoding']);
-        
+
         $mail->address('reply-to', $email['mailReplyTo']);
         if (empty($subscriber['fullname'])) {
             $subscriber['fullname'] = $subscriber['email'];
         }
         $mail->address('to', $subscriber['email'], $subscriber['fullname']);
         $mail->setHTML($email['ishtml']);
-        
+
         $sent = $mail->send();
         if (!$sent) {
-            $this->modx->log(modX::LOG_LEVEL_WARN, '[GoodNews] Email could not be sent to ' . $subscriber['email'] . ' (' . $subscriber['subscriber_id'] . ') -- Error: ' . $mail->mailer->ErrorInfo);
+            $this->modx->log(
+                modX::LOG_LEVEL_WARN,
+                '[GoodNews] Email could not be sent to ' .
+                $subscriber['email'] .
+                ' (' .
+                $subscriber['subscriber_id'] .
+                ') -- Error: ' .
+                $mail->mailer->ErrorInfo
+            );
         } else {
             if ($this->debug) {
-                $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: ' . getmypid() . '] Mailer::sendEmail - Email sent to ' . $subscriber['email'] . ' (' . $subscriber['subscriber_id'] . ') . ');
+                $this->modx->log(
+                    modX::LOG_LEVEL_INFO,
+                    '[GoodNews] [pid: ' .
+                    getmypid() .
+                    '] Mailer::sendEmail - Email sent to ' .
+                    $subscriber['email'] .
+                    ' (' .
+                    $subscriber['subscriber_id'] .
+                    ')'
+                );
             }
         }
         $mail->reset();
-        
         return $sent;
     }
 
@@ -821,11 +901,11 @@ class Mailer
     public function getGoodNewsContainers()
     {
         $c = $this->modx->newQuery(modResource::class);
-        $c->where(array(
+        $c->where([
             'published' => true,
             'deleted'   => false,
             'class_key' => GoodNewsResourceContainer::class
-        ));
+        ]);
         $containers = $this->modx->getIterator(modResource::class, $c);
 
         $containerIDs = array();
@@ -834,7 +914,7 @@ class Mailer
         }
         return $containerIDs;
     }
-    
+
     /**
      * Get the mailing object and set member variable.
      *
@@ -877,23 +957,28 @@ class Mailer
     {
         if (empty($html)) {
             if ($this->debug) {
-                $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: ' . getmypid() . '] Mailer::autoFixImageSizes - No HTML content provided for parsing.');
+                $this->modx->log(
+                    modX::LOG_LEVEL_INFO,
+                    '[GoodNews] [pid: ' .
+                    getmypid() .
+                    '] Mailer::autoFixImageSizes - No HTML content provided for parsing.'
+                );
             }
             return false;
         }
-        
+
         $images = array();
         $phpthumb_nohotlink_enabled = $this->modx->getOption('phpthumb_nohotlink_enabled', null, true);
         $phpthumb_nohotlink_valid_domains = $this->modx->getOption('phpthumb_nohotlink_valid_domains');
-                
+
         // Find all img elements with a src attribute
         preg_match_all('|\<img.*?src=[",\'](.*?)[",\'].*?[^>]+\>|i', $html, $filenames);
-        
+
         // Loop through all found img elements
         foreach ($filenames[1] as $i => $filename) {
             $img_old = $filenames[0][$i];
             $allowcaching = false;
-            
+
             // Is file already cached?
             if (strpos($filename, '?') == false || strpos($filename, '/phpthumb') == false) {
                 //Check if external caching is allowed
@@ -913,7 +998,7 @@ class Mailer
                     $allowcaching = true;
                 }
             }
-            
+
             // Do we have physical access to the file?
             $mypath = $pre . str_replace('%20', ' ', $filename);
             if ($allowcaching && $dimensions = @getimagesize($mypath, $info)) {
@@ -929,7 +1014,7 @@ class Mailer
                         $width = false;
                     }
                 }
-                
+
                 preg_match_all('|height=[",\']([0-9]+?)[",\']|i', $filenames[0][$i], $heights);
                 if (isset($heights[1][0])) {
                     $height = $heights[1][0];
@@ -941,7 +1026,7 @@ class Mailer
                         $height = false;
                     }
                 }
-                
+
                 // If resizing needed...
                 if (($width && $width != $dimensions[0]) || ($height && $height != $dimensions[1])) {
                     // Prepare resizing metadata
@@ -949,13 +1034,13 @@ class Mailer
                     $image = array();
                     $image['input'] = $filename;
                     $image['options'] = 'f=' . $filetype . '&h=' . $height . '&w=' . $width . '&iar=1';
-                    
+
                     // Perform physical resizing and caching via phpthumbof
                     $cacheurl = $this->modx->runSnippet('phpthumbof', $image);
-                    
+
                     // Set freshly cached image file location into old src attribute
                     $img_new = str_replace($filename, $cacheurl, $img_old);
-                    
+
                     // Replace old image element with new one on whole page content
                     $html = str_replace($img_old, $img_new, $html);
                 }
@@ -978,34 +1063,34 @@ class Mailer
         if (empty($html) || empty($base)) {
             return false;
         }
-        
+
         // Preserve GoodNews subscriber fields placeholders (which aren't processed yet)
         $html = str_replace('[[', '%5B%5B', $html);
         $html = str_replace(']]', '%5D%5D', $html);
-        
+
         $document = new DOMDocument();
         // Ensure UTF-8 is respected by using 'mb_convert_encoding'
         $document->loadHTML(mb_convert_encoding($html, 'HTML-ENTITIES', 'UTF-8'));
-        
+
         // Process all link tags
         $elements = $document->getElementsByTagName('a');
-        
+
         foreach ($elements as $element) {
             // Get the value of the href attribute
             $href = $element->getAttribute('href');
-            
+
             // Check if we have a protocol-relative URL - if so, don't touch and continue!
             // Sample: //www.domain.com/page.html
             if (mb_substr($href, 0, 2) == '//') {
                 continue;
             }
-            
+
             // Remove leading / from relative URLs
             $href = ltrim($href, '/');
-            
+
             // De-construct the UR(L|I)
             $url_parts = parse_url($href);
-            
+
             // ['scheme']   - (string) https | http | ftp | ...
             // ['host']     - (string) www.domain.com
             // ['port']     - (int)    9090
@@ -1014,66 +1099,71 @@ class Mailer
             // ['path']     - (string) section1/page1.html | /section1/page1.html
             // ['query']    - (string) all after ?
             // ['fragment'] - (string) all after text anchor #
-            
+
             // Check if UR(L|I) is completely invalid - if so, don't touch and continue!
             if ($url_parts == false) {
                 continue;
             }
-            
+
             // Check if text anchor only - if so, don't touch and continue!
             // Sample: #textanchor
-            if (!empty($url_parts['fragment']) && empty($url_parts['scheme']) && empty($url_parts['host']) && empty($url_parts['path'])) {
+            if (
+                !empty($url_parts['fragment']) &&
+                empty($url_parts['scheme']) &&
+                empty($url_parts['host']) &&
+                empty($url_parts['path'])
+            ) {
                 continue;
             }
-            
+
             // Check if mailto: link - if so, don't touch and continue!
             if (!empty($url_parts['scheme']) && $url_parts['scheme'] == "mailto") {
                 continue;
             }
-            
+
             // Finally add base URL to href value
             if (empty($url_parts['host'])) {
                 $element->setAttribute('href', $base . $href);
             }
         }
-        
+
         // Process all img tags
         $elements = $document->getElementsByTagName('img');
-        
+
         foreach ($elements as $element) {
             // Get the value of the img attribute
             $href = $element->getAttribute('src');
-            
+
             // Check if we have a protocol-relative URL - if so, don't touch and continue!
             // Sample:  //www.domain.com/page.html
             if (mb_substr($href, 0, 2) == '//') {
                 continue;
             }
-            
+
             // Remove / from relative URLs
             $href = ltrim($href, '/');
-            
+
             // De-construct the UR(L|I)
             $url_parts = parse_url($href);
-            
+
             // Check if UR(L|I) is completely invalid - if so, don't touch and continue!
             if ($url_parts == false) {
                 continue;
             }
-            
+
             // Finally add base URL to href value
             if (empty($url_parts['host'])) {
                 $element->setAttribute('src', $base . $href);
             }
         }
-            
+
         // Return the processed (X)HTML
         $html = $document->saveHTML();
-        
+
         // Set back GoodNews subscriber fields placeholders to it's original form
         $html = str_replace('%5B%5B', '[[', $html);
         $html = str_replace('%5D%5D', ']]', $html);
-        
+
         return $html;
     }
 
@@ -1090,41 +1180,46 @@ class Mailer
     {
         if (empty($html)) {
             if ($this->debug) {
-                $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: ' . getmypid() . '] Mailer::inlineCSS - No HTML content provided for parsing.');
+                $this->modx->log(
+                    modX::LOG_LEVEL_INFO,
+                    '[GoodNews] [pid: ' .
+                    getmypid() .
+                    '] Mailer::inlineCSS - No HTML content provided for parsing.'
+                );
             }
             return false;
         }
-        
+
         // GoodNews templates are built with embedded CSS
         // (this can handle multiple <style></style> blocks)
         preg_match_all('|<style(.*)>(.*)</style>|isU', $html, $css);
         $css_rules = '';
-        
+
         if (!empty($css[2])) {
             foreach ($css[2] as $cssblock) {
                 $css_rules .= $cssblock;
             }
         }
-        
+
         $cssToInlineStyles = new CssToInlineStyles();
         $className = CssToInlineStyles::class;
         if (!($cssToInlineStyles instanceof $className)) {
             $this->modx->log(modX::LOG_LEVEL_ERROR, '[GoodNews] CssToInlineStyles class could not be instantiated.');
             return false;
         }
-        
+
         $html = $cssToInlineStyles->convert(
             $html,
             $css_rules
         );
-        
+
         // Workaround to preserve placeholder delimiters - as CssToInlineStyles converts special chars within urls
         $html = str_replace('%5B%5B', '[[', $html);
         $html = str_replace('%5D%5D', ']]', $html);
-        
+
         return $html;
     }
-    
+
     /**
      * Auto start scheduled mailings.
      * (Check for mailing resources with pub_date reached and set them to published
@@ -1139,7 +1234,7 @@ class Mailer
         $tblMailingMeta = $this->modx->getTableName(GoodNewsMailingMeta::class);
         $timeNow = time();
         $ipcStatus = self::GON_IPC_STATUS_STARTED;
-        
+
         $sql = "UPDATE {$tblResource}, {$tblMailingMeta} 
                 SET {$tblMailingMeta}.senton = {$timeNow},
                     {$tblMailingMeta}.sentby = {$tblResource}.createdby,
@@ -1155,12 +1250,18 @@ class Mailer
                 AND {$tblResource}.pub_date < {$timeNow} 
                 AND {$tblResource}.pub_date > 0
                 AND {$tblMailingMeta}.recipients_total > 0";
-        
+
         $publishingResults = $this->modx->exec($sql);
         if ($this->debug) {
             if ($publishingResults) {
                 $mailings = $publishingResults / 2; // we always have two rows affected!
-                $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: ' . getmypid() . '] Mailer::autoPublish - autopublished mailings: ' . $mailings);
+                $this->modx->log(
+                    modX::LOG_LEVEL_INFO,
+                    '[GoodNews] [pid: ' .
+                    getmypid() .
+                    '] Mailer::autoPublish - autopublished mailings: ' .
+                    $mailings
+                );
             }
         }
         return $publishingResults;
@@ -1180,9 +1281,9 @@ class Mailer
         if (!is_object($meta)) {
             return false;
         }
-        
+
         $currentUser = $this->modx->user->get('id');
-        
+
         // set mailing sender and send date
         $meta->set('senton', time());
         $meta->set('sentby', $currentUser);
@@ -1209,7 +1310,7 @@ class Mailer
         if (!is_object($meta)) {
             return false;
         }
-        
+
         if ($finished) {
             $meta->set('finishedon', time());
             $status = self::GON_STATUS_REPORT_MAILING_FINISHED;
@@ -1228,7 +1329,7 @@ class Mailer
             return false;
         }
     }
-    
+
     /**
      * Sets the IPC status of a mailing to "started".
      *
@@ -1243,7 +1344,7 @@ class Mailer
         if (!is_object($meta)) {
             return false;
         }
-        
+
         $meta->set('ipc_status', self::GON_IPC_STATUS_STARTED);
         if ($meta->save()) {
             return true;
@@ -1276,18 +1377,19 @@ class Mailer
         }
         $user = $profile->getOne('User');
         $properties = [];
-        
+
         // Properties for sending email
         $properties['email'] = $profile->get('email');
         $properties['name'] = $profile->get('fullname');
-        $properties['subject'] = $this->modx->lexicon('goodnews.newsletter_statusemail_subject_prefix') . $mailing->get('pagetitle');
+        $properties['subject'] = $this->modx->lexicon('goodnews.newsletter_statusemail_subject_prefix') .
+            $mailing->get('pagetitle');
         $properties['from'] = $this->modx->getOption('emailsender');
         $properties['fromname'] = $this->modx->getOption('goodnews.statusemail_fromname');
-        
+
         $tpl = $this->modx->getOption('goodnews.statusemail_chunk');
         $tplAlt = ''; // @todo: alternative plaintext template
         $tplType = 'modChunk'; // @todo: the type of tpl/chunk can be file
-        
+
         // Email body placeholders
         $properties['mailing_title'] = $mailing->get('pagetitle');
         $properties['recipients_total'] = $meta->get('recipients_total');
@@ -1296,21 +1398,21 @@ class Mailer
         $properties['senton'] = $meta->get('senton');
         $properties['finishedon'] = $meta->get('finishedon');
         $properties['sentby'] = $user->get('username');
-        
+
         switch ($status) {
             case self::GON_STATUS_REPORT_MAILING_STOPPED:
                 $properties['mailingstatus'] = $this->modx->lexicon('goodnews.newsletter_status_stopped');
                 break;
-                
+
             case self::GON_STATUS_REPORT_MAILING_FINISHED:
                 $properties['mailingstatus'] = $this->modx->lexicon('goodnews.newsletter_status_finished');
                 break;
         }
-        
+
         // Parsed email body
         $properties['msg'] = $this->getChunk($tpl, $properties, $tplType);
         $properties['msgAlt'] = (!empty($tplAlt)) ? $this->getChunk($tplAlt, $properties, $tplType) : '';
-        
+
         $this->sendStatusEmail($properties);
     }
 
@@ -1323,7 +1425,12 @@ class Mailer
      */
     private function sendStatusEmail($properties = [])
     {
-        if (empty($properties['email']) || empty($properties['subject']) || empty($properties['msg']) || empty($properties['from'])) {
+        if (
+            empty($properties['email']) ||
+            empty($properties['subject']) ||
+            empty($properties['msg']) ||
+            empty($properties['from'])
+        ) {
             return false;
         }
         $email = $properties['email'];
@@ -1335,7 +1442,7 @@ class Mailer
         $replyTo = $properties['from'];
         $msg = $properties['msg'];
         $msgAlt = $properties['msgAlt'];
-        
+
         $statusmail = $this->modx->services->get('mail');
         $statusmail->set(modMail::MAIL_BODY, $msg);
         if (!empty($msgAlt)) {
@@ -1351,13 +1458,17 @@ class Mailer
         $sent = $statusmail->send();
         if (!$sent) {
             if ($this->debug) {
-                $this->modx->log(modX::LOG_LEVEL_ERROR, '[GoodNews] Mailer::sendStatusEmail - Mailer error: ' . $statusmail->mailer->ErrorInfo);
+                $this->modx->log(
+                    modX::LOG_LEVEL_ERROR,
+                    '[GoodNews] Mailer::sendStatusEmail - Mailer error: ' .
+                    $statusmail->mailer->ErrorInfo
+                );
             }
         }
         $statusmail->reset();
         return $sent;
     }
-    
+
     /**
      * Helper function to get a chunk or tpl by different methods.
      *
@@ -1374,7 +1485,7 @@ class Mailer
             case 'modChunk':
                 $output .= $this->modx->getChunk($name, $properties);
                 break;
-                
+
             case 'file':
                 $name = str_replace([
                     '{base_path}',
