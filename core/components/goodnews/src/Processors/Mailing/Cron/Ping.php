@@ -32,7 +32,7 @@ class Ping extends Processor
     {
         return parent::initialize();
     }
-    
+
     public function process()
     {
         // Read cron ping time from modRegistry
@@ -49,12 +49,19 @@ class Ping extends Processor
 
         $currentTime = time();
         $touchTime = !empty($msg[0]) ? $msg[0] : 0;
-        
+
         // No touch since GON_MAX_TASK_SCEDULER_INTERVAL?
         if ($touchTime < ($currentTime - self::GON_MAX_TASK_SCEDULER_INTERVAL)) {
-            return $this->success($this->modx->lexicon('goodnews.task_scheduler_touch_waiting'));
+            return $this->success(
+                $this->modx->lexicon('goodnews.task_scheduler_touch_waiting')
+            );
         } else {
-            return $this->success($this->modx->lexicon('goodnews.task_scheduler_touch_seconds_ago', ['seconds' => ($currentTime - $touchTime)]));
+            return $this->success(
+                $this->modx->lexicon(
+                    'goodnews.task_scheduler_touch_seconds_ago',
+                    ['seconds' => ($currentTime - $touchTime)]
+                )
+            );
         }
     }
 }
