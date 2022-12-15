@@ -1,45 +1,42 @@
 <?php
-/**
- * GoodNews
- *
- * Copyright 2012 by bitego <office@bitego.com>
- *
- * GoodNews is free software; you can redistribute it and/or modify it under the
- * terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
- *
- * GoodNews is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this software; if not, write to the Free Software Foundation, Inc., 59 Temple
- * Place, Suite 330, Boston, MA 02111-1307 USA
- */
 
 /**
- * GoodNewsProcessHandler class handles worker processes
+ * This file is part of the GoodNews package.
+ *
+ * @copyright bitego (Martin Gartner)
+ * @license GNU General Public License v2.0 (and later)
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+namespace Bitego\GoodNews;
+
+use MODX\Revolution\modX;
+use Bitego\GoodNews\Model\GoodNewsProcess;
+
+/**
+ * ProcessHandler class handles worker processes.
  *
  * @package goodnews
  * @compatibility Linux only
  */
 
-class GoodNewsProcessHandler {
-
-    const PROCESS_TIMEOUT = 90;
+class ProcessHandler
+{
+    public const PROCESS_TIMEOUT = 90;
 
     /** @var modX $modx A reference to the modX object */
     public $modx;
  
-    /** @var string $_pid GoodNews worker process id */
-    private $_pid = '';
+    /** @var string $pid GoodNews worker process id */
+    private $pid = '';
     
-    /** @var string $_command The nohup command for the GoodNews worker process */
-    private $_command = '';
+    /** @var string $command The nohup command for the GoodNews worker process */
+    private $command = '';
 
     /** @var string $currentTime Current epoch time string */
-    private $_currentTime = '';
+    private $currentTime = '';
 
     /** @var string $lockDir The path to the goodnews/locks/ directory in MODX cache folder */
     public $lockDir;
@@ -48,67 +45,75 @@ class GoodNewsProcessHandler {
     public $debug = false;
 
     /**
-     * Constructor for GoodNewsProcessHandler object.
+     * Constructor for ProcessHandler object.
      *
      * @access public
      * @param modX &$modx A reference to the modX object
      */
-    public function __construct(modX &$modx) {
-        $this->modx         = &$modx;
-        $this->_currentTime = time();
-        $this->debug        = $this->modx->getOption('goodnews.debug', null, false) ? true : false;
-        $this->lockDir      = $this->modx->getOption('core_path', null, MODX_CORE_PATH).'cache/goodnews/locks/';
+    public function __construct(modX &$modx)
+    {
+        $this->modx = &$modx;
+        $this->currentTime = time();
+        $this->debug = $this->modx->getOption('goodnews.debug', null, false) ? true : false;
+        $this->lockDir = $this->modx->getOption('core_path', null, MODX_CORE_PATH) . 'cache/goodnews/locks/';
     }
 
     /**
-     * Setter for $_pid.
+     * Setter for $pid.
      *
      * @access public
-     * @param string $_pid The process id
-     */    
-    public function setPid($processid) {
-        $this->_pid = $processid;
+     * @param string $pid The process id
+     */
+    public function setPid($processid)
+    {
+        $this->pid = $processid;
     }
 
     /**
-     * Getter for $_pid.
+     * Getter for $pid.
      *
      * @access public
      * @return string The process id
-     */    
-    public function getPid() {
-        return $this->_pid;
+     */
+    public function getPid()
+    {
+        return $this->pid;
     }
 
     /**
-     * Setter for $_command.
+     * Setter for $command.
      *
      * @access public
      * @param string The command for nohup
-     */    
-    public function setCommand($cmd) {
-        $this->_command = $cmd;
+     */
+    public function setCommand($cmd)
+    {
+        $this->command = $cmd;
     }
 
     /**
-     * Getter for $_command.
+     * Getter for $command.
      *
      * @access public
      * @return string The command for nohup
-     */    
-    public function getCommand() {
-        return $this->_command;
+     */
+    public function getCommand()
+    {
+        return $this->command;
     }
 
     /**
-     * Calls private method _runCommand to start a new process.
+     * Calls private method runCommand to start a new process.
      *
      * @access public
      * @return boolean
-     */    
-    public function start() {
-        if (empty($this->_command)) { return false; }
-        if ($this->_runCommand()) {
+     */
+    public function start()
+    {
+        if (empty($this->command)) {
+            return false;
+        }
+        if ($this->runCommand()) {
             return true;
         } else {
             return false;
@@ -120,13 +125,17 @@ class GoodNewsProcessHandler {
      *
      * @access public
      * @return boolean
-     */    
-    public function stop() {
-        if (empty($this->_pid)) { return false; }
-        $cm = 'kill '.$this->_pid;
+     */
+    public function stop()
+    {
+        if (empty($this->pid)) {
+            return false;
+        }
+        $cm = 'kill ' . $this->pid;
         exec($cm);
-        sleep(1); // workaround: process needs time to stop (otherwise status cant be read properly)
-        // If the process is stopped (doesnt exist any longer) delete status entry and return true
+        // workaround: process needs time to stop (otherwise status cant be read properly)
+        sleep(1);
+        // If the process is stopped (doesn't exist any longer) delete status entry and return true
         if ($this->status() == false) {
             $this->deleteProcessStatus();
             return true;
@@ -140,12 +149,15 @@ class GoodNewsProcessHandler {
      *
      * @access public
      * @return boolean
-     */    
-    public function status() {
-        if (empty($this->_pid)) { return false; }
-        $cm = 'ps -p '.$this->_pid;
+     */
+    public function status()
+    {
+        if (empty($this->pid)) {
+            return false;
+        }
+        $cm = 'ps -p ' . $this->pid;
         exec($cm, $output);
-        if (!isset($output[1])) { 
+        if (!isset($output[1])) {
             return false;
         } else {
             return true;
@@ -158,14 +170,17 @@ class GoodNewsProcessHandler {
      *
      * @access private
      * @return boolean
-     */    
-    private function _runCommand() {
-        if (empty($this->_command)) { return false; }
-        $cm = 'nohup '.$this->_command.' > /dev/null 2>&1 & echo $!';
+     */
+    private function runCommand()
+    {
+        if (empty($this->command)) {
+            return false;
+        }
+        $cm = 'nohup ' . $this->command . ' > /dev/null 2>&1 & echo $!';
         exec($cm, $output);
-        $this->_pid = (int)$output[0];
-        if (isset($this->_pid)) {
-            $this->_newProcessStatus();
+        $this->pid = (int)$output[0];
+        if (isset($this->pid)) {
+            $this->newProcessStatus();
             return true;
         } else {
             return false;
@@ -177,22 +192,32 @@ class GoodNewsProcessHandler {
      *
      * @access public
      * @return int Count of real running processes based on previous cleanup
-     */    
-    public function cleanupProcessStatuses() {
-        $pr = $this->_collectProcessStatuses();
+     */
+    public function cleanupProcessStatuses()
+    {
+        $pr = $this->collectProcessStatuses();
         foreach ($pr as $key => $value) {
             $this->setPid($value->get('pid'));
             
             // If process isn't running
             if (!$this->status()) {
                 $this->deleteProcessStatus();
-                
             // Else check if process runtime is too high (probably the process hangs!)
             } else {
-                if ((($this->_currentTime) - self::PROCESS_TIMEOUT) > $value->get('starttime')) {
-                    $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] GoodNewsProcessHandler::cleanupProcessStatuses - Worker process with pid: '.$this->_pid.' - timed out!');
-                    if(!$this->stop()) {
-                        $this->modx->log(modX::LOG_LEVEL_ERROR, '[GoodNews] GoodNewsProcessHandler::cleanupProcessStatuses - timed out worker process with pid: '.$this->_pid.' - could not be stopped!');
+                if ((($this->currentTime) - self::PROCESS_TIMEOUT) > $value->get('starttime')) {
+                    $this->modx->log(
+                        modX::LOG_LEVEL_INFO,
+                        '[GoodNews] ProcessHandler::cleanupProcessStatuses - Worker process: ' .
+                        $this->pid .
+                        ' - timed out!'
+                    );
+                    if (!$this->stop()) {
+                        $this->modx->log(
+                            modX::LOG_LEVEL_ERROR,
+                            '[GoodNews] ProcessHandler::cleanupProcessStatuses - timed out worker process: ' .
+                            $this->pid .
+                            ' - could not be stopped!'
+                        );
                     }
                 }
             }
@@ -205,13 +230,17 @@ class GoodNewsProcessHandler {
      *
      * @access private
      * @return boolean
-     */    
-    private function _newProcessStatus() {
-        if (empty($this->_pid)) { return false; }
-        $process = $this->modx->newObject('GoodNewsProcess');
-        if (!$process) { return false; }
-
-        $process->set('pid', $this->_pid);
+     */
+    private function newProcessStatus()
+    {
+        if (empty($this->pid)) {
+            return false;
+        }
+        $process = $this->modx->newObject(GoodNewsProcess::class);
+        if (!$process) {
+            return false;
+        }
+        $process->set('pid', $this->pid);
         $process->set('starttime', time());
         if ($process->save() == false) {
             return false;
@@ -225,16 +254,21 @@ class GoodNewsProcessHandler {
      *
      * @access public
      * @return boolean
-     */    
-    public function deleteProcessStatus() {
-        if (empty($this->_pid)) { return false; }
-        $process = $this->modx->getObject('GoodNewsProcess', array('pid' => $this->_pid));
-        if (!$process) { return false; }
+     */
+    public function deleteProcessStatus()
+    {
+        if (empty($this->pid)) {
+            return false;
+        }
+        $process = $this->modx->getObject(GoodNewsProcess::class, ['pid' => $this->pid]);
+        if (!$process) {
+            return false;
+        }
         
         if ($process->remove() == false) {
             return false;
         } else {
-            $this->_removeLockFile();
+            $this->removeLockFile();
             return true;
         }
     }
@@ -244,9 +278,10 @@ class GoodNewsProcessHandler {
      *
      * @access public
      * @return int Count of processes
-     */    
-    public function countProcessStatuses() {
-        $count = $this->modx->getCount('GoodNewsProcess');
+     */
+    public function countProcessStatuses()
+    {
+        $count = $this->modx->getCount(GoodNewsProcess::class);
         return $count;
     }
 
@@ -255,10 +290,13 @@ class GoodNewsProcessHandler {
      *
      * @access public
      * @return boolean
-     */    
-    public function existsProcessStatus() {
-        if (empty($this->_pid)) { return false; }
-        $process = $this->modx->getObject('GoodNewsProcess', array('pid' => $this->_pid));
+     */
+    public function existsProcessStatus()
+    {
+        if (empty($this->pid)) {
+            return false;
+        }
+        $process = $this->modx->getObject(GoodNewsProcess::class, ['pid' => $this->pid]);
         if (!$process) {
             return false;
         } else {
@@ -271,10 +309,13 @@ class GoodNewsProcessHandler {
      *
      * @access public
      * @return string startTime || false
-     */    
-    public function getProcessStartTime() {
-        if (empty($this->_pid)) { return false; }
-        $process = $this->modx->getObject('GoodNewsProcess', array('pid'=>$this->_pid));
+     */
+    public function getProcessStartTime()
+    {
+        if (empty($this->pid)) {
+            return false;
+        }
+        $process = $this->modx->getObject(GoodNewsProcess::class, ['pid' => $this->pid]);
         if (!$process) {
             return false;
         } else {
@@ -287,9 +328,10 @@ class GoodNewsProcessHandler {
      *
      * @access private
      * @return array Collection of all processes
-     */    
-    private function _collectProcessStatuses() {
-        $processes = $this->modx->getCollection('GoodNewsProcess');
+     */
+    private function collectProcessStatuses()
+    {
+        $processes = $this->modx->getCollection(GoodNewsProcess::class);
         //$processes = $this->modx->getIterator('GoodNewsProcess');
         return $processes;
     }
@@ -300,7 +342,8 @@ class GoodNewsProcessHandler {
      * @access public
      * @return boolean (true -> if directory already exists or is created successfully)
      */
-    public function createLockFileDir() {
+    public function createLockFileDir()
+    {
         $dir = false;
 
         if (is_dir($this->lockDir)) {
@@ -309,9 +352,23 @@ class GoodNewsProcessHandler {
             $dir = mkdir($this->lockDir, 0777, true);
             if ($dir) {
                 @chmod($this->lockDir, 0777);
-                if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsProcessHandler::createLockFileDir - lockfile directory created.'); }
+                if ($this->debug) {
+                    $this->modx->log(
+                        modX::LOG_LEVEL_INFO,
+                        '[GoodNews] [pid: ' .
+                        getmypid() .
+                        '] ProcessHandler::createLockFileDir - lockfile directory created.'
+                    );
+                }
             } else {
-                if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_ERROR, '[GoodNews] [pid: '.getmypid().'] GoodNewsProcessHandler::createLockFileDir - could not create lockfile directory.'); }
+                if ($this->debug) {
+                    $this->modx->log(
+                        modX::LOG_LEVEL_ERROR,
+                        '[GoodNews] [pid: ' .
+                        getmypid() .
+                        '] ProcessHandler::createLockFileDir - could not create lockfile directory.'
+                    );
+                }
             }
         }
         return $dir;
@@ -324,9 +381,10 @@ class GoodNewsProcessHandler {
      * @param integer $mailingId
      * @return boolean (true -> if file already exists or is created successfully)
      */
-    public function createLockFile($mailingId) {
-        $tempfile = $this->lockDir.$mailingId.'.temp';
-        $lockfilepattern = $this->lockDir.$mailingId.'.*';
+    public function createLockFile($mailingId)
+    {
+        $tempfile = $this->lockDir . $mailingId . '.temp';
+        $lockfilepattern = $this->lockDir . $mailingId . '.*';
         $file = false;
         
         $ary = glob($lockfilepattern);
@@ -336,9 +394,27 @@ class GoodNewsProcessHandler {
             $file = file_put_contents($tempfile, $mailingId, LOCK_EX);
             if ($file) {
                 @chmod($tempfile, 0777);
-                if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsProcessHandler::createLockFile - Mailing meta [id: '.$mailingId.'] - lockfile created.'); }
+                if ($this->debug) {
+                    $this->modx->log(
+                        modX::LOG_LEVEL_INFO,
+                        '[GoodNews] [pid: ' .
+                        getmypid() .
+                        '] ProcessHandler::createLockFile - Mailing meta [id: ' .
+                        $mailingId .
+                        '] - lockfile created.'
+                    );
+                }
             } else {
-                if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_ERROR, '[GoodNews] [pid: '.getmypid().'] GoodNewsProcessHandler::createLockFile - Mailing meta [id: '.$mailingId.'] - could not create lockfile.'); }
+                if ($this->debug) {
+                    $this->modx->log(
+                        modX::LOG_LEVEL_ERROR,
+                        '[GoodNews] [pid: ' .
+                        getmypid() .
+                        '] ProcessHandler::createLockFile - Mailing meta [id: ' .
+                        $mailingId .
+                        '] - could not create lockfile.'
+                    );
+                }
             }
         }
         return $file;
@@ -351,27 +427,63 @@ class GoodNewsProcessHandler {
      * @param integer $mailingId
      * @return boolean
      */
-    public function lock($mailingId) {
-        $tempfile = $this->lockDir.$mailingId.'.temp';
-        $lockfile = $this->lockDir.$mailingId.'.'.getmypid();
+    public function lock($mailingId)
+    {
+        $tempfile = $this->lockDir . $mailingId . '.temp';
+        $lockfile = $this->lockDir . $mailingId . '.' . getmypid();
         
         while (!file_exists($lockfile)) {
             while (!file_exists($tempfile)) {
-                if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsProcessHandler::lock - waiting (mailing currently locked).'); }
-                usleep(rand(20000, 100000)); // 20 to 100 millisec
+                if ($this->debug) {
+                    $this->modx->log(
+                        modX::LOG_LEVEL_INFO,
+                        '[GoodNews] [pid: ' .
+                        getmypid() .
+                        '] ProcessHandler::lock - waiting (mailing currently locked).'
+                    );
+                }
+                // 20 to 100 millisec
+                usleep(rand(20000, 100000));
             }
             // Atomic method to use the file for locking purposes (@ is required here!)
-            $lock = @rename($tempfile, $lockfile); 
+            $lock = @rename($tempfile, $lockfile);
             if ($lock) {
-                if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsProcessHandler::lock - Mailing meta [id: '.$mailingId.'] - locked.'); }
+                if ($this->debug) {
+                    $this->modx->log(
+                        modX::LOG_LEVEL_INFO,
+                        '[GoodNews] [pid: ' .
+                        getmypid() .
+                        '] ProcessHandler::lock - Mailing meta [id: ' .
+                        $mailingId .
+                        '] - locked.'
+                    );
+                }
             } else {
-                if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_ERROR, '[GoodNews] [pid: '.getmypid().'] GoodNewsProcessHandler::lock - Mailing meta [id: '.$mailingId.'] - could not be locked (file operation failed).'); }
+                if ($this->debug) {
+                    $this->modx->log(
+                        modX::LOG_LEVEL_ERROR,
+                        '[GoodNews] [pid: ' .
+                        getmypid() .
+                        '] ProcessHandler::lock - Mailing meta [id: ' .
+                        $mailingId .
+                        '] - could not be locked (file operation failed).'
+                    );
+                }
             }
-            // Catch race conditions! 
+            // Catch race conditions!
             if (file_exists($lockfile)) {
                 return $lock;
             } else {
-                if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_ERROR, '[GoodNews] [pid: '.getmypid().'] GoodNewsProcessHandler::lock - Mailing meta [id: '.$mailingId.'] - race condition!'); }
+                if ($this->debug) {
+                    $this->modx->log(
+                        modX::LOG_LEVEL_ERROR,
+                        '[GoodNews] [pid: ' .
+                        getmypid() .
+                        '] ProcessHandler::lock - Mailing meta [id: ' .
+                        $mailingId .
+                        '] - race condition!'
+                    );
+                }
             }
         }
     }
@@ -383,15 +495,32 @@ class GoodNewsProcessHandler {
      * @param integer $mailingId
      * @return boolean
      */
-    public function unlock($mailingId) {
-        $tempfile = $this->lockDir.$mailingId.'.temp';
-        $lockfile = $this->lockDir.$mailingId.'.'.getmypid();
+    public function unlock($mailingId)
+    {
+        $tempfile = $this->lockDir . $mailingId . '.temp';
+        $lockfile = $this->lockDir . $mailingId . '.' . getmypid();
         // Atomic method to use the file for locking purposes
-        $unlock = @rename($lockfile, $tempfile); 
+        $unlock = @rename($lockfile, $tempfile);
         if ($unlock) {
-            if ($this->debug) { $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsProcessHandler::unlock - Mailing meta [id: '.$mailingId.'] - unlocked.'); }
+            if ($this->debug) {
+                $this->modx->log(
+                    modX::LOG_LEVEL_INFO,
+                    '[GoodNews] [pid: ' .
+                    getmypid() .
+                    '] ProcessHandler::unlock - Mailing meta [id: ' .
+                    $mailingId .
+                    '] - unlocked.'
+                );
+            }
         } else {
-            $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] GoodNewsProcessHandler::unlock - Mailing meta [id: '.$mailingId.'] - could not be unlocked (file operation failed).');
+            $this->modx->log(
+                modX::LOG_LEVEL_INFO,
+                '[GoodNews] [pid: ' .
+                getmypid() .
+                '] ProcessHandler::unlock - Mailing meta [id: ' .
+                $mailingId .
+                '] - could not be unlocked (file operation failed).'
+            );
         }
         return $unlock;
     }
@@ -402,8 +531,9 @@ class GoodNewsProcessHandler {
      * @access private
      * @return void
      */
-    private function _removeLockFile() {
-        $lockfilepattern = $this->lockDir.'*.'.$this->_pid;
+    private function removeLockFile()
+    {
+        $lockfilepattern = $this->lockDir . '*.' . $this->pid;
         $files = glob($lockfilepattern);
         if (is_array($files) && count($files) > 0) {
             foreach ($files as $filename) {
@@ -419,8 +549,9 @@ class GoodNewsProcessHandler {
      * @param integer $mailingId
      * @return void
      */
-    public function removeTempLockFile($mailingId) {
-        $tempfile = $this->lockDir.$mailingId.'.temp';
+    public function removeTempLockFile($mailingId)
+    {
+        $tempfile = $this->lockDir . $mailingId . '.temp';
         @unlink($tempfile);
     }
 }
