@@ -42,8 +42,16 @@ class GoodNewsResource
     {
         $this->modx = &$modx;
 
-        $corePath = $this->modx->getOption('goodnews.core_path', $config, $this->modx->getOption('core_path') . 'components/goodnews/');
-        $assetsUrl = $this->modx->getOption('goodnews.assets_url', $config, $this->modx->getOption('assets_url') . 'components/goodnews/');
+        $corePath = $this->modx->getOption(
+            'goodnews.core_path',
+            $config,
+            $this->modx->getOption('core_path') . 'components/goodnews/'
+        );
+        $assetsUrl = $this->modx->getOption(
+            'goodnews.assets_url',
+            $config,
+            $this->modx->getOption('assets_url') . 'components/goodnews/'
+        );
 
         $this->config = array_merge(array(
             'corePath'       => $corePath,
