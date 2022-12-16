@@ -13,7 +13,7 @@
 namespace Bitego\GoodNews\Processors\Container;
 
 use MODX\Revolution\modX;
-use MODX\Revolution\Processors\Resource\Create;
+use MODX\Revolution\Processors\Resource\Create as CreateProcessor;
 use Bitego\GoodNews\Model\GoodNewsResourceContainer;
 
 /**
@@ -22,7 +22,7 @@ use Bitego\GoodNews\Model\GoodNewsResourceContainer;
  *
  * @package goodnews
  */
-class ResourceContainerCreate extends Create
+class Create extends CreateProcessor
 {
     /** @var GoodNewsResourceContainer $object */
     public $object;

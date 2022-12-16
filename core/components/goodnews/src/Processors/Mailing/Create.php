@@ -13,23 +13,23 @@
 namespace Bitego\GoodNews\Processors\Mailing;
 
 use MODX\Revolution\modX;
-use MODX\Revolution\Processors\Resource\Update;
+use MODX\Revolution\Processors\Resource\Create as CreateProcessor;
 use Bitego\GoodNews\Model\GoodNewsResourceContainer;
 use Bitego\GoodNews\Model\GoodNewsResourceMailing;
 use Bitego\GoodNews\Model\GoodNewsMailingMeta;
 use Bitego\GoodNews\RecipientsHandler;
 
 /**
- * Overrides the MODX\Revolution\Processors\Resource\Update processor
+ * Overrides the MODX\Revolution\Processors\Resource\Create processor
  * to provide custom processor functionality.
  *
  * @package goodnews
  * @subpackage processors
  */
-class ResourceMailingUpdate extends Update
+class Create extends CreateProcessor
 {
     public $classKey = GoodNewsResourceMailing::class;
-    public $languageTopics = ['resource','goodnews:default'];
+    public $languageTopics = ['resource', 'goodnews:resource'];
 
     /** @var GoodNewsResourceMailing $object */
     public $object;
@@ -44,7 +44,7 @@ class ResourceMailingUpdate extends Update
     public $isPublishing = false;
 
     /**
-     * Create the GoodNewsResourceMailing (modResource) object for manipulation.
+     * Create the GoodNewsResourceMailing (modResource) object for manipulation
      *
      * {@inheritDoc}
      *
@@ -54,15 +54,9 @@ class ResourceMailingUpdate extends Update
     {
         $initialized = parent::initialize();
 
-        $this->meta = $this->modx->getObject(
-            GoodNewsMailingMeta::class,
-            ['mailing_id' => $this->object->get('id')]
-        );
+        $this->meta = $this->modx->newObject(GoodNewsMailingMeta::class);
         if (!is_object($this->meta)) {
-            $this->meta = $this->modx->newObject(GoodNewsMailingMeta::class);
-            if (!is_object($this->meta)) {
-                return $this->modx->lexicon('resource_err_update');
-            }
+            return $this->modx->lexicon('resource_err_create');
         }
 
         $this->recipientshandler = new RecipientsHandler($this->modx);
@@ -70,19 +64,18 @@ class ResourceMailingUpdate extends Update
         return $initialized;
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @return boolean|string
-     */
     public function beforeSet()
     {
+        $this->setProperty('class_key', GoodNewsResourceMailing::class);
+        $this->setProperty('searchable', false);
+        $this->setProperty('isfolder', false);
+        $this->setProperty('cacheable', true);
         $this->setProperty('clearCache', true);
         return parent::beforeSet();
     }
 
     /**
-     * Override Update::beforeSave
+     * Override Create::beforeSave
      *
      * {@inheritDoc}
      *
@@ -90,12 +83,6 @@ class ResourceMailingUpdate extends Update
      */
     public function beforeSave()
     {
-        // If sending has already been startet, the resource can't be changed any longer
-        // (normaly this shouldn't happen as we don't provide an 'Edit' menu in this case)
-        if ($this->meta->get('recipients_sent') != 0) {
-            return $this->modx->lexicon('goodnews.newsletter_err_save_already_sending');
-        }
-
         $this->prepareGroupsCategories();
         $groups      = $this->getProperty('groups');
         $categories  = $this->getProperty('categories');
@@ -115,10 +102,15 @@ class ResourceMailingUpdate extends Update
         $this->meta->set('recipients_total', $this->recipientshandler->getRecipientsTotal());
         $this->object->addOne($this->meta);
 
+        if (!$this->parentResource) {
+            $this->parentResource = $this->object->getOne('Parent');
+        }
+
         // Copy container properties to mailing object properties
         $container = $this->modx->getObject(GoodNewsResourceContainer::class, $this->object->get('parent'));
-        if (is_object($container)) {
-            $this->object->setProperties($container->getProperties('goodnews'), 'goodnews');
+        if ($container) {
+            $settings = $container->getProperties('goodnews');
+            $this->object->setProperties($settings, 'goodnews');
         }
 
         $this->isPublishing = $this->object->isDirty('published') && $this->object->get('published');
@@ -126,8 +118,9 @@ class ResourceMailingUpdate extends Update
         return parent::beforeSave();
     }
 
+
     /**
-     * Override Update::afterSave
+     * Override Create::afterSave
      *
      * {@inheritDoc}
      *
@@ -137,8 +130,8 @@ class ResourceMailingUpdate extends Update
     {
         $this->clearContainerCache();
 
-        // update recipients list
-        $this->recipientshandler->updateRecipientsCollection($this->object->get('id'));
+        // save recipients list
+        $this->recipientshandler->saveRecipientsCollection($this->object->get('id'));
 
         return parent::afterSave();
     }
@@ -156,52 +149,6 @@ class ResourceMailingUpdate extends Update
             'context_settings' => ['contexts' => [$this->object->get('context_key')]],
             'resource' => ['contexts' => [$this->object->get('context_key')]],
         ));
-    }
-
-    /**
-     * Override cleanup to send back only needed params
-     *
-     * @return array|string
-     */
-    public function cleanup()
-    {
-        $this->object->removeLock();
-        $this->clearCache();
-
-        $returnArray = $this->object->get(
-            array_diff(
-                array_keys($this->object->_fields),
-                [
-                    'content',
-                    'ta',
-                    'introtext',
-                    'description',
-                    'link_attributes',
-                    'pagetitle',
-                    'longtitle',
-                    'menutitle',
-                    'goodnews_container_settings',
-                    'properties'
-                ]
-            )
-        );
-        foreach ($returnArray as $k => $v) {
-            if (strpos($k, 'tv') === 0) {
-                unset($returnArray[$k]);
-            }
-            if (strpos($k, 'setting_') === 0) {
-                unset($returnArray[$k]);
-            }
-        }
-        $returnArray['class_key'] = $this->object->get('class_key');
-        $this->workingContext->prepare(true);
-        $returnArray['preview_url'] = $this->modx->makeUrl(
-            $this->object->get('id'),
-            $this->object->get('context_key'),
-            '',
-            'full'
-        );
-        return $this->success('', $returnArray);
     }
 
     /**

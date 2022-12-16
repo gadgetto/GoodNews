@@ -13,7 +13,7 @@
 namespace Bitego\GoodNews\Processors\Container;
 
 use MODX\Revolution\modX;
-use MODX\Revolution\Processors\Resource\Update;
+use MODX\Revolution\Processors\Resource\Update as UpdateProcessor;
 
 /**
  * Overrides the MODX\Revolution\Processors\Resource\Update processor
@@ -21,7 +21,7 @@ use MODX\Revolution\Processors\Resource\Update;
  *
  * @package goodnews
  */
-class ResourceContainerUpdate extends Update
+class Update extends UpdateProcessor
 {
     /** @var GoodNewsResourceContainer $object */
     public $object;
