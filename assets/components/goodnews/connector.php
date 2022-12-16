@@ -14,7 +14,7 @@
  * GoodNews Connector
  *
  * @var \MODX\Revolution\modX $modx
- * @var \GoodNews\GoodNews $goodnews
+ * @var Bitego\GoodNews\GoodNews $goodnews
  * @package goodnews
  */
 
