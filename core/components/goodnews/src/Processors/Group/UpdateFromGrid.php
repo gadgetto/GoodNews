@@ -10,9 +10,9 @@
  * file that was distributed with this source code.
  */
 
-namespace Bitego\GoodNews\Processors\Groups;
+namespace Bitego\GoodNews\Processors\Group;
 
-use Bitego\GoodNews\Processors\Groups\Update;
+use Bitego\GoodNews\Processors\Group\Update;
 
 /**
  * Group update from grid processor

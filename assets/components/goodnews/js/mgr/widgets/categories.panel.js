@@ -141,7 +141,7 @@ GoodNews.grid.Categories = function(config) {
             ,store: new Ext.data.JsonStore({
                 url: GoodNews.config.connectorUrl
                 ,baseParams: {
-                    action : 'Bitego\\GoodNews\\Processors\\Groups\\FilterGetList'
+                    action : 'Bitego\\GoodNews\\Processors\\Group\\FilterGetList'
                 }
                 ,fields: ['id','name']
                 ,root: 'results'
@@ -308,7 +308,7 @@ GoodNews.window.Category = function(config) {
             ,store: new Ext.data.JsonStore({
                 url: GoodNews.config.connectorUrl
                 ,baseParams: {
-                    action : 'Bitego\\GoodNews\\Processors\\Groups\\GetList'
+                    action : 'Bitego\\GoodNews\\Processors\\Group\\GetList'
                     ,noModxGroups: true
                 }
                 ,fields: ['id','name']

@@ -10,19 +10,19 @@
  * file that was distributed with this source code.
  */
 
-namespace Bitego\GoodNews\Processors\Groups;
+namespace Bitego\GoodNews\Processors\Group;
 
 use Bitego\GoodNews\Model\GoodNewsGroup;
-use MODX\Revolution\Processors\Model\UpdateProcessor;
+use MODX\Revolution\Processors\Model\CreateProcessor;
 
 /**
- * Group update processor
+ * Group create processor
  *
  * @package goodnews
  * @subpackage processors
  */
 
-class Update extends UpdateProcessor
+class Create extends CreateProcessor
 {
     public $classKey = GoodNewsGroup::class;
     public $languageTopics = ['goodnews:default'];
@@ -36,28 +36,23 @@ class Update extends UpdateProcessor
             $this->addFieldError('name', $this->modx->lexicon('goodnews.group_err_ns_name'));
         }
 
-        /* if changing name, but new one already exists */
-        if ($this->alreadyExists('name', $name)) {
+        /* check if name already exists */
+        if ($this->doesAlreadyExist(['name' => $name])) {
             $this->addFieldError('name', $this->modx->lexicon('goodnews.group_err_ae'));
         }
 
         /* make sure the modx user group isn't already assigned to another GoodNews group */
         $modxusergroup = $this->getProperty('modxusergroup');
-        if ($this->alreadyExists('modxusergroup', $modxusergroup) && $modxusergroup != '0' && $modxusergroup != '') {
+        if (
+            $this->doesAlreadyExist(['modxusergroup' => $modxusergroup]) &&
+            $modxusergroup != '0' && $modxusergroup != ''
+        ) {
             $this->addFieldError('modxusergroup', $this->modx->lexicon('goodnews.group_modxgroup_err_ae'));
         }
 
-        $this->object->set('editedon', strftime('%Y-%m-%d %H:%M:%S'));
-        $this->object->set('editedby', $this->modx->user->get('id'));
+        $this->object->set('createdon', strftime('%Y-%m-%d %H:%M:%S'));
+        $this->object->set('createdby', $this->modx->user->get('id'));
 
         return parent::beforeSave();
-    }
-
-    public function alreadyExists($fieldname, $fieldvalue)
-    {
-        return $this->modx->getCount($this->classKey, [
-            $fieldname => $fieldvalue,
-            'id:!=' => $this->getProperty('id'),
-        ]) > 0;
     }
 }

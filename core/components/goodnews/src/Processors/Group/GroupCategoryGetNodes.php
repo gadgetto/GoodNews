@@ -10,7 +10,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Bitego\GoodNews\Processors\Groups;
+namespace Bitego\GoodNews\Processors\Group;
 
 use MODX\Revolution\Processors\Processor;
 use Bitego\GoodNews\Model\GoodNewsSubscriberMeta;

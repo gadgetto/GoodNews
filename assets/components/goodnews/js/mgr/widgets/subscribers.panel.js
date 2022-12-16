@@ -229,7 +229,7 @@ GoodNews.grid.Subscribers = function(config){
                     ,store: new Ext.data.JsonStore({
                         url: GoodNews.config.connectorUrl
                         ,baseParams: {
-                            action : 'Bitego\\GoodNews\\Processors\\Groups\\FilterGetList'
+                            action : 'Bitego\\GoodNews\\Processors\\Group\\FilterGetList'
                             ,addNoGroupOption: true
                         }
                         ,fields: ['id','name']
@@ -649,7 +649,7 @@ GoodNews.tree.GroupsCategories = function(config) {
     Ext.applyIf(config,{
         id: 'goodnews-tree-groupscategories'
         ,url: GoodNews.config.connectorUrl
-        ,action: 'Bitego\\GoodNews\\Processors\\Groups\\GroupCategoryGetNodes'
+        ,action: 'Bitego\\GoodNews\\Processors\\Group\\GroupCategoryGetNodes'
         ,autoHeight: false
         ,height: Ext.getBody().getViewSize().height*.30
         ,root_id: 'n_gongrp_0'

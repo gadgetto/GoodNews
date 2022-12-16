@@ -10,7 +10,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Bitego\GoodNews\Processors\Groups;
+namespace Bitego\GoodNews\Processors\Group;
 
 use Bitego\GoodNews\Model\GoodNewsGroup;
 use Bitego\GoodNews\Model\GoodNewsGroupMember;
