@@ -21,7 +21,7 @@ use Bitego\GoodNews\Controllers\Base;
  *
  * @param \MODX\Revolution\modX &$modx A reference to the modX object
  * @param array $config An array of configuration options
- * @extends MODX\Revolution\modExtraManagerController
+ * @extends Bitego\GoodNews\Controllers\Base
  * @package goodnews
  * @subpackage controllers
  */
