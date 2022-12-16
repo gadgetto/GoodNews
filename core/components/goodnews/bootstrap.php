@@ -21,6 +21,10 @@ $modx->services->add('goodnews', function ($c) use ($modx) {
     return new \Bitego\GoodNews\GoodNews($modx);
 });
 
+$modx->services->add('goodnewsresource', function ($c) use ($modx) {
+    return new \Bitego\GoodNews\GoodNewsResource($modx);
+});
+
 $modx->services->add('mail', function ($c) use ($modx) {
     return new \MODX\Revolution\Mail\modPHPMailer($modx);
 });
