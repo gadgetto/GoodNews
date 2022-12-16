@@ -246,7 +246,7 @@ GoodNews.grid.Newsletters = function(config) {
             ,description: _('goodnews.newsletter_send_process_toggle_tooltip')
             ,hideLabel: true
             ,ctCls: 'gon-checkbox-toggle'
-            ,cls: 'danger'
+            ,cls: 'warning'
             ,inputValue: 1
             ,checked: GoodNews.config.workerProcessActive ? false : true
             ,listeners: {
