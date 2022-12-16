@@ -30,7 +30,7 @@ class GoodNewsResource
     public $config = [];
 
     /** @var array $chunks An array of cached chunks used for faster processing */
-    public $chunks;
+    public $chunks = [];
 
     /**
      * Create an instance of GoodNewsResource.
@@ -45,31 +45,36 @@ class GoodNewsResource
         $corePath = $this->modx->getOption(
             'goodnews.core_path',
             $config,
-            $this->modx->getOption('core_path') . 'components/goodnews/'
+            $this->modx->getOption('core_path', null, MODX_CORE_PATH) . 'components/goodnews/'
+        );
+        $assetsPath = $this->modx->getOption(
+            'goodnews.assets_path',
+            $config,
+            $this->modx->getOption('assets_path', null, MODX_ASSETS_PATH) . 'components/goodnews/'
         );
         $assetsUrl = $this->modx->getOption(
             'goodnews.assets_url',
             $config,
-            $this->modx->getOption('assets_url') . 'components/goodnews/'
+            $this->modx->getOption('assets_url', null, MODX_ASSETS_URL) . 'components/goodnews/'
         );
 
-        $this->config = array_merge(array(
+        $this->modx->lexicon->load('goodnews:resource');
+
+        $this->config = array_merge([
             'corePath'       => $corePath,
+            'srcPath'        => $corePath . 'src/',
             'modelPath'      => $corePath . 'src/Model/',
             'processorsPath' => $corePath . 'src/Processors/',
-            'elementsPath'   => $corePath . 'elements/',
-            'snippetsPath'   => $corePath . 'elements/snippets/',
-            'tvsPath'        => $corePath . 'elements/tvs/',
             'chunksPath'     => $corePath . 'elements/chunks/',
+            'includesPath'   => $corePath . 'includes/',
+            'docsPath'       => $corePath . 'docs/',
+            'assetsPath'     => $assetsPath,
             'assetsUrl'      => $assetsUrl,
-            'cssUrl'         => $assetsUrl . 'css/',
             'jsUrl'          => $assetsUrl . 'js/',
+            'cssUrl'         => $assetsUrl . 'css/',
             'imgUrl'         => $assetsUrl . 'img/',
             'connectorUrl'   => $assetsUrl . 'connector_res.php',
-            'chunkSuffix'    => '.chunk.tpl',
-        ), $config);
-
-        $this->modx->lexicon->load('goodnews:resource');
+        ], $config);
     }
 
     /**
