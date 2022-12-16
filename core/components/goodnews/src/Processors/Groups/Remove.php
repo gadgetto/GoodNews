@@ -22,7 +22,7 @@ use MODX\Revolution\Processors\Model\RemoveProcessor;
  * @subpackage processors
  */
 
-class Remove extends modObjectRemoveProcessor
+class Remove extends RemoveProcessor
 {
     public $classKey = GoodNewsGroup::class;
     public $languageTopics = array('goodnews:default');
