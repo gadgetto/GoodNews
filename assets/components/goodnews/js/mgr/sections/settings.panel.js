@@ -111,7 +111,7 @@ Ext.extend(GoodNews.SettingsPanel,MODx.FormPanel,{
         this.getForm().load({
             url: GoodNews.config.connectorUrl
             ,params: {
-                action: 'mgr/settings/get'
+                action: 'Bitego\\GoodNews\\Processors\\Settings\\Get'
             }
             ,waitMsg: _('goodnews.msg_loading')
             ,success: function(){
@@ -127,7 +127,7 @@ Ext.extend(GoodNews.SettingsPanel,MODx.FormPanel,{
         this.getForm().submit({
             url: GoodNews.config.connectorUrl
             ,params: {
-                action: 'mgr/settings/update'
+                action: 'Bitego\\GoodNews\\Processors\\Settings\\Update'
             }
             ,waitMsg: _('goodnews.msg_saving')
             ,success: function(form,action){
