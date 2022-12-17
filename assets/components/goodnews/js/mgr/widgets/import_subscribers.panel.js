@@ -13,7 +13,7 @@ GoodNews.tree.GroupsCategories = function(config) {
         xtype: 'modx-tree'
         ,id: 'goodnews-tree-groupscategories'
         ,url: GoodNews.config.connectorUrl
-        ,action: 'mgr/groups/getGroupCatNodes'
+        ,action: 'Bitego\\GoodNews\\Processors\\Group\\GroupCategoryGetNodes'
         ,autoHeight: false
         ,height: 280
         ,root: {

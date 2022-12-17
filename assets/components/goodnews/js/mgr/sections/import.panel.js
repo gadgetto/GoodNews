@@ -89,7 +89,7 @@ Ext.extend(GoodNews.ImportPanel,MODx.FormPanel,{
         this.getForm().submit({
             url: GoodNews.config.connectorUrl
             ,params: {
-                action: 'mgr/subscribers/import'
+                action: 'Bitego\\GoodNews\\Processors\\Subscribers\\Import'
                 ,register: register
                 ,topic: topic
             }
