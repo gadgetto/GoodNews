@@ -18,7 +18,7 @@ use MODX\Revolution\modResource;
 use MODX\Revolution\Processors\Model\UpdateProcessor;
 
 /**
- * Container settings update processor
+ * Container settings update processor (for settings panel)
  *
  * @package goodnews
  * @subpackage processors
