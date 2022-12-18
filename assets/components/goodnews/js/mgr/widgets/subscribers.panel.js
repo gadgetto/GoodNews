@@ -8,7 +8,6 @@
  */
 GoodNews.panel.Subscribers = function(config) {
     config = config || {};
-
     Ext.applyIf(config,{
         id: 'goodnews-panel-subscribers'
         ,title: _('goodnews.subscribers')   
@@ -18,8 +17,7 @@ GoodNews.panel.Subscribers = function(config) {
         }
         ,items:[{
             html: '<p>'+_('goodnews.subscribers_desc')+'</p>'
-            ,border: false
-            ,bodyCssClass: 'panel-desc'
+            ,xtype: 'modx-description'
         },{
             xtype: 'goodnews-grid-subscribers'
             ,cls: 'main-wrapper'

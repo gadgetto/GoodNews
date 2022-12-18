@@ -70,8 +70,7 @@ GoodNews.panel.AboutSettings = function(config) {
         }
         ,items:[{
             html: '<p>'+_('goodnews.settings_about_tab_desc')+'</p>'
-            ,border: false
-            ,bodyCssClass: 'panel-desc'
+            ,xtype: 'modx-description'
         },{
             layout: 'form'
             ,cls: 'main-wrapper'

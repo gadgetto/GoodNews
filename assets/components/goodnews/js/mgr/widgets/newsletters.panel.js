@@ -8,7 +8,6 @@
  */
 GoodNews.panel.Newsletters = function(config) {
     config = config || {};
-
     Ext.applyIf(config,{
         id: 'goodnews-panel-newsletters'
         ,title: _('goodnews.newsletters')
@@ -17,13 +16,11 @@ GoodNews.panel.Newsletters = function(config) {
             border: false
         }
         ,items:[{
-            html: '<div>'+_('goodnews.newsletters_management_desc')+'</div>'
-            ,border: false
-            ,bodyCssClass: 'panel-desc'
+            html: '<p>'+_('goodnews.newsletters_management_desc')+'</p>'
+            ,xtype: 'modx-description'
         },{
             xtype: 'goodnews-grid-newsletters'
             ,cls: 'main-wrapper'
-            ,bodyCssClass: 'grid-with-buttons'
             ,preventRender: true
         }]
     });

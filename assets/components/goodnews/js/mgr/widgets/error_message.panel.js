@@ -71,8 +71,8 @@ GoodNews.panel.MessageError = function(config) {
         }
         ,items:[{
             html: '<p>'+_('goodnews.error_message_tab_desc')+'</p>'
-            ,border: false
-            ,bodyCssClass: 'panel-desc gon-panel-desc-error'
+            ,xtype: 'modx-description'            
+            ,bodyCssClass: 'gon-panel-desc-error'
         },{
             layout: 'form'
             ,cls: 'main-wrapper'

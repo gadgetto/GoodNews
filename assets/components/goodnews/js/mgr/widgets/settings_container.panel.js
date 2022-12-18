@@ -10,8 +10,7 @@ GoodNews.panel.ContainerSettings = function(config) {
         }
         ,items:[{
             html: '<p>'+_('goodnews.settings_container_tab_desc')+'</p>'
-            ,border: false
-            ,bodyCssClass: 'panel-desc'
+            ,xtype: 'modx-description'
         },{
             xtype: 'goodnews-grid-containers'
             ,cls: 'main-wrapper'

@@ -10,8 +10,7 @@ GoodNews.panel.BounceParsingRulesSettings = function(config) {
         }
         ,items:[{
             html: '<p>'+_('goodnews.settings_bounceparsingrules_tab_desc')+'</p>'
-            ,border: false
-            ,bodyCssClass: 'panel-desc'
+            ,xtype: 'modx-description'
         },{
             layout: 'form'
             ,cls: 'main-wrapper'

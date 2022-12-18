@@ -12,11 +12,9 @@ GoodNews.ErrorPanel = function(config) {
         id: 'goodnews-panel-error'
         ,cls: 'container'
         ,bodyStyle: ''
-        ,unstyled: true
         ,items: [{
-            html: '<h2 class="gon-cmp-header gon-logo">'+_('goodnews.error')+'</h2>'
-            ,border: false
-            ,cls: 'modx-page-header'
+            html: _('goodnews.error')
+            ,xtype: 'modx-header'
         },{
             xtype: 'modx-tabs'
             ,itemId: 'tabs'

@@ -12,11 +12,9 @@ GoodNews.HomePanel = function(config) {
         id: 'goodnews-panel-home'
         ,cls: 'container'
         ,bodyStyle: ''
-        ,unstyled: true
         ,items: [{
-            html: '<h2 class="gon-cmp-header gon-logo">'+_('goodnews.management')+'</h2>'
-            ,border: false
-            ,cls: 'modx-page-header'
+            html: _('goodnews.management')
+            ,xtype: 'modx-header'
         },{
             xtype: 'modx-tabs'
             ,itemId: 'tabs'

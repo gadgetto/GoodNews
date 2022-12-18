@@ -23,11 +23,9 @@ GoodNews.SettingsPanel = function(config) {
         id: 'goodnews-panel-settings'
         ,cls: 'container'
         ,bodyStyle: ''
-        ,unstyled: true
         ,items: [{
-            html: '<h2 class="gon-cmp-header gon-logo">'+_('goodnews.settings')+'</h2>'
-            ,border: false
-            ,cls: 'modx-page-header'
+            html: _('goodnews.settings')
+            ,xtype: 'modx-header'
         },{
             xtype: 'modx-tabs'
             ,itemId: 'tabs'

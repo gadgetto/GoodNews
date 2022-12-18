@@ -16,12 +16,10 @@ GoodNews.ImportPanel = function(config) {
         id: 'goodnews-panel-import'
         ,cls: 'container'
         ,bodyStyle: ''
-        ,unstyled: true
         ,fileUpload: true
         ,items: [{
-            html: '<h2 class="gon-cmp-header gon-logo">'+_('goodnews.import')+'</h2>'
-            ,border: false
-            ,cls: 'modx-page-header'
+            html: _('goodnews.import')
+            ,xtype: 'modx-header'
         },{
             xtype: 'modx-tabs'
             ,itemId: 'tabs'
