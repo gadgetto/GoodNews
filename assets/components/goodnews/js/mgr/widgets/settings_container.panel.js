@@ -41,7 +41,7 @@ GoodNews.grid.Containers = function(config) {
     Ext.applyIf(config,{
         id: 'goodnews-grid-containers'
         ,url: GoodNews.config.connectorUrl
-        ,baseParams: { action: 'mgr/settings/containers/getList' }
+        ,baseParams: { action: 'Bitego\\GoodNews\\Processors\\Settings\\Container\\GetList' }
         ,autoExpandColumn: 'pagetitle'
         ,fields: [
             'id'
@@ -93,7 +93,7 @@ GoodNews.grid.Containers = function(config) {
         ,emptyText: _('goodnews.settings_containers_none')
         ,paging: true
         ,remoteSort: true
-        ,save_action: 'mgr/settings/containers/updateFromGrid'
+        ,save_action: 'Bitego\\GoodNews\\Processors\\Settings\\Container\\UpdateFromGrid'
         ,autosave: true
         ,columns: [{
             header: _('goodnews.settings_container_id')
@@ -201,7 +201,7 @@ GoodNews.window.UpdateContainerSettings = function(config) {
         title: _('goodnews.settings_container_update')
         ,url: GoodNews.config.connectorUrl
         ,baseParams: {
-            action: 'mgr/settings/containers/update'
+            action: 'Bitego\\GoodNews\\Processors\\Settings\\Container\\Update'
         }
         ,autoHeight: true
         ,width: 760
