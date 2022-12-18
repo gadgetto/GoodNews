@@ -10,9 +10,9 @@
  * file that was distributed with this source code.
  */
 
-namespace Bitego\GoodNews\Processors\Settings\Containers;
+namespace Bitego\GoodNews\Processors\Settings\Container;
 
-use Bitego\GoodNews\Processors\Settings\Containers\Update;
+use Bitego\GoodNews\Processors\Settings\Container\Update;
 
 /**
  * GoodNews container update from grid processor (for settings panel)

@@ -10,7 +10,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Bitego\GoodNews\Processors\Settings\Containers;
+namespace Bitego\GoodNews\Processors\Settings\Container;
 
 use Bitego\GoodNews\BounceMailHandler\BounceMailHandler;
 use MODX\Revolution\modX;
