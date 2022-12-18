@@ -352,11 +352,6 @@ button:hover:disabled[class*="gon-ab-"] {
     padding: 5px;
 }
 
-/* Other helper classes */
-.gon-x-panel-add-padding-top {
-    padding-top: 15px;
-}
-
 /* Style adjustments for high resolution devices */
 @media (-o-min-device-pixel-ratio: 5/4),
        (-webkit-min-device-pixel-ratio: 1.25),
