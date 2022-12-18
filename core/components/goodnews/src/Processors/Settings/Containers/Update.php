@@ -1,80 +1,96 @@
 <?php
+
 /**
- * GoodNews
+ * This file is part of the GoodNews package.
  *
- * Copyright 2012 by bitego <office@bitego.com>
+ * @copyright bitego (Martin Gartner)
+ * @license GNU General Public License v2.0 (and later)
  *
- * GoodNews is free software; you can redistribute it and/or modify it under the
- * terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
- *
- * GoodNews is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this software; if not, write to the Free Software Foundation, Inc., 59 Temple
- * Place, Suite 330, Boston, MA 02111-1307 USA
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
-require_once dirname(dirname(dirname(dirname(dirname(__FILE__))))).'/model/goodnews/goodnewsbmh.class.php';
+namespace Bitego\GoodNews\Processors\Settings\Containers;
+
+use Bitego\GoodNews\BounceMailHandler\BounceMailHandler;
+use MODX\Revolution\modX;
+use MODX\Revolution\modResource;
+use MODX\Revolution\Processors\Model\UpdateProcessor;
 
 /**
- * Container definition update processor
+ * Container settings update processor
  *
  * @package goodnews
  * @subpackage processors
  */
-class ContainerSettingsUpdateProcessor extends modObjectUpdateProcessor {
-    public $classKey = 'modResource';
-    public $languageTopics = array('resource','goodnews:default');
+class Update extends UpdateProcessor
+{
+    public $classKey = modResource::class;
+    public $languageTopics = ['resource', 'goodnews:default'];
     public $permission = 'save_document';
     public $objectType = 'resource';
     public $beforeSaveEvent = 'OnBeforeDocFormSave';
     public $afterSaveEvent = 'OnDocFormSave';
 
-    public function beforeSave() {
-
+    public function beforeSave()
+    {
         // make sure editor_groups was specified
         $editorGroups = $this->getProperty('editor_groups');
         if (empty($editorGroups)) {
-            $this->addFieldError('editor_groups', $this->modx->lexicon('goodnews.settings_container_err_ns_editor_groups'));
+            $this->addFieldError(
+                'editor_groups',
+                $this->modx->lexicon('goodnews.settings_container_err_ns_editor_groups')
+            );
         }
         $this->object->setProperty('editorGroups', $editorGroups, 'goodnews');
-        
+
         // make sure mail_from was specified
         $mailFrom = $this->getProperty('mail_from');
         if (empty($mailFrom)) {
-            $this->addFieldError('mail_from', $this->modx->lexicon('goodnews.settings_container_err_ns_mail_from'));
+            $this->addFieldError(
+                'mail_from',
+                $this->modx->lexicon('goodnews.settings_container_err_ns_mail_from')
+            );
         }
         $this->object->setProperty('mailFrom', $mailFrom, 'goodnews');
-               
+
         // make sure mail_from_name was specified
         $mailFromName = $this->getProperty('mail_from_name');
         if (empty($mailFromName)) {
-            $this->addFieldError('mail_from_name', $this->modx->lexicon('goodnews.settings_container_err_ns_mail_from_name'));
+            $this->addFieldError(
+                'mail_from_name',
+                $this->modx->lexicon('goodnews.settings_container_err_ns_mail_from_name')
+            );
         }
         $this->object->setProperty('mailFromName', $mailFromName, 'goodnews');
-        
+
         // make sure mail_reply_to was specified
         $mailReplyTo = $this->getProperty('mail_reply_to');
         if (empty($mailReplyTo)) {
-            $this->addFieldError('mail_reply_to', $this->modx->lexicon('goodnews.settings_container_err_ns_mail_reply_to'));
+            $this->addFieldError(
+                'mail_reply_to',
+                $this->modx->lexicon('goodnews.settings_container_err_ns_mail_reply_to')
+            );
         }
         $this->object->setProperty('mailReplyTo', $mailReplyTo, 'goodnews');
 
         // make sure mail_charset was specified
         $mailCharset = $this->getProperty('mail_charset');
         if (empty($mailCharset)) {
-            $this->addFieldError('mail_charset', $this->modx->lexicon('goodnews.settings_container_err_ns_mail_charset'));
+            $this->addFieldError(
+                'mail_charset',
+                $this->modx->lexicon('goodnews.settings_container_err_ns_mail_charset')
+            );
         }
         $this->object->setProperty('mailCharset', $mailCharset, 'goodnews');
 
         // make sure mail_encoding was specified
         $mailEncoding = $this->getProperty('mail_encoding');
         if (empty($mailEncoding)) {
-            $this->addFieldError('mail_encoding', $this->modx->lexicon('goodnews.settings_container_err_ns_mail_encoding'));
+            $this->addFieldError(
+                'mail_encoding',
+                $this->modx->lexicon('goodnews.settings_container_err_ns_mail_encoding')
+            );
         }
         $this->object->setProperty('mailEncoding', $mailEncoding, 'goodnews');
 
@@ -97,27 +113,27 @@ class ContainerSettingsUpdateProcessor extends modObjectUpdateProcessor {
         // SMTP password
         $mailSmtpPass = $this->getProperty('mail_smtp_pass');
         $this->object->setProperty('mailSmtpPass', $mailSmtpPass, 'goodnews');
-        
+
         // SMTP hosts + ports
         $mailSmtpHosts = $this->getProperty('mail_smtp_hosts');
         $this->object->setProperty('mailSmtpHosts', $mailSmtpHosts, 'goodnews');
-        
+
         // SMTP prefix
         $mailSmtpPrefix = $this->getProperty('mail_smtp_prefix');
         $this->object->setProperty('mailSmtpPrefix', $mailSmtpPrefix, 'goodnews');
-        
+
         // SMTP keep alive (boolean)
         $mailSmtpKeepalive = $this->getProperty('mail_smtp_keepalive');
         $this->object->setProperty('mailSmtpKeepalive', $mailSmtpKeepalive, 'goodnews');
-        
+
         // SMTP timeout
         $mailSmtpTimeout = $this->getProperty('mail_smtp_timeout');
         $this->object->setProperty('mailSmtpTimeout', $mailSmtpTimeout, 'goodnews');
-        
+
         // SMTP single TO (boolean)
         $mailSmtpSingleTo = $this->getProperty('mail_smtp_single_to');
         $this->object->setProperty('mailSmtpSingleTo', $mailSmtpSingleTo, 'goodnews');
-        
+
         // SMTP helo
         $mailSmtpHelo = $this->getProperty('mail_smtp_helo');
         $this->object->setProperty('mailSmtpHelo', $mailSmtpHelo, 'goodnews');
@@ -125,7 +141,7 @@ class ContainerSettingsUpdateProcessor extends modObjectUpdateProcessor {
         // service
         $mailService = $this->getProperty('mail_service');
         $this->object->setProperty('mailService', $mailService, 'goodnews');
-        
+
         // mailhost
         $mailMailHost = $this->getProperty('mail_mailhost');
         $this->object->setProperty('mailMailHost', $mailMailHost, 'goodnews');
@@ -133,19 +149,19 @@ class ContainerSettingsUpdateProcessor extends modObjectUpdateProcessor {
         // mailbox_username
         $mailMailboxUsername = $this->getProperty('mail_mailbox_username');
         $this->object->setProperty('mailMailboxUsername', $mailMailboxUsername, 'goodnews');
-        
+
         // mailbox_password
         $mailMailboxPassword = $this->getProperty('mail_mailbox_password');
         $this->object->setProperty('mailMailboxPassword', $mailMailboxPassword, 'goodnews');
-        
+
         // boxname
         $mailBoxname = $this->getProperty('mail_boxname');
         $this->object->setProperty('mailBoxname', $mailBoxname, 'goodnews');
-        
+
         // port
         $mailPort = $this->getProperty('mail_port');
         $this->object->setProperty('mailPort', $mailPort, 'goodnews');
-        
+
         // service_option
         $mailServiceOption = $this->getProperty('mail_service_option');
         $this->object->setProperty('mailServiceOption', $mailServiceOption, 'goodnews');
@@ -193,19 +209,19 @@ class ContainerSettingsUpdateProcessor extends modObjectUpdateProcessor {
         // resource collection settings
         $collection1Name    = $this->getProperty('collection1_name');
         $this->object->setProperty('collection1Name', $collection1Name, 'goodnews');
-        
+
         $collection1Parents = $this->getProperty('collection1_parents');
         $this->object->setProperty('collection1Parents', $collection1Parents, 'goodnews');
-        
+
         $collection2Name    = $this->getProperty('collection2_name');
         $this->object->setProperty('collection2Name', $collection2Name, 'goodnews');
-        
+
         $collection2Parents = $this->getProperty('collection2_parents');
         $this->object->setProperty('collection2Parents', $collection2Parents, 'goodnews');
-        
+
         $collection3Name    = $this->getProperty('collection3_name');
         $this->object->setProperty('collection3Name', $collection3Name, 'goodnews');
-        
+
         $collection3Parents = $this->getProperty('collection3_parents');
         $this->object->setProperty('collection3Parents', $collection3Parents, 'goodnews');
 
@@ -221,7 +237,8 @@ class ContainerSettingsUpdateProcessor extends modObjectUpdateProcessor {
         return parent::beforeSave();
     }
 
-    public function afterSave() {
+    public function afterSave()
+    {
         $this->setProperty('clearCache', true);
 
         // update properties of all child resources (merge with existing properties)
@@ -230,28 +247,37 @@ class ContainerSettingsUpdateProcessor extends modObjectUpdateProcessor {
         foreach ($this->object->getIterator('Children') as $child) {
             $child->setProperties($parentProperties, 'goodnews');
             if (!$child->save()) {
-                $this->modx->log(modX::LOG_LEVEL_ERROR, "Could not change properties of child resource {$child->get('id')}", '', __METHOD__, __FILE__, __LINE__);
+                $this->modx->log(
+                    modX::LOG_LEVEL_ERROR,
+                    "[GoodNews] Could not change properties of child resource {$child->get('id')}",
+                    '',
+                    __METHOD__,
+                    __FILE__,
+                    __LINE__
+                );
             }
         }
         return parent::afterSave();
     }
-    
+
     /**
      * Test mailbox connection.
-     * 
+     *
      * @access private
      * @return boolean
      */
-    private function connectionTest() {
-        
+    private function connectionTest()
+    {
         $bmh = new GoodNewsBounceMailHandler($this->modx);
         if (!($bmh instanceof GoodNewsBounceMailHandler)) {
-            $this->modx->log(modX::LOG_LEVEL_ERROR, '[GoodNews] GoodNewsBounceMailHandler class could not be instantiated.');
+            $this->modx->log(
+                modX::LOG_LEVEL_ERROR,
+                '[GoodNews] GoodNewsBounceMailHandler class could not be instantiated.'
+            );
             return false;
         }
 
         $bmh->testmode              = true;
-        
         $bmh->mailService           = $this->object->getProperty('mailService', 'goodnews');
         $bmh->mailMailHost          = $this->object->getProperty('mailMailHost', 'goodnews');
         $bmh->mailMailboxUsername   = $this->object->getProperty('mailMailboxUsername', 'goodnews');
@@ -259,13 +285,12 @@ class ContainerSettingsUpdateProcessor extends modObjectUpdateProcessor {
         $bmh->mailBoxname           = $this->object->getProperty('mailBoxname', 'goodnews');
         $bmh->mailPort              = $this->object->getProperty('mailPort', 'goodnews');
         $bmh->mailServiceOption     = $this->object->getProperty('mailServiceOption', 'goodnews');
-        
+
         if ($bmh->openImapStream()) {
             $bmh->closeImapStream();
             return true;
         } else {
             return false;
-        }    
+        }
     }
 }
-return 'ContainerSettingsUpdateProcessor';
