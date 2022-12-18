@@ -1,22 +1,22 @@
 <?php
+
 /**
- * GoodNews
+ * This file is part of the GoodNews package.
  *
- * Copyright 2012 by bitego <office@bitego.com>
+ * @copyright bitego (Martin Gartner)
+ * @license GNU General Public License v2.0 (and later)
  *
- * GoodNews is free software; you can redistribute it and/or modify it under the
- * terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
- *
- * GoodNews is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this software; if not, write to the Free Software Foundation, Inc., 59 Temple
- * Place, Suite 330, Boston, MA 02111-1307 USA
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
+
+namespace Bitego\GoodNews\Processors\Settings\Containers;
+
+use Bitego\GoodNews\Model\GoodNewsResourceContainer;
+use MODX\Revolution\modX;
+use MODX\Revolution\Processors\Model\GetListProcessor;
+use xPDO\Om\xPDOObject;
+use xPDO\Om\xPDOQuery;
 
 /**
  * Container get list processor (for settings panel)
@@ -25,51 +25,53 @@
  * @subpackage processors
  */
 
-class ContainerSettingsGetListProcessor extends modObjectGetListProcessor {
-    public $classKey = 'GoodNewsResourceContainer';
-    public $languageTopics = array('resource','goodnews:default');
+class GetList extends GetListProcessor
+{
+    public $classKey = GoodNewsResourceContainer::class;
+    public $languageTopics = ['resource', 'goodnews:default'];
     public $checkListPermission = true;
     public $defaultSortField = 'pagetitle';
     public $defaultSortDirection = 'ASC';
-    
-    public function prepareQueryBeforeCount(xPDOQuery $c) {
-        $c->select(array(
+
+    public function prepareQueryBeforeCount(xPDOQuery $c)
+    {
+        $c->select([
             'id',
             'pagetitle',
             'context_key',
             'properties',
-        ));
-        $c->where(array(
-            'class_key' => 'GoodNewsResourceContainer'
-            ,'deleted' => 0
-        ));
+        ]);
+        $c->where([
+            'class_key' => $this->classKey,
+            'deleted' => 0,
+        ]);
         return $c;
     }
 
-    public function prepareRow(xPDOObject $object) {
+    public function prepareRow(xPDOObject $object)
+    {
         $resourceArray = parent::prepareRow($object);
 
         $charset = $this->modx->getOption('modx_charset', null, 'UTF-8');
         $resourceArray['pagetitle'] = htmlentities($resourceArray['pagetitle'], ENT_COMPAT, $charset);
-        
+
         // get properties field as array
         if (!empty($resourceArray['properties'])) {
             $properties = $resourceArray['properties'];
         } else {
-            $properties = array();
+            $properties = [];
         }
 
         // action buttons in grid row
-        $resourceArray['actions'] = array();
-        $resourceArray['actions'][] = array(
+        $resourceArray['actions'] = [];
+        $resourceArray['actions'][] = [
             'className' => 'settings icon icon-lg icon-cog',
             'text' => $this->modx->lexicon('goodnews.settings_container_update'),
-        );
+        ];
 
 
         // get container setting (from Resource properties field)
         if (array_key_exists('goodnews', $properties)) {
-            
             // General settings
             if (array_key_exists('editorGroups', $properties['goodnews'])) {
                 $resourceArray['editor_groups'] = $properties['goodnews']['editorGroups'];
@@ -106,7 +108,6 @@ class ContainerSettingsGetListProcessor extends modObjectGetListProcessor {
             } else {
                 $resourceArray['mail_bouncehandling'] = '0';
             }
-            
             // SMTP settings
             if (array_key_exists('mailUseSmtp', $properties['goodnews'])) {
                 $resourceArray['mail_use_smtp'] = $properties['goodnews']['mailUseSmtp'];
@@ -158,7 +159,6 @@ class ContainerSettingsGetListProcessor extends modObjectGetListProcessor {
             } else {
                 $resourceArray['mail_smtp_helo'] = '';
             }
-            
             // Bounce Mailbox
             if (array_key_exists('mailService', $properties['goodnews'])) {
                 $resourceArray['mail_service'] = $properties['goodnews']['mailService'];
@@ -195,7 +195,6 @@ class ContainerSettingsGetListProcessor extends modObjectGetListProcessor {
             } else {
                 $resourceArray['mail_service_option'] = 'notls';
             }
-            
             // Soft Bounces handling
             if (array_key_exists('mailSoftBouncedMessageAction', $properties['goodnews'])) {
                 $resourceArray['mail_softbounced_message_action'] = $properties['goodnews']['mailSoftBouncedMessageAction'];
@@ -217,8 +216,7 @@ class ContainerSettingsGetListProcessor extends modObjectGetListProcessor {
             } else {
                 $resourceArray['mail_max_softbounces_action'] = 'disable';
             }
-
-            // Hard bounces handling            
+            // Hard bounces handling
             if (array_key_exists('mailHardBouncedMessageAction', $properties['goodnews'])) {
                 $resourceArray['mail_hardbounced_message_action'] = $properties['goodnews']['mailHardBouncedMessageAction'];
             } else {
@@ -239,7 +237,6 @@ class ContainerSettingsGetListProcessor extends modObjectGetListProcessor {
             } else {
                 $resourceArray['mail_max_hardbounces_action'] = 'delete';
             }
-
             // Unclassified handling
             if (array_key_exists('mailNotClassifiedMessageAction', $properties['goodnews'])) {
                 $resourceArray['mail_notclassified_message_action'] = $properties['goodnews']['mailNotClassifiedMessageAction'];
@@ -251,7 +248,6 @@ class ContainerSettingsGetListProcessor extends modObjectGetListProcessor {
             } else {
                 $resourceArray['mail_notclassified_mailbox'] = 'INBOX.NotClassified';
             }
-            
             // Content Collection handling
             if (array_key_exists('collection1Name', $properties['goodnews'])) {
                 $resourceArray['collection1_name'] = $properties['goodnews']['collection1Name'];
@@ -283,9 +279,7 @@ class ContainerSettingsGetListProcessor extends modObjectGetListProcessor {
             } else {
                 $resourceArray['collection3_parents'] = '';
             }
-
         }
         return $resourceArray;
     }
 }
-return 'ContainerSettingsGetListProcessor';
