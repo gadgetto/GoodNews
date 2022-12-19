@@ -22,7 +22,7 @@ Ext.extend(GoodNewsResource.page.CreateGoodNewsResourceContainer,MODx.page.Creat
         
         if (cfg.canSave == 1) {
             btns.push({
-                process: 'resource/create'
+                process: 'Resource/Create'
                 ,reload: true
                 ,text: _('save')
                 ,id: 'modx-abtn-save'

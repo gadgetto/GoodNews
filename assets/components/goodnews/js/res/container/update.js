@@ -12,9 +12,9 @@ GoodNewsResource.page.UpdateGoodNewsResourceContainer = function(config) {
     Ext.applyIf(config,{
         panelXType: 'goodnewsresource-panel-container'
         ,actions: {
-            'new': 'resource/create'
-            ,'edit': 'resource/update'
-            ,'preview': 'resource/preview'
+            'new': 'Resource/Create'
+            ,'edit': 'Resource/Update'
+            ,'preview': 'Resource/Preview'
         }
     });
     config.canDuplicate = false;
@@ -40,7 +40,7 @@ Ext.extend(GoodNewsResource.page.UpdateGoodNewsResourceContainer,MODx.page.Updat
         });
         
         btns.push({
-            process: 'resource/update'
+            process: 'Resource/Update'
             ,text: _('save')
             ,id: 'modx-abtn-save'
             ,cls: 'primary-button'
