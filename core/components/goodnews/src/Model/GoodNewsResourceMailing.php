@@ -55,7 +55,7 @@ class GoodNewsResourceMailing extends modResource
             'goodnews.core_path',
             null,
             $modx->getOption('core_path') . 'components/goodnews/'
-        ) . 'controllers/res/mailing/';
+        ) . 'controllers/mailing/';
     }
 
     /**
