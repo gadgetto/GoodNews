@@ -26,7 +26,7 @@
  * @language fr
  */
 
-$_lang['goodnews.container']                               = 'GoodNews';
+$_lang['goodnews.container']                               = 'Conteneur GoodNews';
 $_lang['goodnews.container_create_here']                   = 'Conteneur GoodNews';
 $_lang['goodnews.container_new']                           = 'Nouveau Conteneur GoodNews';
                                                            
