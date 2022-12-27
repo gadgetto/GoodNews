@@ -10,10 +10,10 @@
  * file that was distributed with this source code.
  */
 
-namespace Bitego\GoodNews\Processors\Container;
+namespace Bitego\GoodNews\Model;
 
 use MODX\Revolution\modX;
-use MODX\Revolution\Processors\Resource\Update as UpdateProcessor;
+use MODX\Revolution\Processors\Resource\Update;
 
 /**
  * Overrides the MODX\Revolution\Processors\Resource\Update processor
@@ -21,7 +21,7 @@ use MODX\Revolution\Processors\Resource\Update as UpdateProcessor;
  *
  * @package goodnews
  */
-class Update extends UpdateProcessor
+class GoodNewsResourceContainerUpdateProcessor extends Update
 {
     /** @var GoodNewsResourceContainer $object */
     public $object;
@@ -52,9 +52,12 @@ class Update extends UpdateProcessor
 
                 $settings[$key] = $v;
 
-                // Remove MODX tag delimiters
-                $settings['unsubscribeResource'] = $this->extractID($settings['unsubscribeResource']);
-                $settings['profileResource'] = $this->extractID($settings['profileResource']);
+                $settings['unsubscribeResource'] = !empty($settings['unsubscribeResource'])
+                    ? $this->extractID($settings['unsubscribeResource'])
+                    : '';
+                $settings['profileResource'] = !empty($settings['profileResource'])
+                    ? $this->extractID($settings['profileResource'])
+                    : '';
             }
         }
 
@@ -141,6 +144,12 @@ class Update extends UpdateProcessor
         return $this->success('', $returnArray);
     }
 
+    /**
+     * Remove MODX tag delimiters from given string
+     *
+     * @param string $str The string to parse
+     * @return string The parsed string
+     */
     private function extractID($str)
     {
         $str = str_replace('[[~', '', $str);

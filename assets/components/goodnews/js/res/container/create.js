@@ -17,18 +17,17 @@ GoodNewsResource.page.CreateGoodNewsResourceContainer = function(config) {
     GoodNewsResource.page.CreateGoodNewsResourceContainer.superclass.constructor.call(this,config);
 };
 Ext.extend(GoodNewsResource.page.CreateGoodNewsResourceContainer,MODx.page.CreateResource,{
-    getButtons: function(cfg) {
-        var btns = [];
+    getButtons: function(config) {
+        var buttons = [];
         
-        if (cfg.canSave == 1) {
-            btns.push({
+        if (config.canSave == 1) {
+            buttons.push({
                 process: 'Resource/Create'
                 ,reload: true
                 ,text: _('save')
                 ,id: 'modx-abtn-save'
                 ,cls:'primary-button'
                 ,method: 'remote'
-                //,checkDirty: true
                 ,keys: [{
                     key: MODx.config.keymap_save || 's'
                     ,ctrl: true
@@ -36,7 +35,7 @@ Ext.extend(GoodNewsResource.page.CreateGoodNewsResourceContainer,MODx.page.Creat
             });
         }
         
-        btns.push({
+        buttons.push({
             process: 'cancel'
             ,text: _('cancel')
             ,handler: this.cancel
@@ -44,8 +43,8 @@ Ext.extend(GoodNewsResource.page.CreateGoodNewsResourceContainer,MODx.page.Creat
             ,id: 'modx-abtn-cancel'
         });
         
-        btns.push({
-            text: '<i class="icon icon-question-circle icon-lg"></i>&nbsp;' + _('help_ex')
+        buttons.push({
+            text: '<i class="icon icon-question-circle"></i>'
             ,id: 'modx-abtn-help'
             ,handler: function(){
                 MODx.helpUrl = GoodNewsResource.helpUrl;

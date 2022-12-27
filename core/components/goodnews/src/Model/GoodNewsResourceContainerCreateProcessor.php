@@ -10,10 +10,10 @@
  * file that was distributed with this source code.
  */
 
-namespace Bitego\GoodNews\Processors\Container;
+namespace Bitego\GoodNews\Model;
 
 use MODX\Revolution\modX;
-use MODX\Revolution\Processors\Resource\Create as CreateProcessor;
+use MODX\Revolution\Processors\Resource\Create;
 use Bitego\GoodNews\Model\GoodNewsResourceContainer;
 
 /**
@@ -22,7 +22,7 @@ use Bitego\GoodNews\Model\GoodNewsResourceContainer;
  *
  * @package goodnews
  */
-class Create extends CreateProcessor
+class GoodNewsResourceContainerCreateProcessor extends Create
 {
     /** @var GoodNewsResourceContainer $object */
     public $object;
@@ -53,9 +53,12 @@ class Create extends CreateProcessor
 
                 $settings[$key] = $v;
 
-                // Remove MODX tag delimiters
-                $settings['unsubscribeResource'] = $this->extractID($settings['unsubscribeResource']);
-                $settings['profileResource'] = $this->extractID($settings['profileResource']);
+                $settings['unsubscribeResource'] = !empty($settings['unsubscribeResource'])
+                    ? $this->extractID($settings['unsubscribeResource'])
+                    : '';
+                $settings['profileResource'] = !empty($settings['profileResource'])
+                    ? $this->extractID($settings['profileResource'])
+                    : '';
             }
         }
 
@@ -76,10 +79,15 @@ class Create extends CreateProcessor
     public function afterSave()
     {
         $this->setProperty('clearCache', true);
-
         return parent::afterSave();
     }
 
+    /**
+     * Remove MODX tag delimiters from given string
+     *
+     * @param string $str The string to parse
+     * @return string The parsed string
+     */
     private function extractID($str)
     {
         $str = str_replace('[[~', '', $str);

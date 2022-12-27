@@ -11,82 +11,92 @@ GoodNewsResource.page.UpdateGoodNewsResourceContainer = function(config) {
     config.record = config.record || {};
     Ext.applyIf(config,{
         panelXType: 'goodnewsresource-panel-container'
-        ,actions: {
-            'new': 'Resource/Create'
-            ,'edit': 'Resource/Update'
-            ,'preview': 'Resource/Preview'
-        }
     });
     config.canDuplicate = false;
     config.canDelete = false;
     GoodNewsResource.page.UpdateGoodNewsResourceContainer.superclass.constructor.call(this,config);
 };
 Ext.extend(GoodNewsResource.page.UpdateGoodNewsResourceContainer,MODx.page.UpdateResource,{
-    getButtons: function(cfg) {
-        var btns = [];
+    getButtons: function(config) {
+        var buttons = [];
         
-        btns.push({
-            text: cfg.lockedText || _('locked')
-            ,id: 'modx-abtn-locked'
-            ,handler: Ext.emptyFn
-            ,hidden: (cfg.canSave == 1)
-            ,disabled: true
+        buttons.push({
+            text: '<i class="icon icon-envelope"></i>&nbsp;&nbsp;'+_('goodnews.manage_mailings')
+            ,id: 'gon-abtn-management'
+            ,handler: this.loadGoodNewsManagement
         });
 
-        btns.push({
-            text: _('goodnews.manage_mailings')
-            ,handler: this.loadGoodNewsManagement
-            ,id: 'gon-abtn-management'
-        });
-        
-        btns.push({
+        buttons.push({
             process: 'Resource/Update'
             ,text: _('save')
             ,id: 'modx-abtn-save'
             ,cls: 'primary-button'
             ,method: 'remote'
-            ,hidden: !(cfg.canSave == 1)
-            //,checkDirty: MODx.request.reload ? false : true
+            ,hidden: !(config.canSave == 1)
             ,keys: [{
                 key: MODx.config.keymap_save || 's'
                 ,ctrl: true
             }]
+        },{
+            text: (config.lockedText || '<i class="icon icon-lock"></i>')
+            ,id: 'modx-abtn-locked'
+            ,handler: Ext.emptyFn
+            ,hidden: (config.canSave == 1)
+            ,disabled: true
         });
         
-        if (cfg.canDelete == 1 && !cfg.locked) {
-            btns.push({
-                text: _('delete')
-                ,id: 'modx-abtn-delete'
-                ,handler: this.deleteResource
-                ,scope:this
+        if (config.canDuplicate == 1 && (config.record.parent !== parseInt(MODx.config.tree_root_id) || config.canCreateRoot == 1)) {
+            buttons.push({
+                text: _('duplicate')
+                ,id: 'modx-abtn-duplicate'
+                ,handler: this.duplicateResource
+                ,scope: this
             });
         }
         
-        btns.push({
+        buttons.push({
             text: _('view')
             ,id: 'modx-abtn-preview'
             ,handler: this.preview
+            ,hidden: config.record.deleted
             ,scope: this
-        });
-        
-        btns.push({
+        },{
             text: _('cancel')
             ,id: 'modx-abtn-cancel'
             ,handler: this.cancel
             ,scope: this
         });
         
-        btns.push({
-            text: '<i class="icon icon-question-circle icon-lg"></i>&nbsp;' + _('help_ex')
+        if (config.canDelete == 1 && !config.locked) {
+            buttons.push({
+                text: '<i class="icon icon-repeat"></i>'
+                ,id: 'modx-abtn-undelete'
+                ,handler: this.unDeleteResource
+                ,hidden: !config.record.deleted
+                ,scope: this
+            });
+        
+            buttons.push({
+                text: '<i class="icon icon-trash-o"></i>'
+                ,id: 'modx-abtn-delete'
+                ,handler: this.deleteResource
+                ,hidden: config.record.deleted
+                ,scope: this
+            });
+        }
+        
+        buttons.push({
+            text: '<i class="icon icon-question-circle"></i>'
             ,id: 'modx-abtn-help'
             ,handler: function(){
                 MODx.helpUrl = GoodNewsResource.helpUrl;
                 MODx.loadHelpPane();
             }
         });
-        
-        return btns;
+
+        return buttons;
     }
+    
     ,loadGoodNewsManagement: function(btn,e) {
         MODx.loadPage('index', 'namespace=goodnews&id=' + MODx.request.id);
     }
