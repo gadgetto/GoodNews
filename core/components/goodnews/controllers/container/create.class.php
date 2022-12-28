@@ -13,12 +13,6 @@
 use Bitego\GoodNews\GoodNews;
 use MODX\Revolution\modTemplate;
 
-require_once $modx->getOption(
-    'manager_path',
-    null,
-    MODX_MANAGER_PATH
-) . 'controllers/default/resource/create.class.php';
-
 /**
  * Legacy GoodNewsResourceContainer create controller.
  *

@@ -12,12 +12,6 @@
 
 use Bitego\GoodNews\GoodNews;
 
-require_once $modx->getOption(
-    'manager_path',
-    null,
-    MODX_MANAGER_PATH
-) . 'controllers/default/resource/update.class.php';
-
 /**
  * Legacy GoodNewsResourceContainer update controller.
  *
