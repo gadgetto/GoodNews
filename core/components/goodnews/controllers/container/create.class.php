@@ -11,6 +11,7 @@
  */
 
 use Bitego\GoodNews\GoodNews;
+use MODX\Revolution\modTemplate;
 
 require_once $modx->getOption(
     'manager_path',
@@ -36,15 +37,14 @@ class GoodNewsResourceContainerCreateManagerController extends ResourceCreateMan
      */
     public function loadCustomCssJs()
     {
-        $managerUrl = $this->context->getOption(
-            'manager_url',
-            MODX_MANAGER_URL,
-            $this->modx->_userConfig
-        );
+        $this->prepareResource();
+
+        $managerUrl = $this->context->getOption('manager_url', MODX_MANAGER_URL, $this->modx->_userConfig);
+        $modxAssetsUrl = $this->modx->getOption('assets_url', null, MODX_ASSETS_URL);
         $goodNewsAssetsUrl = $this->modx->getOption(
             'goodnews.assets_url',
             null,
-            $this->modx->getOption('assets_url', null, MODX_ASSETS_URL) . 'components/goodnews/'
+            $modxAssetsUrl . 'components/goodnews/'
         );
         $goodNewsJsUrl = $goodNewsAssetsUrl . 'js/';
 
@@ -59,7 +59,7 @@ class GoodNewsResourceContainerCreateManagerController extends ResourceCreateMan
         $this->addLastJavascript($goodNewsJsUrl . 'res/container/create.js');
 
         $data = [
-            'xtype' => 'goodnewsresource-page-container-update',
+            'xtype' => 'goodnewsresource-page-container-create',
             'resource' => $this->resource->get('id'),
             'record' => $this->resourceArray,
             'publish_document' => $this->canPublish,
@@ -117,11 +117,9 @@ class GoodNewsResourceContainerCreateManagerController extends ResourceCreateMan
      */
     public function prepareResource()
     {
-        $this->resourceArray['goodnews_container_settings'] = $this->resource->getContainerSettings();
-
         $settings = $this->resource->getProperties('goodnews');
         if (empty($settings)) {
-            $settings = array();
+            $settings = [];
         }
 
         $defaultContainerTemplate = $this->modx->getOption(
@@ -130,14 +128,16 @@ class GoodNewsResourceContainerCreateManagerController extends ResourceCreateMan
             false
         );
         if (empty($defaultContainerTemplate)) {
-            $template = $this->modx->getObject(
-                'modTemplate',
-                ['templatename' => 'sample.GoodNewsContainerTemplate']
-            );
+            /** @var modTemplate $template */
+            $template = $this->modx->getObject(modTemplate::class, [
+                'templatename' => 'sample.GoodNewsContainerTemplate'
+            ]);
             if ($template) {
                 $defaultContainerTemplate = $template->get('id');
             }
         }
+
+        $this->resourceArray['goodnews_container_settings'] = $this->resource->getContainerSettings();
         $this->resourceArray['template'] = $defaultContainerTemplate;
 
         // The following setting can only be edited trough GoodNews system settings!

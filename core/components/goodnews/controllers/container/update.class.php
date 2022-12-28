@@ -38,15 +38,12 @@ class GoodNewsResourceContainerUpdateManagerController extends ResourceUpdateMan
     {
         $this->prepareResource();
 
-        $managerUrl = $this->context->getOption(
-            'manager_url',
-            MODX_MANAGER_URL,
-            $this->modx->_userConfig
-        );
+        $managerUrl = $this->context->getOption('manager_url', MODX_MANAGER_URL, $this->modx->_userConfig);
+        $modxAssetsUrl = $this->modx->getOption('assets_url', null, MODX_ASSETS_URL);
         $goodNewsAssetsUrl = $this->modx->getOption(
             'goodnews.assets_url',
             null,
-            $this->modx->getOption('assets_url', null, MODX_ASSETS_URL) . 'components/goodnews/'
+            $modxAssetsUrl . 'components/goodnews/'
         );
         $goodNewsJsUrl = $goodNewsAssetsUrl . 'js/';
 
@@ -112,7 +109,6 @@ class GoodNewsResourceContainerUpdateManagerController extends ResourceUpdateMan
     public function prepareResource()
     {
         $this->resourceArray['goodnews_container_settings'] = $this->resource->getContainerSettings();
-
         $settings = $this->resource->getProperties('goodnews');
         if (is_array($settings) && !empty($settings)) {
             foreach ($settings as $k => $v) {

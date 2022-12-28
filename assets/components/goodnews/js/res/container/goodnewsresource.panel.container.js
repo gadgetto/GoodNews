@@ -8,18 +8,19 @@
  */
 GoodNewsResource.panel.Container = function(config) {
     config = config || {};
+    /*
     Ext.applyIf(config,{
         class_key: 'Bitego\\GoodNews\\Model\\GoodNewsResourceContainer'
     });
-
+    */
     GoodNewsResource.panel.Container.superclass.constructor.call(this,config);
 };
 Ext.extend(GoodNewsResource.panel.Container,MODx.panel.Resource,{
     
-    defaultClassKey: 'Bitego\\GoodNews\\Model\\GoodNewsResourceContainer'
-    ,classLexiconKey: 'goodnews.container'
+    //defaultClassKey: 'Bitego\\GoodNews\\Model\\GoodNewsResourceContainer'
+    //,classLexiconKey: 'goodnews.container'
 
-    ,getFields: function(config) {
+    getFields: function(config) {
         var it = [];
         it.push({
             id: 'modx-resource-settings'

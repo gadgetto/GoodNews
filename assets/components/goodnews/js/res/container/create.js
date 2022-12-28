@@ -19,7 +19,7 @@ GoodNewsResource.page.CreateGoodNewsResourceContainer = function(config) {
 Ext.extend(GoodNewsResource.page.CreateGoodNewsResourceContainer,MODx.page.CreateResource,{
     getButtons: function(config) {
         var buttons = [];
-        
+
         if (config.canSave == 1) {
             buttons.push({
                 process: 'Resource/Create'
@@ -51,8 +51,8 @@ Ext.extend(GoodNewsResource.page.CreateGoodNewsResourceContainer,MODx.page.Creat
                 MODx.loadHelpPane();
             }
         });
-        
-        return btns;
+
+        return buttons;
     }
 });
 Ext.reg('goodnewsresource-page-container-create',GoodNewsResource.page.CreateGoodNewsResourceContainer);
