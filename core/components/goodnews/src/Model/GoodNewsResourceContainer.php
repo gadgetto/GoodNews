@@ -155,7 +155,7 @@ class GoodNewsResourceContainer extends modResource
      */
     public function prepareTreeNode(array $node = array())
     {
-        $this->xpdo->lexicon->load('goodnews:resource');
+        $this->xpdo->lexicon->load('resource', 'goodnews:resource');
 
         $idNote = $this->xpdo->hasPermission('tree_show_resource_ids')
             ? ' <span dir="ltr">(' . $this->id . ')</span>'
@@ -180,6 +180,10 @@ class GoodNewsResourceContainer extends modResource
             'handler' => 'Ext.emptyFn',
         ];
         $menu[] = '-';
+        $menu[] = [
+            'text' => $this->xpdo->lexicon('resource_overview'),
+            'handler' => 'this.overviewResource',
+        ];
         $menu[] = [
             'text' => $this->xpdo->lexicon('goodnews.container_manage'),
             'handler' => 'this.editResource',
