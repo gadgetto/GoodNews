@@ -102,4 +102,25 @@ class Base extends modExtraManagerController
     {
         return true;
     }
+
+    /**
+     * Load the error panel
+     *
+     * @access public
+     * @return void
+     */
+    public function loadErrorPanelCssJs()
+    {
+        $this->addJavascript($this->goodnews->config['jsUrl'] . 'mgr/widgets/error_message.panel.js');
+        $this->addLastJavascript($this->goodnews->config['jsUrl'] . 'mgr/sections/error.panel.js');
+        $this->addHtml(
+            '<script>
+            Ext.onReady(function(){
+                GoodNews.config = ' . $this->modx->toJSON($this->goodnews->config) . ';
+                GoodNews.request = ' . $this->modx->toJSON($_GET) . ';
+                MODx.add("goodnews-panel-error");
+            });
+            </script>'
+        );
+    }
 }

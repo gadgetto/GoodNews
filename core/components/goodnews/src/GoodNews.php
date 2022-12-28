@@ -154,7 +154,6 @@ class GoodNews
 
                 // Get all GoodNews mailing containers the user has access to
                 $this->userAvailableContainers = $this->getUserAvailableContainers();
-
                 if ($this->userAvailableContainers) {
                     $this->initializeMailingContainer();
                 } else {
@@ -217,7 +216,7 @@ class GoodNews
         $this->userCurrentContainer = $this->getUserCurrentContainer();
 
         // Ensure the current container is set
-        if (empty($this->userCurrentContainer) || !$this->isGoodNewsContainer($this->userCurrentContainer)) {
+        if (empty($this->userCurrentContainer)) {
             // If no container is preselected, set default container (= first container based on ID)
             $containers = explode(',', $this->userAvailableContainers);
             $this->userCurrentContainer = reset($containers);
@@ -228,9 +227,14 @@ class GoodNews
         if ($resource) {
             // Get context key of actual GoodNews container
             $this->contextKey = $resource->get('context_key');
-
             // Read template setting for child resources (mailings) of actual GoodNews container
             $this->mailingTemplate = $resource->getProperty('mailingTemplate', 'goodnews');
+        } else {
+            $this->addSetupError(
+                '503 Service Unavailable',
+                $this->modx->lexicon('goodnews.error_message_no_container_available'),
+                false
+            );
         }
     }
 
@@ -296,6 +300,20 @@ class GoodNews
      */
     public function setUserCurrentContainer($containerId)
     {
+        $container = $this->modx->getObject(modResource::class, $containerId);
+        if (!is_object($container) || !$this->isGoodNewsContainer($containerId)) {
+            return false;
+        }
+        // Security check: is user entitled to manage the requested GoodNews container?
+        if (!$this->isEditor($container)) {
+            $this->addSetupError(
+                '401 Unauthorized',
+                $this->modx->lexicon('goodnews.error_message_unauthorized'),
+                false
+            );
+            return false;
+        }
+
         $usersetting = $this->modx->getObject(modUserSetting::class, [
             'key' => 'goodnews.current_container',
             'user' => $this->modx->user->get('id')

@@ -49,11 +49,14 @@ class Import extends Base
      */
     public function loadCustomCssJs()
     {
+        if ($this->setupErrors) {
+            $this->loadErrorPanelCssJs();
+            return;
+        }
         $this->addJavascript($this->goodnews->config['jsUrl'] . 'mgr/widgets/import_subscribers.panel.js');
         $this->addLastJavascript($this->goodnews->config['jsUrl'] . 'mgr/sections/import.panel.js');
-
         $this->addHtml(
-            '<script type="text/javascript">
+            '<script>
             Ext.onReady(function(){
                 GoodNews.config = ' . $this->modx->toJSON($this->goodnews->config) . ';
                 GoodNews.request = ' . $this->modx->toJSON($_GET) . ';

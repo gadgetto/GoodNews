@@ -49,19 +49,24 @@ class Settings extends Base
      */
     public function loadCustomCssJs()
     {
+        if ($this->setupErrors) {
+            $this->loadErrorPanelCssJs();
+            return;
+        }
         $this->addJavascript($this->goodnews->config['jsUrl'] . 'mgr/widgets/settings_general.panel.js');
         $this->addJavascript($this->goodnews->config['jsUrl'] . 'mgr/widgets/settings_container.panel.js');
         // $this->addJavascript($this->goodnews->config['jsUrl'] . 'mgr/widgets/settings_bounceparsingrules.panel.js');
         $this->addJavascript($this->goodnews->config['jsUrl'] . 'mgr/widgets/settings_system.panel.js');
         $this->addJavascript($this->goodnews->config['jsUrl'] . 'mgr/widgets/settings_about.panel.js');
         $this->addLastJavascript($this->goodnews->config['jsUrl'] . 'mgr/sections/settings.panel.js');
-
-        $this->addHtml('<script type="text/javascript">
-        Ext.onReady(function(){
-            GoodNews.config = ' . $this->modx->toJSON($this->goodnews->config) . ';
-            GoodNews.request = ' . $this->modx->toJSON($_GET) . ';
-            MODx.add("goodnews-panel-settings");
-        });
-        </script>');
+        $this->addHtml(
+            '<script>
+            Ext.onReady(function(){
+                GoodNews.config = ' . $this->modx->toJSON($this->goodnews->config) . ';
+                GoodNews.request = ' . $this->modx->toJSON($_GET) . ';
+                MODx.add("goodnews-panel-settings");
+            });
+            </script>'
+        );
     }
 }
