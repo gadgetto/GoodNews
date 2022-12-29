@@ -1,5 +1,5 @@
 <?php
-header($_SERVER['SERVER_PROTOCOL'].' '.$statuscode);
+header($_SERVER['SERVER_PROTOCOL'] . ' ' . $statuscode);
 ?>
 <html>
 <head>
@@ -31,7 +31,7 @@ p {
 </head>
 <body>
 <div class="message">
-    <?php echo '<h1>'.$statuscode.'</h1><p>'.$description.'</p>'; ?>
+    <?php echo '<h1>' . $statuscode . '</h1><p>' . $description . '</p>'; ?>
 </div>
 </body>
 <?php
