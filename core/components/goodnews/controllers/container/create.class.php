@@ -14,9 +14,10 @@ use Bitego\GoodNews\GoodNews;
 use MODX\Revolution\modTemplate;
 
 /**
- * Legacy GoodNewsResourceContainer create controller.
+ * GoodNewsResourceContainer create controller
  *
  * @package goodnews
+ * @subpackage controllers
  */
 
 class GoodNewsResourceContainerCreateManagerController extends ResourceCreateManagerController

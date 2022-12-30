@@ -13,16 +13,14 @@
 use Bitego\GoodNews\GoodNews;
 
 /**
- * Legacy GoodNewsResourceContainer update controller.
+ * GoodNewsResourceContainer update controller
  *
  * @package goodnews
+ * @subpackage controllers
  */
 
 class GoodNewsResourceContainerUpdateManagerController extends ResourceUpdateManagerController
 {
-    /** @var GoodNewsResourceContainer $resource */
-    public $resource;
-
     /**
      * Register custom CSS/JS for the page
      *
@@ -32,7 +30,7 @@ class GoodNewsResourceContainerUpdateManagerController extends ResourceUpdateMan
     {
         $this->prepareResource();
 
-        $managerUrl = $this->context->getOption('manager_url', MODX_MANAGER_URL, $this->modx->_userConfig);
+        $managerUrl = $this->context->getOption('manager_url', null, MODX_MANAGER_URL);
         $modxAssetsUrl = $this->modx->getOption('assets_url', null, MODX_ASSETS_URL);
         $goodNewsAssetsUrl = $this->modx->getOption(
             'goodnews.assets_url',
@@ -57,14 +55,15 @@ class GoodNewsResourceContainerUpdateManagerController extends ResourceUpdateMan
             'record' => $this->resourceArray,
             'publish_document' => $this->canPublish,
             'preview_url' => $this->previewUrl,
-            'locked' => $this->locked ? 1 : 0,
+            'locked' => (int)$this->locked,
             'lockedText' => $this->lockedText,
-            'canSave' => $this->canSave ? 1 : 0,
-            'canEdit' => $this->canEdit ? 1 : 0,
-            'canCreate' => $this->canCreate ? 1 : 0,
-            'canDuplicate' => $this->canDuplicate ? 1 : 0,
-            'canDelete' => $this->canDelete ? 1 : 0,
-            'show_tvs' => !empty($this->tvCounts) ? 1 : 0,
+            'canSave' => (int)$this->canSave,
+            'canEdit' => (int)$this->canEdit,
+            'canCreate' => (int)$this->canCreate,
+            'canCreateRoot' => (int)$this->canCreateRoot,
+            'canDuplicate' => (int)$this->canDuplicate,
+            'canDelete' => (int)$this->canDelete,
+            'show_tvs' => (int)!empty($this->tvCounts),
             'mode' => 'update',
         ];
 
@@ -74,7 +73,7 @@ class GoodNewsResourceContainerUpdateManagerController extends ResourceUpdateMan
             GoodNewsResource.helpUrl = "' . GoodNews::HELP_URL . '";
             MODx.config.publish_document = "' . $this->canPublish . '";
             MODx.onDocFormRender = "' . $this->onDocFormRender . '";
-            MODx.ctx = "' . $this->resource->get('context_key') . '";
+            MODx.ctx = "' . $this->ctx . '";
             Ext.onReady(function() {
                 MODx.load(' . json_encode($data, JSON_INVALID_UTF8_SUBSTITUTE) . ')
             });
