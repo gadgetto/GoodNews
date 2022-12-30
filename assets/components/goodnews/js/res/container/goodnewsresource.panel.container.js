@@ -8,17 +8,9 @@
  */
 GoodNewsResource.panel.Container = function(config) {
     config = config || {};
-    /*
-    Ext.applyIf(config,{
-        class_key: 'Bitego\\GoodNews\\Model\\GoodNewsResourceContainer'
-    });
-    */
     GoodNewsResource.panel.Container.superclass.constructor.call(this,config);
 };
 Ext.extend(GoodNewsResource.panel.Container,MODx.panel.Resource,{
-    
-    //defaultClassKey: 'Bitego\\GoodNews\\Model\\GoodNewsResourceContainer'
-    //,classLexiconKey: 'goodnews.container'
 
     getFields: function(config) {
         var it = [];
@@ -85,52 +77,6 @@ Ext.extend(GoodNewsResource.panel.Container,MODx.panel.Resource,{
             its.push(tvs);
         }
         return its;
-    }
-
-    ,getPageHeader: function(config) {
-        config = config || {record:{}};
-        var header = {
-            // html: _('goodnews.container_new')
-            html: config.record && config.record.pagetitle || config.default_title
-            ,id: 'modx-resource-header'
-            ,xtype: 'modx-header'
-        };
-        // Add breadcrumbs with parents
-        if (config.record['parents'] && config.record['parents'].length) {
-            var parents = config.record['parents'];
-            var trail = [];
-            for (var i = 0; i < parents.length; i++) {
-                if (parents[i].id) {
-                    if (parents[i].parent && i == 1) {
-                        trail.push({
-                            text: parents[i].parent && i == 1 ? '...' : parents[i].pagetitle
-                            ,href: false
-                        });
-                    }
-                    trail.push({
-                        text: parents[i].pagetitle
-                        ,href: MODx.config.manager_url + '?a=resource/update&id=' + parents[i].id
-                        ,cls: function(data) {
-                            var cls = [];
-                            if (!data.published) {
-                                cls.push('not_published');
-                            }
-                            if (data.hidemenu) {
-                                cls.push('menu_hidden');
-                            }
-                            return cls.join(' ');
-                        }(parents[i])
-                    });
-                } else {
-                    trail.push({
-                        text: parents[i].name || parents[i].key
-                        ,href: false
-                    });
-                }
-            }
-            return MODx.util.getHeaderBreadCrumbs(header, trail);
-        }
-        return header;
     }
 
     // GoodNewsResourceContainer hidden fields
