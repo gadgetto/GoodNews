@@ -54,7 +54,7 @@ if (!($goodnews instanceof GoodNews)) {
 require_once $sources['source_core'].'/model/goodnews/goodnewsbmh.class.php';
 
 // testing examples
-$bmh = new GoodNewsBounceMailHandler($modx);
+$bmh = new BounceMailHandler($modx);
 
 $bmh->testmode             = true; // false is default, no need to specify
 $bmh->debug                = true;

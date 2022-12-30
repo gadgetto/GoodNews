@@ -268,11 +268,11 @@ class Update extends UpdateProcessor
      */
     private function connectionTest()
     {
-        $bmh = new GoodNewsBounceMailHandler($this->modx);
-        if (!($bmh instanceof GoodNewsBounceMailHandler)) {
+        $bmh = new BounceMailHandler($this->modx);
+        if (!($bmh instanceof BounceMailHandler)) {
             $this->modx->log(
                 modX::LOG_LEVEL_ERROR,
-                '[GoodNews] GoodNewsBounceMailHandler class could not be instantiated.'
+                '[GoodNews] BounceMailHandler class could not be instantiated.'
             );
             return false;
         }
