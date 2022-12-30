@@ -89,7 +89,7 @@ Ext.extend(GoodNews.HomePanel,MODx.Panel,{
     ,getElements: function() {
         var elements = [];
         // Cron ping display
-        elements.push('-',{
+        elements.push({
             xtype: 'tbtext'
             ,id: 'goodnews-cron-ping-display'
             ,text: _('goodnews.task_scheduler_touch_waiting')
@@ -103,7 +103,7 @@ Ext.extend(GoodNews.HomePanel,MODx.Panel,{
                     });
                 },scope:this}
             }
-        },'-')
+        })
         // Dropdown for choosing a GoodNews container
         elements.push({
             xtype: 'modx-combo'
@@ -135,7 +135,7 @@ Ext.extend(GoodNews.HomePanel,MODx.Panel,{
             ,listeners: {
                 'select': {fn:this.setUserCurrentContainer,scope:this}
             }
-        },'-')
+        })
         // Settings button
         if (GoodNews.config.isGoodNewsAdmin) {
             elements.push({
@@ -143,7 +143,7 @@ Ext.extend(GoodNews.HomePanel,MODx.Panel,{
                 ,id: 'button-settings'
                 ,handler: this.loadSettingsPanel
                 ,scope: this
-            },'-')
+            })
         }
         // Help button
         elements.push({

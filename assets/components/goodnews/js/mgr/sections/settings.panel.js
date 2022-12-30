@@ -74,10 +74,10 @@ Ext.extend(GoodNews.SettingsPanel,MODx.FormPanel,{
     ,getButtons: function() {
         var buttons = [];
         // Plugin version
-        buttons.push('-',{
+        buttons.push({
             xtype: 'tbtext'
             ,html: '<i>'+GoodNews.config.componentVersion+'-'+GoodNews.config.componentRelease+'</i>'
-        },'-')
+        })
         // Save Settings button <i class="fa fa-check-circle"></i>
         buttons.push({
             text: '<i class="icon icon-check-circle icon-lg"></i>&nbsp;' + _('goodnews.settings_save_button')
@@ -85,14 +85,14 @@ Ext.extend(GoodNews.SettingsPanel,MODx.FormPanel,{
             ,handler: this.updateSettings
             ,scope: this
             ,cls: 'primary-button'
-        },'-')
+        })
         // Close Settings button
         buttons.push({
             text: '<i class="icon icon-arrow-circle-left icon-lg"></i>&nbsp;' + _('goodnews.settings_close_button')
             ,id: 'button-settings-close'
             ,handler: this.closeSettings
             ,scope: this
-        },'-')
+        })
         // Help button
         buttons.push({
             text: '<i class="icon icon-question-circle icon-lg"></i>&nbsp;' + _('help_ex')

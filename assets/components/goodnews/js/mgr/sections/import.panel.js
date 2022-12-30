@@ -105,10 +105,10 @@ Ext.extend(GoodNews.ImportPanel,MODx.FormPanel,{
     ,getButtons: function() {
         var buttons = [];
         // Plugin version
-        buttons.push('-',{
+        buttons.push({
             xtype: 'tbtext'
             ,html: '<i>'+GoodNews.config.componentVersion+'-'+GoodNews.config.componentRelease+'</i>'
-        },'-')
+        })
         // Start Import button
         buttons.push({
             text: '<i class="icon icon-download icon-lg"></i>&nbsp;' + _('goodnews.import_subscribers_button_start')
@@ -116,14 +116,14 @@ Ext.extend(GoodNews.ImportPanel,MODx.FormPanel,{
             ,cls: 'primary-button'
             ,handler: this.startSubscriberImport
             ,scope: this
-        },'-')
+        })
         // Close Import button
         buttons.push({
             text: '<i class="icon icon-arrow-circle-left icon-lg"></i>&nbsp;' + _('goodnews.import_close_button')
             ,id: 'button-import-close'
             ,handler: this.closeImport
             ,scope: this
-        },'-')
+        })
         // Help button
         buttons.push({
             text: '<i class="icon icon-question-circle icon-lg"></i>&nbsp;' + _('help_ex')

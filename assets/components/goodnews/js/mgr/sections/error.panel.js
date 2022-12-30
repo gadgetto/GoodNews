@@ -54,10 +54,10 @@ Ext.extend(GoodNews.ErrorPanel,MODx.FormPanel,{
     ,getButtons: function() {
         var buttons = [];
         // Plugin version
-        buttons.push('-',{
+        buttons.push({
             xtype: 'tbtext'
             ,html: '<i>'+GoodNews.config.componentVersion+'-'+GoodNews.config.componentRelease+'</i>'
-        },'-')
+        })
         // Help button
         buttons.push({
             text: '<i class="icon icon-question-circle icon-lg"></i>&nbsp;' + _('help_ex')
