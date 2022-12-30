@@ -21,9 +21,6 @@ use MODX\Revolution\modTemplate;
 
 class GoodNewsResourceContainerCreateManagerController extends ResourceCreateManagerController
 {
-    /** @var GoodNewsResourceContainer $resource */
-    public $resource;
-
     /**
      * Register custom CSS/JS for the page
      *
@@ -33,7 +30,7 @@ class GoodNewsResourceContainerCreateManagerController extends ResourceCreateMan
     {
         $this->prepareResource();
 
-        $managerUrl = $this->context->getOption('manager_url', MODX_MANAGER_URL, $this->modx->_userConfig);
+        $managerUrl = $this->context->getOption('manager_url', null, MODX_MANAGER_URL);
         $modxAssetsUrl = $this->modx->getOption('assets_url', null, MODX_ASSETS_URL);
         $goodNewsAssetsUrl = $this->modx->getOption(
             'goodnews.assets_url',
@@ -54,15 +51,10 @@ class GoodNewsResourceContainerCreateManagerController extends ResourceCreateMan
 
         $data = [
             'xtype' => 'goodnewsresource-page-container-create',
-            'resource' => $this->resource->get('id'),
             'record' => $this->resourceArray,
             'publish_document' => $this->canPublish,
-            'canSave' => $this->canSave ? 1 : 0,
-            'canEdit' => $this->canEdit ? 1 : 0,
-            'canCreate' => $this->canCreate ? 1 : 0,
-            'canDuplicate' => $this->canDuplicate ? 1 : 0,
-            'canDelete' => $this->canDelete ? 1 : 0,
-            'show_tvs' => !empty($this->tvCounts) ? 1 : 0,
+            'canSave' => (int)$this->modx->hasPermission('save_document'),
+            'show_tvs' => (int)!empty($this->tvCounts),
             'mode' => 'create',
         ];
 
@@ -72,7 +64,7 @@ class GoodNewsResourceContainerCreateManagerController extends ResourceCreateMan
             GoodNewsResource.helpUrl = "' . GoodNews::HELP_URL . '";
             MODx.config.publish_document = "' . $this->canPublish . '";
             MODx.onDocFormRender = "' . $this->onDocFormRender . '";
-            MODx.ctx = "' . $this->resource->get('context_key') . '";
+            MODx.ctx = "' . $this->ctx . '";
             Ext.onReady(function() {
                 MODx.load(' . json_encode($data, JSON_INVALID_UTF8_SUBSTITUTE) . ')
             });
@@ -102,7 +94,6 @@ class GoodNewsResourceContainerCreateManagerController extends ResourceCreateMan
     {
         return $this->modx->lexicon('goodnews.container_new');
     }
-
 
     /**
      * Used to set values on the resource record sent to the template for derivative classes
