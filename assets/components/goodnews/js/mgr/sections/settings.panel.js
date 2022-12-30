@@ -78,9 +78,9 @@ Ext.extend(GoodNews.SettingsPanel,MODx.FormPanel,{
             xtype: 'tbtext'
             ,html: '<i>'+GoodNews.config.componentVersion+'-'+GoodNews.config.componentRelease+'</i>'
         })
-        // Save Settings button <i class="fa fa-check-circle"></i>
+        // Save Settings button
         buttons.push({
-            text: '<i class="icon icon-check-circle icon-lg"></i>&nbsp;' + _('goodnews.settings_save_button')
+            text: '<i class="icon icon-check-circle"></i>&nbsp;' + _('goodnews.settings_save_button')
             ,id: 'button-settings-save'
             ,handler: this.updateSettings
             ,scope: this
@@ -88,14 +88,14 @@ Ext.extend(GoodNews.SettingsPanel,MODx.FormPanel,{
         })
         // Close Settings button
         buttons.push({
-            text: '<i class="icon icon-arrow-circle-left icon-lg"></i>&nbsp;' + _('goodnews.settings_close_button')
+            text: '<i class="icon icon-arrow-circle-left"></i>&nbsp;' + _('goodnews.settings_close_button')
             ,id: 'button-settings-close'
             ,handler: this.closeSettings
             ,scope: this
         })
         // Help button
         buttons.push({
-            text: '<i class="icon icon-question-circle icon-lg"></i>&nbsp;' + _('help_ex')
+            text: '<i class="icon icon-question-circle"></i>&nbsp;' + _('help_ex')
             ,id: 'button-help'
             ,handler: function(){
                 MODx.config.help_url = GoodNews.config.helpUrl;

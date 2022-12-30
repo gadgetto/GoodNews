@@ -139,7 +139,7 @@ Ext.extend(GoodNews.HomePanel,MODx.Panel,{
         // Settings button
         if (GoodNews.config.isGoodNewsAdmin) {
             elements.push({
-                text: '<i class="icon icon-cog icon-lg"></i>'
+                text: '<i class="icon icon-cog"></i>'
                 ,id: 'button-settings'
                 ,handler: this.loadSettingsPanel
                 ,scope: this
@@ -147,7 +147,7 @@ Ext.extend(GoodNews.HomePanel,MODx.Panel,{
         }
         // Help button
         elements.push({
-            text: '<i class="icon icon-question-circle icon-lg"></i>&nbsp;' + _('help_ex')
+            text: '<i class="icon icon-question-circle"></i>&nbsp;' + _('help_ex')
             ,id: 'button-help'
             ,handler: function(){
                 MODx.config.help_url = GoodNews.config.helpUrl;

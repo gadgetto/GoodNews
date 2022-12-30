@@ -69,7 +69,7 @@ Ext.extend(GoodNewsResource.page.UpdateGoodNewsResourceMailing,MODx.page.UpdateR
         });
         
         btns.push({
-            text: '<i class="icon icon-question-circle icon-lg"></i>&nbsp;' + _('help_ex')
+            text: '<i class="icon icon-question-circle"></i>&nbsp;' + _('help_ex')
             ,id: 'modx-abtn-help'
             ,handler: function(){
                 MODx.helpUrl = GoodNewsResource.helpUrl;

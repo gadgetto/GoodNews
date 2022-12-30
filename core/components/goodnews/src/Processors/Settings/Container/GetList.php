@@ -65,10 +65,9 @@ class GetList extends GetListProcessor
         // action buttons in grid row
         $resourceArray['actions'] = [];
         $resourceArray['actions'][] = [
-            'className' => 'settings icon icon-lg icon-cog',
+            'className' => 'settings icon icon-cog',
             'text' => $this->modx->lexicon('goodnews.settings_container_update'),
         ];
-
 
         // get container setting (from Resource properties field)
         if (array_key_exists('goodnews', $properties)) {
