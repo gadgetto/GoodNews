@@ -1,6 +1,11 @@
 /**
- * Custom GoodNews CMP styles for Revo >= 2.3.0
+ * Custom GoodNews CMP styles for Revo >= 3.0
  */
+
+/* MODX fixes/workarounds */
+#goodnews-panel-home .x-grid3-body .x-grid3-td-checker {
+    padding: 7px 0 0;
+}
 
 /* Render checkboxes as toogle switch (CSS from MODX3 index.css) */
 .gon-checkbox-toggle .x-form-check-wrap [type="checkbox"],
@@ -145,7 +150,6 @@ html[dir=rtl] .gon-checkbox-toggle .x-fieldset legend [type="checkbox"] {
     padding: 4px 22px 4px 6px;
     line-height: 20px;
 }
-
 
 /* Start / Stop / Continue action buttons */
 .gon-ab-start:before,
