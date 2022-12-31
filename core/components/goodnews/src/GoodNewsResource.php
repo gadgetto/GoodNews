@@ -73,7 +73,7 @@ class GoodNewsResource
             'jsUrl'          => $assetsUrl . 'js/',
             'cssUrl'         => $assetsUrl . 'css/',
             'imgUrl'         => $assetsUrl . 'img/',
-            'connectorUrl'   => $assetsUrl . 'connector_res.php',
+            'connectorUrl'   => $assetsUrl . 'connector.php',
         ], $config);
     }
 
