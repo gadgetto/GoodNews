@@ -22,6 +22,7 @@ use Bitego\GoodNews\ProcessHandler;
 use Bitego\GoodNews\RecipientsHandler;
 use Bitego\GoodNews\Model\GoodNewsResourceContainer;
 use Bitego\GoodNews\Model\GoodNewsResourceMailing;
+use Bitego\GoodNews\Model\GoodNewsMailingMeta;
 use Bitego\GoodNews\Model\GoodNewsSubscriberMeta;
 use TijsVerkoyen\CssToInlineStyles\CssToInlineStyles;
 use Soundasleep\Html2Text;
