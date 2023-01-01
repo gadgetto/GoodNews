@@ -182,7 +182,7 @@ class Export extends GetListProcessor
         // @todo: remove this quickhack and get the counts in prepareQueryBeforeCount
         if (!empty($userArray['id'])) {
             // Check if user has GoodNews meta data
-            $c = $this->modx->newQuery('GoodNewsSubscriberMeta');
+            $c = $this->modx->newQuery(GoodNewsSubscriberMeta::class);
             $c->where([
                 'subscriber_id' => $userArray['id'],
             ]);
