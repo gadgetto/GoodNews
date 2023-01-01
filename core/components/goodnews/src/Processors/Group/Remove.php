@@ -25,6 +25,6 @@ use MODX\Revolution\Processors\Model\RemoveProcessor;
 class Remove extends RemoveProcessor
 {
     public $classKey = GoodNewsGroup::class;
-    public $languageTopics = array('goodnews:default');
+    public $languageTopics = ['goodnews:default'];
     public $objectType = 'goodnews.group';
 }
