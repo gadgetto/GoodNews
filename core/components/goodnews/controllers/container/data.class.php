@@ -11,7 +11,7 @@
  */
 
 /**
- * Legacy GoodNewsResourceContainer data controller.
+ * GoodNewsResourceContainer data controller.
  *
  * @package goodnews
  */
