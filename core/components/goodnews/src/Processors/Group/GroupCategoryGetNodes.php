@@ -13,6 +13,7 @@
 namespace Bitego\GoodNews\Processors\Group;
 
 use MODX\Revolution\Processors\Processor;
+use Bitego\GoodNews\Model\GoodNewsMailingMeta;
 use Bitego\GoodNews\Model\GoodNewsSubscriberMeta;
 use Bitego\GoodNews\Model\GoodNewsCategory;
 use Bitego\GoodNews\Model\GoodNewsGroup;
