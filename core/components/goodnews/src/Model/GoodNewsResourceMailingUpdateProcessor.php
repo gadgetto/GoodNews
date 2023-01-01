@@ -10,10 +10,10 @@
  * file that was distributed with this source code.
  */
 
-namespace Bitego\GoodNews\Processors\Mailing;
+namespace Bitego\GoodNews\Model;
 
 use MODX\Revolution\modX;
-use MODX\Revolution\Processors\Resource\Update as UpdateProcessor;
+use MODX\Revolution\Processors\Resource\Update;
 use Bitego\GoodNews\Model\GoodNewsResourceContainer;
 use Bitego\GoodNews\Model\GoodNewsResourceMailing;
 use Bitego\GoodNews\Model\GoodNewsMailingMeta;
@@ -24,9 +24,8 @@ use Bitego\GoodNews\RecipientsHandler;
  * to provide custom processor functionality.
  *
  * @package goodnews
- * @subpackage processors
  */
-class Update extends UpdateProcessor
+class GoodNewsResourceMailingUpdateProcessor extends Update
 {
     public $classKey = GoodNewsResourceMailing::class;
     public $languageTopics = ['resource','goodnews:default'];
@@ -46,14 +45,11 @@ class Update extends UpdateProcessor
     /**
      * Create the GoodNewsResourceMailing (modResource) object for manipulation.
      *
-     * {@inheritDoc}
-     *
      * @return string|modResource
      */
     public function initialize()
     {
         $initialized = parent::initialize();
-
         $this->meta = $this->modx->getObject(
             GoodNewsMailingMeta::class,
             ['mailing_id' => $this->object->get('id')]
@@ -64,14 +60,12 @@ class Update extends UpdateProcessor
                 return $this->modx->lexicon('resource_err_update');
             }
         }
-
         $this->recipientshandler = new RecipientsHandler($this->modx);
-
         return $initialized;
     }
 
     /**
-     * {@inheritDoc}
+     * Override Update::beforeSet
      *
      * @return boolean|string
      */
@@ -84,8 +78,6 @@ class Update extends UpdateProcessor
     /**
      * Override Update::beforeSave
      *
-     * {@inheritDoc}
-     *
      * @return boolean
      */
     public function beforeSave()
@@ -97,7 +89,7 @@ class Update extends UpdateProcessor
         }
 
         $this->prepareGroupsCategories();
-        $groups      = $this->getProperty('groups');
+        $groups = $this->getProperty('groups');
         $categories  = $this->getProperty('categories');
         $collection1 = array_filter(explode(',', $this->getProperty('collection1')));
         $collection2 = array_filter(explode(',', $this->getProperty('collection2')));
@@ -129,17 +121,13 @@ class Update extends UpdateProcessor
     /**
      * Override Update::afterSave
      *
-     * {@inheritDoc}
-     *
      * @return boolean
      */
     public function afterSave()
     {
         $this->clearContainerCache();
-
         // update recipients list
         $this->recipientshandler->updateRecipientsCollection($this->object->get('id'));
-
         return parent::afterSave();
     }
 

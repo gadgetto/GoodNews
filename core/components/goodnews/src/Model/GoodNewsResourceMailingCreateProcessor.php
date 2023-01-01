@@ -10,10 +10,10 @@
  * file that was distributed with this source code.
  */
 
-namespace Bitego\GoodNews\Processors\Mailing;
+namespace Bitego\GoodNews\Model;
 
 use MODX\Revolution\modX;
-use MODX\Revolution\Processors\Resource\Create as CreateProcessor;
+use MODX\Revolution\Processors\Resource\Create;
 use Bitego\GoodNews\Model\GoodNewsResourceContainer;
 use Bitego\GoodNews\Model\GoodNewsResourceMailing;
 use Bitego\GoodNews\Model\GoodNewsMailingMeta;
@@ -24,9 +24,8 @@ use Bitego\GoodNews\RecipientsHandler;
  * to provide custom processor functionality.
  *
  * @package goodnews
- * @subpackage processors
  */
-class Create extends CreateProcessor
+class GoodNewsResourceMailingCreateProcessor extends Create
 {
     public $classKey = GoodNewsResourceMailing::class;
     public $languageTopics = ['resource', 'goodnews:resource'];
@@ -46,27 +45,22 @@ class Create extends CreateProcessor
     /**
      * Create the GoodNewsResourceMailing (modResource) object for manipulation
      *
-     * {@inheritDoc}
-     *
      * @return string|modResource
      */
     public function initialize()
     {
         $initialized = parent::initialize();
-
         $this->meta = $this->modx->newObject(GoodNewsMailingMeta::class);
         if (!is_object($this->meta)) {
             return $this->modx->lexicon('resource_err_create');
         }
-
         $this->recipientshandler = new RecipientsHandler($this->modx);
-
         return $initialized;
     }
 
     public function beforeSet()
     {
-        $this->setProperty('class_key', GoodNewsResourceMailing::class);
+        $this->setProperty('class_key', $classKey);
         $this->setProperty('searchable', false);
         $this->setProperty('isfolder', false);
         $this->setProperty('cacheable', true);
@@ -77,14 +71,12 @@ class Create extends CreateProcessor
     /**
      * Override Create::beforeSave
      *
-     * {@inheritDoc}
-     *
      * @return boolean
      */
     public function beforeSave()
     {
         $this->prepareGroupsCategories();
-        $groups      = $this->getProperty('groups');
+        $groups = $this->getProperty('groups');
         $categories  = $this->getProperty('categories');
         $collection1 = array_filter(explode(',', $this->getProperty('collection1')));
         $collection2 = array_filter(explode(',', $this->getProperty('collection2')));
@@ -122,17 +114,13 @@ class Create extends CreateProcessor
     /**
      * Override Create::afterSave
      *
-     * {@inheritDoc}
-     *
      * @return boolean
      */
     public function afterSave()
     {
         $this->clearContainerCache();
-
         // save recipients list
         $this->recipientshandler->saveRecipientsCollection($this->object->get('id'));
-
         return parent::afterSave();
     }
 

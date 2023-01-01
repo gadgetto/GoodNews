@@ -34,7 +34,7 @@ Ext.extend(GoodNewsResource.page.CreateGoodNewsResourceContainer,MODx.page.Creat
                 }]
             });
         }
-        
+
         buttons.push({
             process: 'cancel'
             ,text: _('cancel')
@@ -42,7 +42,7 @@ Ext.extend(GoodNewsResource.page.CreateGoodNewsResourceContainer,MODx.page.Creat
             ,scope: this
             ,id: 'modx-abtn-cancel'
         });
-        
+
         buttons.push({
             text: '<i class="icon icon-question-circle"></i>'
             ,id: 'modx-abtn-help'
