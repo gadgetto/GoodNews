@@ -126,7 +126,7 @@ Ext.extend(GoodNews.ImportPanel,MODx.FormPanel,{
         })
         // Help button
         buttons.push({
-            text: '<i class="icon icon-question-circle"></i>&nbsp;' + _('help_ex')
+            text: '<i class="icon icon-question-circle"></i>'
             ,id: 'button-help'
             ,handler: function(){
                 MODx.config.help_url = GoodNews.config.helpUrl;
