@@ -345,7 +345,7 @@ class GetList extends GetListProcessor
                 ];
             } elseif ($resourceArray['status'] == self::GON_NEWSLETTER_STATUS_STOPPED) {
                 $resourceArray['actions'][] = [
-                    'className' => 'continue gon-ab-continue',
+                    'className' => 'continue orange gon-ab-continue',
                     'text'      => '',
                 ];
                 $resourceArray['actions'][] = [
