@@ -120,7 +120,7 @@ class RecipientsHandler
 
         $query = $this->modx->query($sql);
         if ($query) {
-            $users = $query->fetchAll(PDO::FETCH_COLUMN);
+            $users = $query->fetchAll(\PDO::FETCH_COLUMN);
         } else {
             $users = array();
         }
