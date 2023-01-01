@@ -16,6 +16,7 @@ use Bitego\GoodNews\GoodNews;
 use Bitego\GoodNews\Model\GoodNewsResourceContainer;
 use Bitego\GoodNews\Model\GoodNewsResourceMailing;
 use Bitego\GoodNews\Model\GoodNewsMailingMeta;
+use Bitego\GoodNews\Model\GoodNewsSubscriberMeta;
 use MODX\Revolution\modUser;
 use MODX\Revolution\Processors\Model\GetListProcessor;
 use xPDO\Om\xPDOObject;
