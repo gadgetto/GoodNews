@@ -60,7 +60,7 @@ class GoodNewsResourceMailingCreateProcessor extends Create
 
     public function beforeSet()
     {
-        $this->setProperty('class_key', $classKey);
+        $this->setProperty('class_key', $this->classKey);
         $this->setProperty('searchable', false);
         $this->setProperty('isfolder', false);
         $this->setProperty('cacheable', true);
