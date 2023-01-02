@@ -52,6 +52,7 @@ $_lang['goodnews.continue']                                         = 'Continue'
 $_lang['goodnews.test']                                             = 'Test';
 $_lang['goodnews.sendlog']                                          = 'Send-Log';
 $_lang['goodnews.id']                                               = 'ID';
+$_lang['goodnews.user_id']                                          = 'User ID';
 $_lang['goodnews.modx_username']                                    = 'MODX Username';
 $_lang['goodnews.management']                                       = 'GoodNews - Group Mailer';
 $_lang['goodnews.button_settings']                                  = 'Settings';
