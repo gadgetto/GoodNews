@@ -20,6 +20,7 @@ GoodNews.panel.Newsletters = function(config) {
             ,xtype: 'modx-description'
         },{
             xtype: 'goodnews-grid-newsletters'
+            ,bodyCssClass: 'grid-with-buttons'
             ,cls: 'main-wrapper'
             ,preventRender: true
         }]
@@ -100,7 +101,7 @@ GoodNews.grid.Newsletters = function(config) {
         ].join('\n');
 
     // A row expander for newsletter grid rows (additional informations)
-    this.exp = new Ext.ux.grid.RowExpander({
+    this.exp = new Ext.grid.RowExpander({
         tpl: new Ext.Template(nlInfos)
         ,enableCaching: false
         ,lazyRender: false
@@ -109,16 +110,18 @@ GoodNews.grid.Newsletters = function(config) {
     // Newsletter title and action buttons renderer    
     this.tplPageTitle = new Ext.XTemplate(
         '<tpl for=".">'
-            +'<h3 class="gon-newsletter-title"><a href="?a=resource/update&id={id}" title="'+_('goodnews.newsletter_update')+'" class="x-grid-link">{pagetitle}</a></h3>'
+            +'<h3 class="gon-newsletter-title main-column{state:defaultValue("")}">{pagetitle}</h3>'
             +'<tpl if="actions !== null">'
-                +'<ul class="actions">'
+                +'<ul class="actions gon-newsletter-actions">'
                     +'<tpl for="actions">'
                         +'<li><button type="button" class="controlBtn {className}"{disabled}>{text}</button></li>'
                     +'</tpl>'
                 +'</ul>'
             +'</tpl>'
         +'</tpl>'
-    ,{compiled: true});
+    ,{
+        compiled: true
+    });
 
     Ext.applyIf(config,{
         id: 'goodnews-grid-newsletters'
@@ -157,6 +160,7 @@ GoodNews.grid.Newsletters = function(config) {
             ,'menu'
             ,'actions'
         ]
+        ,showActionsColumn: false
         ,emptyText: _('goodnews.newsletters_none')
         ,paging: true
         ,pageSize: 10

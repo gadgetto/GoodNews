@@ -60,34 +60,22 @@ GoodNews.grid.Subscribers = function(config){
     var subscrInfos = [
         '<table id="gon-subscrinfo-{id}" class="gon-expinfos">',
             '<tr>',
-                '<td class="gon-expinfos-key">'+_('goodnews.id')+'</td><td class="gon-expinfos-val">{id}</td>',
-            '</tr>',
-            '<tr>',
-                '<td class="gon-expinfos-key">'+_('goodnews.modx_username')+'</td><td class="gon-expinfos-val">{username}</td>',
-            '</tr>',
-            '<tr>',
+                '<td class="gon-expinfos-key">'+_('goodnews.user_id')+'</td><td class="gon-expinfos-val">{id}</td>',
+                '<td class="gon-expinfos-key">'+_('goodnews.subscriber_subscribed_on')+'</td><td class="gon-expinfos-val">{subscribedon_formatted}</td>',
+                '<td class="gon-expinfos-key">'+_('goodnews.subscriber_ip')+'</td><td class="gon-expinfos-val">{ip}</td>',
                 '<td class="gon-expinfos-key">'+_('goodnews.groups')+'</td><td class="gon-expinfos-val">{grpcount}</td>',
             '</tr>',
             '<tr>',
-                '<td class="gon-expinfos-key">'+_('goodnews.categories')+'</td><td class="gon-expinfos-val">{catcount}</td>',
-            '</tr>',
-            '<tr>',
-                '<td class="gon-expinfos-key">'+_('goodnews.subscriber_subscribed_on')+'</td><td class="gon-expinfos-val">{subscribedon_formatted}</td>',
-            '</tr>',
-            '<tr>',
-                '<td class="gon-expinfos-key">'+_('goodnews.subscriber_ip')+'</td><td class="gon-expinfos-val">{ip}</td>',
-            '</tr>',
-            '<tr>',
+                '<td class="gon-expinfos-key">'+_('goodnews.modx_username')+'</td><td class="gon-expinfos-val">{username}</td>',
                 '<td class="gon-expinfos-key">'+_('goodnews.subscriber_activated_on')+'</td><td class="gon-expinfos-val">{activatedon_formatted}</td>',
-            '</tr>',
-            '<tr>',
                 '<td class="gon-expinfos-key">'+_('goodnews.subscriber_ip_activated')+'</td><td class="gon-expinfos-val">{ip_activated}</td>',
+                '<td class="gon-expinfos-key">'+_('goodnews.categories')+'</td><td class="gon-expinfos-val">{catcount}</td>',
             '</tr>',
         '</table>'
         ].join('\n');
 
     // A row expander for subscribers grid rows (additional informations)
-    this.exp = new Ext.ux.grid.RowExpander({
+    this.exp = new Ext.grid.RowExpander({
         tpl: new Ext.Template(subscrInfos)
         ,enableCaching: false
         ,lazyRender: false
@@ -117,6 +105,7 @@ GoodNews.grid.Subscribers = function(config){
         ]
         ,emptyText: _('goodnews.subscribers_none')
         ,paging: true
+        ,pageSize: Math.min(parseInt(MODx.config.default_per_page), 25)
         ,remoteSort: true
         ,sm: this.sm
         ,plugins: [this.exp]
@@ -138,7 +127,7 @@ GoodNews.grid.Subscribers = function(config){
                         addCls = ' gon-no-subscriptions';
                     }
                 }
-                return '<span class="gon-subscriber-email'+addCls+'">'+value+'</span>';
+                return '<strong class="gon-subscriber-email'+addCls+'">'+value+'</strong>';
             }
         },{
             header: _('goodnews.subscriber_fullname')
@@ -646,10 +635,11 @@ GoodNews.tree.GroupsCategories = function(config) {
     
     Ext.applyIf(config,{
         id: 'goodnews-tree-groupscategories'
+        ,cls: 'gon-tree-groupscategories'
         ,url: GoodNews.config.connectorUrl
         ,action: 'Bitego\\GoodNews\\Processors\\Group\\GroupCategoryGetNodes'
         ,autoHeight: false
-        ,height: Ext.getBody().getViewSize().height*.30
+        ,height: Ext.getBody().getViewSize().height*.28
         ,root_id: 'n_gongrp_0'
         ,root_name: _('goodnews.subscriber_groups_categories')
         ,rootVisible: false
@@ -658,7 +648,6 @@ GoodNews.tree.GroupsCategories = function(config) {
         ,useDefaultToolbar: true
         ,stateful: false
         ,collapsed: false
-        ,cls: 'gon-tree-groupscategories'
         ,listeners: {
             'checkchange': function(node,checked){
                 if(config.reverse === true){
