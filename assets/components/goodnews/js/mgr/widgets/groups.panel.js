@@ -66,6 +66,7 @@ GoodNews.grid.Groups = function(config) {
         ]
         ,emptyText: _('goodnews.groups_none')
         ,paging: true
+        ,pageSize: Math.min(parseInt(MODx.config.default_per_page), 25)
         ,remoteSort: true
         ,save_action: 'Bitego\\GoodNews\\Processors\\Group\\UpdateFromGrid'
         ,autosave: true

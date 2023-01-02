@@ -72,6 +72,7 @@ GoodNews.grid.Categories = function(config) {
         ,sortBy: 'name'
         ,sortDir: 'ASC'
         ,paging: true
+        ,pageSize: Math.min(parseInt(MODx.config.default_per_page), 25)
         ,remoteSort: true
         ,emptyText: _('goodnews.categories_none')
         ,save_action: 'Bitego\\GoodNews\\Processors\\Category\\UpdateFromGrid'
