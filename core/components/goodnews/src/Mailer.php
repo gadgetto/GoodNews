@@ -65,7 +65,7 @@ class Mailer
     public $debug = false;
 
     /** @var array $subscriberFields The object fields of modUser + modUserProfile + GoodNewsSubscriberMeta */
-    public $subscriberFields = array();
+    public $subscriberFields = [];
 
     /**
      * Constructor for Mailer object
@@ -185,7 +185,7 @@ class Mailer
      * @param array $properties
      * @return array $properties
      */
-    private function cleanupKeys(array $properties = array())
+    private function cleanupKeys(array $properties = [])
     {
         unset(
             $properties['id'],          // multiple occurrence; not needed
@@ -206,7 +206,7 @@ class Mailer
      */
     private function flattenExtended($array, $prefix = '')
     {
-        $result = array();
+        $result = [];
         foreach ($array as $key => $value) {
             if (is_array($value)) {
                 $result = $result + $this->flattenExtended($value, $prefix . $key . '.');
@@ -524,13 +524,13 @@ class Mailer
     {
         $c = $this->modx->newQuery(modUser::class);
         $c->leftJoin(GoodNewsSubscriberMeta::class, 'SubscriberMeta', 'SubscriberMeta.subscriber_id = modUser.id');
-        $c->where(array(
+        $c->where([
             'modUser.active' => true,
             'SubscriberMeta.testdummy' => 1,
-        ));
+        ]);
         $recipients = $this->modx->getIterator(modUser::class, $c);
 
-        $testrecipients = array();
+        $testrecipients = [];
         foreach ($recipients as $recipient) {
             $testrecipients[] = $recipient->get('id');
         }
@@ -569,15 +569,15 @@ class Mailer
 
         $c = $this->modx->newQuery(modResource::class);
         $c->leftJoin(GoodNewsMailingMeta::class, 'MailingMeta', 'MailingMeta.mailing_id = modResource.id');
-        $c->where(array(
+        $c->where([
             'modResource.published'  => true,
             'modResource.deleted'    => false,
             'modResource.parent:IN'  => $containerIDs,
             'MailingMeta.ipc_status' => self::GON_IPC_STATUS_STARTED,
-        ));
+        ]);
         $mailings = $this->modx->getIterator(modResource::class, $c);
 
-        $mailingIDs = array();
+        $mailingIDs = [];
         foreach ($mailings as $mailing) {
             $mailingIDs[] = $mailing->get('id');
         }
@@ -604,15 +604,15 @@ class Mailer
     public function getMailingsFinished()
     {
         $c = $this->modx->newQuery(GoodNewsMailingMeta::class);
-        $c->where(array(
+        $c->where([
             'recipients_total > 0',
             'recipients_total = recipients_sent',
             'finishedon > 0',
             'ipc_status' => self::GON_IPC_STATUS_STOPPED,
-        ));
+        ]);
         $mailings = $this->modx->getIterator(GoodNewsMailingMeta::class, $c);
 
-        $mailingIDs = array();
+        $mailingIDs = [];
         foreach ($mailings as $mailing) {
             $mailingIDs[] = $mailing->get('id');
         }
@@ -869,7 +869,7 @@ class Mailer
         if (!$sent) {
             $this->modx->log(
                 modX::LOG_LEVEL_WARN,
-                '[GoodNews] Email could not be sent to ' .
+                '[GoodNews] Mailer::sendEmail - Email could not be sent to ' .
                 $subscriber['email'] .
                 ' (' .
                 $subscriber['subscriber_id'] .
@@ -910,7 +910,7 @@ class Mailer
         ]);
         $containers = $this->modx->getIterator(modResource::class, $c);
 
-        $containerIDs = array();
+        $containerIDs = [];
         foreach ($containers as $container) {
             $containerIDs[] = $container->get('id');
         }
@@ -969,7 +969,7 @@ class Mailer
             return false;
         }
 
-        $images = array();
+        $images = [];
         $phpthumb_nohotlink_enabled = $this->modx->getOption('phpthumb_nohotlink_enabled', null, true);
         $phpthumb_nohotlink_valid_domains = $this->modx->getOption('phpthumb_nohotlink_valid_domains');
 
@@ -1033,7 +1033,7 @@ class Mailer
                 if (($width && $width != $dimensions[0]) || ($height && $height != $dimensions[1])) {
                     // Prepare resizing metadata
                     $filetype = strtolower(substr($filename, strrpos($filename, ".") + 1));
-                    $image = array();
+                    $image = [];
                     $image['input'] = $filename;
                     $image['options'] = 'f=' . $filetype . '&h=' . $height . '&w=' . $width . '&iar=1';
 
@@ -1066,11 +1066,20 @@ class Mailer
             return false;
         }
 
+        $document = new \DOMDocument();
+        if (!$document instanceof \DOMDocument) {
+            $this->modx->log(
+                modX::LOG_LEVEL_ERROR,
+                '[GoodNews] Mailer::fullURLs - DOMDocument class could not be instantiated. ' .
+                'Can\'t convert full urls!'
+            );
+            return false;
+        }
+
         // Preserve GoodNews subscriber fields placeholders (which aren't processed yet)
         $html = str_replace('[[', '%5B%5B', $html);
         $html = str_replace(']]', '%5D%5D', $html);
 
-        $document = new DOMDocument();
         // Ensure UTF-8 is respected by using 'mb_convert_encoding'
         $document->loadHTML(mb_convert_encoding($html, 'HTML-ENTITIES', 'UTF-8'));
 
@@ -1205,8 +1214,12 @@ class Mailer
 
         $cssToInlineStyles = new CssToInlineStyles();
         $className = CssToInlineStyles::class;
-        if (!($cssToInlineStyles instanceof $className)) {
-            $this->modx->log(modX::LOG_LEVEL_ERROR, '[GoodNews] CssToInlineStyles class could not be instantiated.');
+        if (!$cssToInlineStyles instanceof $className) {
+            $this->modx->log(
+                modX::LOG_LEVEL_ERROR,
+                '[GoodNews] Mailer::inlineCSS - CssToInlineStyles class could not be instantiated. ' .
+                'Could not apply inline styles!'
+            );
             return false;
         }
 
@@ -1308,7 +1321,7 @@ class Mailer
     public function setIPCstop($id, $finished = false)
     {
         // Get resource mailing meta object
-        $meta = $this->modx->getObject(GoodNewsMailingMeta::class, array('mailing_id' => $id));
+        $meta = $this->modx->getObject(GoodNewsMailingMeta::class, ['mailing_id' => $id]);
         if (!is_object($meta)) {
             return false;
         }
