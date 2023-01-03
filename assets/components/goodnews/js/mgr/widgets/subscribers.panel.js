@@ -148,9 +148,8 @@ GoodNews.grid.Subscribers = function(config){
         },{
             header: _('goodnews.subscriber_testdummy')
             ,dataIndex: 'testdummy'
-            ,align: 'center'
             ,sortable: true
-            ,width: 60
+            ,width: 50
             ,renderer: function(value){
                 switch (value){
                     case '0':
@@ -166,16 +165,15 @@ GoodNews.grid.Subscribers = function(config){
         },{
             header: _('goodnews.subscriber_active')
             ,dataIndex: 'active'
-            ,align: 'center'
             ,sortable: true
             ,editable: false
             ,editor: { xtype: 'combo-boolean', renderer: 'boolean' }
-            ,width: 60
+            ,width: 50
         },{
             header: _('goodnews.subscriber_subscribed_on')
             ,dataIndex: 'subscribedon_formatted'
             ,sortable: true
-            ,width: 80
+            ,width: 70
         },{
             header: _('goodnews.subscriber_soft_bounces')
             ,dataIndex: 'soft_bounces'

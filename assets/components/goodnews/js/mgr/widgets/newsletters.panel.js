@@ -80,22 +80,19 @@ GoodNews.grid.Newsletters = function(config) {
                 '<td class="gon-expinfos-key">'+_('goodnews.id')+'</td><td class="gon-expinfos-val">{id}</td>',
                 '<td class="gon-expinfos-key">'+_('goodnews.newsletter_createdon')+'</td><td class="gon-expinfos-val">{createdon_formatted}</td>',
                 '<td class="gon-expinfos-key">'+_('goodnews.newsletter_publishedon')+'</td><td class="gon-expinfos-val">{publishedon_formatted}</td>',
-                '<td class="gon-expinfos-key">'+_('goodnews.newsletter_sender')+'</td><td class="gon-expinfos-val">{sentby_username}</td>',
                 '<td class="gon-expinfos-key">'+_('goodnews.newsletter_scheduled')+'</td><td class="gon-expinfos-val gon-scheduled">{pub_date_formatted}</td>',
             '</tr>',
             '<tr>',
                 '<td class="gon-expinfos-key"></td><td class="gon-expinfos-val"></td>',
                 '<td class="gon-expinfos-key">'+_('goodnews.newsletter_createdby')+'</td><td class="gon-expinfos-val">{createdby_username}</td>',
                 '<td class="gon-expinfos-key">'+_('goodnews.newsletter_publishedby')+'</td><td class="gon-expinfos-val">{publishedby_username}</td>',
-                '<td class="gon-expinfos-key"></td><td class="gon-expinfos-val"></td>',
-                '<td class="gon-expinfos-key"></td><td class="gon-expinfos-val"></td>',
+                '<td class="gon-expinfos-key">'+_('goodnews.newsletter_sender')+'</td><td class="gon-expinfos-val">{sentby_username}</td>',
             '</tr>',
             '<tr>',
                 '<td class="gon-expinfos-key"></td><td class="gon-expinfos-val"></td>',
                 '<td class="gon-expinfos-key">'+_('goodnews.newsletter_sending_errors')+'</td><td class="gon-expinfos-val">{recipients_error}</td>',
                 '<td class="gon-expinfos-key">'+_('goodnews.newsletter_soft_bounces')+'</td><td class="gon-expinfos-val">{soft_bounces}</td>',
                 '<td class="gon-expinfos-key">'+_('goodnews.newsletter_hard_bounces')+'</td><td class="gon-expinfos-val">{hard_bounces}</td>',
-                '<td class="gon-expinfos-key"></td><td class="gon-expinfos-val"></td>',
             '</tr>',
         '</table>'
         ].join('\n');
@@ -186,18 +183,17 @@ GoodNews.grid.Newsletters = function(config) {
             header: _('goodnews.newsletter_sent_on')
             ,dataIndex: 'senton_formatted'
             ,sortable: false
-            ,width: 80
+            ,width: 70
         },{
             header: _('goodnews.newsletter_finished_on')
             ,dataIndex: 'finishedon_formatted'
             ,sortable: false
-            ,width: 80
+            ,width: 70
         },{
             header: _('goodnews.newsletter_recipients_sent')
             ,dataIndex: 'recipients_total_sent'
             ,sortable: false
-            ,align: 'center'
-            ,width: 80
+            ,width: 60
         },{
             header: _('goodnews.newsletter_status')
             ,dataIndex: 'statusmessage'
