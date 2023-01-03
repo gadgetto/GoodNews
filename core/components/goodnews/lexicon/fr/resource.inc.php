@@ -23,7 +23,7 @@
  *
  * @package goodnews
  * @subpackage lexicon
- * @language fr
+ * @language en
  */
 
 $_lang['goodnews.container']                               = 'GoodNews';
@@ -55,6 +55,7 @@ $_lang['goodnews.container_view']                          = 'Voir le Conteneur 
 $_lang['goodnews.manage_mailings']                         = 'Gestion des Mailings';
 
 $_lang['goodnews.mailing']                                 = 'Mailing';
+$_lang['goodnews.mailing_readonly']                        = 'Read Only';
 $_lang['goodnews.mailing_new']                             = 'Nouveau Mailing';
 $_lang['goodnews.mail_subject']                            = 'Sujet du Mail';
 $_lang['goodnews.mail_subject_desc']                       = 'Le sujet du mail.';
