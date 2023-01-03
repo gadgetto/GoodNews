@@ -175,7 +175,7 @@ class GetList extends GetListProcessor
 
         $this->modx->getContext($resourceArray['context_key']);
         $resourceArray['preview_url'] = $this->modx->makeUrl($resourceArray['id'], $resourceArray['context_key']);
-        $resourceArray['recipients_total_sent'] = (int)$resourceArray['recipients_total'] . ' / ' . (int)$resourceArray['recipients_sent'];
+        $resourceArray['recipients_total_sent'] = (int)$resourceArray['recipients_sent'] . ' | ' . (int)$resourceArray['recipients_total'];
         $resourceArray['recipients_open'] = (int)$resourceArray['recipients_total'] - (int)$resourceArray['recipients_sent'];
         $resourceArray['test_recipients_total'] = $this->countTestRecipients();
 
