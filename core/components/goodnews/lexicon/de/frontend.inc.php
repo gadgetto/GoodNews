@@ -23,7 +23,7 @@
  *
  * @package goodnews
  * @subpackage lexicon
- * @language de
+ * @language en
  */
 
 $_lang['goodnews.user_err_save']                    = 'Es trat ein Fehler beim Speichern des Benutzers auf.';
