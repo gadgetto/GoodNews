@@ -23,7 +23,7 @@
  *
  * @package goodnews
  * @subpackage lexicon
- * @language de
+ * @language en
  */
 
 // GoodNewsSubscription snippet
