@@ -5,7 +5,6 @@
  *
  * @package goodnews
  * @subpackage lexicon
- * @language en
  */
 
 // GoodNewsSubscription snippet

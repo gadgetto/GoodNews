@@ -5,7 +5,6 @@
  *
  * @package goodnews
  * @subpackage lexicon
- * @language en
  */
 
 $_lang['goodnews.user_err_save']                    = 'An error occurred while trying to save the User.';
