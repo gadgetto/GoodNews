@@ -195,39 +195,39 @@ html[dir=rtl] .gon-checkbox-toggle .x-fieldset legend [type="checkbox"] {
 }
 /* Status tags in newsletter grid */
 .gon-nlstatus {
-    display: block;
-    height: 16px;
-    line-height: 16px;
     font-weight: bold;
+    line-height: 1;
 }
     .gon-not-published {
-        color: #b7b7b7; /* grey */
+        color: rgb(127, 127, 127);
     }
     .gon-not-ready-to-send {
-        color: #b7b7b7; /* grey */
+        color: rgb(127, 127, 127);
     }
     .gon-not-sent {
-        color: #ffc14d; /* orange */
+        color: rgb(255, 193, 7);
     }
     .gon-in-progress {
-        color: #71abf3; /* light-blue */
+        color: rgb(13, 110, 253);
         padding-left: 20px;
+        background-size: 16px auto !important;
         background: url(../img/sending-ani.gif) no-repeat center left;
     }
+    @media (-o-min-device-pixel-ratio: 5/4),
+           (-webkit-min-device-pixel-ratio: 1.25),
+           (min-resolution: 120dpi) {
+        .gon-in-progress {
+            background-image: url(../img/sending-ani@2x.gif);
+        }
+    }
     .gon-stopped {
-        color: #be0000; /* red */
+        color: rgb(220, 53, 69);
     }
     .gon-finished {
-        color: #6cb24a; /* green */
+        color: rgb(25, 135, 84);
     }
     .gon-scheduled {
-        color: #71abf3; /* light-blue */
-    }
-    .gon-testdummy-no {
-        color: #6cb24a;
-    }
-    .gon-testdummy-yes {
-        color: #6060ff; /* blue */
+        color: rgb(13, 110, 253);
     }
 
 /* Subscriber grid */
@@ -250,6 +250,12 @@ html[dir=rtl] .gon-checkbox-toggle .x-fieldset legend [type="checkbox"] {
 }
 .gon-subscriber-email.gon-no-goodnewsmeta::before {
     color: transparent;
+}
+.gon-testdummy-no {
+    color: rgb(25, 135, 84);
+}
+.gon-testdummy-yes {
+    color: rgb(13, 110, 253);
 }
 
 /* Expanded rows in grids */
@@ -399,15 +405,4 @@ button:hover:disabled[class*="gon-ab-"] {
     font-weight: normal;
     line-height: 1.2;
     padding: 5px;
-}
-
-/* Style adjustments for high resolution devices */
-@media (-o-min-device-pixel-ratio: 5/4),
-       (-webkit-min-device-pixel-ratio: 1.25),
-       (min-resolution: 120dpi) {
-
-    .gon-in-progress {
-        background-image: url(../img/sending-ani@2x.gif);
-        background-size: 16px auto !important;
-    }
 }
