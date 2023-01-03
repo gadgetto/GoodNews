@@ -23,7 +23,7 @@
  *
  * @package goodnews
  * @subpackage lexicon
- * @language de
+ * @language en
  */
 
 $_lang['goodnews']                                                  = 'GoodNews';
@@ -200,7 +200,7 @@ $_lang['goodnews.category_err_nf']                                  = 'Kategorie
 $_lang['goodnews.category_err_ns']                                  = 'Kategorie nicht angegeben.';
 $_lang['goodnews.category_err_remove']                              = 'Beim Entfernen der Kategorie ist ein Fehler aufgetreten.';
 $_lang['goodnews.category_err_save']                                = 'Beim Speichern der Kategorie ist ein Fehler aufgetreten.';
-
+                                                            
 $_lang['goodnews.subscribers']                                      = 'Abonnenten';
 $_lang['goodnews.subscribers_desc']                                 = 'Verwalten Sie Ihre Abonnenten hier. Neue Abonnenten werden via Benutzer-Abonnements, manuell &uuml;ber die MODX Benutzerverwaltung oder per Import erstellt.';
 $_lang['goodnews.modx_user_create']                                 = 'MODX Benutzer erstellen';
