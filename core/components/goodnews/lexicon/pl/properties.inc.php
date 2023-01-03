@@ -1,0 +1,157 @@
+<?php
+
+/**
+ * GoodNews properties
+ *
+ * @package goodnews
+ * @subpackage lexicon
+ */
+
+// GoodNewsSubscription snippet
+$_lang['prop_goodnewssubscription.activation_desc']                 = '';
+$_lang['prop_goodnewssubscription.activationttl_desc']              = '';
+$_lang['prop_goodnewssubscription.activationemail_desc']            = '';
+$_lang['prop_goodnewssubscription.activationemailsubject_desc']     = '';
+$_lang['prop_goodnewssubscription.activationemailtpl_desc']         = '';
+$_lang['prop_goodnewssubscription.activationemailtplalt_desc']      = '';
+$_lang['prop_goodnewssubscription.activationemailtpltype_desc']     = '';
+$_lang['prop_goodnewssubscription.activationresourceid_desc']       = '';
+$_lang['prop_goodnewssubscription.submittedresourceid_desc']        = '';
+$_lang['prop_goodnewssubscription.sendsubscriptionemail_desc']      = '';
+$_lang['prop_goodnewssubscription.unsubscriberesourceid_desc']      = '';
+$_lang['prop_goodnewssubscription.profileresourceid_desc']          = '';
+$_lang['prop_goodnewssubscription.subscriptionemailsubject_desc']   = '';
+$_lang['prop_goodnewssubscription.subscriptionemailtpl_desc']       = '';
+$_lang['prop_goodnewssubscription.subscriptionemailtplalt_desc']    = '';
+$_lang['prop_goodnewssubscription.subscriptionemailtpltype_desc']   = '';
+$_lang['prop_goodnewssubscription.resubscriptionemailsubject_desc'] = '';
+$_lang['prop_goodnewssubscription.resubscriptionemailtpl_desc']     = '';
+$_lang['prop_goodnewssubscription.resubscriptionemailtplalt_desc']  = '';
+$_lang['prop_goodnewssubscription.resubscriptionemailtpltype_desc'] = '';
+$_lang['prop_goodnewssubscription.errtpl_desc']                     = '';
+$_lang['prop_goodnewssubscription.useextended_desc']                = '';
+$_lang['prop_goodnewssubscription.excludeextended_desc']            = '';
+$_lang['prop_goodnewssubscription.emailfield_desc']                 = '';
+$_lang['prop_goodnewssubscription.usernamefield_desc']              = '';
+$_lang['prop_goodnewssubscription.passwordfield_desc']              = '';
+$_lang['prop_goodnewssubscription.persistparams_desc']              = '';
+$_lang['prop_goodnewssubscription.prehooks_desc']                   = '';
+$_lang['prop_goodnewssubscription.posthooks_desc']                  = '';
+$_lang['prop_goodnewssubscription.redirectback_desc']               = '';
+$_lang['prop_goodnewssubscription.redirectbackparams_desc']         = '';
+$_lang['prop_goodnewssubscription.submitvar_desc']                  = '';
+$_lang['prop_goodnewssubscription.successmsg_desc']                 = '';
+$_lang['prop_goodnewssubscription.usergroups_desc']                 = '';
+$_lang['prop_goodnewssubscription.usergroupsfield_desc']            = '';
+$_lang['prop_goodnewssubscription.validate_desc']                   = '';
+$_lang['prop_goodnewssubscription.grpfieldsettpl_desc']             = '';
+$_lang['prop_goodnewssubscription.grpnametpl_desc']                 = '';
+$_lang['prop_goodnewssubscription.grpfieldtpl_desc']                = '';
+$_lang['prop_goodnewssubscription.grpfieldhiddentpl_desc']          = '';
+$_lang['prop_goodnewssubscription.catfieldtpl_desc']                = '';
+$_lang['prop_goodnewssubscription.catfieldhiddentpl_desc']          = '';
+$_lang['prop_goodnewssubscription.groupsonly_desc']                 = '';
+$_lang['prop_goodnewssubscription.includegroups_desc']              = '';
+$_lang['prop_goodnewssubscription.defaultgroups_desc']              = '';
+$_lang['prop_goodnewssubscription.defaultcategories_desc']          = '';
+$_lang['prop_goodnewssubscription.sort_desc']                       = '';
+$_lang['prop_goodnewssubscription.dir_desc']                        = '';
+$_lang['prop_goodnewssubscription.grpcatplaceholder_desc']          = '';
+$_lang['prop_goodnewssubscription.placeholderprefix_desc']          = '';
+$_lang['prop_goodnewssubscription.errorpage_desc']                  = '';
+
+// GoodNewsConfirmSubscription snippet
+$_lang['prop_goodnewsconfirmsubscription.sendsubscriptionemail_desc']      = '';
+$_lang['prop_goodnewsconfirmsubscription.unsubscriberesourceid_desc']      = '';
+$_lang['prop_goodnewsconfirmsubscription.profileresourceid_desc']          = '';
+$_lang['prop_goodnewsconfirmsubscription.subscriptionemailsubject_desc']   = '';
+$_lang['prop_goodnewsconfirmsubscription.subscriptionemailtpl_desc']       = '';
+$_lang['prop_goodnewsconfirmsubscription.subscriptionemailtplalt_desc']    = '';
+$_lang['prop_goodnewsconfirmsubscription.subscriptionemailtpltype_desc']   = '';
+$_lang['prop_goodnewsconfirmsubscription.errorpage_desc']                  = '';
+
+// GoodNewsUpdateProfile snippet
+$_lang['prop_goodnewsupdateprofile.errtpl_desc']                    = '';
+$_lang['prop_goodnewsupdateprofile.useextended_desc']               = '';
+$_lang['prop_goodnewsupdateprofile.excludeextended_desc']           = '';
+$_lang['prop_goodnewsupdateprofile.emailfield_desc']                = '';
+$_lang['prop_goodnewsupdateprofile.prehooks_desc']                  = '';
+$_lang['prop_goodnewsupdateprofile.posthooks_desc']                 = '';
+$_lang['prop_goodnewsupdateprofile.sendunauthorizedpage_desc']      = '';
+$_lang['prop_goodnewsupdateprofile.reloadonsuccess_desc']           = '';
+$_lang['prop_goodnewsupdateprofile.submitvar_desc']                 = '';
+$_lang['prop_goodnewsupdateprofile.successkey_desc']                = '';
+$_lang['prop_goodnewsupdateprofile.successmsg_desc']                = '';
+$_lang['prop_goodnewsupdateprofile.validate_desc']                  = '';
+$_lang['prop_goodnewsupdateprofile.grpfieldsettpl_desc']            = '';
+$_lang['prop_goodnewsupdateprofile.grpnametpl_desc']                = '';
+$_lang['prop_goodnewsupdateprofile.grpfieldtpl_desc']               = '';
+$_lang['prop_goodnewsupdateprofile.grpfieldhiddentpl_desc']         = '';
+$_lang['prop_goodnewsupdateprofile.catfieldtpl_desc']               = '';
+$_lang['prop_goodnewsupdateprofile.catfieldhiddentpl_desc']         = '';
+$_lang['prop_goodnewsupdateprofile.groupsonly_desc']                = '';
+$_lang['prop_goodnewsupdateprofile.includegroups_desc']             = '';
+$_lang['prop_goodnewsupdateprofile.defaultgroups_desc']             = '';
+$_lang['prop_goodnewsupdateprofile.defaultcategories_desc']         = '';
+$_lang['prop_goodnewsupdateprofile.sort_desc']                      = '';
+$_lang['prop_goodnewsupdateprofile.dir_desc']                       = '';
+$_lang['prop_goodnewsupdateprofile.grpcatplaceholder_desc']         = '';
+$_lang['prop_goodnewsupdateprofile.placeholderprefix_desc']         = '';
+
+// GoodNewsUnSubscription snippet
+$_lang['prop_goodnewsunsubscription.errtpl_desc']                   = '';
+$_lang['prop_goodnewsunsubscription.prehooks_desc']                 = '';
+$_lang['prop_goodnewsunsubscription.posthooks_desc']                = '';
+$_lang['prop_goodnewsunsubscription.sendunauthorizedpage_desc']     = '';
+$_lang['prop_goodnewsunsubscription.submitvar_desc']                = '';
+$_lang['prop_goodnewsunsubscription.successkey_desc']               = '';
+$_lang['prop_goodnewsunsubscription.removeuserdata_desc']           = '';
+$_lang['prop_goodnewsunsubscription.placeholderprefix_desc']        = '';
+
+// GoodNewsGetNewsletters snippet
+$_lang['prop_goodnewsgetnewsletters.parent_desc']                   = '';
+$_lang['prop_goodnewsgetnewsletters.tpl_desc']                      = '';
+$_lang['prop_goodnewsgetnewsletters.sortby_desc']                   = '';
+$_lang['prop_goodnewsgetnewsletters.sortdir_desc']                  = '';
+$_lang['prop_goodnewsgetnewsletters.includecontent_desc']           = '';
+$_lang['prop_goodnewsgetnewsletters.limit_desc']                    = '';
+$_lang['prop_goodnewsgetnewsletters.offset_desc']                   = '';
+$_lang['prop_goodnewsgetnewsletters.totalvar_desc']                 = '';
+$_lang['prop_goodnewsgetnewsletters.outputseparator_desc']          = '';
+$_lang['prop_goodnewsgetnewsletters.toplaceholder_desc']            = '';
+$_lang['prop_goodnewsgetnewsletters.debug_desc']                    = '';
+
+// GoodNewsContentCollection snippet
+$_lang['prop_goodnewscontentcollection.collectionid_desc']          = '';
+$_lang['prop_goodnewscontentcollection.tpl_desc']                   = '';
+$_lang['prop_goodnewscontentcollection.tplwrapper_desc']            = '';
+$_lang['prop_goodnewscontentcollection.sortby_desc']                = '';
+$_lang['prop_goodnewscontentcollection.sortdir_desc']               = '';
+$_lang['prop_goodnewscontentcollection.includecontent_desc']        = '';
+$_lang['prop_goodnewscontentcollection.outputseparator_desc']       = '';
+$_lang['prop_goodnewscontentcollection.toplaceholder_desc']         = '';
+$_lang['prop_goodnewscontentcollection.debug_desc']                 = '';
+
+// GoodNewsRequestLinks snippet
+$_lang['prop_goodnewsrequestlinks.unsubscriberesourceid_desc']      = '';
+$_lang['prop_goodnewsrequestlinks.profileresourceid_desc']          = '';
+$_lang['prop_goodnewsrequestlinks.submittedresourceid_desc']        = '';
+$_lang['prop_goodnewsrequestlinks.requestlinksemailsubject_desc']   = '';
+$_lang['prop_goodnewsrequestlinks.requestlinksemailtpl_desc']       = '';
+$_lang['prop_goodnewsrequestlinks.requestlinksemailtplalt_desc']    = '';
+$_lang['prop_goodnewsrequestlinks.requestlinksemailtpltype_desc']   = '';
+$_lang['prop_goodnewsrequestlinks.errtpl_desc']                     = '';
+$_lang['prop_goodnewsrequestlinks.emailfield_desc']                 = '';
+$_lang['prop_goodnewsrequestlinks.sendunauthorizedpage_desc']       = '';
+$_lang['prop_goodnewsrequestlinks.submitvar_desc']                  = '';
+$_lang['prop_goodnewsrequestlinks.successmsg_desc']                 = '';
+$_lang['prop_goodnewsrequestlinks.validate_desc']                   = '';
+$_lang['prop_goodnewsrequestlinks.placeholderprefix_desc']          = '';
+
+// List options
+$_lang['opt_goodnews.chunk']    = '';
+$_lang['opt_goodnews.file']     = '';
+$_lang['opt_goodnews.inline']   = '';
+$_lang['opt_goodnews.embedded'] = '';
+$_lang['opt_goodnews.asc']      = '';
+$_lang['opt_goodnews.desc']     = '';
