@@ -7,7 +7,7 @@
  * @subpackage lexicon
  */
 
-$_lang['goodnews']                                                  = '';
+$_lang['goodnews']                                                  = 'GoodNews';
 $_lang['goodnews.desc']                                             = 'Un système intégré d\'envoi de newsletter et de groupes.';
 $_lang['goodnews.version']                                          = 'Version GoodNews';
 $_lang['goodnews.credits']                                          = 'Crédits';
