@@ -25,12 +25,12 @@
  * @subpackage build
  */
 
-$customresources = array();
+$customresources = [];
 $i = 0;
 $epoch = time();
 
 // GoodNews Mailing Container
-$customresources[++$i] = array (
+$customresources[++$i] = [
     'type'                  => 'document',
     'contentType'           => 'text/html',
     'pagetitle'             => 'GoodNews',
@@ -70,7 +70,7 @@ $customresources[++$i] = array (
     'hide_children_in_tree' => 1,
     'show_in_tree'          => 1,
     'properties'            => NULL,
-);
+];
 
 
 /**
@@ -97,10 +97,10 @@ if (!function_exists('createCustomResources')) {
 
             $upd = true;
             /** @var modResource $resource */
-            $resource = $modx->getObject('modResource', array('pagetitle' => $fieldvalues['pagetitle']));
+            $resource = $modx->getObject('modResource', ['pagetitle' => $fieldvalues['pagetitle']]);
             if (!is_object($resource)) {
                 $upd = false;
-                $resource = $modx->newObject('modResource', array('pagetitle' => $fieldvalues['pagetitle']));
+                $resource = $modx->newObject('modResource', ['pagetitle' => $fieldvalues['pagetitle']]);
             }
             
             // Replace Resource template name with Resource template content
@@ -120,7 +120,7 @@ if (!function_exists('createCustomResources')) {
                 if ($fieldvalues['template'] == 'default') {
                     $fieldvalues['template'] = $modx->getOption('default_template');
                 } else {
-                    $templateObj = $modx->getObject('modTemplate', array('templatename' => $fieldvalues['template']));
+                    $templateObj = $modx->getObject('modTemplate', ['templatename' => $fieldvalues['template']]);
                     if ($templateObj) {
                         $fieldvalues['template'] = $templateObj->get('id');
                     } else {
@@ -131,7 +131,7 @@ if (!function_exists('createCustomResources')) {
             
             // Replace parent Resource name with Resource ID in $fieldvalues
             if (!empty($fieldvalues['parent'])) {
-                $parentObj = $modx->getObject('modResource', array('pagetitle' => $fieldvalues['parent']));
+                $parentObj = $modx->getObject('modResource', ['pagetitle' => $fieldvalues['parent']]);
                 if ($parentObj) {
                     $fieldvalues['parent'] = $parentObj->get('id');
                 } else {

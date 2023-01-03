@@ -24,7 +24,7 @@
  * @var modX $modx
  *
  * @property string $collectionId Internal name of the content collection (collection1, collection2 or collection3). (default: 'collection1')
- * @property string $tpl Name of a Chunk serving as template for a Resource row. NOTE: if not provided, properties are dumped to output for each resource. (default: 'sample.GoodNewsContentCollectionRowTpl')
+ * @property string $tpl Name of a Chunk serving as template for a Resource row. NOTE: if not provided, properties are dumped to output for each resource. (default: 'sample.GoodNewsContentCollectionRowChunk')
  * @property string $tplWrapper Name of a Chunk serving as wrapper template for the Snippet output. (default: '')
  * @property string $sortby A field name to sort by or JSON object of field names and sortdir for each field, e.g. {"publishedon":"ASC","createdon":"DESC"}. (default: 'publishedon')
  * @property string $sortdir Order which to sort by. (default: 'DESC')
@@ -44,7 +44,7 @@ $output = array();
 
 // Default properties
 $collectionId    = !empty($collectionId) ? $collectionId : 'collection1';
-$tpl             = !empty($tpl) ? $tpl : 'sample.GoodNewsContentCollectionRowTpl';
+$tpl             = !empty($tpl) ? $tpl : 'sample.GoodNewsContentCollectionRowChunk';
 $tplWrapper      = !empty($tplWrapper) ? $tplWrapper : '';
 $sortby          = isset($sortby) ? $sortby : 'publishedon';
 $sortdir         = isset($sortdir) ? $sortdir : 'DESC';

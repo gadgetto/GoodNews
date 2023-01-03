@@ -10,8 +10,7 @@ GoodNews.panel.ContainerSettings = function(config) {
         }
         ,items:[{
             html: '<p>'+_('goodnews.settings_container_tab_desc')+'</p>'
-            ,border: false
-            ,bodyCssClass: 'panel-desc'
+            ,xtype: 'modx-description'
         },{
             xtype: 'goodnews-grid-containers'
             ,cls: 'main-wrapper'
@@ -27,21 +26,10 @@ Ext.reg('goodnews-panel-settings-container', GoodNews.panel.ContainerSettings);
 GoodNews.grid.Containers = function(config) {
     config = config || {};
     
-    this.tplActionButtons = new Ext.XTemplate(
-        '<tpl for=".">'
-            +'<tpl if="actions !== null">'
-                +'<tpl for="actions">'
-                    +'<i style="cursor:pointer;" class="controlLink {className}" title="{text}"></i>'
-                +'</tpl>'
-            +'</tpl>'
-        +'</tpl>'
-    ,{compiled: true});
-
-
     Ext.applyIf(config,{
         id: 'goodnews-grid-containers'
         ,url: GoodNews.config.connectorUrl
-        ,baseParams: { action: 'mgr/settings/containers/getList' }
+        ,baseParams: { action: 'Bitego\\GoodNews\\Processors\\Settings\\Container\\GetList' }
         ,autoExpandColumn: 'pagetitle'
         ,fields: [
             'id'
@@ -93,7 +81,7 @@ GoodNews.grid.Containers = function(config) {
         ,emptyText: _('goodnews.settings_containers_none')
         ,paging: true
         ,remoteSort: true
-        ,save_action: 'mgr/settings/containers/updateFromGrid'
+        ,save_action: 'Bitego\\GoodNews\\Processors\\Settings\\Container\\UpdateFromGrid'
         ,autosave: true
         ,columns: [{
             header: _('goodnews.settings_container_id')
@@ -132,16 +120,6 @@ GoodNews.grid.Containers = function(config) {
             ,sortable: true
             ,editable: false
             ,width: 80
-        },{
-            header: ''
-            ,dataIndex: 'actions'
-            ,sortable: false
-            ,fixed: true
-            ,width: 50
-            ,resizable: false
-            ,hideable: false
-            ,align: 'right'
-            ,renderer: {fn:this._renderActionButtons,scope:this}
         }]
     });
     GoodNews.grid.Containers.superclass.constructor.call(this,config);
@@ -188,9 +166,6 @@ Ext.extend(GoodNews.grid.Containers,MODx.grid.Grid,{
         this.updateContainerSettingsWindow.enableDisableBounceFields(this.menu.record.mail_service);
         this.updateContainerSettingsWindow.show(e.target);
     }
-    ,_renderActionButtons: function(v,md,rec) {
-		return this.tplActionButtons.apply(rec.data);
-    }
 });
 Ext.reg('goodnews-grid-containers',GoodNews.grid.Containers);
 
@@ -201,31 +176,27 @@ GoodNews.window.UpdateContainerSettings = function(config) {
         title: _('goodnews.settings_container_update')
         ,url: GoodNews.config.connectorUrl
         ,baseParams: {
-            action: 'mgr/settings/containers/update'
+            action: 'Bitego\\GoodNews\\Processors\\Settings\\Container\\Update'
         }
+        ,layout: 'anchor'
+        ,bwrapCssClass: 'x-window-with-tabs'
         ,autoHeight: true
         ,width: 760
         ,closeAction: 'hide'
         ,fields: [{
             xtype: 'modx-tabs'
-            ,hideMode: 'offsets'
-            ,autoHeight: true
-            ,deferredRender: false
-            ,forceLayout: true
-            ,anchor: '100%'
-            ,bodyStyle: 'padding: 10px 10px 10px 10px;'
+            ,bodyStyle: { background: 'transparent' }
             ,border: true
+            ,deferredRender: false
+            ,autoHeight: true
+            ,autoScroll: false
+            ,anchor: '100% 100%'
             ,defaults: {
-                border: false
+                layout: 'form'
                 ,autoHeight: true
-                ,bodyStyle: 'padding: 5px 8px 5px 5px;'
-                ,layout: 'form'
-                ,deferredRender: false
-                ,forceLayout: true
             }
             ,items: [{
                 title: _('goodnews.settings_container_tab_general')
-                ,layout: 'form'
                 ,items: [{
                     xtype: 'hidden'
                     ,name: 'id'
@@ -243,7 +214,6 @@ GoodNews.window.UpdateContainerSettings = function(config) {
                     ,cls: 'desc-under'
                 },{
                     layout: 'column'
-                    ,cls: 'gon-x-panel-add-padding-top'
                     ,border: false
                     ,anchor: '100%'
                     ,defaults: {
@@ -254,7 +224,6 @@ GoodNews.window.UpdateContainerSettings = function(config) {
                     }
                     ,items: [{
                         columnWidth: .5
-                        ,style: 'margin: 0 7px 0 0;'
                         ,items: [{
                             xtype: 'textfield'
                             ,fieldLabel: _('goodnews.settings_container_mail_from')
@@ -270,7 +239,6 @@ GoodNews.window.UpdateContainerSettings = function(config) {
                         }]
                     },{
                         columnWidth: .5
-                        ,style: 'margin: 0 0 0 7px;'
                         ,items: [{
                             xtype: 'textfield'
                             ,fieldLabel: _('goodnews.settings_container_mail_from_name')
@@ -299,7 +267,6 @@ GoodNews.window.UpdateContainerSettings = function(config) {
                     ,cls: 'desc-under'
                 },{
                     layout: 'column'
-                    ,cls: 'gon-x-panel-add-padding-top'
                     ,border: false
                     ,anchor: '100%'
                     ,defaults: {
@@ -310,7 +277,6 @@ GoodNews.window.UpdateContainerSettings = function(config) {
                     }
                     ,items: [{
                         columnWidth: .5
-                        ,style: 'margin: 0 7px 0 0;'
                         ,items: [{
                             xtype: 'modx-combo-charset'
                             ,fieldLabel: _('goodnews.settings_container_mail_charset')
@@ -328,7 +294,6 @@ GoodNews.window.UpdateContainerSettings = function(config) {
                         }]
                     },{
                         columnWidth: .5
-                        ,style: 'margin: 0 0 0 7px;'
                         ,items: [{
                             xtype: 'textfield'
                             ,fieldLabel: _('goodnews.settings_container_mail_encoding')
@@ -366,7 +331,6 @@ GoodNews.window.UpdateContainerSettings = function(config) {
                 }]
             },{
                 title: _('goodnews.settings_container_tab_smtp')
-                ,layout: 'form'
                 ,items: [{
                     layout: 'column'
                     ,border: false
@@ -379,7 +343,6 @@ GoodNews.window.UpdateContainerSettings = function(config) {
                     }
                     ,items: [{
                         columnWidth: .5
-                        ,style: 'margin: 0 7px 0 0;'
                         ,items: [{
                             xtype: 'modx-combo'
                             ,fieldLabel: _('goodnews.settings_container_smtp_use')
@@ -415,7 +378,6 @@ GoodNews.window.UpdateContainerSettings = function(config) {
                         }]
                     },{
                         columnWidth: .5
-                        ,style: 'margin: 0 0 0 7px;'
                         ,items: [{
                             xtype: 'modx-combo'
                             ,fieldLabel: _('goodnews.settings_container_smtp_auth')
@@ -448,7 +410,6 @@ GoodNews.window.UpdateContainerSettings = function(config) {
                     }]
                 },{
                     layout: 'column'
-                    ,cls: 'gon-x-panel-add-padding-top'
                     ,border: false
                     ,anchor: '100%'
                     ,defaults: {
@@ -459,7 +420,6 @@ GoodNews.window.UpdateContainerSettings = function(config) {
                     }
                     ,items: [{
                         columnWidth: .5
-                        ,style: 'margin: 0 7px 0 0;'
                         ,items: [{
                             xtype: 'textfield'
                             ,fieldLabel: _('goodnews.settings_container_smtp_user')
@@ -475,7 +435,6 @@ GoodNews.window.UpdateContainerSettings = function(config) {
                         }]
                     },{
                         columnWidth: .5
-                        ,style: 'margin: 0 0 0 7px;'
                         ,items: [{
                             xtype: 'textfield'
                             ,inputType: 'password'
@@ -493,7 +452,6 @@ GoodNews.window.UpdateContainerSettings = function(config) {
                     }]
                 },{
                     layout: 'column'
-                    ,cls: 'gon-x-panel-add-padding-top'
                     ,border: false
                     ,anchor: '100%'
                     ,defaults: {
@@ -504,7 +462,6 @@ GoodNews.window.UpdateContainerSettings = function(config) {
                     }
                     ,items: [{
                         columnWidth: .5
-                        ,style: 'margin: 0 7px 0 0;'
                         ,items: [{
                             xtype: 'textfield'
                             ,fieldLabel: _('goodnews.settings_container_smtp_hosts')
@@ -520,7 +477,6 @@ GoodNews.window.UpdateContainerSettings = function(config) {
                         }]
                     },{
                         columnWidth: .5
-                        ,style: 'margin: 0 0 0 7px;'
                         ,items: [{
                             xtype: 'textfield'
                             ,fieldLabel: _('goodnews.settings_container_smtp_prefix')
@@ -537,7 +493,6 @@ GoodNews.window.UpdateContainerSettings = function(config) {
                     }]
                 },{
                     layout: 'column'
-                    ,cls: 'gon-x-panel-add-padding-top'
                     ,border: false
                     ,anchor: '100%'
                     ,defaults: {
@@ -548,7 +503,6 @@ GoodNews.window.UpdateContainerSettings = function(config) {
                     }
                     ,items: [{
                         columnWidth: .5
-                        ,style: 'margin: 0 7px 0 0;'
                         ,items: [{
                             xtype: 'modx-combo'
                             ,fieldLabel: _('goodnews.settings_container_smtp_keepalive')
@@ -572,7 +526,6 @@ GoodNews.window.UpdateContainerSettings = function(config) {
                         }]
                     },{
                         columnWidth: .5
-                        ,style: 'margin: 0 0 0 7px;'
                         ,items: [{
                             xtype: 'textfield'
                             ,fieldLabel: _('goodnews.settings_container_smtp_timeout')
@@ -589,7 +542,6 @@ GoodNews.window.UpdateContainerSettings = function(config) {
                     }]
                 },{
                     layout: 'column'
-                    ,cls: 'gon-x-panel-add-padding-top'
                     ,border: false
                     ,anchor: '100%'
                     ,defaults: {
@@ -600,7 +552,6 @@ GoodNews.window.UpdateContainerSettings = function(config) {
                     }
                     ,items: [{
                         columnWidth: .5
-                        ,style: 'margin: 0 7px 0 0;'
                         ,items: [{
                             xtype: 'modx-combo'
                             ,fieldLabel: _('goodnews.settings_container_smtp_single_to')
@@ -624,7 +575,6 @@ GoodNews.window.UpdateContainerSettings = function(config) {
                         }]
                     },{
                         columnWidth: .5
-                        ,style: 'margin: 0 0 0 7px;'
                         ,items: [{
                             xtype: 'textfield'
                             ,fieldLabel: _('goodnews.settings_container_smtp_helo')
@@ -642,7 +592,6 @@ GoodNews.window.UpdateContainerSettings = function(config) {
                 }]
             },{
                 title: _('goodnews.settings_container_tab_bouncemailbox')
-                ,layout: 'form'
                 ,items: [{
                     xtype: 'modx-combo'
                     ,fieldLabel: _('goodnews.settings_container_mail_service')
@@ -688,7 +637,6 @@ GoodNews.window.UpdateContainerSettings = function(config) {
                     ,cls: 'desc-under'
                 },{
                     layout: 'column'
-                    ,cls: 'gon-x-panel-add-padding-top'
                     ,border: false
                     ,anchor: '100%'
                     ,defaults: {
@@ -699,7 +647,6 @@ GoodNews.window.UpdateContainerSettings = function(config) {
                     }
                     ,items: [{
                         columnWidth: .5
-                        ,style: 'margin: 0 7px 0 0;'
                         ,items: [{
                             xtype: 'textfield'
                             ,fieldLabel: _('goodnews.settings_container_mail_mailbox_username')
@@ -715,7 +662,6 @@ GoodNews.window.UpdateContainerSettings = function(config) {
                         }]
                     },{
                         columnWidth: .5
-                        ,style: 'margin: 0 0 0 7px;'
                         ,items: [{
                             xtype: 'textfield'
                             ,inputType: 'password'
@@ -745,7 +691,6 @@ GoodNews.window.UpdateContainerSettings = function(config) {
                     ,cls: 'desc-under'
                 },{
                     layout: 'column'
-                    ,cls: 'gon-x-panel-add-padding-top'
                     ,border: false
                     ,anchor: '100%'
                     ,defaults: {
@@ -756,7 +701,6 @@ GoodNews.window.UpdateContainerSettings = function(config) {
                     }
                     ,items: [{
                         columnWidth: .5
-                        ,style: 'margin: 0 7px 0 0;'
                         ,items: [{
                             xtype: 'modx-combo'
                             ,fieldLabel: _('goodnews.settings_container_mail_service_option')
@@ -785,7 +729,6 @@ GoodNews.window.UpdateContainerSettings = function(config) {
                         }]
                     },{
                         columnWidth: .5
-                        ,style: 'margin: 0 0 0 7px;'
                         ,items: [{
                             xtype: 'textfield'
                             ,fieldLabel: _('goodnews.settings_container_mail_port')
@@ -803,7 +746,6 @@ GoodNews.window.UpdateContainerSettings = function(config) {
                 }]
             },{
                 title: _('goodnews.settings_container_tab_bouncerules')
-                ,layout: 'form'
                 ,items: [{
                     layout: 'column'
                     ,border: false
@@ -816,7 +758,6 @@ GoodNews.window.UpdateContainerSettings = function(config) {
                     }
                     ,items: [{
                         columnWidth: .5
-                        ,style: 'margin: 0 7px 0 0;'
                         ,items: [{
                             xtype: 'modx-combo'
                             ,fieldLabel: _('goodnews.settings_container_softbounced_msg_action')
@@ -892,7 +833,6 @@ GoodNews.window.UpdateContainerSettings = function(config) {
                         }]
                     },{
                         columnWidth: .5
-                        ,style: 'margin: 0 0 0 7px;'
                         ,items: [{
                             xtype: 'modx-combo'
                             ,fieldLabel: _('goodnews.settings_container_hardbounced_msg_action')
@@ -970,7 +910,6 @@ GoodNews.window.UpdateContainerSettings = function(config) {
                 }]
             },{
                 title: _('goodnews.settings_container_tab_unclassified_bounces')
-                ,layout: 'form'
                 ,items: [{
                     xtype: 'modx-combo'
                     ,fieldLabel: _('goodnews.settings_container_notclassified_msg_action')

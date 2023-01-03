@@ -18,6 +18,9 @@
  * Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
+use MODX\Revolution\modTemplateVar;
+use MODX\Revolution\modTemplateVarTemplate;
+
 /**
  * Add TVs to package
  *
@@ -27,12 +30,12 @@
  * @subpackage build
  */
 
-$tvs = array();
+$tvs = [];
 $i = 0;
 
 /*
-$tvs[++$i]= $modx->newObject('modTemplateVar');
-$tvs[$i]->fromArray(array(
+$tvs[++$i]= $modx->newObject(modTemplateVar::class);
+$tvs[$i]->fromArray([
     'id'                => $i,
     'type'              => 'checkbox',
     'name'              => 'tvName',
@@ -46,7 +49,7 @@ $tvs[$i]->fromArray(array(
     'input_properties'  => '',
     'output_properties' => '',
     'properties'        => array(),
-), '', true, true);
+], '', true, true);
 */
 
 unset($i);

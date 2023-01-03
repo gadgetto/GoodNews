@@ -1,42 +1,31 @@
 <?php
+
 /**
- * GoodNews
+ * This file is part of the GoodNews package.
  *
- * Copyright 2012 by bitego <office@bitego.com>
+ * @copyright bitego (Martin Gartner)
+ * @license GNU General Public License v2.0 (and later)
  *
- * GoodNews is free software; you can redistribute it and/or modify it under the
- * terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
- *
- * GoodNews is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this software; if not, write to the Free Software Foundation, Inc., 59 Temple
- * Place, Suite 330, Boston, MA 02111-1307 USA
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
 /**
  * GoodNews Connector
  *
+ * @var \MODX\Revolution\modX $modx
+ * @var Bitego\GoodNews\GoodNews $goodnews
  * @package goodnews
  */
 
-require_once dirname(dirname(dirname(dirname(__FILE__)))).'/config.core.php';
-require_once MODX_CORE_PATH.'config/'.MODX_CONFIG_KEY.'.inc.php';
-require_once MODX_CONNECTORS_PATH.'index.php';
- 
-$corePath = $modx->getOption('goodnews.core_path', null, $modx->getOption('core_path').'components/goodnews/');
-require_once $corePath.'model/goodnews/goodnews.class.php';
-$modx->goodnews = new GoodNews($modx);
- 
+require_once dirname(__DIR__, 3) . '/config.core.php';
+require_once MODX_CORE_PATH . 'config/' . MODX_CONFIG_KEY . '.inc.php';
+require_once MODX_CONNECTORS_PATH . 'index.php';
+
+$goodnews = $modx->services->get('goodnews');
 $modx->lexicon->load('goodnews:default');
- 
-/* handle request */
-$path = $modx->getOption('processorsPath', $modx->goodnews->config, $corePath.'processors/');
-$modx->request->handleRequest(array(
-    'processors_path' => $path,
+
+$modx->request->handleRequest([
+    'processors_path' => $goodnews->config['processorsPath'],
     'location' => '',
-));
+]);

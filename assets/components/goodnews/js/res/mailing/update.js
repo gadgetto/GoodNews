@@ -17,35 +17,35 @@ GoodNewsResource.page.UpdateGoodNewsResourceMailing = function(config) {
     GoodNewsResource.page.UpdateGoodNewsResourceMailing.superclass.constructor.call(this,config);
 };
 Ext.extend(GoodNewsResource.page.UpdateGoodNewsResourceMailing,MODx.page.UpdateResource,{
-    getButtons: function(cfg) {
-        var btns = [];
+    getButtons: function(config) {
+        var buttons = [];
         
-        if (cfg.readOnly == 1) {
-            
-            btns.push({
+        if (config.readOnly == 1) {
+
+            buttons.push({
                 text: _('goodnews.mailing_readonly')
                 ,id: 'gon-abtn-readonly'
                 ,handler: Ext.emptyFn
                 ,disabled: true
             });
-            
+
         } else {
-            
-            btns.push({
-                text: cfg.lockedText || _('locked')
+
+            buttons.push({
+                text: config.lockedText || _('locked')
                 ,id: 'modx-abtn-locked'
                 ,handler: Ext.emptyFn
-                ,hidden: (cfg.canSave == 1)
+                ,hidden: (config.canSave == 1)
                 ,disabled: true
             });
 
-            btns.push({
+            buttons.push({
                 process: 'resource/update'
                 ,text: _('save')
                 ,id: 'modx-abtn-save'
                 ,cls: 'primary-button'
                 ,method: 'remote'
-                ,hidden: !(cfg.canSave == 1)
+                ,hidden: !(config.canSave == 1)
                 //,checkDirty: MODx.request.reload ? false : true
                 ,keys: [{
                     key: MODx.config.keymap_save || 's'
@@ -54,22 +54,22 @@ Ext.extend(GoodNewsResource.page.UpdateGoodNewsResourceMailing,MODx.page.UpdateR
             });            
         }
         
-        btns.push({
+        buttons.push({
             text: _('view')
             ,id: 'modx-abtn-preview'
             ,handler: this.preview
             ,scope: this
         });
         
-        btns.push({
+        buttons.push({
             text: _('cancel')
             ,id: 'modx-abtn-cancel'
             ,handler: this.cancel
             ,scope: this
         });
         
-        btns.push({
-            text: '<i class="icon icon-question-circle icon-lg"></i>&nbsp;' + _('help_ex')
+        buttons.push({
+            text: '<i class="icon icon-question-circle"></i>'
             ,id: 'modx-abtn-help'
             ,handler: function(){
                 MODx.helpUrl = GoodNewsResource.helpUrl;
@@ -77,7 +77,7 @@ Ext.extend(GoodNewsResource.page.UpdateGoodNewsResourceMailing,MODx.page.UpdateR
             }
         });
         
-        return btns;
+        return buttons;
     }
     ,cancel: function(btn,e) {
         var fp = Ext.getCmp(this.config.formpanel);

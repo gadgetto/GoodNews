@@ -1,5 +1,5 @@
 /**
- * Container panel which holds the main tabs
+ * GoodNewsResource container panel which holds the main tabs
  * 
  * @class GoodNewsResource.panel.Container
  * @extends MODx.panel.Resource (/manager/assets/modext/widgets/resource/modx.panel.resource.js)
@@ -11,24 +11,21 @@ GoodNewsResource.panel.Container = function(config) {
     GoodNewsResource.panel.Container.superclass.constructor.call(this,config);
 };
 Ext.extend(GoodNewsResource.panel.Container,MODx.panel.Resource,{
+
     getFields: function(config) {
         var it = [];
         it.push({
-            title: _('goodnews.container_tab_container')
-            ,id: 'modx-resource-settings'
+            id: 'modx-resource-settings'
+            ,title: _(this.classLexiconKey)
             ,cls: 'modx-resource-tab'
-            ,layout: 'form'
             ,labelAlign: 'top'
-            ,labelSeparator: ''
             ,bodyCssClass: 'tab-panel-wrapper main-wrapper'
             ,autoHeight: true
-            ,defaults: {
-                border: false
-                ,msgTarget: 'side'
-                ,width: 400
-            }
-            ,items: this.getMainFields(config)
+            ,items: this.getMainFieldsCombined(config)
         });
+        if (config.show_tvs && MODx.config.tvs_below_content != 1) {
+            it.push(this.getTemplateVariablesPanel(config));
+        }
         it.push({
             id: 'modx-page-settings'
             ,title: _('goodnews.container_tab_settings_container')
@@ -40,8 +37,8 @@ Ext.extend(GoodNewsResource.panel.Container,MODx.panel.Resource,{
             ,bodyCssClass: 'main-wrapper'
             ,autoHeight: true
             ,defaults: {
-                border: false
-                ,msgTarget: 'under'
+                border: false,
+                msgTarget: 'under'
             }
             ,items: this.getSettingFields(config)
         });
@@ -61,10 +58,7 @@ Ext.extend(GoodNewsResource.panel.Container,MODx.panel.Resource,{
             }
             ,items: this.getMailingsSettingFields(config)
         });
-        if (config.show_tvs && MODx.config.tvs_below_content != 1) {
-            it.push(this.getTemplateVariablesPanel(config));
-        }
-        if (MODx.perm.resourcegroup_resource_list == 1) {
+        if (MODx.perm.resourcegroup_resource_list) {
             it.push(this.getAccessPermissionsTab(config));
         }
         var its = [];
@@ -73,47 +67,21 @@ Ext.extend(GoodNewsResource.panel.Container,MODx.panel.Resource,{
             ,xtype: 'modx-tabs'
             ,forceLayout: true
             ,deferredRender: false
-            ,collapsible: true
+            ,collapsible: false
+            ,animCollapse: false
             ,itemId: 'tabs'
             ,items: it
         });
-        var ct = this.getContentField(config);
-        if (ct) {
-            its.push({
-                title: _('resource_content')
-                ,id: 'modx-resource-content'
-                ,layout: 'form'
-                ,bodyCssClass: 'main-wrapper'
-                ,autoHeight: true
-                ,collapsible: true
-                ,animCollapse: false
-                ,hideMode: 'offsets'
-                ,items: ct
-                ,style: 'margin-top: 10px'
-            });
-        }
         if (MODx.config.tvs_below_content == 1) {
             var tvs = this.getTemplateVariablesPanel(config);
             its.push(tvs);
         }
         return its;
     }
-    
-    ,getPageHeader: function(config) {
-        config = config || {record:{}};
-        return {
-            html: _('goodnews.container_new')
-            ,id: 'modx-resource-header'
-            ,xtype: 'modx-header'
-        };
-    }
-    
-    ,getSettingLeftFields: function(config) {
+
+    // GoodNewsResourceContainer hidden fields
+    ,getGoodNewsHiddenFields: function() {
         return [{
-            xtype: 'hidden'
-            ,name: 'class_key'
-            ,value: 'GoodNewsResourceContainer'
-        },{
             xtype: 'hidden'
             ,name: 'setting_editorGroups'
         },{
@@ -233,99 +201,75 @@ Ext.extend(GoodNewsResource.panel.Container,MODx.panel.Resource,{
         },{
             xtype: 'hidden'
             ,name: 'setting_collection3Parents'
-        },{
-            xtype: 'modx-field-parent-change'
-            ,fieldLabel: _('resource_parent')
-            ,description: '<b>[[*parent]]</b><br />'+_('resource_parent_help')
-            ,name: 'parent-cmb'
-            ,id: 'modx-resource-parent'
-            ,value: config.record.parent || 0
-            ,anchor: '100%'
-        },{
-            xtype: 'xdatetime'
-            ,fieldLabel: _('resource_publishedon')
-            ,description: '<b>[[*publishedon]]</b><br />'+_('resource_publishedon_help')
-            ,name: 'publishedon'
-            ,id: 'modx-resource-publishedon'
-            ,allowBlank: true
-            ,dateFormat: MODx.config.manager_date_format
-            ,timeFormat: MODx.config.manager_time_format
-            ,startDay: parseInt(MODx.config.manager_week_start)
-            ,dateWidth: 120
-            ,timeWidth: 120
-            ,offset_time: MODx.config.server_offset_time
-            ,value: config.record.publishedon
-        },{
-            xtype: MODx.config.publish_document ? 'xdatetime' : 'hidden'
-            ,fieldLabel: _('resource_publishdate')
-            ,description: '<b>[[*pub_date]]</b><br />'+_('resource_publishdate_help')
-            ,name: 'pub_date'
-            ,id: 'modx-resource-pub-date'
-            ,allowBlank: true
-            ,dateFormat: MODx.config.manager_date_format
-            ,timeFormat: MODx.config.manager_time_format
-            ,startDay: parseInt(MODx.config.manager_week_start)
-            ,dateWidth: 120
-            ,timeWidth: 120
-            ,offset_time: MODx.config.server_offset_time
-            ,value: config.record.pub_date
-        },{
-            xtype: MODx.config.publish_document ? 'xdatetime' : 'hidden'
-            ,fieldLabel: _('resource_unpublishdate')
-            ,description: '<b>[[*unpub_date]]</b><br />'+_('resource_unpublishdate_help')
-            ,name: 'unpub_date'
-            ,id: 'modx-resource-unpub-date'
-            ,allowBlank: true
-            ,dateFormat: MODx.config.manager_date_format
-            ,timeFormat: MODx.config.manager_time_format
-            ,startDay: parseInt(MODx.config.manager_week_start)
-            ,dateWidth: 120
-            ,timeWidth: 120
-            ,offset_time: MODx.config.server_offset_time
-            ,value: config.record.unpub_date
         }];
     }
-    ,getSettingRightFields: function(config) {
+
+    // Combine MODX main fields with GoodNewsResourceContainer hidden fields
+    ,getMainFieldsCombined: function(config) {
+        var fc = [];
+        fc.push(this.getMainFields(config));
+        fc.push(this.getGoodNewsHiddenFields());
+        return fc;
+    }
+    
+    ,getSettingLeftFields: function(config) {
         return [{
-            xtype: 'fieldset'
-            ,fieldLabel: _('goodnews.container_properties')
-            ,items: this.getSettingRightFieldset(config)
+            xtype: 'textfield'
+            ,fieldLabel: _('resource_type')
+            ,description: '<b>[[*class_key]]</b><br>'
+            ,name: 'class_key'
+            ,id: 'modx-resource-class-key'
+            ,maxLength: 255
+            ,readOnly: true
+            ,value: this.defaultClassKey
         },{
-            xtype: 'numberfield'
-            ,fieldLabel: _('resource_menuindex')
-            ,description: '<b>[[*menuindex]]</b><br />'+_('resource_menuindex_help')
-            ,name: 'menuindex'
-            ,id: 'modx-resource-menuindex'
-            ,width: 60
-            ,value: parseInt(config.record.menuindex) || 0
+            xtype: 'modx-combo-content-type'
+            ,fieldLabel: _('resource_content_type')
+            ,description: '<b>[[*content_type]]</b><br>'+_('resource_content_type_help')
+            ,name: 'content_type'
+            ,hiddenName: 'content_type'
+            ,id: 'modx-resource-content-type'
+            ,allowBlank: false
+            ,value: config.record.content_type || (MODx.config.default_content_type || 1)
         }];
     }
-    ,getSettingRightFieldset: function(config) {
+    
+    ,getSettingRightFieldsetLeft: function(config) {
         return [{
-            layout: 'column'
-            ,id: 'modx-page-settings-box-columns'
-            ,border: false
-            ,anchor: '100%'
-            ,defaults: {
-                labelSeparator: ''
-                ,labelAlign: 'top'
-                ,border: false
-                ,layout: 'form'
-                ,msgTarget: 'under'
-            }
-            ,items: [{
-                columnWidth: .5
-                ,id: 'modx-page-settings-right-box-left'
-                ,defaults: { msgTarget: 'under' }
-                ,items: this.getSettingRightFieldsetLeft(config)
-            },{
-                columnWidth: .5
-                ,id: 'modx-page-settings-right-box-right'
-                ,defaults: { msgTarget: 'under' }
-                ,items: this.getSettingRightFieldsetRight(config)
-            }]
+            // is always folder!
+            xtype: 'hidden'
+            ,name: 'isfolder'
+            ,id: 'modx-resource-isfolder'
+            ,value: 1
         },{
             xtype: 'xcheckbox'
+            ,ctCls: 'display-switch'
+            ,boxLabel: _('resource_show_in_tree')
+            ,description: '<b>[[*show_in_tree]]</b><br>'+_('resource_show_in_tree_help')
+            ,hideLabel: false // needs to be false for first visible element (top margin!)
+            ,name: 'show_in_tree'
+            ,id: 'modx-resource-show-in-tree'
+            ,inputValue: 1
+            ,checked: parseInt(config.record.show_in_tree)
+        },{
+            // child resources are always hidden in tree!
+            xtype: 'hidden'
+            ,name: 'hide_children_in_tree'
+            ,id: 'modx-resource-hide-children-in-tree'
+            ,value: 1
+        },{
+            xtype: 'xcheckbox'
+            ,ctCls: 'display-switch'
+            ,boxLabel: _('resource_alias_visible')
+            ,description: '<b>[[*alias_visible]]</b><br>'+_('resource_alias_visible_help')
+            ,hideLabel: true
+            ,name: 'alias_visible'
+            ,id: 'modx-resource-alias-visible'
+            ,inputValue: 1
+            ,checked: parseInt(config.record.alias_visible) || 1
+        },{
+            xtype: 'xcheckbox'
+            ,ctCls: 'display-switch'
             ,boxLabel: _('resource_uri_override')
             ,description: _('resource_uri_override_help')
             ,hideLabel: true
@@ -333,79 +277,51 @@ Ext.extend(GoodNewsResource.panel.Container,MODx.panel.Resource,{
             ,value: 1
             ,checked: parseInt(config.record.uri_override) ? true : false
             ,id: 'modx-resource-uri-override'
-
         },{
             xtype: 'textfield'
             ,fieldLabel: _('resource_uri')
-            ,description: '<b>[[*uri]]</b><br />'+_('resource_uri_help')
+            ,description: '<b>[[*uri]]</b><br>'+_('resource_uri_help')
             ,name: 'uri'
             ,id: 'modx-resource-uri'
             ,maxLength: 255
-            ,anchor: '70%'
             ,value: config.record.uri || ''
             ,hidden: !config.record.uri_override
         }];
     }
-    ,getSettingRightFieldsetLeft: function(config) {
-        return [{
-            xtype: 'xcheckbox'
-            ,boxLabel: _('resource_searchable')
-            ,description: '<b>[[*searchable]]</b><br />'+_('resource_searchable_help')
-            ,hideLabel: true
-            ,name: 'searchable'
-            ,id: 'modx-resource-searchable'
-            ,inputValue: 1
-            ,checked: parseInt(config.record.searchable)
-        },{
-            xtype: 'xcheckbox'
-            ,boxLabel: _('resource_richtext')
-            ,description: '<b>[[*richtext]]</b><br />'+_('resource_richtext_help')
-            ,hideLabel: true
-            ,name: 'richtext'
-            ,id: 'modx-resource-richtext'
-            ,inputValue: 1
-            ,checked: parseInt(config.record.richtext)
-        }];
-    }
-    ,getSettingRightFieldsetRight: function(config) {
-        return [{
-            xtype: 'xcheckbox'
-            ,boxLabel: _('deleted')
-            ,description: '<b>[[*deleted]]</b>'
-            ,hideLabel: true
-            ,name: 'deleted'
-            ,id: 'modx-resource-deleted'
-            ,inputValue: 1
-            ,checked: parseInt(config.record.deleted) || false
-        }];
-    }
+
     ,getMailingsSettingFields: function(config) {
         config = config || {record:{}};
-        var s = [{
+        return [{
             layout:'column'
-            ,border: false
-            ,anchor: '100%'
             ,defaults: {
-                labelSeparator: ''
-                ,labelAlign: 'top'
-                ,border: false
-                ,layout: 'form'
-                ,msgTarget: 'under'
+                defaults: {
+                    layout: 'form',
+                    labelAlign: 'top',
+                    labelSeparator: '',
+                    defaults: {
+                        validationEvent: 'change',
+                        anchor: '100%',
+                        msgTarget: 'under'
+                    }
+                }
             }
             ,items:[{
                 columnWidth: .5
-                ,id: 'goodnewsresource-page-mailings-settings-left'
-                ,defaults: { msgTarget: 'under' }
-                ,items: this.getMailingsSettingLeftFields(config)
+                ,items: [{
+                    id: 'goodnewsresource-page-mailings-settings-left'
+                    ,items: this.getMailingsSettingLeftFields(config)
+                }]
             },{
                 columnWidth: .5
-                ,id: 'goodnewsresource-page-mailings-settings-right'
-                ,defaults: { msgTarget: 'under' }
-                ,items: this.getMailingsSettingRightFields(config)
+                ,items: [{
+                    id: 'goodnewsresource-page-mailings-settings-right'
+                    ,items: this.getMailingsSettingRightFields(config)
+                }]
+    
             }]
         }];
-        return s;
     }
+
     ,getMailingsSettingLeftFields: function(config) {
         return [{
             xtype: 'modx-combo-category'
@@ -415,8 +331,6 @@ Ext.extend(GoodNewsResource.panel.Container,MODx.panel.Resource,{
             ,hiddenName: 'setting_templatesCategory'
             ,id: 'goodnewsresource-templates-category'
             ,value: config.record.setting_templatesCategory || 0
-            ,pageSize: 20
-            ,anchor: '100%'
         },{
             xtype: 'modx-combo-template'
             ,fieldLabel: _('goodnews.container_mailing_template')
@@ -425,10 +339,10 @@ Ext.extend(GoodNewsResource.panel.Container,MODx.panel.Resource,{
             ,hiddenName: 'setting_mailingTemplate'
             ,id: 'goodnewsresource-mailing-template'
             ,value: config.record.setting_mailingTemplate || 0
-            ,anchor: '100%'
             ,editable: false
         }];
     }
+    
     ,getMailingsSettingRightFields: function(config) {
         return [{
             xtype: 'textfield'
@@ -436,14 +350,12 @@ Ext.extend(GoodNewsResource.panel.Container,MODx.panel.Resource,{
             ,description: '<b>[[+unsubscribeResource]]</b><br />'+_('goodnews.container_unsubscribe_resource_desc')
             ,name: 'setting_unsubscribeResource'
             ,value: config.record.setting_unsubscribeResource || ''
-            ,anchor: '60%'
         },{
             xtype: 'textfield'
             ,fieldLabel: _('goodnews.container_profile_resource')
             ,description: '<b>[[+profileResource]]</b><br />'+_('goodnews.container_profile_resource_desc')
             ,name: 'setting_profileResource'
             ,value: config.record.setting_profileResource || ''
-            ,anchor: '60%'
         }];
     }
 });

@@ -1,0 +1,25 @@
+{
+    "name": "bitego/goodnews",
+    "description": "An integrated group and newsletter mailing system for MODX Revolution CMF",
+    "type": "modx-plugin",
+    "license": "GNU General Public License v2",
+    "keywords": [
+      "modx",
+      "GoodNews"
+    ],
+    "autoload": {
+        "psr-4": {
+            "Bitego\\GoodNews\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Martin Gartner",
+            "email": "martin.gartner@bitego.com"
+        }
+    ],
+    "require": {
+        "tijsverkoyen/css-to-inline-styles": "^2.2",
+        "soundasleep/html2text": "^2.0"
+    }
+}

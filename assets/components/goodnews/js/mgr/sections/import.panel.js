@@ -16,12 +16,10 @@ GoodNews.ImportPanel = function(config) {
         id: 'goodnews-panel-import'
         ,cls: 'container'
         ,bodyStyle: ''
-        ,unstyled: true
         ,fileUpload: true
         ,items: [{
-            html: '<h2 class="gon-cmp-header gon-logo">'+_('goodnews.import')+'</h2>'
-            ,border: false
-            ,cls: 'modx-page-header'
+            html: _('goodnews.import')
+            ,xtype: 'modx-header'
         },{
             xtype: 'modx-tabs'
             ,itemId: 'tabs'
@@ -89,7 +87,7 @@ Ext.extend(GoodNews.ImportPanel,MODx.FormPanel,{
         this.getForm().submit({
             url: GoodNews.config.connectorUrl
             ,params: {
-                action: 'mgr/subscribers/import'
+                action: 'Bitego\\GoodNews\\Processors\\Subscribers\\Import'
                 ,register: register
                 ,topic: topic
             }
@@ -107,28 +105,28 @@ Ext.extend(GoodNews.ImportPanel,MODx.FormPanel,{
     ,getButtons: function() {
         var buttons = [];
         // Plugin version
-        buttons.push('-',{
+        buttons.push({
             xtype: 'tbtext'
             ,html: '<i>'+GoodNews.config.componentVersion+'-'+GoodNews.config.componentRelease+'</i>'
-        },'-')
+        })
         // Start Import button
         buttons.push({
-            text: '<i class="icon icon-download icon-lg"></i>&nbsp;' + _('goodnews.import_subscribers_button_start')
+            text: '<i class="icon icon-download"></i>&nbsp;' + _('goodnews.import_subscribers_button_start')
             ,id: 'button-import-start'
             ,cls: 'primary-button'
             ,handler: this.startSubscriberImport
             ,scope: this
-        },'-')
+        })
         // Close Import button
         buttons.push({
-            text: '<i class="icon icon-arrow-circle-left icon-lg"></i>&nbsp;' + _('goodnews.import_close_button')
+            text: '<i class="icon icon-arrow-circle-left"></i>&nbsp;' + _('goodnews.import_close_button')
             ,id: 'button-import-close'
             ,handler: this.closeImport
             ,scope: this
-        },'-')
+        })
         // Help button
         buttons.push({
-            text: '<i class="icon icon-question-circle icon-lg"></i>&nbsp;' + _('help_ex')
+            text: '<i class="icon icon-question-circle"></i>'
             ,id: 'button-help'
             ,handler: function(){
                 MODx.config.help_url = GoodNews.config.helpUrl;

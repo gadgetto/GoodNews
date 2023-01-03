@@ -63,7 +63,7 @@ $properties = array(
         'desc'    => 'prop_goodnewssubscription.activationemailtpl_desc',
         'type'    => 'textfield',
         'options' => '',
-        'value'   => 'sample.GoodNewsActivationEmailTpl',
+        'value'   => 'sample.GoodNewsActivationEmailChunk',
         'lexicon' => 'goodnews:properties',
     ),
     array(
@@ -140,7 +140,7 @@ $properties = array(
         'desc'    => 'prop_goodnewssubscription.subscriptionemailtpl_desc',
         'type'    => 'textfield',
         'options' => '',
-        'value'   => 'sample.GoodNewsSubscriptionEmailTpl',
+        'value'   => 'sample.GoodNewsSubscriptionEmailChunk',
         'lexicon' => 'goodnews:properties',
     ),
     array(
@@ -177,7 +177,7 @@ $properties = array(
         'desc'    => 'prop_goodnewssubscription.resubscriptionemailtpl_desc',
         'type'    => 'textfield',
         'options' => '',
-        'value'   => 'sample.GoodNewsSubscriptionEmailTpl',
+        'value'   => 'sample.GoodNewsSubscriptionEmailChunk',
         'lexicon' => 'goodnews:properties',
     ),
     array(
@@ -334,7 +334,7 @@ $properties = array(
         'desc'    => 'prop_goodnewssubscription.grpfieldsettpl_desc',
         'type'    => 'textfield',
         'options' => '',
-        'value'   => 'sample.GoodNewsGrpFieldsetTpl',
+        'value'   => 'sample.GoodNewsGrpFieldsetChunk',
         'lexicon' => 'goodnews:properties',
     ),
     array(
@@ -342,7 +342,7 @@ $properties = array(
         'desc'    => 'prop_goodnewssubscription.grpnametpl_desc',
         'type'    => 'textfield',
         'options' => '',
-        'value'   => 'sample.GoodNewsGrpNameTpl',
+        'value'   => 'sample.GoodNewsGrpNameChunk',
         'lexicon' => 'goodnews:properties',
     ),
     array(
@@ -350,7 +350,7 @@ $properties = array(
         'desc'    => 'prop_goodnewssubscription.grpfieldtpl_desc',
         'type'    => 'textfield',
         'options' => '',
-        'value'   => 'sample.GoodNewsGrpFieldTpl',
+        'value'   => 'sample.GoodNewsGrpFieldChunk',
         'lexicon' => 'goodnews:properties',
     ),
     array(
@@ -358,7 +358,7 @@ $properties = array(
         'desc'    => 'prop_goodnewssubscription.grpfieldhiddentpl_desc',
         'type'    => 'textfield',
         'options' => '',
-        'value'   => 'sample.GoodNewsGrpFieldHiddenTpl',
+        'value'   => 'sample.GoodNewsGrpFieldHiddenChunk',
         'lexicon' => 'goodnews:properties',
     ),
     array(
@@ -366,7 +366,7 @@ $properties = array(
         'desc'    => 'prop_goodnewssubscription.catfieldtpl_desc',
         'type'    => 'textfield',
         'options' => '',
-        'value'   => 'sample.GoodNewsCatFieldTpl',
+        'value'   => 'sample.GoodNewsCatFieldChunk',
         'lexicon' => 'goodnews:properties',
     ),
     array(
@@ -374,7 +374,7 @@ $properties = array(
         'desc'    => 'prop_goodnewssubscription.catfieldhiddentpl_desc',
         'type'    => 'textfield',
         'options' => '',
-        'value'   => 'sample.GoodNewsCatFieldHiddenTpl',
+        'value'   => 'sample.GoodNewsCatFieldHiddenChunk',
         'lexicon' => 'goodnews:properties',
     ),
     array(

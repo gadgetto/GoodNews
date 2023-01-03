@@ -26,7 +26,7 @@
  * @language en
  */
 
-$_lang['goodnews.container']                               = 'GoodNews';
+$_lang['goodnews.container']                               = 'GoodNews Container';
 $_lang['goodnews.container_create_here']                   = 'GoodNews Container';
 $_lang['goodnews.container_new']                           = 'New GoodNews Container';
                                                            
@@ -62,7 +62,7 @@ $_lang['goodnews.mail_subject_desc']                       = 'The subject of the
 $_lang['goodnews.mail_summary']                            = 'Mail Summary';
 $_lang['goodnews.mail_summary_desc']                       = 'A short summary of the mail content.';
 $_lang['goodnews.mail_body']                               = 'Mail Body';
-$_lang['goodnews.mail_publishing_information']             = 'Publishing Informations';
+$_lang['goodnews.mail_publishing']                         = 'Publishing';
 $_lang['goodnews.mail_status']                             = 'Status';
 $_lang['goodnews.mail_options']                            = 'Mail Options';
 $_lang['goodnews.mail_sending_scheduled']                  = 'Scheduled Sending';

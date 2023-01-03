@@ -9,12 +9,12 @@
 GoodNewsResource.panel.Mailing = function(config) {
     config = config || {};
     config.trackResetOnLoad = true;
-    Ext.applyIf(config,{});
     GoodNewsResource.panel.Mailing.superclass.constructor.call(this,config);
 };
 Ext.extend(GoodNewsResource.panel.Mailing,MODx.panel.Resource,{
+    
     beforeSubmit: function(o) {
-        var ta = Ext.get('ta');
+        var ta = Ext.get(this.contentField);
         if (ta) {
             var v = ta.dom.value;
             var hc = Ext.getCmp('hiddenContent');
@@ -29,7 +29,7 @@ Ext.extend(GoodNewsResource.panel.Mailing,MODx.panel.Resource,{
         if (ta) {
             this.cleanupEditor();
         }
-        if(this.getForm().baseParams.action == 'resource/create') {
+        if(this.getForm().baseParams.action == 'Resource/Create') {
             var btn = Ext.getCmp('modx-abtn-save');
             if (btn) { btn.disable(); }
         }
@@ -86,39 +86,36 @@ Ext.extend(GoodNewsResource.panel.Mailing,MODx.panel.Resource,{
             ,stay: Ext.state.Manager.get('modx.stay.'+MODx.request.a,'stay')
         });
     }
+
     ,getFields: function(config) {
         var it = [];
         it.push({
-            title: _('goodnews.mailing')
-            ,id: 'modx-resource-settings'
+            id: 'modx-resource-settings'
+            ,title: _('goodnews.mailing')
             ,cls: 'modx-resource-tab'
-            ,layout: 'form'
             ,labelAlign: 'top'
-            ,labelSeparator: ''
             ,bodyCssClass: 'tab-panel-wrapper main-wrapper'
             ,autoHeight: true
-            ,defaults: {
-                border: false
-                ,msgTarget: 'under'
-                ,width: 400
-            }
-            ,items: this.getMainFields(config)
+            ,items: this.getMainFieldsCombined(config)
         });
-        it.push(this.getResourceCollectionTabs(config));
+        it.push(
+            this.getResourceCollectionTabs(config)
+        );
         if (config.show_tvs && MODx.config.tvs_below_content != 1) {
-            it.push(this.getTemplateVariablesPanel(config));
+            it.push(
+                this.getTemplateVariablesPanel(config)
+            );
         }
-        if (MODx.perm.resourcegroup_resource_list == 1) {
+        if (MODx.perm.resourcegroup_resource_list) {
             it.push(this.getAccessPermissionsTab(config));
         }
-        
         var its = [];
         its.push(this.getPageHeader(config),{
             id:'modx-resource-tabs'
             ,xtype: 'modx-tabs'
             ,forceLayout: true
             ,deferredRender: false
-            ,collapsible: true
+            ,collapsible: false
             ,animCollapse: false
             ,itemId: 'tabs'
             ,items: it
@@ -129,23 +126,155 @@ Ext.extend(GoodNewsResource.panel.Mailing,MODx.panel.Resource,{
         }
         return its;
     }
+
+    // GoodNewsResourceMailing hidden fields
+    ,getGoodNewsHiddenFields: function(config) {
+        return [{
+            xtype: 'hidden'
+            ,id: 'goodnewsresource-groupscategories'
+            ,name: 'groupscategories'
+        },{
+            xtype: 'hidden'
+            ,id: 'goodnewsresource-collection1'
+            ,name: 'collection1'
+        },{
+            xtype: 'hidden'
+            ,id: 'goodnewsresource-collection2'
+            ,name: 'collection2'
+        },{
+            xtype: 'hidden'
+            ,id: 'goodnewsresource-collection3'
+            ,name: 'collection3'
+        },{
+            xtype: 'hidden'
+            ,id: 'modx-resource-longtitle'
+            ,name: 'longtitle'
+            ,value: config.record.longtitle || ''
+        },{
+            xtype: 'hidden'
+            ,id: 'modx-resource-description'
+            ,name: 'description'
+            ,value: config.record.description || ''
+        },{
+            xtype: 'hidden'
+            ,id: 'modx-resource-unpub-date'
+            ,name: 'unpub_date'
+            ,value: config.record.unpub_date
+        },{
+            xtype: 'hidden'
+            ,id: 'modx-resource-hidemenu'
+            ,name: 'hidemenu'
+            ,value: config.record.hidemenu
+        },{
+            xtype: 'hidden'
+            ,id: 'modx-resource-menutitle'
+            ,name: 'menutitle'
+            ,value: config.record.menutitle || ''
+        },{
+            xtype: 'hidden'
+            ,id: 'modx-resource-link-attributes'
+            ,name: 'link_attributes'
+            ,value: config.record.link_attributes || ''
+        },{
+            xtype: 'hidden'
+            ,id: 'modx-resource-menuindex'
+            ,name: 'menuindex'
+            ,value: parseInt(config.record.menuindex) || 0
+        },{
+            xtype: 'hidden'
+            ,id: 'modx-resource-class-key'
+            ,name: 'class_key'
+            ,value: 'Bitego\\GoodNews\\Model\\GoodNewsResourceMailing'
+        },{
+            xtype: 'hidden'
+            ,id: 'modx-resource-content-type'
+            ,name: 'content_type'
+            ,value: 1
+        },{
+            xtype: 'hidden'
+            ,id: 'modx-resource-parent'
+            ,name: 'parent'
+            ,value: config.record.parent
+        },{
+            xtype: 'hidden'
+            ,id: 'modx-resource-content-dispo'
+            ,name: 'content_dispo'
+            ,value: 0
+        },{
+            xtype: 'hidden'
+            ,id: 'modx-resource-isfolder'
+            ,name: 'isfolder'
+            ,value: 0
+        },{
+            xtype: 'hidden'
+            ,id: 'modx-resource-show-in-tree'
+            ,name: 'show_in_tree'
+            ,value: 0
+        },{
+            xtype: 'hidden'
+            ,id: 'modx-resource-hide-children-in-tree'
+            ,name: 'hide_children_in_tree'
+            ,value: 1
+        },{
+            xtype: 'hidden'
+            ,id: 'modx-resource-alias-visible'
+            ,name: 'alias_visible'
+            ,value: parseInt(config.record.alias_visible) || 1
+        },{
+            xtype: 'hidden'
+            ,id: 'modx-resource-uri-override'
+            ,name: 'uri_override'
+            ,value: parseInt(config.record.uri_override) || 0
+        },{
+            xtype: 'hidden'
+            ,id: 'modx-resource-uri'
+            ,name: 'uri'
+            ,value: config.record.uri || ''
+        },{
+            xtype: 'hidden'
+            ,id: 'modx-resource-searchable'
+            ,name: 'searchable'
+            ,value: parseInt(config.record.searchable)
+        },{
+            xtype: 'hidden'
+            ,id: 'modx-resource-cacheable'
+            ,name: 'cacheable'
+            ,value: parseInt(config.record.cacheable)
+        }];
+    }
+
+    // Combine MODX main fields with GoodNewsResourceMailing hidden fields
+    // and change column widths
+    ,getMainFieldsCombined: function(config) {
+        var fc = [];
+        var mainFields = this.getMainFields(config);
+        // Change columnWidths in mainfield columns
+        mainFields[0].items[0].columnWidth = 0.7;
+        mainFields[0].items[1].columnWidth = 0.3;
+        fc.push(mainFields);
+        fc.push(this.getGoodNewsHiddenFields(config));
+        return fc;
+    }
+
     ,getResourceCollectionTabs: function(config) {
         var cTabs = [];
         if (config.record.collection1Name && config.record.collection1Parents) {
             cTabs.push({
                 id: 'goodnewsresource-collection1-tab'
-                ,autoHeight: true
                 ,title: _('goodnews.mailing_resource_collection')+config.record.collection1Name
-                ,layout: 'form'
-                ,anchor: '100%'
+                ,cls: 'modx-resource-tab'
+                ,labelAlign: 'top'
+                ,bodyCssClass: 'tab-panel-wrapper main-wrapper'
+                ,autoHeight: true
                 ,items: [{
                     html: '<p>'+_('goodnews.mailing_resource_collection_desc')+'</p>'
-                    ,bodyCssClass: 'panel-desc'
-                    ,border: false
+                    ,xtype: 'modx-description'
                 },{
                     xtype: 'goodnewsresource-grid-collect-resources'
+                    ,cls: 'main-wrapper'
+                    ,preventRender: true
                     ,baseParams: {
-                        action: 'mgr/collection/getResourceList'
+                        action: 'Bitego\\GoodNews\\Processors\\Collection\\GetResourceList'
                         ,parentIds: config.record.collection1Parents
                         ,collectionIds: config.record.collection1 || ''
                         ,collectionInternalName: 'collection1'
@@ -156,18 +285,20 @@ Ext.extend(GoodNewsResource.panel.Mailing,MODx.panel.Resource,{
         if (config.record.collection2Name && config.record.collection2Parents) {
             cTabs.push({
                 id: 'goodnewsresource-collection2-tab'
-                ,autoHeight: true
                 ,title: _('goodnews.mailing_resource_collection')+config.record.collection2Name
-                ,layout: 'form'
-                ,anchor: '100%'
+                ,cls: 'modx-resource-tab'
+                ,labelAlign: 'top'
+                ,bodyCssClass: 'tab-panel-wrapper main-wrapper'
+                ,autoHeight: true
                 ,items: [{
                     html: '<p>'+_('goodnews.mailing_resource_collection_desc')+'</p>'
-                    ,bodyCssClass: 'panel-desc'
-                    ,border: false
+                    ,xtype: 'modx-description'
                 },{
                     xtype: 'goodnewsresource-grid-collect-resources'
+                    ,cls: 'main-wrapper'
+                    ,preventRender: true
                     ,baseParams: {
-                        action: 'mgr/collection/getResourceList'
+                        action: 'Bitego\\GoodNews\\Processors\\Collection\\GetResourceList'
                         ,parentIds: config.record.collection2Parents
                         ,collectionIds: config.record.collection2 || ''
                         ,collectionInternalName: 'collection2'
@@ -178,149 +309,137 @@ Ext.extend(GoodNewsResource.panel.Mailing,MODx.panel.Resource,{
         if (config.record.collection3Name && config.record.collection3Parents) {
             cTabs.push({
                 id: 'goodnewsresource-collection3-tab'
-                ,autoHeight: true
                 ,title: _('goodnews.mailing_resource_collection')+config.record.collection3Name
-                ,layout: 'form'
-                ,anchor: '100%'
+                ,cls: 'modx-resource-tab'
+                ,labelAlign: 'top'
+                ,bodyCssClass: 'tab-panel-wrapper main-wrapper'
+                ,autoHeight: true
                 ,items: [{
                     html: '<p>'+_('goodnews.mailing_resource_collection_desc')+'</p>'
-                    ,bodyCssClass: 'panel-desc'
-                    ,border: false
+                    ,xtype: 'modx-description'
                 },{
                     xtype: 'goodnewsresource-grid-collect-resources'
+                    ,cls: 'main-wrapper'
+                    ,preventRender: true
                     ,baseParams: {
-                        action: 'mgr/collection/getResourceList'
+                        action: 'Bitego\\GoodNews\\Processors\\Collection\\GetResourceList'
                         ,parentIds: config.record.collection3Parents
                         ,collectionIds: config.record.collection3 || ''
-                        ,collectionInternalName: 'collection3'
+                        ,collectionInternalName: 'collection2'
                     }
                 }]
             });
         }
         return cTabs;
     }
-    ,getPageHeader: function(config) {
-        config = config || {record:{}};
-        return {
-            html: _('goodnews.mailing_new')
-            ,id: 'modx-resource-header'
-            ,xtype: 'modx-header'
-        };
-    }
+
     ,getMainLeftFields: function(config) {
         config = config || {record:{}};
-        var mlf = [{
-            xtype: 'hidden'
-            ,name: 'class_key'
-            ,value: 'GoodNewsResourceMailing'
-        },{
-            xtype: 'hidden'
-            ,name: 'longtitle'
-            ,id: 'modx-resource-longtitle'
-            ,value: config.record.longtitle || ''
-        },{
-            xtype: 'hidden'
-            ,name: 'menutitle'
-            ,id: 'modx-resource-menutitle'
-            ,value: config.record.menutitle || ''
-        },{
-            xtype: 'hidden'
-            ,name: 'link_attributes'
-            ,id: 'modx-resource-link-attributes'
-            ,value: config.record.link_attributes || ''
-        },{
-            xtype: 'hidden'
-            ,name: 'hidemenu'
-            ,id: 'modx-resource-hidemenu'
-            ,value: config.record.hidemenu
-        },{
-            xtype: 'hidden'
-            ,name: 'groupscategories'
-        },{
-            xtype: 'hidden'
-            ,name: 'collection1'
-            ,id: 'goodnewsresource-collection1'
-        },{
-            xtype: 'hidden'
-            ,name: 'collection2'
-            ,id: 'goodnewsresource-collection2'
-        },{
-            xtype: 'hidden'
-            ,name: 'collection3'
-            ,id: 'goodnewsresource-collection3'
-        }];
-        mlf.push({
-            xtype: 'textfield'
-            ,fieldLabel: _('goodnews.mail_subject')+'<span class="required">*</span>'
-            ,description: '<b>[[*pagetitle]]</b><br />'+_('goodnews.mail_subject_desc')
-            ,name: 'pagetitle'
-            ,id: 'modx-resource-pagetitle'
-            ,maxLength: 255
-            ,anchor: '100%'
-            ,allowBlank: false
-            ,enableKeyEvents: true
-            ,listeners: {
-                'keyup': {scope:this,fn:function(f,e) {
-                    var title = Ext.util.Format.stripTags(f.getValue());
-                    Ext.getCmp('modx-resource-header').getEl().update('<h2>'+title+'</h2>');
-                    }
+        const aliasLength = ~~MODx.config['friendly_alias_max_length'] || 0;
+        return [{
+            layout: 'column'
+            ,defaults: {
+                layout: 'form',
+                labelSeparator: '',
+                defaults: {
+                    layout: 'form',
+                    anchor: '100%',
+                    validationEvent: 'change',
+                    msgTarget: 'under'
                 }
             }
-        });
-        mlf.push({
+            ,items: [{
+                columnWidth: .7
+                ,items: [{
+                    xtype: 'textfield'
+                    ,fieldLabel: _('goodnews.mail_subject')
+                    ,required: true
+                    ,description: '<b>[[*pagetitle]]</b><br>'+_('goodnews.mail_subject_desc')
+                    ,name: 'pagetitle'
+                    ,id: 'modx-resource-pagetitle'
+                    ,maxLength: 191
+                    ,allowBlank: false
+                    ,enableKeyEvents: true
+                    ,listeners: {
+                        keyup: {
+                            fn: function(cmp) {
+                                const title = this.formatMainPanelTitle('resource', this.config.record, cmp.getValue(), true);
+                                this.generateAliasRealTime(title);
+                                // check some system settings before doing real time alias transliteration
+                                if (parseInt(MODx.config.friendly_alias_realtime, 10) && parseInt(MODx.config.automatic_alias, 10)) {
+                                    // handles the realtime-alias transliteration
+                                    if (this.config.aliaswasempty && title !== '') {
+                                        this.translitAlias(title);
+                                    }
+                                }
+                            },
+                            scope: this
+                        }
+                        // also do realtime transliteration of alias on blur of pagetitle field
+                        // as sometimes (when typing very fast) the last letter(s) are not caught
+                        ,blur: {
+                            fn: function(cmp, e) {
+                                const title = Ext.util.Format.stripTags(cmp.getValue());
+                                this.generateAliasRealTime(title);
+                            },
+                            scope: this
+                        }
+                    }
+                }]
+            },{
+                columnWidth: .3
+                ,items: [{
+                    xtype: 'textfield'
+                    ,fieldLabel: _('resource_alias')
+                    ,description: '<b>[[*alias]]</b><br>'+_('resource_alias_help')
+                    ,name: 'alias'
+                    ,id: 'modx-resource-alias'
+                    ,maxLength: (aliasLength > 191 || aliasLength === 0) ? 191 : aliasLength
+                    ,value: config.record.alias || ''
+                    ,listeners: {
+                        change: {fn: function(f,e) {
+                                // when the alias is manually cleared, enable real time alias
+                                if (Ext.isEmpty(f.getValue())) {
+                                    this.config.aliaswasempty = true;
+                                }
+                            }, scope: this}
+                    }
+                }]
+            }]
+        },{
             xtype: 'textarea'
             ,fieldLabel: _('goodnews.mail_summary')
-            ,description: '<b>[[*introtext]]</b><br />'+_('goodnews.mail_summary_desc')
+            ,description: '<b>[[*introtext]]</b><br>'+_('goodnews.mail_summary_desc')
             ,name: 'introtext'
             ,id: 'modx-resource-introtext'
-            ,grow: true
-            ,anchor: '100%'
             ,value: config.record.introtext || ''
-        });
-        var ct = this.getContentField(config);
-        if (ct) {
-            mlf.push(ct);
-        }
-        return mlf;
+        },
+        this.getContentField(config)];
     }
-    ,getContentField: function(config) {
-        return [{
-            id: 'modx-content-above'
-            ,border: false
-        },{
-            xtype: 'textarea'
-            ,fieldLabel: _('goodnews.mail_body')
-            ,name: 'ta'
-            ,id: 'ta'
-            ,anchor: '100%'
-            ,height: 450
-            ,grow: false
-            ,value: (config.record.content || config.record.ta) || ''
-            ,itemCls: 'contentblocks_replacement'
-        },{
-            id: 'modx-content-below'
-            ,border: false
-        }];
-    }
+
     ,getMainRightFields: function(config) {
         config = config || {};
         return [{
-            xtype: 'fieldset'
+            id: 'goodnewsresource-send-to'
+            ,cls: 'modx-resource-panel'
             ,title: _('goodnews.mail_send_to')
-            ,id: 'goodnewsmailing-box-send-to'
-            ,defaults: {
-                msgTarget: 'under'
+            ,collapsible: true
+            ,stateful: true
+            ,stateEvents: ['collapse', 'expand']
+            ,getState: function() {
+                return { collapsed: this.collapsed };
             }
             ,items: [{
                 xtype: 'modx-tree'
                 ,id: 'goodnewsresource-tree-groupscategories'
+                ,cls: 'gonr-tree-groupscategories'
                 ,url: GoodNewsResource.connector_url
-                ,action: 'mgr/groups/getGroupCatNodes'
+                ,action: 'Bitego\\GoodNews\\Processors\\Group\\GroupCategoryGetNodes'
                 ,baseParams: {
                     addModxGroups: true
                     ,resourceID: config.record.id || 0
                 }
-                ,autoHeight: false
+                ,autoHeight: true
                 ,height: 200
                 ,root: {
                     text: _('goodnews.mail_groups_categories')
@@ -336,7 +455,6 @@ Ext.extend(GoodNewsResource.panel.Mailing,MODx.panel.Resource,{
                 ,useDefaultToolbar: true
                 ,stateful: false
                 ,collapsed: false
-                ,cls: 'gonr-tree-groupscategories'
                 ,listeners: {
                     'afterrender': function(){
                         var tree = Ext.getCmp('goodnewsresource-tree-groupscategories');
@@ -346,7 +464,7 @@ Ext.extend(GoodNewsResource.panel.Mailing,MODx.panel.Resource,{
                         // make dirty
                         this.fireEvent('fieldChange');
                         node.expand();
-                        // check all leafes (categories) if node (group) is checked
+                        // check all leafs (categories) if node (group) is checked
                         if(checked){
                             node.eachChild(function(n) {
                                 n.getUI().toggleCheck(checked);
@@ -360,20 +478,39 @@ Ext.extend(GoodNewsResource.panel.Mailing,MODx.panel.Resource,{
                 }
             }]
         },{
-            xtype: 'fieldset'
+            defaults: {
+                layout: 'form',
+                anchor: '100%',
+                labelSeparator: '',
+                validationEvent: 'change',
+                msgTarget: 'under',
+                defaults: {
+                    layout: 'form',
+                    anchor: '100%',
+                    validationEvent: 'change',
+                    msgTarget: 'under'
+                }
+            }
+            ,id: 'goodnewsresource-mailing-options'
+            ,cls: 'modx-resource-panel'
             ,title: _('goodnews.mail_options')
-            ,id: 'goodnewsmailing-box-options'
-            ,defaults: {
-                msgTarget: 'under'
+            ,collapsible: true
+            ,stateful: true
+            ,stateEvents: ['collapse', 'expand']
+            ,getState: function() {
+                return { collapsed: this.collapsed };
             }
             ,items: [{
                 xtype: 'modx-combo'
                 ,id: 'goodnewsresource-mail-format'
                 ,fieldLabel: _('goodnews.mail_format')
-                ,description: '<b>[[*richtext]]</b><br />'+_('goodnews.mail_format_desc')
+                ,description: '<b>[[*richtext]]</b><br>'+_('goodnews.mail_format_desc')
                 ,name: 'richtext'
                 ,hiddenName: 'richtext'
-                ,store: [[1,_('goodnews.mail_format_html')],[0,_('goodnews.mail_format_plaintxt')]]
+                ,store: [
+                    [1,_('goodnews.mail_format_html')],
+                    [0,_('goodnews.mail_format_plaintxt')]
+                ]
                 ,value: 1
                 ,triggerAction: 'all'
                 ,editable: false
@@ -385,11 +522,10 @@ Ext.extend(GoodNewsResource.panel.Mailing,MODx.panel.Resource,{
                     'select': {
                         scope:this
                         ,fn:function(combo,record,index) {
-                            var tplsel = Ext.getCmp('modx-resource-template');
+                            var tplsel = Ext.getCmp('goodnewsresource-template');
                             // Hide/show template selector
                             if (index==0) {
                                 tplsel.show();
-                                tplsel.setWidth(300); // workaround (elements width isn't set correctly)
                             } else {
                                 tplsel.hide();
                             }
@@ -398,16 +534,16 @@ Ext.extend(GoodNewsResource.panel.Mailing,MODx.panel.Resource,{
                 }
             },{
                 xtype: 'modx-combo'
-                ,id: 'modx-resource-template'
+                ,id: 'goodnewsresource-template'
                 ,url: GoodNewsResource.connector_url
                 ,baseParams: {
-                    action: 'mgr/mailing/getTplList'
+                    action: 'Bitego\\GoodNews\\Processors\\Mailing\\MailingTemplatesGetList'
                     ,catid: config.record.templatesCategory || 0
-					,limit: '0'
+                    ,limit: '0'
                 }
                 ,fields: ['id','templatename','description']
                 ,fieldLabel: _('goodnews.mail_template')
-                ,description: '<b>[[*template]]</b><br />'+_('goodnews.mail_template_desc')
+                ,description: '<b>[[*template]]</b><br>'+_('goodnews.mail_template_desc')
                 ,name: 'template'
                 ,hiddenName: 'template'
                 ,displayField: 'templatename'
@@ -415,108 +551,127 @@ Ext.extend(GoodNewsResource.panel.Mailing,MODx.panel.Resource,{
                 ,tpl: new Ext.XTemplate(
                      '<tpl for=".">'
                     ,'    <div class="x-combo-list-item">'
-                    ,'        <span style="font-weight: bold">{templatename}</span>'
-                    ,'        <br />{description}'
+                    ,'        <span style="font-weight: bold;">{templatename}</span>'
+                    ,'        <br>{description}'
                     ,'    </div>'
                     ,'</tpl>'
                 )
                 ,pageSize: 10
                 ,anchor: '100%'
-                ,listWidth: 350
                 ,allowBlank: true
                 ,editable: false
                 ,hidden: !config.record.richtext
-            },{
-                xtype: 'textfield'
-                ,fieldLabel: _('resource_alias')
-                ,description: '<b>[[*alias]]</b><br />'+_('resource_alias_help')
-                ,name: 'alias'
-                ,id: 'modx-resource-alias'
-                ,maxLength: 100
-                ,anchor: '100%'
-                ,value: config.record.alias || ''
             }]
         },{
-            xtype: 'fieldset'
-            ,title: _('goodnews.mail_publishing_information')
-            ,id: 'goodnewsmailing-box-publishing-information'
-            ,defaults: {
-                msgTarget: 'under'
+            defaults: {
+                layout: 'form',
+                anchor: '100%',
+                labelSeparator: '',
+                validationEvent: 'change',
+                msgTarget: 'under',
+                defaults: {
+                    layout: 'form',
+                    anchor: '100%',
+                    validationEvent: 'change',
+                    msgTarget: 'under'
+                }
+            }
+            ,id: 'goodnewsresource-publishing'
+            ,cls: 'modx-resource-panel'
+            ,title: _('goodnews.mail_publishing')
+            ,collapsible: true
+            ,stateful: true
+            ,stateEvents: ['collapse','expand']
+            ,getState: function() {
+                return { collapsed: this.collapsed };
             }
             ,items: [{
-                xtype: 'modx-combo'
-                ,fieldLabel: _('goodnews.mail_status')
-                ,name: 'published'
-                ,hiddenName: 'published'
-                ,store: [[1,_('published')],[0,_('unpublished')]]
-                ,value: 0
-                ,triggerAction: 'all'
-                ,editable: false
-                ,selectOnFocus: false
-                ,preventRender: true
-                ,forceSelection: true
-                ,enableKeyEvents: true
+                items: [{
+                    xtype: 'xcheckbox'
+                    ,id: 'modx-resource-published'
+                    ,ctCls: 'display-switch'
+                    ,boxLabel: _('resource_published')
+                    ,hideLabel: true
+                    ,description: '<b>[[*published]]</b><br>'+_('resource_published_help')
+                    ,name: 'published'
+                    ,inputValue: 1
+                    ,checked: parseInt(config.record.published)
+                },{
+                    xtype: 'xcheckbox'
+                    ,id: 'modx-resource-deleted'
+                    ,ctCls: 'display-switch'
+                    ,boxLabel: _('deleted')
+                    ,description: '<b>[[*deleted]]</b><br>'+_('resource_delete')
+                    ,hideLabel: true
+                    ,cls: 'danger'
+                    ,name: 'deleted'
+                    ,inputValue: 1
+                    ,checked: parseInt(config.record.deleted) || false
+                }]
             },{
                 xtype: 'xdatetime'
-                ,fieldLabel: _('resource_publishedon')
-                ,description: '<b>[[*publishedon]]</b><br />'+_('resource_publishedon_help')
-                ,name: 'publishedon'
                 ,id: 'modx-resource-publishedon'
+                ,fieldLabel: _('resource_publishedon')
+                ,description: '<b>[[*publishedon]]</b><br>'+_('resource_publishedon_help')
+                ,name: 'publishedon'
                 ,allowBlank: true
                 ,dateFormat: MODx.config.manager_date_format
                 ,timeFormat: MODx.config.manager_time_format
-                ,dateWidth: 120
-                ,timeWidth: 120
+                ,startDay: parseInt(MODx.config.manager_week_start)
+                ,dateWidth: '100%'
+                ,timeWidth: '100%'
+                ,offset_time: MODx.config.server_offset_time
                 ,value: config.record.publishedon
             },{
                 xtype: MODx.config.publish_document ? 'xdatetime' : 'hidden'
-                ,fieldLabel: _('goodnews.mail_sending_scheduled')
-                ,description: '<b>[[*pub_date]]</b><br />'+_('goodnews.mail_sending_scheduled_desc')
-                ,name: 'pub_date'
                 ,id: 'modx-resource-pub-date'
+                ,fieldLabel: _('goodnews.mail_sending_scheduled')
+                ,description: '<b>[[*pub_date]]</b><br>'+_('goodnews.mail_sending_scheduled_desc')
+                ,name: 'pub_date'
                 ,allowBlank: true
                 ,dateFormat: MODx.config.manager_date_format
                 ,timeFormat: MODx.config.manager_time_format
-                ,dateWidth: 120
-                ,timeWidth: 120
+                ,startDay: parseInt(MODx.config.manager_week_start)
+                ,dateWidth: '100%'
+                ,timeWidth: '100%'
+                ,offset_time: MODx.config.server_offset_time
                 ,value: config.record.pub_date
-            }
-            // workaround for MODX bug in:
-            // https://github.com/modxcms/revolution/blob/2.x/core/model/modx/processors/security/user/getlist.class.php#L35
-            // Issue: https://github.com/modxcms/revolution/issues/13267
-            // We cannot use modx-combo-user but the following modx-combo instead!
-            /*,{
+            },{
                 xtype: MODx.config.publish_document ? 'modx-combo-user' : 'hidden'
                 ,fieldLabel: _('resource_createdby')
-                ,description: '<b>[[*createdby]]</b><br />'+_('resource_createdby_help')
+                ,description: '<b>[[*createdby]]</b><br>'+_('resource_createdby_help')
                 ,name: 'created_by'
                 ,hiddenName: 'createdby'
                 ,id: 'modx-resource-createdby'
                 ,anchor: '100%'
                 ,value: config.record.createdby || MODx.user.id
-            }*/
-            ,{
-                xtype: MODx.config.publish_document ? 'modx-combo' : 'hidden'
-                ,fieldLabel: _('resource_createdby')
-                ,description: '<b>[[*createdby]]</b>'
-                ,id: 'modx-resource-createdby'
-                ,url: GoodNewsResource.connector_url
-                ,baseParams: {
-                    action: 'mgr/subscribers/user/getList'
-                }
-                ,fields: ['username','id']
-                ,name: 'created_by'
-                ,hiddenName: 'createdby'
-                ,displayField: 'username'
-                ,valueField: 'id'
-                ,value: config.record.createdby || MODx.user.id
-                ,pageSize: 20
-                ,anchor: '100%'
-                ,allowBlank: false
-                ,editable: true
-                ,typeAhead: false
             }]
-        }]
+        }
+    ]}
+    
+    ,getContentField: function(config) {
+        return {
+            id: 'modx-resource-content'
+            ,layout: 'form'
+            ,autoHeight: true
+            ,hideMode: 'offsets'
+            ,items: [{
+                id: 'modx-content-above'
+                ,border: false
+            },{
+                xtype: 'textarea'
+                ,name: 'ta'
+                ,id: 'ta'
+                ,fieldLabel: _('goodnews.mail_body')
+                ,anchor: '100%'
+                ,height: 488
+                ,grow: false
+                ,value: (config.record.content || config.record.ta) || ''
+            },{
+                id: 'modx-content-below'
+                ,border: false
+            }]
+        };
     }
 });
 Ext.reg('goodnewsresource-panel-mailing',GoodNewsResource.panel.Mailing);

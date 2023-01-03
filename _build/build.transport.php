@@ -38,7 +38,7 @@ define('PKG_NAMESPACE', strtolower(PKG_NAME));
 
 /* Define build paths */
 $root = dirname(__DIR__, 1) . '/';
-$sources = array(
+$sources = [
     'root'           => $root,
     'build'          => $root . '_build/',
     'includes'       => $root . '_build/includes/',
@@ -58,7 +58,7 @@ $sources = array(
     'source_core'    => $root . 'core/components/' . PKG_NAMESPACE,
     'source_assets'  => $root . 'assets/components/' . PKG_NAMESPACE,
     'source_model'   => $root . 'core/components/' . PKG_NAMESPACE . '/model/' . PKG_NAMESPACE . '/',
-);
+];
 unset($root);
 
 require_once $sources['root'] . 'config.core.php';
@@ -107,11 +107,11 @@ flush();
 $menus = include $sources['data'] . 'transport.menus.php';
 if (!empty($menus) && is_array($menus)) {
     foreach ($menus as $menu) {
-        $vehicle = $builder->createVehicle($menu, array(
+        $vehicle = $builder->createVehicle($menu, [
             xPDOTransport::UNIQUE_KEY => 'text',
             xPDOTransport::PRESERVE_KEYS => true,
             xPDOTransport::UPDATE_OBJECT => true,
-        ));
+        ]);
         $builder->putVehicle($vehicle);
     }
     $modx->log(modX::LOG_LEVEL_INFO,'Packaged in <b>' . count($menus) . '</b> menu(s).');
@@ -125,11 +125,11 @@ unset($vehicle, $menus, $menu);
 $settings = include $sources['data'] . 'transport.settings.php';
 if (!empty($settings) && is_array($settings)) {
     foreach ($settings as $setting) {
-        $vehicle = $builder->createVehicle($setting, array(
+        $vehicle = $builder->createVehicle($setting, [
             xPDOTransport::UNIQUE_KEY => 'key',
             xPDOTransport::PRESERVE_KEYS => true,
             xPDOTransport::UPDATE_OBJECT => false, // existing settings should not be overwritten
-        ));
+        ]);
         $builder->putVehicle($vehicle);
     }
     $modx->log(modX::LOG_LEVEL_INFO, 'Packaged in <b>' . count($settings) . '</b> system setting(s).');
@@ -206,23 +206,23 @@ unset($tvs);
 */
 
 /* Create category vehicle for all elements */
-$attributes = array(
+$attributes = [
     xPDOTransport::UNIQUE_KEY => 'category',
     xPDOTransport::PRESERVE_KEYS => false,
     xPDOTransport::UPDATE_OBJECT => true,
     xPDOTransport::RELATED_OBJECTS => true,
-    xPDOTransport::RELATED_OBJECT_ATTRIBUTES => array(
-        'Snippets' => array(
+    xPDOTransport::RELATED_OBJECT_ATTRIBUTES => [
+        'Snippets' => [
             xPDOTransport::UNIQUE_KEY => 'name',
             xPDOTransport::PRESERVE_KEYS => false,
             xPDOTransport::UPDATE_OBJECT => true,
-        ),
-        'Chunks' => array(
+        ],
+        'Chunks' => [
             xPDOTransport::UNIQUE_KEY => 'name',
             xPDOTransport::PRESERVE_KEYS => false,
             xPDOTransport::UPDATE_OBJECT => true,
-        ),
-        'Plugins' => array(
+        ],
+        'Plugins' => [
             xPDOTransport::UNIQUE_KEY => 'name',
             xPDOTransport::PRESERVE_KEYS => false,
             xPDOTransport::UPDATE_OBJECT => true,
@@ -234,53 +234,53 @@ $attributes = array(
                     xPDOTransport::UNIQUE_KEY => ['pluginid', 'event'],
                 ],
             ],
-        ),
-        'Templates' => array(
+        ],
+        'Templates' => [
             xPDOTransport::UNIQUE_KEY => 'templatename',
             xPDOTransport::PRESERVE_KEYS => false,
             xPDOTransport::UPDATE_OBJECT => true,
-        ),
-        'TemplateVars' => array(
+        ],
+        'TemplateVars' => [
             xPDOTransport::UNIQUE_KEY => 'name',
             xPDOTransport::PRESERVE_KEYS => false,
             xPDOTransport::UPDATE_OBJECT => true,
-        ),
-    ),
+        ],
+    ],
     xPDOTransport::ABORT_INSTALL_ON_VEHICLE_FAIL => true,
-);
+];
 
 $modx->log(modX::LOG_LEVEL_INFO, 'Adding category vehicle for all elements...');
 // Exclude files with a specific pattern (eg. __ prefix)
-$categoryAttributes = array_merge($attributes, array('copy_exclude_patterns' => array('/^__/')));
+$categoryAttributes = array_merge($attributes, ['copy_exclude_patterns' => ['/^__/']]);
 $vehicle = $builder->createVehicle($category, $categoryAttributes);
 flush();
 unset($category, $attributes, $categoryAttributes); // don't unset $vehicle as we still need it to add resolvers and validators!
 
 /* Add file resolvers */
 $modx->log(modX::LOG_LEVEL_INFO, 'Adding file resolvers...');
-$vehicle->resolve('file', array(
+$vehicle->resolve('file', [
     'source' => $sources['source_core'],
     'target' => "return MODX_CORE_PATH.'components/';",
-));
-$vehicle->resolve('file',array(
+]);
+$vehicle->resolve('file', [
     'source' => $sources['source_assets'],
     'target' => "return MODX_ASSETS_PATH.'components/';",
-));
+]);
 
 /* Add PHP validators and resolvers (keep oder!) */
 $modx->log(modX::LOG_LEVEL_INFO, 'Adding PHP validators and resolvers...');
-$vehicle->validate('php', array('source' => $sources['validators'].'validate.requirements.php'));
-$vehicle->validate('php', array('source' => $sources['validators'].'validate.preinstall.php'));
-$vehicle->resolve('php', array('source' => $sources['resolvers'].'resolve.system-settings.php'));
-$vehicle->resolve('php', array('source' => $sources['resolvers'].'resolve.setupoptions.php'));
-$vehicle->resolve('php', array('source' => $sources['resolvers'].'resolve.dbtables.php'));
-$vehicle->resolve('php', array('source' => $sources['resolvers'].'resolve.dbchanges.php'));
-$vehicle->resolve('php', array('source' => $sources['resolvers'].'resolve.gngroup-tablescontent.php'));
-$vehicle->resolve('php', array('source' => $sources['resolvers'].'resolve.newsletter-tpl-categories.php'));
-$vehicle->resolve('php', array('source' => $sources['resolvers'].'resolve.resources.php'));
-$vehicle->resolve('php', array('source' => $sources['resolvers'].'resolve.customresources.php'));
-$vehicle->resolve('php', array('source' => $sources['resolvers'].'resolve.customresourceproperties.php'));
-//$vehicle->resolve('php', array('source' => $sources['resolvers'].'resolve.tvs.php'));
+$vehicle->validate('php', ['source' => $sources['validators'] . 'validate.requirements.php']);
+$vehicle->validate('php', ['source' => $sources['validators'] . 'validate.preinstall.php']);
+$vehicle->resolve('php', ['source' => $sources['resolvers'] . 'resolve.system-settings.php']);
+$vehicle->resolve('php', ['source' => $sources['resolvers'] . 'resolve.setupoptions.php']);
+$vehicle->resolve('php', ['source' => $sources['resolvers'] . 'resolve.dbtables.php']);
+$vehicle->resolve('php', ['source' => $sources['resolvers'] . 'resolve.dbchanges.php']);
+$vehicle->resolve('php', ['source' => $sources['resolvers'] . 'resolve.gngroup-tablescontent.php']);
+$vehicle->resolve('php', ['source' => $sources['resolvers'] . 'resolve.newsletter-tpl-categories.php']);
+$vehicle->resolve('php', ['source' => $sources['resolvers'] . 'resolve.resources.php']);
+$vehicle->resolve('php', ['source' => $sources['resolvers'] . 'resolve.customresources.php']);
+$vehicle->resolve('php', ['source' => $sources['resolvers'] . 'resolve.customresourceproperties.php']);
+//$vehicle->resolve('php', ['source' => $sources['resolvers'].'resolve.tvs.php']);
 
 $builder->putVehicle($vehicle);
 flush();
@@ -288,15 +288,15 @@ unset($vehicle);
 
 /* Add the license file, readme and setup options */
 $modx->log(modX::LOG_LEVEL_INFO, 'Adding package attributes and setup options...');
-$builder->setPackageAttributes(array(
+$builder->setPackageAttributes([
     'license'   => file_get_contents($sources['docs'] . 'license.txt'),
     'readme'    => file_get_contents($sources['docs'] . 'readme.txt'),
     'changelog' => file_get_contents($sources['docs'] . 'changelog.txt'),
-    'copy_exclude_patterns' => array('/^__/'),
-    'setup-options' => array(
+    'copy_exclude_patterns' => ['/^__/'],
+    'setup-options' => [
         'source' => $sources['build'] . 'setup.options.php',
-    ),
-));
+    ],
+]);
 
 /* Create zip package */
 $modx->log(modX::LOG_LEVEL_INFO, 'Packing transport package zip...');

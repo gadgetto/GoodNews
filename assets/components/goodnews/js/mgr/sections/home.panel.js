@@ -12,11 +12,9 @@ GoodNews.HomePanel = function(config) {
         id: 'goodnews-panel-home'
         ,cls: 'container'
         ,bodyStyle: ''
-        ,unstyled: true
         ,items: [{
-            html: '<h2 class="gon-cmp-header gon-logo">'+_('goodnews.management')+'</h2>'
-            ,border: false
-            ,cls: 'modx-page-header'
+            html: _('goodnews.management')
+            ,xtype: 'modx-header'
         },{
             xtype: 'modx-tabs'
             ,itemId: 'tabs'
@@ -73,7 +71,7 @@ Ext.extend(GoodNews.HomePanel,MODx.Panel,{
                 MODx.Ajax.request({
                     url: GoodNews.config.connectorUrl
                     ,params: {
-                        action: 'mgr/mailing/cron/ping'
+                        action: 'Bitego\\GoodNews\\Processors\\Mailing\\Cron\\Ping'
                     }
                     ,method: 'post'
                     ,scope: this
@@ -91,7 +89,7 @@ Ext.extend(GoodNews.HomePanel,MODx.Panel,{
     ,getElements: function() {
         var elements = [];
         // Cron ping display
-        elements.push('-',{
+        elements.push({
             xtype: 'tbtext'
             ,id: 'goodnews-cron-ping-display'
             ,text: _('goodnews.task_scheduler_touch_waiting')
@@ -105,7 +103,7 @@ Ext.extend(GoodNews.HomePanel,MODx.Panel,{
                     });
                 },scope:this}
             }
-        },'-')
+        })
         // Dropdown for choosing a GoodNews container
         elements.push({
             xtype: 'modx-combo'
@@ -128,7 +126,7 @@ Ext.extend(GoodNews.HomePanel,MODx.Panel,{
             ,store: new Ext.data.JsonStore({
                 url: GoodNews.config.connectorUrl
                 ,baseParams: {
-                    action : 'mgr/settings/containers/getContList'
+                    action : 'Bitego\\GoodNews\\Processors\\Container\\SimpleGetList'
                     ,containerIDs: GoodNews.config.userAvailableContainers
                 }
                 ,fields: ['id','name']
@@ -137,19 +135,19 @@ Ext.extend(GoodNews.HomePanel,MODx.Panel,{
             ,listeners: {
                 'select': {fn:this.setUserCurrentContainer,scope:this}
             }
-        },'-')
+        })
         // Settings button
         if (GoodNews.config.isGoodNewsAdmin) {
             elements.push({
-                text: '<i class="icon icon-cog icon-lg"></i>'
+                text: '<i class="icon icon-cog"></i>'
                 ,id: 'button-settings'
                 ,handler: this.loadSettingsPanel
                 ,scope: this
-            },'-')
+            })
         }
         // Help button
         elements.push({
-            text: '<i class="icon icon-question-circle icon-lg"></i>&nbsp;' + _('help_ex')
+            text: '<i class="icon icon-question-circle"></i>'
             ,id: 'button-help'
             ,handler: function(){
                 MODx.config.help_url = GoodNews.config.helpUrl;
@@ -168,7 +166,7 @@ Ext.extend(GoodNews.HomePanel,MODx.Panel,{
         MODx.Ajax.request({
             url: GoodNews.config.connectorUrl
             ,params: {
-                action: 'mgr/mailing/switchContainer'
+                action: 'Bitego\\GoodNews\\Processors\\Container\\SwitchContainer'
                 ,containerid: cb.getValue()
             }
             ,method: 'post'

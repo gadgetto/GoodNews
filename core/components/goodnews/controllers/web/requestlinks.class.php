@@ -47,7 +47,7 @@ class GoodNewsSubscriptionRequestLinksController extends GoodNewsSubscriptionCon
             'profileResourceId'        => '',
             'submittedResourceId'      => '',
             'requestLinksEmailSubject' => $this->modx->lexicon('goodnews.requestlinks_email_subject'),
-            'requestLinksEmailTpl'     => 'sample.GoodNewsRequestLinksEmailTpl',
+            'requestLinksEmailTpl'     => 'sample.GoodNewsRequestLinksEmailChunk',
             'requestLinksEmailTplAlt'  => '',
             'requestLinksEmailTplType' => 'modChunk',
             'errTpl'                   => '<span class="error">[[+error]]</span>',

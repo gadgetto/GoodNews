@@ -1,22 +1,25 @@
 <?php
+
 /**
- * GoodNews
+ * This file is part of the GoodNews package.
  *
- * Copyright 2012 by bitego <office@bitego.com>
+ * @copyright bitego (Martin Gartner)
+ * @license GNU General Public License v2.0 (and later)
  *
- * GoodNews is free software; you can redistribute it and/or modify it under the
- * terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
- *
- * GoodNews is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this software; if not, write to the Free Software Foundation, Inc., 59 Temple
- * Place, Suite 330, Boston, MA 02111-1307 USA
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
+
+use MODX\Revolution\modX;
+use MODX\Revolution\modUser;
+use MODX\Revolution\Error\modError;
+use MODX\Revolution\Registry\modRegistry;
+use MODX\Revolution\Registry\modFileRegister;
+use Bitego\GoodNews\GoodNews;
+use Bitego\GoodNews\Mailer;
+use Bitego\GoodNews\ProcessHandler;
+use Bitego\GoodNews\BounceMailHandler\BounceMailHandler;
+use Bitego\GoodNews\Model\GoodNewsSubscriberMeta;
 
 /**
  * cron.php is the Cron connector and GoodNews process manager
@@ -27,167 +30,210 @@
 set_time_limit(0);
 
 // Fetch params of CLI calls and merge with URL params (for universal usage)
-if(isset($_SERVER['argc'])) {
+if (isset($_SERVER['argc'])) {
     $argc = $_SERVER['argc'];
     if ($argc > 0) {
-        for ($i=1; $i < $argc; $i++) {
+        for ($i = 1; $i < $argc; $i++) {
             parse_str($argv[$i], $tmp);
             $_GET = array_merge($_GET, $tmp);
         }
     }
 }
 
+// Load MODX
 define('MODX_API_MODE', true);
-require_once dirname(dirname(dirname(dirname(__FILE__)))).'/config.core.php';
-require_once MODX_CORE_PATH.'model/modx/modx.class.php';
+$root = dirname(__DIR__, 3) . '/';
+require_once $root . 'config.core.php';
+require_once MODX_CORE_PATH . 'vendor/autoload.php';
+/** @var modX $modx */
 $modx = new modX();
 $modx->initialize('mgr');
-$modx->getService('error', 'error.modError', '', '');
+if (!$modx->services->has('error')) {
+    $modx->services->add('error', function ($c) use ($modx) {
+        return new modError($modx);
+    });
+}
 
-// If set - connector script may only be continued if the correct security key is provided by cron (@param sid)
-$sid = isset($_GET['sid']) ? $_GET['sid'] : '';
-$securityKey = $modx->getOption('goodnews.cron_security_key', null, '');
-if ($sid != $securityKey) {
-    exit('[GoodNews] cron.php - Missing or wrong authentification! Sorry Dude!');
+// Security check:
+// (if set - connector script may only be continued if the correct
+// security key is provided by @param sid via CLI calls or URL params)
+$sid = (string)isset($_GET['sid']) ? $_GET['sid'] : '';
+$securityKey = (string)$modx->getOption('goodnews.cron_security_key', null, '');
+if ($sid !== $securityKey) {
+    $modx->log(modX::LOG_LEVEL_WARN, '[GoodNews] cron.php - missing or wrong security key!');
+    header('HTTP/1.1 401 Unauthorized');
+    exit();
 }
 
 // Set cron ping-time to modRegistry.
 // (Will be read by ping processor called in home.panel.js)
-$modx->getService('registry', 'registry.modRegistry');
-$modx->registry->addRegister('goodnewscron', 'registry.modFileRegister');
-$modx->registry->goodnewscron->connect();
-$modx->registry->goodnewscron->subscribe('/ping/');
-$modx->registry->goodnewscron->send('/ping/', array('time' => time()));
+if (!$modx->services->has('registry')) {
+    $modx->services->add('registry', function ($c) use ($modx) {
+        return new modRegistry($modx);
+    });
+}
+$registry = $modx->services->get('registry');
+$registry->addRegister('goodnewscron', modFileRegister::class);
+$registry->goodnewscron->connect();
+$registry->goodnewscron->subscribe('/ping/');
+$registry->goodnewscron->send('/ping/', array('time' => time()));
 
+// Is the worker process active or blocked (via GoodNews CMP interface)?
+$workerProcessActive = $modx->getOption('goodnews.worker_process_active', null, 1);
+if (!$workerProcessActive) {
+    exit();
+}
+
+// Debug mode?
 $debug = $modx->getOption('goodnews.debug', null, false) ? true : false;
 
-$workerProcessActive = $modx->getOption('goodnews.worker_process_active', null, 1);
-if (!$workerProcessActive) { exit(); }
+// Load GoodNews
+/** @var GoodNews $goodnews */
+$goodnews = new GoodNews($modx);
+if (!($goodnews instanceof GoodNews)) {
+    $modx->log(modX::LOG_LEVEL_ERROR, '[GoodNews] cron.php - Could not load GoodNews class.');
+    exit();
+}
+$assetsUrl = $goodnews->config['assetsUrl'];
 
-$corePath  = $modx->getOption('goodnews.core_path', null, $modx->getOption('core_path').'components/goodnews/');
-$assetsUrl = $modx->getOption('goodnews.assets_url', null, $modx->getOption('assets_url').'components/goodnews/');
-
-require_once $corePath.'model/goodnews/goodnews.class.php';
-$modx->goodnews = new GoodNews($modx);
-if (!($modx->goodnews instanceof GoodNews)) {
-    $modx->log(modX::LOG_LEVEL_ERROR,'[GoodNews] cron.php - Could not load GoodNews class.');
+// Load BounceMailHandler
+/** @var BounceMailHandler $goodnews */
+$bmh = new BounceMailHandler($modx);
+if (!($bmh instanceof BounceMailHandler)) {
+    $modx->log(modX::LOG_LEVEL_ERROR, '[GoodNews] cron.php - Could not load BounceMailHandler class.');
     exit();
 }
 
-require_once $corePath.'model/goodnews/goodnewsbmh.class.php';
-$modx->bmh = new GoodNewsBounceMailHandler($modx);
-if (!($modx->bmh instanceof GoodNewsBounceMailHandler)) {
-    $modx->log(modX::LOG_LEVEL_ERROR,'[GoodNews] cron.php - Could not load GoodNewsBounceMailHandler class.');
-    exit();
-}
-
-// If multi processing isn't available we directly send mails without a worker process
 $workerProcessLimit = $modx->getOption('goodnews.worker_process_limit', null, 1);
-if (!$modx->goodnews->isMultiProcessing || $workerProcessLimit <= 1) {
-    
-    require_once $corePath.'model/goodnews/goodnewsmailing.class.php';
-    $modx->goodnewsmailing = new GoodNewsMailing($modx);
-    if (!($modx->goodnewsmailing instanceof GoodNewsMailing)) {
-        $modx->log(modX::LOG_LEVEL_ERROR,'[GoodNews] cron.php - Could not load GoodNewsMailing class.');
+
+if (!$goodnews->isMultiProcessing || $workerProcessLimit <= 1) {
+    // If multi processing isn't available, directly send mails without a worker process
+    /** @var Mailer $mailer */
+    $mailer = new Mailer($modx);
+    if (!($mailer instanceof Mailer)) {
+        $modx->log(modX::LOG_LEVEL_ERROR, '[GoodNews] cron.php - Could not load Mailer class.');
         exit();
     }
 
-    $mailingsToSend = $modx->goodnewsmailing->getMailingsToSend();
+    $mailingsToSend = $mailer->getMailingsToSend();
     if (is_array($mailingsToSend)) {
         foreach ($mailingsToSend as $mailingid) {
-            $modx->goodnewsmailing->processMailing($mailingid);
+            $mailer->processMailing($mailingid);
         }
     }
-
-// Otherwise start multiple worker processes
 } else {
-
-    require_once $corePath.'model/goodnews/goodnewsprocesshandler.class.php';
-    $modx->goodnewsprocesshandler = new GoodNewsProcessHandler($modx);
-    if (!($modx->goodnewsprocesshandler instanceof GoodNewsProcessHandler)) {
-        $modx->log(modX::LOG_LEVEL_ERROR,'[GoodNews] cron.php - Could not load GoodNewsProcessHandler class.');
+    // Otherwise start multiple worker processes
+    /** @var ProcessHandler $processhandler */
+    $processhandler = new ProcessHandler($modx);
+    if (!($processhandler instanceof ProcessHandler)) {
+        $modx->log(modX::LOG_LEVEL_ERROR, '[GoodNews] cron.php - Could not load ProcessHandler class.');
         exit();
     }
 
     // Cleanup old processes and get count of actual running processes
-    $actualProcessCount = $modx->goodnewsprocesshandler->cleanupProcessStatuses();
-    if ($debug) { $modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] cron.php - Actual process count: '.$actualProcessCount); }
-    
+    $actualProcessCount = $processhandler->cleanupProcessStatuses();
+    if ($debug) {
+        $modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] cron.php - Actual process count: ' . $actualProcessCount);
+    }
+
     while ($actualProcessCount < $workerProcessLimit) {
-            
         $actualProcessCount++;
-        $modx->goodnewsprocesshandler->setCommand('php '.rtrim(MODX_BASE_PATH, '/').$assetsUrl.'cron.worker.php sid='.$sid);
-        if (!$modx->goodnewsprocesshandler->start()) {
-            if ($debug) { $modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] cron.php - No worker started.'); }
+        $processhandler->setCommand(
+            'php ' . rtrim(MODX_BASE_PATH, '/') . $assetsUrl . 'cron.worker.php sid=' . $sid
+        );
+        if (!$processhandler->start()) {
+            if ($debug) {
+                $modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] cron.php - No worker started.');
+            }
             break;
         } else {
-            if ($debug) { $modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] cron.php - New worker started with pid: '.$modx->goodnewsprocesshandler->getPid().' | Start-time: '.$modx->goodnewsprocesshandler->getProcessStartTime()); }
+            if ($debug) {
+                $modx->log(
+                    modX::LOG_LEVEL_INFO,
+                    '[GoodNews] cron.php - New worker started with pid: ' .
+                    $modx->goodnewsprocesshandler->getPid() .
+                    ' | Start-time: ' .
+                    $modx->goodnewsprocesshandler->getProcessStartTime()
+                );
+            }
         }
         // Wait a little before letting start another process
         sleep(2);
-        if (!$modx->goodnewsprocesshandler->status()) {
-            // If after this time no process is running, there are no more mailings to send 
+        if (!$processhandler->status()) {
+            // If after this time no process is running, there are no more mailings to send
             break;
         }
     }
 }
 
-bounceHandling($modx, $debug);
+bounceHandling($modx, $bmh, $debug);
 cleanUpSubscriptions($modx, $debug);
 
 /**
  * Handle bounced messages.
- * 
+ *
  * @access public
- * @param mixed &$modx The modx object
+ * @param mixed &$modx The modX object
+ * @param mixed &$bhm The BounceMailHandler object
  * @param bool $debug_bmh (default: false)
  * @return void
  */
-function bounceHandling(&$modx, $debug_bmh = false) {
- 
-    $containerIDs = $modx->bmh->getGoodNewsBmhContainers();
+function bounceHandling(&$modx, &$bmh, $debug_bmh = false)
+{
+    $containerIDs = $bmh->getGoodNewsBmhContainers();
     if (!is_array($containerIDs)) {
         return false;
     }
-    
+
     foreach ($containerIDs as $containerID) {
-        $modx->bmh->getBmhContainerProperties($containerID);
-        
+        $bmh->getBmhContainerProperties($containerID);
+
         if ($debug_bmh) {
-            $modx->bmh->debug             = true;
-            $modx->bmh->maxMailsBatchsize = 20;
+            $bmh->debug             = true;
+            $bmh->maxMailsBatchsize = 20;
         }
 
-        if ($modx->bmh->openImapStream()) {
-            $modx->bmh->processMailbox();
+        if ($bmh->openImapStream()) {
+            $bmh->processMailbox();
         } else {
-            $modx->log(modX::LOG_LEVEL_ERROR,'[GoodNews] cron.php - Connection to mailhost failed: '.$modx->bmh->mailMailHost);
-            if (!empty($modx->bmh->lastErrorMsg)) {
-                $modx->log(modX::LOG_LEVEL_ERROR,'[GoodNews] cron.php - phpIMAP error message: '.$modx->bmh->lastErrorMsg);
+            $modx->log(
+                modX::LOG_LEVEL_ERROR,
+                '[GoodNews] cron.php - Connection to mailhost failed: ' . $bmh->mailMailHost
+            );
+            if (!empty($bmh->lastErrorMsg)) {
+                $modx->log(
+                    modX::LOG_LEVEL_ERROR,
+                    '[GoodNews] cron.php - phpIMAP error message: ' . $bmh->lastErrorMsg
+                );
             }
         }
     }
-    $modx->bmh->closeImapStream();
+    $bmh->closeImapStream();
 }
 
 /**
  * Cleanup subscriptions ( = MODX users):
  * - delete subscriptions which were not activated within a specific time
- * 
+ *
  * @access public
- * @param mixed &$modx The modx object
+ * @param mixed &$modx The modX object
  * @param bool $debug_cs (default: false)
  * @return void || false
  */
-function cleanUpSubscriptions(&$modx, $debug_cs = false) {
-    $autoCleanUpSubscriptions = $modx->getOption('goodnews.auto_cleanup_subscriptions', null, false) ? true : false;
-    if (!$autoCleanUpSubscriptions) { return false; }
-    
+function cleanUpSubscriptions(&$modx, $debug_cs = false)
+{
+    $autoCleanUpSubscriptions = $modx->getOption('goodnews.auto_cleanup_subscriptions', null, false)
+        ? true
+        : false;
+    if (!$autoCleanUpSubscriptions) {
+        return false;
+    }
+
     $autoCleanUpSubscriptionsTtl = $modx->getOption('goodnews.auto_cleanup_subscriptions_ttl', null, 360);
     $expDate = time() - ($autoCleanUpSubscriptionsTtl * 60);
 
-    $c = $modx->newQuery('modUser');
-    $c->leftJoin('GoodNewsSubscriberMeta', 'SubscriberMeta', 'modUser.id = SubscriberMeta.subscriber_id');
+    $c = $modx->newQuery(modUser::class);
+    $c->leftJoin(GoodNewsSubscriberMeta::class, 'SubscriberMeta', 'modUser.id = SubscriberMeta.subscriber_id');
 
     // modUser must:
     // - be inactive
@@ -197,16 +243,19 @@ function cleanUpSubscriptions(&$modx, $debug_cs = false) {
     // - have SubscriberMeta.subscribedon date < expiration date (GoodNews setting)
     $c->where(array(
         'active' => false,
-        'cachepwd:!=' => '', 
+        'cachepwd:!=' => '',
         'primary_group' => 0,
         'sudo' => 0,
         'SubscriberMeta.subscribedon:<' => $expDate,
     ));
-    
-    $users = $modx->getIterator('modUser', $c);
+
+    $users = $modx->getIterator(modUser::class, $c);
     foreach ($users as $idx => $user) {
         if ($debug_cs) {
-            $modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] cron.php::cleanUpSubscriptions - user with ID: '.$user->get('id').' would be deleted.');
+            $modx->log(
+                modX::LOG_LEVEL_INFO,
+                '[GoodNews] cron.php::cleanUpSubscriptions - user with ID: ' . $user->get('id') . ' would be deleted.'
+            );
         } else {
             $user->remove();
         }

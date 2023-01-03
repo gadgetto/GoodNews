@@ -11,7 +11,6 @@ var GoodNewsResource = function(config) {
 };
 Ext.extend(GoodNewsResource,Ext.Component,{
     page:{},window:{},grid:{},tree:{},panel:{},combo:{},config:{},view:{}
-    ,connector_url: ''
 });
 Ext.reg('GoodNewsResource',GoodNewsResource);
 

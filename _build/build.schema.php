@@ -1,26 +1,21 @@
 <?php
+
 /**
- * GoodNews
+ * This file is part of the GoodNews package.
  *
- * Copyright 2022 by bitego <office@bitego.com>
+ * @copyright bitego (Martin Gartner)
+ * @license GNU General Public License v2.0 (and later)
  *
- * GoodNews is free software; you can redistribute it and/or modify it under the
- * terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
- *
- * GoodNews is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this software; if not, write to the Free Software Foundation, Inc., 59 Temple
- * Place, Suite 330, Boston, MA 02111-1307 USA
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
+
+use MODX\Revolution\modX;
+use MODX\Revolution\Error\modError;
 
 /**
  * Build Schema script
- * (supports MODX version 2.3.0 up to 2.8.x)
+ * (supports MODX version 3.0.0 up to *)
  *
  * @package goodnews
  * @subpackage build
@@ -33,6 +28,7 @@ $tstart = $mtime;
 set_time_limit(0);
 
 /* Define package name and namespace */
+define('VENDOR_NAME', 'Bitego');
 define('PKG_NAME', 'GoodNews');
 define('PKG_NAMESPACE', strtolower(PKG_NAME));
 
@@ -41,55 +37,50 @@ $root = dirname(__DIR__, 1) . '/';
 $sources = array(
     'root'   => $root,
     'core'   => $root . 'core/components/' . PKG_NAMESPACE . '/',
-    'model'  => $root . 'core/components/' . PKG_NAMESPACE . '/model/',
-    'schema' => $root . 'core/components/' . PKG_NAMESPACE . '/model/schema/',
-    'assets' => $root . 'assets/components/' . PKG_NAMESPACE . '/',
+    'src'    => $root . 'core/components/' . PKG_NAMESPACE . '/src/',
+    'schema' => $root . 'core/components/' . PKG_NAMESPACE . '/schema/',
 );
 
-/* Load modx and configs */
 require_once $sources['root'] . 'config.core.php';
-require_once MODX_CORE_PATH . 'model/modx/modx.class.php';
+require_once MODX_CORE_PATH . 'vendor/autoload.php';
 
-/* Connect to MODX */
-$modx= new modX();
+/* Load MODX */
+$modx = new modX();
 $modx->initialize('mgr');
-$modx->loadClass('transport.modPackageBuilder', '', false, true);
-$modx->getService('error', 'error.modError', '', '');
+if (!$modx->services->has('error')) {
+    $modx->services->add('error', function ($c) use ($modx) {
+        return new modError($modx);
+    });
+}
+
+$modx->error = $modx->services->get('error');
 $modx->setLogLevel(modX::LOG_LEVEL_INFO);
 $modx->setLogTarget('ECHO');
 echo '<pre>';
+flush();
 
 $manager = $modx->getManager();
 $generator = $manager->getGenerator();
+$schemaFile = $sources['schema'] . PKG_NAMESPACE . '.mysql.schema.xml';
 
-$generator->classTemplate = <<<EOD
-<?php
-/**
- * [+phpdoc-package+]
- */
-class [+class+] extends [+extends+] {}
-?>
-EOD;
-$generator->platformTemplate = <<<EOD
-<?php
-/**
- * [+phpdoc-package+]
- */
-require_once (strtr(realpath(dirname(dirname(__FILE__))), '\\\\', '/') . '/[+class-lowercase+].class.php');
-class [+class+]_[+platform+] extends [+class+] {}
-?>
-EOD;
-$generator->mapHeader = <<<EOD
-<?php
-/**
- * [+phpdoc-package+]
- */
-EOD;
-
-$generator->parseSchema(
-    $sources['schema'] . PKG_NAMESPACE . '.mysql.schema.xml',
-    $sources['model']
-);
+if (is_file($schemaFile)) {
+    echo "Parsing schema: {$schemaFile}" . PHP_EOL;
+    // Parse schema and generate class files in src/Model/
+    // (Model directory will be created automatically)
+    $generator->parseSchema(
+        $schemaFile,
+        $sources['src'],
+        [
+            'compile' => 0,
+            'update' => 0,
+            'regenerate' => 1,
+            'namespacePrefix' => VENDOR_NAME . '\\' . PKG_NAME . '\\'
+        ]
+    );
+} else {
+    echo "Schema file path invalid: {$schemaFile}" . PHP_EOL;
+    echo 'Parsing schema failed!' . PHP_EOL;
+}
 
 $mtime = microtime();
 $mtime = explode(" ", $mtime);
@@ -98,6 +89,6 @@ $tend = $mtime;
 $totalTime = ($tend - $tstart);
 $totalTime = sprintf("%2.4f s", $totalTime);
 
-echo "\nExecution time: {$totalTime}\n";
+echo "Execution time: {$totalTime}" . PHP_EOL;
 echo '</pre>';
-exit ();
+exit();

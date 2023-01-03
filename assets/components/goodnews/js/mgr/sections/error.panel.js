@@ -12,11 +12,9 @@ GoodNews.ErrorPanel = function(config) {
         id: 'goodnews-panel-error'
         ,cls: 'container'
         ,bodyStyle: ''
-        ,unstyled: true
         ,items: [{
-            html: '<h2 class="gon-cmp-header gon-logo">'+_('goodnews.error')+'</h2>'
-            ,border: false
-            ,cls: 'modx-page-header'
+            html: _('goodnews.error')
+            ,xtype: 'modx-header'
         },{
             xtype: 'modx-tabs'
             ,itemId: 'tabs'
@@ -56,13 +54,13 @@ Ext.extend(GoodNews.ErrorPanel,MODx.FormPanel,{
     ,getButtons: function() {
         var buttons = [];
         // Plugin version
-        buttons.push('-',{
+        buttons.push({
             xtype: 'tbtext'
             ,html: '<i>'+GoodNews.config.componentVersion+'-'+GoodNews.config.componentRelease+'</i>'
-        },'-')
+        })
         // Help button
         buttons.push({
-            text: '<i class="icon icon-question-circle icon-lg"></i>&nbsp;' + _('help_ex')
+            text: '<i class="icon icon-question-circle"></i>'
             ,id: 'button-help'
             ,handler: function(){
                 MODx.config.help_url = GoodNews.config.helpUrl;

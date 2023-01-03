@@ -1,14 +1,14 @@
 [[!GoodNewsSubscription?
     &submittedResourceId=`[[!GoodNewsGetResourceID? &pagetitle=`GoodNews Subscription Mail Sent`]]`
     &activationResourceId=`[[!GoodNewsGetResourceID? &pagetitle=`GoodNews Subscription Confirm`]]`
-    &activationEmailTpl=`sample.GoodNewsActivationEmailTpl`
+    &activationEmailTpl=`sample.GoodNewsActivationEmailChunk`
     &activationEmailSubject=`Thank you for joining our newsletter service at [[++site_name]]`
     &sendSubscriptionEmail=`1`
     &unsubscribeResourceId=`[[!GoodNewsGetResourceID? &pagetitle=`GoodNews Unsubscribe`]]`
     &profileResourceId=`[[!GoodNewsGetResourceID? &pagetitle=`GoodNews Subscription Update`]]`
     &subscriptionEmailSubject=`Your subscription to our newsletter service at [[++site_name]] was successful!`
     &reSubscriptionEmailSubject=`Existing user profile or newsletter subscription found!`
-    &reSubscriptionEmailTpl=`sample.GoodNewsReSubscriptionEmailTpl`
+    &reSubscriptionEmailTpl=`sample.GoodNewsReSubscriptionEmailChunk`
     &validate=`
         email:email:required,
         gdprcheck:required`

@@ -20,18 +20,18 @@
  * - - - - config.core.php
  *
  * PLEASE NOTE:
- * 
- * To use this project structure (subfolder MODX installation and development outside of MODX root)   
+ *
+ * To use this project structure (subfolder MODX installation and development outside of MODX root)
  * you need to change the following "session_" system settings in all MODX installations:
- * 
+ *
  * MODX 2 install sample:
  *   session_name = EXTRAS2x  (<- different session name in all installations)
  *   session_cookie_path = /  (<- needs to be same in all installations)
- * 
+ *
  * MODX 3 install sample:
  *   session_name = EXTRAS3x
  *   session_cookie_path = /
- * 
+ *
  * Be sure to modify this to your needs and rename this config.core.sample.php file
  * to config.core.php and to NOT include it in the git repo.
  */

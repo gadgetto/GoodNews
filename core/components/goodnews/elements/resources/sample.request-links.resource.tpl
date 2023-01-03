@@ -1,7 +1,7 @@
 [[!GoodNewsRequestLinks?
     &unsubscribeResourceId=`[[!GoodNewsGetResourceID? &pagetitle=`GoodNews Unsubscribe`]]`
     &profileResourceId=`[[!GoodNewsGetResourceID? &pagetitle=`GoodNews Subscription Update`]]`
-    &requestLinksEmailTpl=`sample.GoodNewsRequestLinksEmailTpl`
+    &requestLinksEmailTpl=`sample.GoodNewsRequestLinksEmailChunk`
     &requestLinksEmailSubject=`Your requested links to update or cancel your subscription at [[++site_name]]`
     &validate=`
         email:email:required,

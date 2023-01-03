@@ -18,6 +18,9 @@
  * Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
+use MODX\Revolution\modPlugin;
+use MODX\Revolution\modPluginEvent;
+
 /**
  * Add plugins to package
  *
@@ -29,17 +32,17 @@
  * @subpackage build
  */
 
-$plugins = array();
+$plugins = [];
 $i = 0;
 
-$plugins[++$i] = $modx->newObject('modPlugin');
-$plugins[$i]->fromArray(array(
+$plugins[++$i] = $modx->newObject(modPlugin::class);
+$plugins[$i]->fromArray([
     'id'          => $i,
     'name'        => 'GoodNews',
     'description' => 'Main GoodNews plugin. Do not change!',
     'plugincode'  => getPHPFileContent($sources['plugins'] . 'goodnews.plugin.php'),
     'category'    => 0,
-), '', true, true);
+], '', true, true);
 
 $events = include $sources['events'] . 'events.goodnews.php';
 if (!empty($events) && is_array($events)) {

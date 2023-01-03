@@ -1,21 +1,13 @@
 <?php
+
 /**
- * GoodNews
+ * This file is part of the GoodNews package.
  *
- * Copyright 2022 by bitego <office@bitego.com>
+ * @copyright bitego (Martin Gartner)
+ * @license GNU General Public License v2.0 (and later)
  *
- * GoodNews is free software; you can redistribute it and/or modify it under the
- * terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
- *
- * GoodNews is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this software; if not, write to the Free Software Foundation, Inc., 59 Temple
- * Place, Suite 330, Boston, MA 02111-1307 USA
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
 /**
@@ -26,11 +18,11 @@
  */
 
 
-$resources = array();
+$resources = [];
 $i = 0;
 $epoch = time();
 
-$resources[++$i] = array(
+$resources[++$i] = [
     'type'                  => 'document',
     'contentType'           => 'text/html',
     'pagetitle'             => 'GoodNews Subscription Confirm',
@@ -64,16 +56,16 @@ $resources[++$i] = array(
     'privatemgr'            => 0,
     'content_dispo'         => 0,
     'hidemenu'              => 1,
-    'class_key'             => 'modDocument',
+    'class_key'             => 'MODX\Revolution\modDocument',
     'context_key'           => 'web',
     'content_type'          => 1,
     'uri_override'          => 0,
     'hide_children_in_tree' => 0,
     'show_in_tree'          => 1,
-    'properties'            => NULL,
-);
+    'properties'            => null,
+];
 
-$resources[++$i] = array(
+$resources[++$i] = [
     'type'                  => 'document',
     'contentType'           => 'text/html',
     'pagetitle'             => 'GoodNews Subscription Mail Sent',
@@ -106,16 +98,16 @@ $resources[++$i] = array(
     'privatemgr'            => 0,
     'content_dispo'         => 0,
     'hidemenu'              => 1,
-    'class_key'             => 'modDocument',
+    'class_key'             => 'MODX\Revolution\modDocument',
     'context_key'           => 'web',
     'content_type'          => 1,
     'uri_override'          => 0,
     'hide_children_in_tree' => 0,
     'show_in_tree'          => 1,
-    'properties'            => NULL,
-);
+    'properties'            => null,
+];
 
-$resources[++$i] = array(
+$resources[++$i] = [
     'type'                  => 'document',
     'contentType'           => 'text/html',
     'pagetitle'             => 'GoodNews Subscription Success',
@@ -148,16 +140,16 @@ $resources[++$i] = array(
     'privatemgr'            => 0,
     'content_dispo'         => 0,
     'hidemenu'              => 1,
-    'class_key'             => 'modDocument',
+    'class_key'             => 'MODX\Revolution\modDocument',
     'context_key'           => 'web',
     'content_type'          => 1,
     'uri_override'          => 0,
     'hide_children_in_tree' => 0,
     'show_in_tree'          => 1,
-    'properties'            => NULL,
-);
+    'properties'            => null,
+];
 
-$resources[++$i] = array(
+$resources[++$i] = [
     'type'                  => 'document',
     'contentType'           => 'text/html',
     'pagetitle'             => 'GoodNews Subscription Update',
@@ -190,16 +182,16 @@ $resources[++$i] = array(
     'privatemgr'            => 0,
     'content_dispo'         => 0,
     'hidemenu'              => 1,
-    'class_key'             => 'modDocument',
+    'class_key'             => 'MODX\Revolution\modDocument',
     'context_key'           => 'web',
     'content_type'          => 1,
     'uri_override'          => 0,
     'hide_children_in_tree' => 0,
     'show_in_tree'          => 1,
-    'properties'            => NULL,
-);
+    'properties'            => null,
+];
 
-$resources[++$i] = array(
+$resources[++$i] = [
     'type'                  => 'document',
     'contentType'           => 'text/html',
     'pagetitle'             => 'GoodNews Profile Update',
@@ -232,16 +224,16 @@ $resources[++$i] = array(
     'privatemgr'            => 0,
     'content_dispo'         => 0,
     'hidemenu'              => 1,
-    'class_key'             => 'modDocument',
+    'class_key'             => 'MODX\Revolution\modDocument',
     'context_key'           => 'web',
     'content_type'          => 1,
     'uri_override'          => 0,
     'hide_children_in_tree' => 0,
     'show_in_tree'          => 1,
-    'properties'            => NULL,
-);
+    'properties'            => null,
+];
 
-$resources[++$i] = array(
+$resources[++$i] = [
     'type'                  => 'document',
     'contentType'           => 'text/html',
     'pagetitle'             => 'GoodNews Subscription',
@@ -274,16 +266,16 @@ $resources[++$i] = array(
     'privatemgr'            => 0,
     'content_dispo'         => 0,
     'hidemenu'              => 1,
-    'class_key'             => 'modDocument',
+    'class_key'             => 'MODX\Revolution\modDocument',
     'context_key'           => 'web',
     'content_type'          => 1,
     'uri_override'          => 0,
     'hide_children_in_tree' => 0,
     'show_in_tree'          => 1,
-    'properties'            => NULL,
-);
+    'properties'            => null,
+];
 
-$resources[++$i] = array(
+$resources[++$i] = [
     'type'                  => 'document',
     'contentType'           => 'text/html',
     'pagetitle'             => 'GoodNews Unsubscribe',
@@ -316,16 +308,16 @@ $resources[++$i] = array(
     'privatemgr'            => 0,
     'content_dispo'         => 0,
     'hidemenu'              => 1,
-    'class_key'             => 'modDocument',
+    'class_key'             => 'MODX\Revolution\modDocument',
     'context_key'           => 'web',
     'content_type'          => 1,
     'uri_override'          => 0,
     'hide_children_in_tree' => 0,
     'show_in_tree'          => 1,
-    'properties'            => NULL,
-);
+    'properties'            => null,
+];
 
-$resources[++$i] = array(
+$resources[++$i] = [
     'type'                  => 'document',
     'contentType'           => 'text/html',
     'pagetitle'             => 'GoodNews Request Links',
@@ -358,16 +350,16 @@ $resources[++$i] = array(
     'privatemgr'            => 0,
     'content_dispo'         => 0,
     'hidemenu'              => 1,
-    'class_key'             => 'modDocument',
+    'class_key'             => 'MODX\Revolution\modDocument',
     'context_key'           => 'web',
     'content_type'          => 1,
     'uri_override'          => 0,
     'hide_children_in_tree' => 0,
     'show_in_tree'          => 1,
-    'properties'            => NULL,
-);
+    'properties'            => null,
+];
 
-$resources[++$i] = array(
+$resources[++$i] = [
     'type'                  => 'document',
     'contentType'           => 'text/html',
     'pagetitle'             => 'GoodNews Registration Confirm',
@@ -400,16 +392,16 @@ $resources[++$i] = array(
     'privatemgr'            => 0,
     'content_dispo'         => 0,
     'hidemenu'              => 1,
-    'class_key'             => 'modDocument',
+    'class_key'             => 'MODX\Revolution\modDocument',
     'context_key'           => 'web',
     'content_type'          => 1,
     'uri_override'          => 0,
     'hide_children_in_tree' => 0,
     'show_in_tree'          => 1,
-    'properties'            => NULL,
-);
+    'properties'            => null,
+];
 
-$resources[++$i] = array(
+$resources[++$i] = [
     'type'                  => 'document',
     'contentType'           => 'text/html',
     'pagetitle'             => 'GoodNews Registration Mail Sent',
@@ -442,16 +434,16 @@ $resources[++$i] = array(
     'privatemgr'            => 0,
     'content_dispo'         => 0,
     'hidemenu'              => 1,
-    'class_key'             => 'modDocument',
+    'class_key'             => 'MODX\Revolution\modDocument',
     'context_key'           => 'web',
     'content_type'          => 1,
     'uri_override'          => 0,
     'hide_children_in_tree' => 0,
     'show_in_tree'          => 1,
-    'properties'            => NULL,
-);
+    'properties'            => null,
+];
 
-$resources[++$i] = array(
+$resources[++$i] = [
     'type'                  => 'document',
     'contentType'           => 'text/html',
     'pagetitle'             => 'GoodNews Registration',
@@ -484,16 +476,16 @@ $resources[++$i] = array(
     'privatemgr'            => 0,
     'content_dispo'         => 0,
     'hidemenu'              => 1,
-    'class_key'             => 'modDocument',
+    'class_key'             => 'MODX\Revolution\modDocument',
     'context_key'           => 'web',
     'content_type'          => 1,
     'uri_override'          => 0,
     'hide_children_in_tree' => 0,
     'show_in_tree'          => 1,
-    'properties'            => NULL,
-);
+    'properties'            => null,
+];
 
-$resources[++$i] = array(
+$resources[++$i] = [
     'type'                  => 'document',
     'contentType'           => 'text/html',
     'pagetitle'             => 'GoodNews Terms and Conditions',
@@ -526,16 +518,16 @@ $resources[++$i] = array(
     'privatemgr'            => 0,
     'content_dispo'         => 0,
     'hidemenu'              => 1,
-    'class_key'             => 'modDocument',
+    'class_key'             => 'MODX\Revolution\modDocument',
     'context_key'           => 'web',
     'content_type'          => 1,
     'uri_override'          => 0,
     'hide_children_in_tree' => 0,
     'show_in_tree'          => 1,
-    'properties'            => NULL,
-);
+    'properties'            => null,
+];
 
-$resources[++$i] = array(
+$resources[++$i] = [
     'type'                  => 'document',
     'contentType'           => 'text/html',
     'pagetitle'             => 'GoodNews Privacy Policy',
@@ -568,14 +560,14 @@ $resources[++$i] = array(
     'privatemgr'            => 0,
     'content_dispo'         => 0,
     'hidemenu'              => 1,
-    'class_key'             => 'modDocument',
+    'class_key'             => 'MODX\Revolution\modDocument',
     'context_key'           => 'web',
     'content_type'          => 1,
     'uri_override'          => 0,
     'hide_children_in_tree' => 0,
     'show_in_tree'          => 1,
-    'properties'            => NULL,
-);
+    'properties'            => null,
+];
 
 unset($epoch, $i);
 return $resources;

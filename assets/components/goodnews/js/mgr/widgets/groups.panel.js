@@ -8,7 +8,6 @@
  */
 GoodNews.panel.Groups = function(config) {
     config = config || {};
-
     Ext.applyIf(config,{
         id: 'goodnews-panel-groups'
         ,title: _('goodnews.groups')
@@ -18,8 +17,7 @@ GoodNews.panel.Groups = function(config) {
         }
         ,items:[{
             html: '<p>'+_('goodnews.groups_management_desc')+'</p>'
-            ,border: false
-            ,bodyCssClass: 'panel-desc'
+            ,xtype: 'modx-description'
         },{
             xtype: 'goodnews-grid-groups'
             ,cls: 'main-wrapper'
@@ -55,7 +53,7 @@ GoodNews.grid.Groups = function(config) {
     Ext.applyIf(config,{
         id: 'goodnews-grid-groups'
         ,url: GoodNews.config.connectorUrl
-        ,baseParams: { action: 'mgr/groups/getList' }
+        ,baseParams: { action: 'Bitego\\GoodNews\\Processors\\Group\\GetList' }
         ,fields: [
             'id'
             ,'name'
@@ -68,8 +66,9 @@ GoodNews.grid.Groups = function(config) {
         ]
         ,emptyText: _('goodnews.groups_none')
         ,paging: true
+        ,pageSize: Math.min(parseInt(MODx.config.default_per_page), 25)
         ,remoteSort: true
-        ,save_action: 'mgr/groups/updateFromGrid'
+        ,save_action: 'Bitego\\GoodNews\\Processors\\Group\\UpdateFromGrid'
         ,autosave: true
         ,autoExpandColumn: 'description'
         /*
@@ -212,7 +211,7 @@ Ext.extend(GoodNews.grid.Groups,MODx.grid.Grid,{
             ,text: _('goodnews.group_remove_confirm')
             ,url: this.config.url
             ,params: {
-                action: 'mgr/groups/remove'
+                action: 'Bitego\\GoodNews\\Processors\\Group\\Remove'
                 ,id: this.menu.record.id
             }
             ,listeners: {
@@ -228,7 +227,7 @@ Ext.extend(GoodNews.grid.Groups,MODx.grid.Grid,{
     }
     ,clearFilter: function() {
     	this.getStore().baseParams = {
-            action: 'mgr/groups/getList'
+            action: 'Bitego\\GoodNews\\Processors\\Group\\GetList'
     	};
         Ext.getCmp('goodnews-groups-search-filter').reset();
     	this.getBottomToolbar().changePage(1);
@@ -257,8 +256,8 @@ GoodNews.window.Group = function(config) {
         ,url: GoodNews.config.connectorUrl
         ,baseParams: {
             action: (config.isUpdate) ?
-                'mgr/groups/update' :
-                'mgr/groups/create'
+                'Bitego\\GoodNews\\Processors\\Group\\Update' :
+                'Bitego\\GoodNews\\Processors\\Group\\Create'
         }
         ,closeAction: 'close'
         ,fields: [{
@@ -277,7 +276,7 @@ GoodNews.window.Group = function(config) {
         },{
             xtype: 'modx-combo-usergroup'
             ,baseParams: {
-                action: 'security/group/getList'
+                action: 'Security/Group/GetList'
                 ,addNone: true
             }
             ,fieldLabel: _('goodnews.group_belongs_to_modx_usergroup')

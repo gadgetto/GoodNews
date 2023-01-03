@@ -56,7 +56,7 @@ class GoodNewsSubscriptionConfirmController extends GoodNewsSubscriptionControll
             'unsubscribeResourceId'    => '',
             'profileResourceId'        => '',
             'subscriptionEmailSubject' => $this->modx->lexicon('goodnews.subscription_email_subject'),
-            'subscriptionEmailTpl'     => 'sample.GoodNewsSubscriptionEmailTpl',
+            'subscriptionEmailTpl'     => 'sample.GoodNewsSubscriptionEmailChunk',
             'subscriptionEmailTplAlt'  => '',
             'subscriptionEmailTplType' => 'modChunk',
             'errorPage'                => false,

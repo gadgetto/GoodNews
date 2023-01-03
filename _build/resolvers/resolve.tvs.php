@@ -25,9 +25,9 @@
  * @subpackage build
  */
 
-$templates = array(
+$templates = [
     'templateName',
-);
+];
 
 
 if ($object->xpdo) {
@@ -37,20 +37,20 @@ if ($object->xpdo) {
         case xPDOTransport::ACTION_INSTALL:
         case xPDOTransport::ACTION_UPGRADE:
         
-            $tv = $modx->getObject('modTemplateVar',array(
+            $tv = $modx->getObject('modTemplateVar', [
                 'name' => 'tvName',
-            ));
+            ]);
             
             if ($tv) {
             
                 foreach ($templates as $templateName) {
                 
-                    $template = $modx->getObject('modTemplate',array('templatename' => $templateName));
+                    $template = $modx->getObject('modTemplate', ['templatename' => $templateName]);
                     if ($template) {
-                        $templateVarTemplate = $modx->getObject('modTemplateVarTemplate',array(
+                        $templateVarTemplate = $modx->getObject('modTemplateVarTemplate', [
                             'templateid' => $template->get('id'),
                             'tmplvarid' => $tv->get('id'),
-                        ));
+                        ]);
                         if (!$templateVarTemplate) {
                             $templateVarTemplate = $modx->newObject('modTemplateVarTemplate');
                             $templateVarTemplate->set('templateid', $template->get('id'));

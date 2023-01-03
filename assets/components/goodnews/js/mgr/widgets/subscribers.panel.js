@@ -8,7 +8,6 @@
  */
 GoodNews.panel.Subscribers = function(config) {
     config = config || {};
-
     Ext.applyIf(config,{
         id: 'goodnews-panel-subscribers'
         ,title: _('goodnews.subscribers')   
@@ -18,8 +17,7 @@ GoodNews.panel.Subscribers = function(config) {
         }
         ,items:[{
             html: '<p>'+_('goodnews.subscribers_desc')+'</p>'
-            ,border: false
-            ,bodyCssClass: 'panel-desc'
+            ,xtype: 'modx-description'
         },{
             xtype: 'goodnews-grid-subscribers'
             ,cls: 'main-wrapper'
@@ -62,34 +60,22 @@ GoodNews.grid.Subscribers = function(config){
     var subscrInfos = [
         '<table id="gon-subscrinfo-{id}" class="gon-expinfos">',
             '<tr>',
-                '<td class="gon-expinfos-key">'+_('goodnews.id')+'</td><td class="gon-expinfos-val">{id}</td>',
-            '</tr>',
-            '<tr>',
-                '<td class="gon-expinfos-key">'+_('goodnews.modx_username')+'</td><td class="gon-expinfos-val">{username}</td>',
-            '</tr>',
-            '<tr>',
+                '<td class="gon-expinfos-key">'+_('goodnews.user_id')+'</td><td class="gon-expinfos-val">{id}</td>',
+                '<td class="gon-expinfos-key">'+_('goodnews.subscriber_subscribed_on')+'</td><td class="gon-expinfos-val">{subscribedon_formatted}</td>',
+                '<td class="gon-expinfos-key">'+_('goodnews.subscriber_ip')+'</td><td class="gon-expinfos-val">{ip}</td>',
                 '<td class="gon-expinfos-key">'+_('goodnews.groups')+'</td><td class="gon-expinfos-val">{grpcount}</td>',
             '</tr>',
             '<tr>',
-                '<td class="gon-expinfos-key">'+_('goodnews.categories')+'</td><td class="gon-expinfos-val">{catcount}</td>',
-            '</tr>',
-            '<tr>',
-                '<td class="gon-expinfos-key">'+_('goodnews.subscriber_subscribed_on')+'</td><td class="gon-expinfos-val">{subscribedon_formatted}</td>',
-            '</tr>',
-            '<tr>',
-                '<td class="gon-expinfos-key">'+_('goodnews.subscriber_ip')+'</td><td class="gon-expinfos-val">{ip}</td>',
-            '</tr>',
-            '<tr>',
+                '<td class="gon-expinfos-key">'+_('goodnews.modx_username')+'</td><td class="gon-expinfos-val">{username}</td>',
                 '<td class="gon-expinfos-key">'+_('goodnews.subscriber_activated_on')+'</td><td class="gon-expinfos-val">{activatedon_formatted}</td>',
-            '</tr>',
-            '<tr>',
                 '<td class="gon-expinfos-key">'+_('goodnews.subscriber_ip_activated')+'</td><td class="gon-expinfos-val">{ip_activated}</td>',
+                '<td class="gon-expinfos-key">'+_('goodnews.categories')+'</td><td class="gon-expinfos-val">{catcount}</td>',
             '</tr>',
         '</table>'
         ].join('\n');
 
     // A row expander for subscribers grid rows (additional informations)
-    this.exp = new Ext.ux.grid.RowExpander({
+    this.exp = new Ext.grid.RowExpander({
         tpl: new Ext.Template(subscrInfos)
         ,enableCaching: false
         ,lazyRender: false
@@ -98,7 +84,7 @@ GoodNews.grid.Subscribers = function(config){
     Ext.applyIf(config,{
         id: 'goodnews-grid-subscribers'
         ,url: GoodNews.config.connectorUrl
-        ,baseParams: { action: 'mgr/subscribers/getList' }
+        ,baseParams: { action: 'Bitego\\GoodNews\\Processors\\Subscribers\\GetList' }
         ,fields: [
             'id'
             ,'email'
@@ -119,6 +105,7 @@ GoodNews.grid.Subscribers = function(config){
         ]
         ,emptyText: _('goodnews.subscribers_none')
         ,paging: true
+        ,pageSize: Math.min(parseInt(MODx.config.default_per_page), 25)
         ,remoteSort: true
         ,sm: this.sm
         ,plugins: [this.exp]
@@ -140,7 +127,7 @@ GoodNews.grid.Subscribers = function(config){
                         addCls = ' gon-no-subscriptions';
                     }
                 }
-                return '<span class="gon-subscriber-email'+addCls+'">'+value+'</span>';
+                return '<strong class="gon-subscriber-email'+addCls+'">'+value+'</strong>';
             }
         },{
             header: _('goodnews.subscriber_fullname')
@@ -161,9 +148,8 @@ GoodNews.grid.Subscribers = function(config){
         },{
             header: _('goodnews.subscriber_testdummy')
             ,dataIndex: 'testdummy'
-            ,align: 'center'
             ,sortable: true
-            ,width: 60
+            ,width: 50
             ,renderer: function(value){
                 switch (value){
                     case '0':
@@ -179,16 +165,15 @@ GoodNews.grid.Subscribers = function(config){
         },{
             header: _('goodnews.subscriber_active')
             ,dataIndex: 'active'
-            ,align: 'center'
             ,sortable: true
             ,editable: false
             ,editor: { xtype: 'combo-boolean', renderer: 'boolean' }
-            ,width: 60
+            ,width: 50
         },{
             header: _('goodnews.subscriber_subscribed_on')
             ,dataIndex: 'subscribedon_formatted'
             ,sortable: true
-            ,width: 80
+            ,width: 70
         },{
             header: _('goodnews.subscriber_soft_bounces')
             ,dataIndex: 'soft_bounces'
@@ -211,11 +196,11 @@ GoodNews.grid.Subscribers = function(config){
             ,defaultType: 'toolbar'
             ,items: [{
                 items: [{
-                    text: '<i class="icon icon-download icon-lg"></i>&nbsp;' + _('goodnews.import_button')
+                    text: '<i class="icon icon-download"></i>&nbsp;' + _('goodnews.import_button')
                     ,handler: this.importSubscribers
                     ,scope: this
                 },{
-                    text: '<i class="icon icon-upload icon-lg"></i>&nbsp;' + _('goodnews.export_button')
+                    text: '<i class="icon icon-upload"></i>&nbsp;' + _('goodnews.export_button')
                     ,handler: this.exportSubscribers
                     ,scope: this
                 },'->',{
@@ -229,7 +214,7 @@ GoodNews.grid.Subscribers = function(config){
                     ,store: new Ext.data.JsonStore({
                         url: GoodNews.config.connectorUrl
                         ,baseParams: {
-                            action : 'mgr/groups/getGroupFilterList'
+                            action : 'Bitego\\GoodNews\\Processors\\Group\\FilterGetList'
                             ,addNoGroupOption: true
                         }
                         ,fields: ['id','name']
@@ -249,7 +234,7 @@ GoodNews.grid.Subscribers = function(config){
                     ,store: new Ext.data.JsonStore({
                         url: GoodNews.config.connectorUrl
                         ,baseParams: {
-                            action : 'mgr/category/getCategoryFilterList'
+                            action : 'Bitego\\GoodNews\\Processors\\Category\\FilterGetList'
                             ,addNoCategoryOption: true
                         }
                         ,fields: ['id','name']
@@ -449,7 +434,7 @@ Ext.extend(GoodNews.grid.Subscribers,MODx.grid.Grid,{
             ,text: _('goodnews.subscriber_reset_bounce_counters_confirm')
             ,url: this.config.url
             ,params: {
-                action: 'mgr/subscribers/resetBounceCounters'
+                action: 'Bitego\\GoodNews\\Processors\\Subscribers\\ResetBounceCounters'
                 ,id: this.menu.record.id
             }
             ,listeners: {
@@ -463,7 +448,7 @@ Ext.extend(GoodNews.grid.Subscribers,MODx.grid.Grid,{
             ,text: _('goodnews.subscriber_remove_subscriptions_confirm')
             ,url: this.config.url
             ,params: {
-                action: 'mgr/subscribers/removeSubscriptions'
+                action: 'Bitego\\GoodNews\\Processors\\Subscribers\\RemoveSubscriptions'
                 ,id: this.menu.record.id
             }
             ,listeners: {
@@ -477,7 +462,7 @@ Ext.extend(GoodNews.grid.Subscribers,MODx.grid.Grid,{
             ,text: _('goodnews.subscriber_remove_meta_data_confirm')
             ,url: this.config.url
             ,params: {
-                action: 'mgr/subscribers/removeMeta'
+                action: 'Bitego\\GoodNews\\Processors\\Subscribers\\RemoveMeta'
                 ,id: this.menu.record.id
             }
             ,listeners: {
@@ -521,7 +506,7 @@ Ext.extend(GoodNews.grid.Subscribers,MODx.grid.Grid,{
             ,text: _('goodnews.subscriber_reset_bounce_counters_confirm_multi')
             ,url: this.config.url
             ,params: {
-                action: 'mgr/subscribers/resetBounceCountersMulti'
+                action: 'Bitego\\GoodNews\\Processors\\Subscribers\\ResetBounceCountersMulti'
                 ,userIds: sel
             }
             ,listeners: {
@@ -545,7 +530,7 @@ Ext.extend(GoodNews.grid.Subscribers,MODx.grid.Grid,{
             ,text: _('goodnews.subscriber_remove_subscriptions_confirm_multi')
             ,url: this.config.url
             ,params: {
-                action: 'mgr/subscribers/removeSubscriptionsMulti'
+                action: 'Bitego\\GoodNews\\Processors\\Subscribers\\RemoveSubscriptionsMulti'
                 ,userIds: sel
             }
             ,listeners: {
@@ -569,7 +554,7 @@ Ext.extend(GoodNews.grid.Subscribers,MODx.grid.Grid,{
             ,text: _('goodnews.subscriber_remove_meta_data_confirm_multi')
             ,url: this.config.url
             ,params: {
-                action: 'mgr/subscribers/removeMetaMulti'
+                action: 'Bitego\\GoodNews\\Processors\\Subscribers\\RemoveMetaMulti'
                 ,userIds: sel
             }
             ,listeners: {
@@ -621,7 +606,7 @@ Ext.extend(GoodNews.grid.Subscribers,MODx.grid.Grid,{
     }
     ,clearFilter: function() {
     	this.getStore().baseParams = {
-            action: 'mgr/subscribers/getList'
+            action: 'Bitego\\GoodNews\\Processors\\Subscribers\\GetList'
     	};
         Ext.getCmp('goodnews-subscribers-group-filter').reset();
         Ext.getCmp('goodnews-subscribers-category-filter').reset();
@@ -648,10 +633,11 @@ GoodNews.tree.GroupsCategories = function(config) {
     
     Ext.applyIf(config,{
         id: 'goodnews-tree-groupscategories'
+        ,cls: 'gon-tree-groupscategories'
         ,url: GoodNews.config.connectorUrl
-        ,action: 'mgr/groups/getGroupCatNodes'
+        ,action: 'Bitego\\GoodNews\\Processors\\Group\\GroupCategoryGetNodes'
         ,autoHeight: false
-        ,height: Ext.getBody().getViewSize().height*.30
+        ,height: Ext.getBody().getViewSize().height*.28
         ,root_id: 'n_gongrp_0'
         ,root_name: _('goodnews.subscriber_groups_categories')
         ,rootVisible: false
@@ -660,7 +646,6 @@ GoodNews.tree.GroupsCategories = function(config) {
         ,useDefaultToolbar: true
         ,stateful: false
         ,collapsed: false
-        ,cls: 'gon-tree-groupscategories'
         ,listeners: {
             'checkchange': function(node,checked){
                 if(config.reverse === true){
@@ -709,7 +694,7 @@ GoodNews.window.UpdateSubscriptions = function(config) {
         ,closeAction: 'close'
         ,url: GoodNews.config.connectorUrl
         ,baseParams: {
-            action: 'mgr/subscribers/update'
+            action: 'Bitego\\GoodNews\\Processors\\Subscribers\\Update'
         }
         ,fields: [{
             xtype: 'hidden'
@@ -788,7 +773,7 @@ GoodNews.window.SubscribersAssignMulti = function(config) {
         ,closeAction: 'close'
         ,url: GoodNews.config.connectorUrl
         ,baseParams: {
-            action: 'mgr/subscribers/assignmulti'
+            action: 'Bitego\\GoodNews\\Processors\\Subscribers\\AssignMulti'
         }
         ,fields: [{
             xtype: 'hidden'
@@ -891,7 +876,7 @@ GoodNews.window.SubscribersRemoveMulti = function(config) {
         ,closeAction: 'close'
         ,url: GoodNews.config.connectorUrl
         ,baseParams: {
-            action: 'mgr/subscribers/removemulti'
+            action: 'Bitego\\GoodNews\\Processors\\Subscribers\\RemoveMulti'
         }
         ,fields: [{
             xtype: 'hidden'
@@ -971,7 +956,7 @@ GoodNews.window.SubscribersExport = function(config) {
         ,closeAction: 'close'
         ,url: GoodNews.config.connectorUrl
         ,baseParams: {
-            action: 'mgr/subscribers/export'
+            action: 'Bitego\\GoodNews\\Processors\\Subscribers\\Export'
         }
         ,items:[{
             html: '<p>'+_('goodnews.export_subscribers_desc',{ count: config.exportcount })+'</p>'

@@ -39,7 +39,7 @@ $properties = array(
         'desc' => 'prop_goodnewscontentcollection.tpl_desc',
         'type' => 'textfield',
         'options' => '',
-        'value' => 'sample.GoodNewsContentCollectionRowTpl',
+        'value' => 'sample.GoodNewsContentCollectionRowChunk',
         'lexicon' => 'goodnews:properties',
     ),
     array(

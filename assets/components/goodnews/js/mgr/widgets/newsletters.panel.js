@@ -8,7 +8,6 @@
  */
 GoodNews.panel.Newsletters = function(config) {
     config = config || {};
-
     Ext.applyIf(config,{
         id: 'goodnews-panel-newsletters'
         ,title: _('goodnews.newsletters')
@@ -17,13 +16,12 @@ GoodNews.panel.Newsletters = function(config) {
             border: false
         }
         ,items:[{
-            html: '<div>'+_('goodnews.newsletters_management_desc')+'</div>'
-            ,border: false
-            ,bodyCssClass: 'panel-desc'
+            html: '<p>'+_('goodnews.newsletters_management_desc')+'</p>'
+            ,xtype: 'modx-description'
         },{
             xtype: 'goodnews-grid-newsletters'
-            ,cls: 'main-wrapper'
             ,bodyCssClass: 'grid-with-buttons'
+            ,cls: 'main-wrapper'
             ,preventRender: true
         }]
     });
@@ -82,28 +80,25 @@ GoodNews.grid.Newsletters = function(config) {
                 '<td class="gon-expinfos-key">'+_('goodnews.id')+'</td><td class="gon-expinfos-val">{id}</td>',
                 '<td class="gon-expinfos-key">'+_('goodnews.newsletter_createdon')+'</td><td class="gon-expinfos-val">{createdon_formatted}</td>',
                 '<td class="gon-expinfos-key">'+_('goodnews.newsletter_publishedon')+'</td><td class="gon-expinfos-val">{publishedon_formatted}</td>',
-                '<td class="gon-expinfos-key">'+_('goodnews.newsletter_sender')+'</td><td class="gon-expinfos-val">{sentby_username}</td>',
                 '<td class="gon-expinfos-key">'+_('goodnews.newsletter_scheduled')+'</td><td class="gon-expinfos-val gon-scheduled">{pub_date_formatted}</td>',
             '</tr>',
             '<tr>',
                 '<td class="gon-expinfos-key"></td><td class="gon-expinfos-val"></td>',
                 '<td class="gon-expinfos-key">'+_('goodnews.newsletter_createdby')+'</td><td class="gon-expinfos-val">{createdby_username}</td>',
                 '<td class="gon-expinfos-key">'+_('goodnews.newsletter_publishedby')+'</td><td class="gon-expinfos-val">{publishedby_username}</td>',
-                '<td class="gon-expinfos-key"></td><td class="gon-expinfos-val"></td>',
-                '<td class="gon-expinfos-key"></td><td class="gon-expinfos-val"></td>',
+                '<td class="gon-expinfos-key">'+_('goodnews.newsletter_sender')+'</td><td class="gon-expinfos-val">{sentby_username}</td>',
             '</tr>',
             '<tr>',
                 '<td class="gon-expinfos-key"></td><td class="gon-expinfos-val"></td>',
                 '<td class="gon-expinfos-key">'+_('goodnews.newsletter_sending_errors')+'</td><td class="gon-expinfos-val">{recipients_error}</td>',
                 '<td class="gon-expinfos-key">'+_('goodnews.newsletter_soft_bounces')+'</td><td class="gon-expinfos-val">{soft_bounces}</td>',
                 '<td class="gon-expinfos-key">'+_('goodnews.newsletter_hard_bounces')+'</td><td class="gon-expinfos-val">{hard_bounces}</td>',
-                '<td class="gon-expinfos-key"></td><td class="gon-expinfos-val"></td>',
             '</tr>',
         '</table>'
         ].join('\n');
 
     // A row expander for newsletter grid rows (additional informations)
-    this.exp = new Ext.ux.grid.RowExpander({
+    this.exp = new Ext.grid.RowExpander({
         tpl: new Ext.Template(nlInfos)
         ,enableCaching: false
         ,lazyRender: false
@@ -112,21 +107,23 @@ GoodNews.grid.Newsletters = function(config) {
     // Newsletter title and action buttons renderer    
     this.tplPageTitle = new Ext.XTemplate(
         '<tpl for=".">'
-            +'<h3 class="gon-newsletter-title"><a href="?a=resource/update&id={id}" title="'+_('goodnews.newsletter_update')+'" class="x-grid-link">{pagetitle}</a></h3>'
+            +'<h3 class="gon-newsletter-title main-column{state:defaultValue("")}">{pagetitle}</h3>'
             +'<tpl if="actions !== null">'
-                +'<ul class="actions">'
+                +'<ul class="actions gon-newsletter-actions">'
                     +'<tpl for="actions">'
                         +'<li><button type="button" class="controlBtn {className}"{disabled}>{text}</button></li>'
                     +'</tpl>'
                 +'</ul>'
             +'</tpl>'
         +'</tpl>'
-    ,{compiled: true});
+    ,{
+        compiled: true
+    });
 
     Ext.applyIf(config,{
         id: 'goodnews-grid-newsletters'
         ,url: GoodNews.config.connectorUrl
-        ,baseParams: { action: 'mgr/mailing/getList' }
+        ,baseParams: { action: 'Bitego\\GoodNews\\Processors\\Mailing\\GetList' }
         ,fields: [
             'id'
             ,'pagetitle'
@@ -160,6 +157,7 @@ GoodNews.grid.Newsletters = function(config) {
             ,'menu'
             ,'actions'
         ]
+        ,showActionsColumn: false
         ,emptyText: _('goodnews.newsletters_none')
         ,paging: true
         ,pageSize: 10
@@ -185,18 +183,17 @@ GoodNews.grid.Newsletters = function(config) {
             header: _('goodnews.newsletter_sent_on')
             ,dataIndex: 'senton_formatted'
             ,sortable: false
-            ,width: 80
+            ,width: 70
         },{
             header: _('goodnews.newsletter_finished_on')
             ,dataIndex: 'finishedon_formatted'
             ,sortable: false
-            ,width: 80
+            ,width: 70
         },{
             header: _('goodnews.newsletter_recipients_sent')
             ,dataIndex: 'recipients_total_sent'
             ,sortable: false
-            ,align: 'center'
-            ,width: 80
+            ,width: 60
         },{
             header: _('goodnews.newsletter_status')
             ,dataIndex: 'statusmessage'
@@ -246,7 +243,7 @@ GoodNews.grid.Newsletters = function(config) {
             ,description: _('goodnews.newsletter_send_process_toggle_tooltip')
             ,hideLabel: true
             ,ctCls: 'gon-checkbox-toggle'
-            ,cls: 'danger'
+            ,cls: 'warning'
             ,inputValue: 1
             ,checked: GoodNews.config.workerProcessActive ? false : true
             ,listeners: {
@@ -535,7 +532,7 @@ Ext.extend(GoodNews.grid.Newsletters,MODx.grid.Grid,{
         MODx.Ajax.request({
             url: GoodNews.config.connectorUrl
             ,params: {
-                action: 'mgr/send/switchSendProcess'
+                action: 'Bitego\\GoodNews\\Processors\\Send\\SwitchSendProcess'
                 ,emergencystop: emergencystop
             }
             ,method: 'post'
@@ -561,7 +558,7 @@ Ext.extend(GoodNews.grid.Newsletters,MODx.grid.Grid,{
     }
     ,clearFilter: function() {
     	this.getStore().baseParams = {
-            action: 'mgr/mailing/getList'
+            action: 'Bitego\\GoodNews\\Processors\\Mailing\\GetList'
     	};
         Ext.getCmp('goodnews-newsletters-filter').reset();
         Ext.getCmp('goodnews-newsletters-search-filter').reset();
@@ -569,10 +566,17 @@ Ext.extend(GoodNews.grid.Newsletters,MODx.grid.Grid,{
         this.refresh();
     }
     ,createNewsletter: function(btn,e) {
+        var tpl = '';
         if (GoodNews.config.mailingTemplate) {
             tpl = '&template='+GoodNews.config.mailingTemplate;
         }
-        MODx.loadPage('resource/create', 'class_key=GoodNewsResourceMailing&parent=' + GoodNews.config.userCurrentContainer + '&context_key=' + GoodNews.config.contextKey + tpl);
+        var classKey = 'Bitego\\GoodNews\\Model\\GoodNewsResourceMailing';
+        var parent = GoodNews.config.userCurrentContainer;
+        var contextKey = GoodNews.config.contextKey;
+        MODx.loadPage(
+            'resource/create',
+            'class_key='+classKey+'&parent='+parent+'&context_key='+contextKey+tpl
+        );
     }
     ,previewNewsletter: function(btn,e) {
         if (this.menu.record.richtext == true) {
@@ -606,7 +610,7 @@ Ext.extend(GoodNews.grid.Newsletters,MODx.grid.Grid,{
         MODx.Ajax.request({
             url: GoodNews.config.connectorUrl
             ,params: {
-                action: 'mgr/send/sendtest'
+                action: 'Bitego\\GoodNews\\Processors\\Send\\SendTest'
                 ,mailingid: this.menu.record.id
             }
             ,method: 'post'
@@ -622,7 +626,7 @@ Ext.extend(GoodNews.grid.Newsletters,MODx.grid.Grid,{
                     Ext.getCmp('goodnews-grid-newsletters').refresh();
                 },scope:this}
                 ,'failure':{fn:function(r) {
-                    // todo: handle test sending failure
+                    // @todo: handle test sending failure
                     
                 },scope:this}
             }
@@ -634,7 +638,7 @@ Ext.extend(GoodNews.grid.Newsletters,MODx.grid.Grid,{
             ,text: _('goodnews.newsletter_start_sending_confirm')+' ('+_('goodnews.newsletter_recipients')+this.menu.record.recipients_open+')'
             ,url: GoodNews.config.connectorUrl
             ,params: {
-                action: 'mgr/send/start'
+                action: 'Bitego\\GoodNews\\Processors\\Send\\StartSending'
                 ,mailingid: this.menu.record.id
             }
             ,listeners: {
@@ -648,7 +652,7 @@ Ext.extend(GoodNews.grid.Newsletters,MODx.grid.Grid,{
             ,text: _('goodnews.newsletter_stop_sending_confirm')+' ('+_('goodnews.newsletter_recipients')+this.menu.record.recipients_open+')'
             ,url: GoodNews.config.connectorUrl
             ,params: {
-                action: 'mgr/send/stop'
+                action: 'Bitego\\GoodNews\\Processors\\Send\\StopSending'
                 ,mailingid: this.menu.record.id
             }
             ,listeners: {
@@ -662,7 +666,7 @@ Ext.extend(GoodNews.grid.Newsletters,MODx.grid.Grid,{
             ,text: _('goodnews.newsletter_continue_sending_confirm')+' ('+_('goodnews.newsletter_recipients')+this.menu.record.recipients_open+')'
             ,url: GoodNews.config.connectorUrl
             ,params: {
-                action: 'mgr/send/continue'
+                action: 'Bitego\\GoodNews\\Processors\\Send\\ContinueSending'
                 ,mailingid: this.menu.record.id
             }
             ,listeners: {
@@ -671,7 +675,7 @@ Ext.extend(GoodNews.grid.Newsletters,MODx.grid.Grid,{
         });
     }
     ,updateNewsletter: function(btn,e) {
-        MODx.loadPage('resource/update', 'id=' + this.menu.record.id);
+        MODx.loadPage('resource/update', 'id='+this.menu.record.id);
     }
     ,removeNewsletter: function() {
         MODx.msg.confirm({
@@ -679,7 +683,7 @@ Ext.extend(GoodNews.grid.Newsletters,MODx.grid.Grid,{
             ,text: _('goodnews.newsletter_remove_confirm')
             ,url: MODx.config.connector_url
             ,params: {
-                action: 'resource/delete'
+                action: 'Resource/Delete'
                 ,id: this.menu.record.id
             }
             ,listeners: {
@@ -691,7 +695,7 @@ Ext.extend(GoodNews.grid.Newsletters,MODx.grid.Grid,{
         MODx.Ajax.request({
             url: MODx.config.connector_url
             ,params: {
-                action: 'resource/undelete'
+                action: 'Resource/Undelete'
                 ,id: this.menu.record.id
             }
             ,listeners: {
@@ -703,7 +707,7 @@ Ext.extend(GoodNews.grid.Newsletters,MODx.grid.Grid,{
         MODx.Ajax.request({
             url: MODx.config.connector_url
             ,params: {
-                action: 'resource/publish'
+                action: 'Resource/Publish'
                 ,id: this.menu.record.id
             }
             ,listeners: {
@@ -715,7 +719,7 @@ Ext.extend(GoodNews.grid.Newsletters,MODx.grid.Grid,{
         MODx.Ajax.request({
             url: MODx.config.connector_url
             ,params: {
-                action: 'resource/unpublish'
+                action: 'Resource/Unpublish'
                 ,id: this.menu.record.id
             }
             ,listeners: {
@@ -855,7 +859,7 @@ GoodNews.grid.SendLog = function(config) {
         id: 'goodnews-grid-sendlog'
         ,url: GoodNews.config.connectorUrl
         ,baseParams: {
-            action: 'mgr/mailing/sendlog/getList'
+            action: 'Bitego\\GoodNews\\Processors\\Mailing\\Sendlog\\GetList'
             ,mailingid: config.params.mailingid
         }
         ,fields: [
@@ -958,7 +962,7 @@ Ext.extend(GoodNews.grid.SendLog,MODx.grid.Grid,{
     }
     ,clearFilter: function() {
     	this.getStore().baseParams = {
-            action: 'mgr/mailing/sendlog/getList'
+            action: 'Bitego\\GoodNews\\Processors\\Mailing\\Sendlog\\GetList'
             ,mailingid: this.config.params.mailingid
     	};
         Ext.getCmp('goodnews-sendlog-status-filter').reset();
@@ -968,10 +972,9 @@ Ext.extend(GoodNews.grid.SendLog,MODx.grid.Grid,{
     }
     ,exportSendLog: function() {
         var s = this.getStore();
-        var action = 'mgr/mailing/sendlog/export';
+        var action = 'Bitego\\GoodNews\\Processors\\Mailing\\Sendlog\\Export';
         var mailingid = s.baseParams.mailingid;
         location.href = GoodNews.config.connectorUrl+'?action='+action+'&mailingid='+mailingid+'&HTTP_MODAUTH='+MODx.siteId;
     }
 });
 Ext.reg('goodnews-grid-sendlog',GoodNews.grid.SendLog);
-

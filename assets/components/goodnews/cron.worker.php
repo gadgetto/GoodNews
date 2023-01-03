@@ -1,22 +1,17 @@
 <?php
+
 /**
- * GoodNews
+ * This file is part of the GoodNews package.
  *
- * Copyright 2012 by bitego <office@bitego.com>
+ * @copyright bitego (Martin Gartner)
+ * @license GNU General Public License v2.0 (and later)
  *
- * GoodNews is free software; you can redistribute it and/or modify it under the
- * terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
- *
- * GoodNews is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this software; if not, write to the Free Software Foundation, Inc., 59 Temple
- * Place, Suite 330, Boston, MA 02111-1307 USA
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
+
+use MODX\Revolution\modX;
+use Bitego\GoodNews\Mailer;
 
 /**
  * cron.worker.php is the mail sender (handled and started by cron.php via php exec)
@@ -32,43 +27,55 @@ $tstart = $mtime;
 set_time_limit(0);
 
 // Fetch params of CLI calls and merge with URL params (for universal usage)
-if(isset($_SERVER['argc'])) {
+if (isset($_SERVER['argc'])) {
+    $argc = $_SERVER['argc'];
     if ($argc > 0) {
-        for ($i=1; $i < $argc; $i++) {
+        for ($i = 1; $i < $argc; $i++) {
             parse_str($argv[$i], $tmp);
             $_GET = array_merge($_GET, $tmp);
         }
     }
 }
 
+// Load MODX
 define('MODX_API_MODE', true);
-require_once dirname(dirname(dirname(dirname(__FILE__)))).'/config.core.php';
-require_once MODX_CORE_PATH.'model/modx/modx.class.php';
+$root = dirname(__DIR__, 3) . '/';
+require_once $root . 'config.core.php';
+require_once MODX_CORE_PATH . 'vendor/autoload.php';
+/** @var modX $modx */
 $modx = new modX();
 $modx->initialize('mgr');
-$modx->getService('error', 'error.modError', '', '');
-
-// If set - worker script may only be continued if the correct security key is provided by cron (@param sid)
-$sid = isset($_GET['sid']) ? $_GET['sid'] : '';
-$securityKey = $modx->getOption('goodnews.cron_security_key', null, '');
-if ($sid != $securityKey) {
-    exit('[GoodNews] cron.worker.php - Missing or wrong authentification! Sorry Dude!');
+if (!$modx->services->has('error')) {
+    $modx->services->add('error', function ($c) use ($modx) {
+        return new modError($modx);
+    });
 }
 
-$debug = $modx->getOption('goodnews.debug', null, false) ? true : false;
-
-$corePath = $modx->getOption('goodnews.core_path', null, $modx->getOption('core_path').'components/goodnews/');
-require_once $corePath.'model/goodnews/goodnewsmailing.class.php';
-$modx->goodnewsmailing = new GoodNewsMailing($modx);
-if (!($modx->goodnewsmailing instanceof GoodNewsMailing)) {
-    $modx->log(modX::LOG_LEVEL_ERROR,'[GoodNews] cron.worker.php - Could not load GoodNewsMailing class.');
+// Security check:
+// (if set - connector script may only be continued if the correct
+// security key is provided by @param sid via CLI calls or URL params)
+$sid = (string)isset($_GET['sid']) ? $_GET['sid'] : '';
+$securityKey = (string)$modx->getOption('goodnews.cron_security_key', null, '');
+if ($sid !== $securityKey) {
+    $modx->log(modX::LOG_LEVEL_WARN, '[GoodNews] cron.worker.php - missing or wrong security key!');
+    header('HTTP/1.1 401 Unauthorized');
     exit();
 }
 
-$mailingsToSend = $modx->goodnewsmailing->getMailingsToSend();
+// Debug mode?
+$debug = $modx->getOption('goodnews.debug', null, false) ? true : false;
+
+/** @var Mailer $mailer */
+$mailer = new Mailer($modx);
+if (!($mailer instanceof Mailer)) {
+    $modx->log(modX::LOG_LEVEL_ERROR, '[GoodNews] cron.worker.php - could not load Mailer class.');
+    exit();
+}
+
+$mailingsToSend = $mailer->getMailingsToSend();
 if (is_array($mailingsToSend)) {
     foreach ($mailingsToSend as $mailingid) {
-        $modx->goodnewsmailing->processMailing($mailingid);
+        $mailer->processMailing($mailingid);
     }
 }
 
@@ -79,7 +86,8 @@ $tend = $mtime;
 $totalTime = ($tend - $tstart);
 $totalTime = sprintf("%2.4f s", $totalTime);
 if ($debug) {
-    $modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] [pid: '.getmypid().'] cron.worker.php - Finished with execution time: '.$totalTime);
+    $modx->log(
+        modX::LOG_LEVEL_INFO,
+        '[GoodNews] [pid: ' . getmypid() . '] cron.worker.php - process finished with execution time: ' . $totalTime
+    );
 }
-
-exit();

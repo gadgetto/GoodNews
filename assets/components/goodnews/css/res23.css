@@ -1,9 +1,0 @@
-/**
- * custom GoodNews Resource (gonr-) Type styles for Revo >= 2.3.0
- */
-
-/* Special styles */
-.gonr-modx-group-assigned,
-.gonr-modx-group-assigned span {
-    color: #3759cb !important;
-}

@@ -10,8 +10,7 @@ GoodNews.panel.SystemSettings = function(config) {
         }
         ,items:[{
             html: '<p>'+_('goodnews.settings_system_tab_desc')+'</p>'
-            ,border: false
-            ,bodyCssClass: 'panel-desc'
+            ,xtype: 'modx-description'
         },{
             layout: 'form'
             ,cls: 'main-wrapper'
@@ -63,7 +62,6 @@ GoodNews.panel.SystemSettings = function(config) {
                 }]
             },{
                 layout: 'column'
-                ,cls: 'gon-x-panel-add-padding-top'
                 ,border: false
                 ,defaults: {
                     layout: 'form'

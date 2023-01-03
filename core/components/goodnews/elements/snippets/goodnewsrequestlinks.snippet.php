@@ -29,7 +29,7 @@
  * @property string $profileResourceId The ID of the resource for editing the mailing profile. (default: '')
  * @property string $submittedResourceId If set, will redirect to the specified resource after the user submits the request links form. (default: '')
  * @property string $requestLinksEmailSubject The subject of the request links email. (default: a lexicon string)
- * @property string $requestLinksEmailTpl The template for the request links email. (default: sample.GoodNewsRequestLinksEmailTpl)
+ * @property string $requestLinksEmailTpl The template for the request links email. (default: sample.GoodNewsRequestLinksEmailChunk)
  * @property string $requestLinksEmailTplAlt If set, will use this template instead of $requestLinksEmailTpl (e.g. for plaintext mails). (default: '')
  * @property string $requestLinksEmailTplType The type of tpl provided for the request links email. (default: modChunk)
  * @property string $errTpl Chunk for error output. (default: <span class="error">[[+error]]</span>)

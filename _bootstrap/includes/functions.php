@@ -1,22 +1,30 @@
 <?php
+
 /**
- * GoodNews
+ * This file is part of the GoodNews package.
  *
- * Copyright 2022 by bitego <office@bitego.com>
+ * @copyright bitego (Martin Gartner)
+ * @license GNU General Public License v2.0 (and later)
  *
- * GoodNews is free software; you can redistribute it and/or modify it under the
- * terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
- *
- * GoodNews is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this software; if not, write to the Free Software Foundation, Inc., 59 Temple
- * Place, Suite 330, Boston, MA 02111-1307 USA
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
+
+use MODX\Revolution\modX;
+use MODX\Revolution\modMenu;
+use MODX\Revolution\modCategory;
+use MODX\Revolution\modChunk;
+use MODX\Revolution\modNamespace;
+use MODX\Revolution\modPlugin;
+use MODX\Revolution\modPluginEvent;
+use MODX\Revolution\modSnippet;
+use MODX\Revolution\modSystemSetting;
+use MODX\Revolution\modTemplate;
+use MODX\Revolution\modTemplateVar;
+use MODX\Revolution\modTemplateVarTemplate;
+use MODX\Revolution\modResource;
+use MODX\Revolution\Transport\modTransportPackage;
+use MODX\Revolution\Error\modError;
 
 /**
  * Helper functions for _bootstrap
@@ -34,7 +42,8 @@
  * @param boolean $custom Default resource or custom resource type
  * @return mixed/boolean
  */
-function createModxResources(&$modx, $resources, $sources, $custom = false) {
+function createModxResources(&$modx, $resources, $sources, $custom = false)
+{
     $uCaseCustom = '';
     $lCaseCustom = '';
     if ($custom) {
@@ -52,14 +61,13 @@ function createModxResources(&$modx, $resources, $sources, $custom = false) {
     $count = 0;
     // $namespace will be namespace for properties array (if any)
     foreach ($resources as $namespace => $fieldvalues) {
-        
         $upd = true;
         /** @var modResource $resource */
-        $resource = $modx->getObject('modResource', array('pagetitle' => $fieldvalues['pagetitle']));
+        $resource = $modx->getObject(modResource::class, ['pagetitle' => $fieldvalues['pagetitle']]);
         if (!is_object($resource)) {
             $upd = false;
             /* @var modResource $resource */
-            $resource = $modx->newObject('modResource', array('pagetitle' => $fieldvalues['pagetitle']));
+            $resource = $modx->newObject(modResource::class, ['pagetitle' => $fieldvalues['pagetitle']]);
         }
         
         // Replace content-template file-name with content-template content
@@ -78,7 +86,7 @@ function createModxResources(&$modx, $resources, $sources, $custom = false) {
                 $fieldvalues['template'] = $modx->getOption('default_template');
             } else {
                 /* @var modTemplate $templateObj */
-                $templateObj = $modx->getObject('modTemplate', array('templatename' => $fieldvalues['template']));
+                $templateObj = $modx->getObject(modTemplate::class, ['templatename' => $fieldvalues['template']]);
                 if ($templateObj) {
                     $fieldvalues['template'] = $templateObj->get('id');
                 } else {
@@ -91,7 +99,7 @@ function createModxResources(&$modx, $resources, $sources, $custom = false) {
         // Replace parent resource pagetitle with resource ID
         if (!empty($fieldvalues['parent'])) {
             /* @var modResource $parentObj */
-            $parentObj = $modx->getObject('modResource', array('pagetitle' => $fieldvalues['parent']));
+            $parentObj = $modx->getObject(modResource::class, ['pagetitle' => $fieldvalues['parent']]);
             if ($parentObj) {
                 $fieldvalues['parent'] = $parentObj->get('id');
             } else {
@@ -101,7 +109,7 @@ function createModxResources(&$modx, $resources, $sources, $custom = false) {
         
         // Get properties array from $fieldvalues and empty 'properties' key
         $properties = $fieldvalues['properties'];
-        $fieldvalues['properties'] = NULL;
+        $fieldvalues['properties'] = null;
         
         // Set resource fieldvalues
         $resource->fromArray($fieldvalues);
@@ -130,7 +138,8 @@ function createModxResources(&$modx, $resources, $sources, $custom = false) {
  * @param array $settingAttributes Setting attributes array
  * @return mixed/boolean
  */
-function assignSettings(&$modx, $settingAttributes) {
+function assignSettings(&$modx, $settingAttributes)
+{
     $modx->log(modX::LOG_LEVEL_INFO, 'Assign setting values...');
     
     if (empty($settingAttributes) || !is_array($settingAttributes)) {
@@ -141,7 +150,7 @@ function assignSettings(&$modx, $settingAttributes) {
     $count = 0;
     foreach ($settingAttributes as $attributes) {
         // Check if setting exists
-        $setting = $modx->getObject('modSystemSetting', array('key' => $attributes['key']));
+        $setting = $modx->getObject(modSystemSetting::class, ['key' => $attributes['key']]);
         if (!$setting) {
             $modx->log(modX::LOG_LEVEL_ERROR, '-> could not find setting: ' . $attributes['key']);
             continue;
@@ -150,7 +159,7 @@ function assignSettings(&$modx, $settingAttributes) {
         if ($attributes['xtype'] == 'modx-combo-template') {
             // Assign template id based on template name
             if (!empty($attributes['value'])) {
-                $templateObj = $modx->getObject('modTemplate', array('templatename' => $attributes['value']));
+                $templateObj = $modx->getObject(modTemplate::class, ['templatename' => $attributes['value']]);
                 if ($templateObj) {
                     $setting->set('value', $templateObj->get('id'));
                 } else {
@@ -164,13 +173,9 @@ function assignSettings(&$modx, $settingAttributes) {
             } else {
                 $modx->log(modX::LOG_LEVEL_ERROR, '-> could not save setting: ' . $attributes['key']);
             }
-        
         } elseif ($attributes['xtype'] == 'modx-combo-boolean') {
-            
         } elseif ($attributes['xtype'] == 'numberfield') {
-            
         } elseif ($attributes['xtype'] == 'textfield') {
-            
         }
     }
     
@@ -185,8 +190,8 @@ function assignSettings(&$modx, $settingAttributes) {
  * @param integer $defaultCategoryId The ID of the package category
  * @return mixed/boolean
  */
-function createElementCategories(&$modx, $categories, $defaultCategoryId = 0) {
-    
+function createElementCategories(&$modx, $categories, $defaultCategoryId = 0)
+{
     $modx->log(modX::LOG_LEVEL_INFO, 'Adding additional elements categories...');
     if (empty($categories) || !is_array($categories)) {
         $modx->log(modX::LOG_LEVEL_ERROR, 'Additional elements categories could not be added. Data missing.');
@@ -230,8 +235,8 @@ function createElementCategories(&$modx, $categories, $defaultCategoryId = 0) {
  * @param array $tables An array database table-names
  * @return mixed/boolean
  */
-function createDatabaseTables(&$modx, $tables) {
-    
+function createDatabaseTables(&$modx, $tables)
+{
     $modx->log(modX::LOG_LEVEL_INFO, 'Creating database tables...');
     if (empty($tables) || !is_array($tables)) {
         $modx->log(modX::LOG_LEVEL_ERROR, 'Database tables could not be added. Data missing.');
@@ -249,7 +254,7 @@ function createDatabaseTables(&$modx, $tables) {
             ++$count;
             $modx->log(modX::LOG_LEVEL_INFO, '-> added database table: ' . $tableName);
         } else {
-            $modx->log(modX::LOG_LEVEL_INFO, '-> database table ' . $tableName , ' already exists - skipped!');
+            $modx->log(modX::LOG_LEVEL_INFO, '-> database table ' . $tableName . ' already exists - skipped!');
         }
     }
     
@@ -263,8 +268,8 @@ function createDatabaseTables(&$modx, $tables) {
  * @param array $categories An array of data
  * @return mixed/boolean
  */
-function createDatabaseEntries(&$modx, $entries) {
-    
+function createDatabaseEntries(&$modx, $entries)
+{
     $modx->log(modX::LOG_LEVEL_INFO, 'Creating entries in custom database tables...');
     if (empty($entries) || !is_array($entries)) {
         $modx->log(modX::LOG_LEVEL_ERROR, 'Database entries could not be added. Data missing.');
@@ -275,7 +280,9 @@ function createDatabaseEntries(&$modx, $entries) {
     foreach ($entries as $class => $attributes) {
         // Check if entry already exists
         $obj = $modx->getObject($class, $attributes);
-        if ($obj) { continue; }
+        if ($obj) {
+            continue;
+        }
         $obj = $modx->newObject($class, $attributes);
         if ($obj->save()) {
             ++$count;
@@ -295,7 +302,8 @@ function createDatabaseEntries(&$modx, $entries) {
  * @param array $templateCategories An array of template => category associations
  * @return mixed/boolean
  */
-function assignTemplateCategories(&$modx, $templateCategories) {
+function assignTemplateCategories(&$modx, $templateCategories)
+{
     $modx->log(modX::LOG_LEVEL_INFO, 'Assign templates to categories...');
     
     if (empty($templateCategories) || !is_array($templateCategories)) {
@@ -306,7 +314,7 @@ function assignTemplateCategories(&$modx, $templateCategories) {
     $count = 0;
     foreach ($templateCategories as $templateName => $categoryName) {
         // Check if template exists
-        $template = $modx->getObject('modTemplate', array('templatename' => $templateName));
+        $template = $modx->getObject(modTemplate::class, ['templatename' => $templateName]);
         if (!$template) {
             $modx->log(modX::LOG_LEVEL_WARN, '-> template ' . $templateName . ' does not exist. No category assigned.');
             continue;
@@ -334,19 +342,20 @@ function assignTemplateCategories(&$modx, $templateCategories) {
  * @param bool $update
  * @return bool
  */
-function createObject(&$modx, $className = '', array $data = array(), $primaryField = '', $update = true) {
+function createObject(&$modx, $className = '', array $data = [], $primaryField = '', $update = true)
+{
     /* @var xPDOObject $object */
     $object = null;
 
     /* Attempt to get the existing object */
     if (!empty($primaryField)) {
         if (is_array($primaryField)) {
-            $condition = array();
+            $condition = [];
             foreach ($primaryField as $key) {
                 $condition[$key] = $data[$key];
             }
         } else {
-            $condition = array($primaryField => $data[$primaryField]);
+            $condition = [$primaryField => $data[$primaryField]];
         }
 
         $object = $modx->getObject($className, $condition);
@@ -382,11 +391,12 @@ function createObject(&$modx, $className = '', array $data = array(), $primaryFi
  * @param string $namespace
  * @return boolean
  */
-function createSystemSetting(&$modx, $key, $value, $namespace, $xtype = 'textfield', $area = 'Development') {
-    $exists = $modx->getCount('modSystemSetting', array('key' => "{$namespace}.{$key}"));
+function createSystemSetting(&$modx, $key, $value, $namespace, $xtype = 'textfield', $area = 'Development')
+{
+    $exists = $modx->getCount(modSystemSetting::class, ['key' => "{$namespace}.{$key}"]);
     $saved = false;
     if (!$exists) {
-        $setting = $modx->newObject('modSystemSetting');
+        $setting = $modx->newObject(modSystemSetting::class);
         $setting->set('key', "{$namespace}.{$key}");
         $setting->set('value', $value);
         $setting->set('xtype', $xtype);
@@ -407,13 +417,16 @@ function createSystemSetting(&$modx, $key, $value, $namespace, $xtype = 'textfie
  * @param string $name Name of transport package
  * @return boolean
  */
-function isTransportPackageInstalled(&$modx, $tpname) {
+function isTransportPackageInstalled(&$modx, $tpname)
+{
     $installed = false;
     /** @var transport.modTransportPackage $package */
-    $package = $modx->getObject('transport.modTransportPackage', array(
+    $package = $modx->getObject(modTransportPackage::class, [
         'package_name' => $tpname,
-    ));
-    if (is_object($package)) { $installed = true; }
+    ]);
+    if (is_object($package)) {
+        $installed = true;
+    }
     return $installed;
 }
 
@@ -424,11 +437,14 @@ function isTransportPackageInstalled(&$modx, $tpname) {
  * @param string $name Name of namespace
  * @return boolean
  */
-function existsNamespace(&$modx, $nspace) {
+function existsNamespace(&$modx, $nspace)
+{
     $exists = false;
     /** @var modNamespace $namespace */
-    $namespace = $modx->getObject('modNamespace', array('name' => $nspace,));
-    if (is_object($namespace)) { $exists = true; }
+    $namespace = $modx->getObject(modNamespace::class, ['name' => $nspace,]);
+    if (is_object($namespace)) {
+        $exists = true;
+    }
     return $exists;
 }
 
@@ -439,10 +455,13 @@ function existsNamespace(&$modx, $nspace) {
  * @param mixed $name
  * @return int category ID | 0 if not found
  */
-function getCategoryID(&$modx, $name) {
+function getCategoryID(&$modx, $name)
+{
     $id = 0;
-    $categoryObj = $modx->getObject('modCategory', array('category' => $name));
-    if (is_object($categoryObj)) { $id = $categoryObj->get('id'); }
+    $categoryObj = $modx->getObject(modCategory::class, ['category' => $name]);
+    if (is_object($categoryObj)) {
+        $id = $categoryObj->get('id');
+    }
     return $id;
 }
 
@@ -452,7 +471,8 @@ function getCategoryID(&$modx, $name) {
  * @param string $namespace
  * @return string
  */
-function fetchAssetsUrl($namespace) {
+function fetchAssetsUrl($namespace)
+{
     $url = 'http';
     if (isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS'] == 'on')) {
         $url .= 's';
@@ -474,7 +494,8 @@ function fetchAssetsUrl($namespace) {
  * @param string $filename
  * @return mixed|string
  */
-function getPHPFileContent($filename) {
+function getPHPFileContent($filename)
+{
     $o = file_get_contents($filename);
     $o = str_replace('<?php', '', $o);
     $o = str_replace('?>', '', $o);

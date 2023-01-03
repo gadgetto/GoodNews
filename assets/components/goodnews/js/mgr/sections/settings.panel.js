@@ -23,11 +23,9 @@ GoodNews.SettingsPanel = function(config) {
         id: 'goodnews-panel-settings'
         ,cls: 'container'
         ,bodyStyle: ''
-        ,unstyled: true
         ,items: [{
-            html: '<h2 class="gon-cmp-header gon-logo">'+_('goodnews.settings')+'</h2>'
-            ,border: false
-            ,cls: 'modx-page-header'
+            html: _('goodnews.settings')
+            ,xtype: 'modx-header'
         },{
             xtype: 'modx-tabs'
             ,itemId: 'tabs'
@@ -76,28 +74,28 @@ Ext.extend(GoodNews.SettingsPanel,MODx.FormPanel,{
     ,getButtons: function() {
         var buttons = [];
         // Plugin version
-        buttons.push('-',{
+        buttons.push({
             xtype: 'tbtext'
             ,html: '<i>'+GoodNews.config.componentVersion+'-'+GoodNews.config.componentRelease+'</i>'
-        },'-')
-        // Save Settings button <i class="fa fa-check-circle"></i>
+        })
+        // Save Settings button
         buttons.push({
-            text: '<i class="icon icon-check-circle icon-lg"></i>&nbsp;' + _('goodnews.settings_save_button')
+            text: '<i class="icon icon-check-circle"></i>&nbsp;' + _('goodnews.settings_save_button')
             ,id: 'button-settings-save'
             ,handler: this.updateSettings
             ,scope: this
             ,cls: 'primary-button'
-        },'-')
+        })
         // Close Settings button
         buttons.push({
-            text: '<i class="icon icon-arrow-circle-left icon-lg"></i>&nbsp;' + _('goodnews.settings_close_button')
+            text: '<i class="icon icon-arrow-circle-left"></i>&nbsp;' + _('goodnews.settings_close_button')
             ,id: 'button-settings-close'
             ,handler: this.closeSettings
             ,scope: this
-        },'-')
+        })
         // Help button
         buttons.push({
-            text: '<i class="icon icon-question-circle icon-lg"></i>&nbsp;' + _('help_ex')
+            text: '<i class="icon icon-question-circle"></i>'
             ,id: 'button-help'
             ,handler: function(){
                 MODx.config.help_url = GoodNews.config.helpUrl;
@@ -111,7 +109,7 @@ Ext.extend(GoodNews.SettingsPanel,MODx.FormPanel,{
         this.getForm().load({
             url: GoodNews.config.connectorUrl
             ,params: {
-                action: 'mgr/settings/get'
+                action: 'Bitego\\GoodNews\\Processors\\Settings\\Get'
             }
             ,waitMsg: _('goodnews.msg_loading')
             ,success: function(){
@@ -127,7 +125,7 @@ Ext.extend(GoodNews.SettingsPanel,MODx.FormPanel,{
         this.getForm().submit({
             url: GoodNews.config.connectorUrl
             ,params: {
-                action: 'mgr/settings/update'
+                action: 'Bitego\\GoodNews\\Processors\\Settings\\Update'
             }
             ,waitMsg: _('goodnews.msg_saving')
             ,success: function(form,action){
