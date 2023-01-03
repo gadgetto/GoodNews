@@ -1,22 +1,4 @@
 <?php
-/**
- * GoodNews
- *
- * Copyright 2012 by bitego <office@bitego.com>
- *
- * GoodNews is free software; you can redistribute it and/or modify it under the
- * terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
- *
- * GoodNews is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this software; if not, write to the Free Software Foundation, Inc., 59 Temple
- * Place, Suite 330, Boston, MA 02111-1307 USA
- */
 
 /**
  * GoodNews default
@@ -179,7 +161,7 @@ $_lang['goodnews.group_err_nf']                                     = 'Group not
 $_lang['goodnews.group_err_ns']                                     = 'Group not specified.';
 $_lang['goodnews.group_err_remove']                                 = 'An error occurred while trying to remove the group.';
 $_lang['goodnews.group_err_save']                                   = 'An error occurred while trying to save the group.';
-                                                            
+
 $_lang['goodnews.category']                                         = 'Category';
 $_lang['goodnews.categories']                                       = 'Categories';
 $_lang['goodnews.categories_management_desc']                       = 'Manage your mailing categories here.';
@@ -201,7 +183,7 @@ $_lang['goodnews.category_err_nf']                                  = 'Category 
 $_lang['goodnews.category_err_ns']                                  = 'Category not specified.';
 $_lang['goodnews.category_err_remove']                              = 'An error occurred while trying to remove the category.';
 $_lang['goodnews.category_err_save']                                = 'An error occurred while trying to save the category.';
-                                                            
+
 $_lang['goodnews.subscribers']                                      = 'Subscribers';
 $_lang['goodnews.subscribers_desc']                                 = 'Manage your subscribers here. New subscribers are created via user subscriptions, manually through MODX user management or by importing.';
 $_lang['goodnews.modx_user_create']                                 = 'Create MODX User';
