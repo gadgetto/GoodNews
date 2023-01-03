@@ -23,7 +23,7 @@
  *
  * @package goodnews
  * @subpackage lexicon
- * @language fr
+ * @language en
  */
 
 $_lang['goodnews.user_err_save']                    = 'Une erreur s\'est produite lors de la sauvegarde de l\'utilisateur.';
