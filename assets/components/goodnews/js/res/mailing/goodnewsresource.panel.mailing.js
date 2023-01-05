@@ -274,7 +274,7 @@ Ext.extend(GoodNewsResource.panel.Mailing,MODx.panel.Resource,{
                     ,cls: 'main-wrapper'
                     ,preventRender: true
                     ,baseParams: {
-                        action: 'Bitego\\GoodNews\\Processors\\Collection\\GetResourceList'
+                        action: 'Bitego\\GoodNews\\Processors\\Collection\\GetList'
                         ,parentIds: config.record.collection1Parents
                         ,collectionIds: config.record.collection1 || ''
                         ,collectionInternalName: 'collection1'
@@ -298,7 +298,7 @@ Ext.extend(GoodNewsResource.panel.Mailing,MODx.panel.Resource,{
                     ,cls: 'main-wrapper'
                     ,preventRender: true
                     ,baseParams: {
-                        action: 'Bitego\\GoodNews\\Processors\\Collection\\GetResourceList'
+                        action: 'Bitego\\GoodNews\\Processors\\Collection\\GetList'
                         ,parentIds: config.record.collection2Parents
                         ,collectionIds: config.record.collection2 || ''
                         ,collectionInternalName: 'collection2'
@@ -322,7 +322,7 @@ Ext.extend(GoodNewsResource.panel.Mailing,MODx.panel.Resource,{
                     ,cls: 'main-wrapper'
                     ,preventRender: true
                     ,baseParams: {
-                        action: 'Bitego\\GoodNews\\Processors\\Collection\\GetResourceList'
+                        action: 'Bitego\\GoodNews\\Processors\\Collection\\GetList'
                         ,parentIds: config.record.collection3Parents
                         ,collectionIds: config.record.collection3 || ''
                         ,collectionInternalName: 'collection2'
