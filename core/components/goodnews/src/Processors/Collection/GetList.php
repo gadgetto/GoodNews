@@ -123,13 +123,13 @@ class GetList extends GetListProcessor
         $input = strip_tags($input);
 
         // convert html encoded chars back to single chars to ensure correct character counting
-        $output = html_entity_decode($input, ENT_COMPAT, $encoding);
+        $output = html_entity_decode($input, ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401, $encoding);
 
         // multi-byte based
         if ($usemb) {
             if (mb_strlen($output, $encoding) > $limit) {
                 $output = mb_substr($output, 0, $limit, $encoding);
-                $length = mb_strrpos($output, $break, $encoding);
+                $length = mb_strrpos($output, $break, 0, $encoding);
                 if ($length !== false) {
                     $output = mb_substr($output, 0, $length, $encoding);
                 }
@@ -147,7 +147,7 @@ class GetList extends GetListProcessor
         }
 
         // re-encode special chars
-        $output = htmlentities($output, ENT_COMPAT, $encoding, false);
+        $output = htmlentities($output, ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401, $encoding, false);
         return $output;
     }
 }
