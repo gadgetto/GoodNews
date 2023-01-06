@@ -113,11 +113,12 @@ Ext.extend(GoodNewsResource.panel.Mailing,MODx.panel.Resource,{
         its.push(this.getPageHeader(config),{
             id:'modx-resource-tabs'
             ,xtype: 'modx-tabs'
+            ,itemId: 'tabs'
+            ,cls: 'structure-tabs'
             ,forceLayout: true
             ,deferredRender: false
             ,collapsible: false
             ,animCollapse: false
-            ,itemId: 'tabs'
             ,items: it
         });
         if (MODx.config.tvs_below_content == 1) {
@@ -263,16 +264,14 @@ Ext.extend(GoodNewsResource.panel.Mailing,MODx.panel.Resource,{
                 id: 'goodnewsresource-collection1-tab'
                 ,title: _('goodnews.mailing_resource_collection')+config.record.collection1Name
                 ,cls: 'modx-resource-tab'
-                ,labelAlign: 'top'
-                ,bodyCssClass: 'tab-panel-wrapper main-wrapper'
+                ,layout: 'form'
+                ,anchor: '100%'
                 ,autoHeight: true
                 ,items: [{
                     html: '<p>'+_('goodnews.mailing_resource_collection_desc')+'</p>'
                     ,xtype: 'modx-description'
                 },{
                     xtype: 'goodnewsresource-grid-collect-resources'
-                    ,cls: 'main-wrapper'
-                    ,preventRender: true
                     ,baseParams: {
                         action: 'Bitego\\GoodNews\\Processors\\Collection\\GetList'
                         ,parentIds: config.record.collection1Parents
@@ -287,16 +286,14 @@ Ext.extend(GoodNewsResource.panel.Mailing,MODx.panel.Resource,{
                 id: 'goodnewsresource-collection2-tab'
                 ,title: _('goodnews.mailing_resource_collection')+config.record.collection2Name
                 ,cls: 'modx-resource-tab'
-                ,labelAlign: 'top'
-                ,bodyCssClass: 'tab-panel-wrapper main-wrapper'
+                ,layout: 'form'
+                ,anchor: '100%'
                 ,autoHeight: true
                 ,items: [{
                     html: '<p>'+_('goodnews.mailing_resource_collection_desc')+'</p>'
                     ,xtype: 'modx-description'
                 },{
                     xtype: 'goodnewsresource-grid-collect-resources'
-                    ,cls: 'main-wrapper'
-                    ,preventRender: true
                     ,baseParams: {
                         action: 'Bitego\\GoodNews\\Processors\\Collection\\GetList'
                         ,parentIds: config.record.collection2Parents
@@ -311,16 +308,14 @@ Ext.extend(GoodNewsResource.panel.Mailing,MODx.panel.Resource,{
                 id: 'goodnewsresource-collection3-tab'
                 ,title: _('goodnews.mailing_resource_collection')+config.record.collection3Name
                 ,cls: 'modx-resource-tab'
-                ,labelAlign: 'top'
-                ,bodyCssClass: 'tab-panel-wrapper main-wrapper'
+                ,layout: 'form'
+                ,anchor: '100%'
                 ,autoHeight: true
                 ,items: [{
                     html: '<p>'+_('goodnews.mailing_resource_collection_desc')+'</p>'
                     ,xtype: 'modx-description'
                 },{
                     xtype: 'goodnewsresource-grid-collect-resources'
-                    ,cls: 'main-wrapper'
-                    ,preventRender: true
                     ,baseParams: {
                         action: 'Bitego\\GoodNews\\Processors\\Collection\\GetList'
                         ,parentIds: config.record.collection3Parents

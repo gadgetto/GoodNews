@@ -38,3 +38,9 @@
     line-height: 0.75em;
     vertical-align: -15%;
 }
+
+/* Content Collection grid fix */
+.gonr-collection-grid .x-grid3-body .x-grid3-td-checker {
+    padding: 7px 0 0;
+}
+
