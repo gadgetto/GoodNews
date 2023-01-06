@@ -258,8 +258,10 @@ Ext.extend(GoodNewsResource.panel.Mailing,MODx.panel.Resource,{
     }
 
     ,getResourceCollectionTabs: function(config) {
+        var snippetName = '';
         var cTabs = [];
         if (config.record.collection1Name && config.record.collection1Parents) {
+            snippetName = '[[GoodNewsContentCollection? &collectionId=`collection1`]]';
             cTabs.push({
                 id: 'goodnewsresource-collection1-tab'
                 ,title: _('goodnews.mailing_resource_collection')+config.record.collection1Name
@@ -268,8 +270,13 @@ Ext.extend(GoodNewsResource.panel.Mailing,MODx.panel.Resource,{
                 ,anchor: '100%'
                 ,autoHeight: true
                 ,items: [{
-                    html: '<p>'+_('goodnews.mailing_resource_collection_desc')+'</p>'
-                    ,xtype: 'modx-description'
+                    xtype: 'modx-description'
+                    ,html:
+                        '<p>'+
+                            _('goodnews.mailing_resource_collection_desc', {
+                                tag: `<b class="gonr-code-snippet">${snippetName}</b>`
+                            })+
+                        '</p>'
                 },{
                     xtype: 'goodnewsresource-grid-collect-resources'
                     ,baseParams: {
@@ -282,6 +289,7 @@ Ext.extend(GoodNewsResource.panel.Mailing,MODx.panel.Resource,{
             });
         }
         if (config.record.collection2Name && config.record.collection2Parents) {
+            snippetName = '[[GoodNewsContentCollection? &collectionId=`collection2`]]';
             cTabs.push({
                 id: 'goodnewsresource-collection2-tab'
                 ,title: _('goodnews.mailing_resource_collection')+config.record.collection2Name
@@ -290,8 +298,13 @@ Ext.extend(GoodNewsResource.panel.Mailing,MODx.panel.Resource,{
                 ,anchor: '100%'
                 ,autoHeight: true
                 ,items: [{
-                    html: '<p>'+_('goodnews.mailing_resource_collection_desc')+'</p>'
-                    ,xtype: 'modx-description'
+                    xtype: 'modx-description'
+                    ,html:
+                    '<p>'+
+                        _('goodnews.mailing_resource_collection_desc', {
+                            tag: `<b class="gonr-code-snippet">${snippetName}</b>`
+                        })+
+                    '</p>'
                 },{
                     xtype: 'goodnewsresource-grid-collect-resources'
                     ,baseParams: {
@@ -304,6 +317,7 @@ Ext.extend(GoodNewsResource.panel.Mailing,MODx.panel.Resource,{
             });
         }
         if (config.record.collection3Name && config.record.collection3Parents) {
+            snippetName = '[[GoodNewsContentCollection? &collectionId=`collection3`]]';
             cTabs.push({
                 id: 'goodnewsresource-collection3-tab'
                 ,title: _('goodnews.mailing_resource_collection')+config.record.collection3Name
@@ -312,15 +326,20 @@ Ext.extend(GoodNewsResource.panel.Mailing,MODx.panel.Resource,{
                 ,anchor: '100%'
                 ,autoHeight: true
                 ,items: [{
-                    html: '<p>'+_('goodnews.mailing_resource_collection_desc')+'</p>'
-                    ,xtype: 'modx-description'
+                    xtype: 'modx-description'
+                    ,html:
+                    '<p>'+
+                        _('goodnews.mailing_resource_collection_desc', {
+                            tag: `<b class="gonr-code-snippet">${snippetName}</b>`
+                        })+
+                    '</p>'
                 },{
                     xtype: 'goodnewsresource-grid-collect-resources'
                     ,baseParams: {
                         action: 'Bitego\\GoodNews\\Processors\\Collection\\GetList'
                         ,parentIds: config.record.collection3Parents
                         ,collectionIds: config.record.collection3 || ''
-                        ,collectionInternalName: 'collection2'
+                        ,collectionInternalName: 'collection3'
                     }
                 }]
             });
