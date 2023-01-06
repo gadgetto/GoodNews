@@ -54,7 +54,7 @@ $_lang['goodnews.mail_subject']                                     = 'Mail Subj
 $_lang['goodnews.mail_body']                                        = 'Mail Body';
 
 $_lang['goodnews.newsletters']                                      = 'Mailings';
-$_lang['goodnews.newsletters_management_desc']                      = 'This overview provides status information for your mailing documents. To view additional information, please click on the [+] sign. To follow the status live during transmission, please activate <strong>Auto-Refresh</strong>.';
+$_lang['goodnews.newsletters_management_desc']                      = 'This overview provides status information for your mailing documents. To get additional information, use the [+] sign. To follow the status live during transmission, activate <strong>Auto-Refresh</strong>. To completely pause all sending processes, activate <strong>Transmission STOP</strong>.';
 $_lang['goodnews.newsletter_create']                                = 'Create Mailing';
 $_lang['goodnews.newsletter_id']                                    = 'ID';
 $_lang['goodnews.newsletter_title']                                 = 'Mailing Title';
@@ -139,14 +139,14 @@ $_lang['goodnews.sendlog_status_unknown']                           = 'Unknown';
 $_lang['goodnews.sendlog_none']                                     = 'No send-log entries';
 
 $_lang['goodnews.groups']                                           = 'Groups';
-$_lang['goodnews.groups_management_desc']                           = 'Manage your subscriber groups here. Assigning a GoodNews group to a MODX user-group (<span class="gon-modx-group-assigned">blue marker</span>), makes it possible to send mailings to all members of this MODX user-group. If you assign a MODX user-group, this GoodNews group can <strong>not</strong> be used to manage subscribers.';
+$_lang['goodnews.groups_management_desc']                           = 'Manage your subscriber groups here. Linking a GoodNews group to a MODX user-group (<span class="gon-modx-group-assigned">blue marker</span>), makes it possible to send mailings to all members of this MODX user-group. If you assign a MODX user-group, this GoodNews group can <strong>not</strong> be used to manage subscribers.';
 $_lang['goodnews.group_create']                                     = 'Create Group';
 $_lang['goodnews.modx_groups_edit']                                 = 'Edit MODX User Groups';
 $_lang['goodnews.group_name']                                       = 'Group Name';
 $_lang['goodnews.group_description']                                = 'Description';
 $_lang['goodnews.group_membercount']                                = 'Subscribers';
 $_lang['goodnews.modx_usergroup']                                   = 'MODX User-Group';
-$_lang['goodnews.group_belongs_to_modx_usergroup']                  = 'Assigned to MODX User Group';
+$_lang['goodnews.group_belongs_to_modx_usergroup']                  = 'Linked to MODX User Group';
 $_lang['goodnews.choose_modx_user_group']                           = '(Choose MODX user group)';
 $_lang['goodnews.group_public']                                     = 'Public';
 $_lang['goodnews.groups_none']                                      = 'No groups';

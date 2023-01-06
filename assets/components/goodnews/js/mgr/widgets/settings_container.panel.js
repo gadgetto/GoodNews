@@ -76,7 +76,6 @@ GoodNews.grid.Containers = function(config) {
             ,'collection3_parents'
             ,'context_key'
             ,'menu'
-            ,'actions'
         ]
         ,emptyText: _('goodnews.settings_containers_none')
         ,paging: true
@@ -1056,7 +1055,7 @@ Ext.extend(GoodNews.window.UpdateContainerSettings,MODx.Window,{
         var msu = Ext.getCmp('mail_smtp_user');
         var msp = Ext.getCmp('mail_smtp_pass');
         // disable/enable fields related to smtp auth
-        if (enabled==false) {
+        if (enabled===0) {
             msu.disable();
             msp.disable();
         } else {
@@ -1069,7 +1068,7 @@ Ext.extend(GoodNews.window.UpdateContainerSettings,MODx.Window,{
         var msh = Ext.getCmp('mail_smtp_hosts');
         var msp = Ext.getCmp('mail_smtp_prefix');
         // preset Mandrill settings
-        if (service==2) {
+        if (service===2) {
             msa.setValue(1);
             msh.setValue('smtp.mandrillapp.com:587');
             msp.setValue('');

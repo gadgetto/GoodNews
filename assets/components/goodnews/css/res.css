@@ -38,3 +38,18 @@
     line-height: 0.75em;
     vertical-align: -15%;
 }
+
+/* Content Collection grid fix */
+.gonr-collection-grid .x-grid3-body .x-grid3-td-checker {
+    padding: 7px 0 0;
+}
+
+/* Common styles */
+.gonr-code-snippet {
+    display: inline;
+    padding: .1em .25em;
+    border-radius: .25em;
+    font-weight: normal;
+    background-color: #e7f1fb;
+    color: #1b5ca8;
+}

@@ -47,6 +47,7 @@ GoodNewsResource.grid.CollectResources = function(config) {
 	Ext.applyIf(config,{
 		title: _('resources_active')
 		,id: 'goodnewsresource-'+config.baseParams.collectionInternalName+'-grid'
+        ,cls: 'main-wrapper gonr-collection-grid'
         ,url: GoodNewsResource.connector_url
 		,fields: [
 		    'id'
@@ -56,11 +57,12 @@ GoodNewsResource.grid.CollectResources = function(config) {
 		    ,'createdon'
 		    ,'parent'
         ]
-        ,cls: 'main-wrapper'
+        ,showActionsColumn: false
         ,remoteSort: true
         ,sortBy: 'publishedon' // default sort field of grouped grid (this is not the grouping field!)
         ,sortDir: 'DESC'       // (the grouping field is pre-sorted in getlist processor)
 		,paging: true
+        ,pageSize: Math.min(parseInt(MODx.config.default_per_page), 25)
         ,emptyText: _('goodnews.mailing_rc_resources_none')
         ,preventRender: true
         ,autoExpandColumn: 'pagetitle'
@@ -77,7 +79,7 @@ GoodNewsResource.grid.CollectResources = function(config) {
         },{
             header: _('page_title')
             ,dataIndex: 'pagetitle'
-            ,width: 260
+            //,width: 260
             ,sortable: true
         },{
             header: _('publishedon')
@@ -95,7 +97,7 @@ GoodNewsResource.grid.CollectResources = function(config) {
             ,width: 120
             ,sortable: true
         }]
-        ,tbar:['->',{
+        ,tbar: ['->',{
             xtype: 'modx-combo'
             ,id: 'goodnewsresource-'+config.baseParams.collectionInternalName+'-parent-filter'
             ,emptyText: _('goodnews.mailing_rc_parent_filter')
@@ -107,7 +109,7 @@ GoodNewsResource.grid.CollectResources = function(config) {
             ,store: new Ext.data.JsonStore({
                 url: GoodNewsResource.connector_url
                 ,baseParams: {
-                    action: 'mgr/collection/getParentList'
+                    action: 'Bitego\\GoodNews\\Processors\\Collection\\ParentFilterGetList'
                     ,addAllOption: true
                     ,parentIds: config.baseParams.parentIds
                 }
