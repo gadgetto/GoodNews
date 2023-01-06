@@ -139,14 +139,14 @@ $_lang['goodnews.sendlog_status_unknown']                           = 'Unknown';
 $_lang['goodnews.sendlog_none']                                     = 'No send-log entries';
 
 $_lang['goodnews.groups']                                           = 'Groups';
-$_lang['goodnews.groups_management_desc']                           = 'Manage your subscriber groups here. Assigning a GoodNews group to a MODX user-group (<span class="gon-modx-group-assigned">blue marker</span>), makes it possible to send mailings to all members of this MODX user-group. If you assign a MODX user-group, this GoodNews group can <strong>not</strong> be used to manage subscribers.';
+$_lang['goodnews.groups_management_desc']                           = 'Manage your subscriber groups here. Linking a GoodNews group to a MODX user-group (<span class="gon-modx-group-assigned">blue marker</span>), makes it possible to send mailings to all members of this MODX user-group. If you assign a MODX user-group, this GoodNews group can <strong>not</strong> be used to manage subscribers.';
 $_lang['goodnews.group_create']                                     = 'Create Group';
 $_lang['goodnews.modx_groups_edit']                                 = 'Edit MODX User Groups';
 $_lang['goodnews.group_name']                                       = 'Group Name';
 $_lang['goodnews.group_description']                                = 'Description';
 $_lang['goodnews.group_membercount']                                = 'Subscribers';
 $_lang['goodnews.modx_usergroup']                                   = 'MODX User-Group';
-$_lang['goodnews.group_belongs_to_modx_usergroup']                  = 'Assigned to MODX User Group';
+$_lang['goodnews.group_belongs_to_modx_usergroup']                  = 'Linked to MODX User Group';
 $_lang['goodnews.choose_modx_user_group']                           = '(Choose MODX user group)';
 $_lang['goodnews.group_public']                                     = 'Public';
 $_lang['goodnews.groups_none']                                      = 'No groups';
