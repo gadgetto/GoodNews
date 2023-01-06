@@ -31,7 +31,7 @@ $_lang['prop_goodnewssubscription.resubscriptionemailtpltype_desc'] = 'Le type d
 $_lang['prop_goodnewssubscription.errtpl_desc']                     = 'Modèle pour la sortie du message d\'erreur dans les champs.';
 $_lang['prop_goodnewssubscription.useextended_desc']                = 'Définir les champs additionnels du formulaire pour étendre les champs du profil utilisateur MODx. Utile pour stocker des données supplémentaires.';
 $_lang['prop_goodnewssubscription.excludeextended_desc']            = 'Liste de champs séparés par une virgule à exclure des champs additionnels.';
-$_lang['prop_goodnewssubscription.emailfield_desc']                 = 'Nom du champs à utiliser pour la nouvelle adresse email de l\'inscrit. ';
+$_lang['prop_goodnewssubscription.emailfield_desc']                 = 'Nom du champs à utiliser pour la nouvelle adresse email de l\'inscrit.';
 $_lang['prop_goodnewssubscription.usernamefield_desc']              = 'Nom du champ à utiliser pour le nom d\'utilisateur du nouvel abonné.';
 $_lang['prop_goodnewssubscription.passwordfield_desc']              = 'Nom du champ à utiliser pour le mot de passe du nouvel abonné.';
 $_lang['prop_goodnewssubscription.persistparams_desc']              = 'Objet de paramètres qui persistent au long du processus d\'inscription. Utile lors de l\'utilisation de redirection dans le snippet GoodNewsConfirmSubscription pour rediriger vers une autre page (p.ex. pour les paniers de shop).';
@@ -117,9 +117,9 @@ $_lang['prop_goodnewsgetnewsletters.includecontent_desc']           = 'Indique s
 $_lang['prop_goodnewsgetnewsletters.limit_desc']                    = 'Limite le nombre des ressources newsletter affichées. Par défaut : 0 = illimité.';
 $_lang['prop_goodnewsgetnewsletters.offset_desc']                   = 'Décalage des ressources affichées par le critère de saut.';
 $_lang['prop_goodnewsgetnewsletters.totalvar_desc']                 = 'Nom du placeholder qui contient le nombre des ressources newsletter reçues.';
-$_lang['prop_goodnewsgetnewsletters.outputseparator_desc']          = 'Séparateur pour la sortie des rangées de chunks de newsletter';
+$_lang['prop_goodnewsgetnewsletters.outputseparator_desc']          = 'Séparateur pour la sortie des rangées de chunks de newsletter.';
 $_lang['prop_goodnewsgetnewsletters.toplaceholder_desc']            = 'Si défini, assigne le résultat à ce placeholder ou lieu de l\'afficher directement.';
-$_lang['prop_goodnewsgetnewsletters.debug_desc']                    = 'Si vrai, envoie la requête SQL dans le log MODx . Par défaut : False.';
+$_lang['prop_goodnewsgetnewsletters.debug_desc']                    = 'Si vrai, envoie la requête SQL dans le log MODX . Par défaut : false.';
 
 // GoodNewsContentCollection snippet
 $_lang['prop_goodnewscontentcollection.collectionid_desc']          = 'Nom interne de la collection de contenu (collection1, collection2 ou collection3).';
