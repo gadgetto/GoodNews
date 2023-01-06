@@ -276,9 +276,6 @@ class GetList extends GetListProcessor
             $resourceArray['collection3_parents'] = '';
         }
 
-        $this->modx->log(modX::LOG_LEVEL_INFO, '$resourceArray: ' . print_r($resourceArray, true));
-
-
         return $resourceArray;
     }
 }
