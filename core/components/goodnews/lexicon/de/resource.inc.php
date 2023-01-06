@@ -58,7 +58,7 @@ $_lang['goodnews.mail_format_html']                        = 'HTML';
 $_lang['goodnews.mail_format_plaintxt']                    = 'Nur Text';
 
 $_lang['goodnews.mailing_resource_collection']             = 'Sammlung: ';
-$_lang['goodnews.mailing_resource_collection_desc']        = 'Wählen Sie Resource Dokumente aus, welche automatisch in den Inhalt des Mails eingebunden werden sollen (zB. eine Liste von Newsbeiträgen).';
+$_lang['goodnews.mailing_resource_collection_desc']        = 'Wählen Sie Resource Dokumente aus, die automatisch im Mail-Body gerendert werden sollen (z.B. eine Liste von News Beiträgen). Um den von dieser Sammlung generierten Inhalt in einer GoodNews Mailing-Ressource (oder einem dazugehörige Template oder Chunk) zu rendern, verwenden Sie das folgende MODX Snippet-Tag: [[+tag]]';
 $_lang['goodnews.mailing_rc_container']                    = 'Container';
 $_lang['goodnews.mailing_rc_resource']                     = 'Resource';
 $_lang['goodnews.mailing_rc_resources']                    = 'Resources';
