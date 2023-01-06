@@ -27,7 +27,7 @@ use xPDO\Om\xPDOQuery;
 class ParentFilterGetList extends GetListProcessor
 {
     public $classKey = modResource::class;
-    public $languageTopics = ['resource', 'goodnews:default'];
+    public $languageTopics = ['resource', 'goodnews:default', 'goodnews:resource'];
     public $defaultSortField = 'pagetitle';
     public $defaultSortDirection = 'ASC';
 

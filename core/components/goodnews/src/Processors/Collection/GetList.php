@@ -35,7 +35,7 @@ use xPDO\Om\xPDOQuery;
 class GetList extends GetListProcessor
 {
     public $classKey = modResource::class;
-    public $languageTopics = ['default', 'resource', 'goodnews:default'];
+    public $languageTopics = ['default', 'resource', 'goodnews:default', 'goodnews:resource'];
     public $defaultSortField = 'publishedon';
     public $defaultSortDirection = 'DESC';
     public $objectType = 'goodnews';
