@@ -54,7 +54,7 @@ $_lang['goodnews.mail_subject']                                     = 'Mail Subj
 $_lang['goodnews.mail_body']                                        = 'Mail Body';
 
 $_lang['goodnews.newsletters']                                      = 'Mailings';
-$_lang['goodnews.newsletters_management_desc']                      = 'This overview provides status information for your mailing documents. To view additional information, please click on the [+] sign. To follow the status live during transmission, please activate <strong>Auto-Refresh</strong>.';
+$_lang['goodnews.newsletters_management_desc']                      = 'This overview provides status information for your mailing documents. To get additional information, use the [+] sign. To follow the status live during transmission, activate <strong>Auto-Refresh</strong>. To completely pause all sending processes, activate <strong>Transmission STOP</strong>.';
 $_lang['goodnews.newsletter_create']                                = 'Create Mailing';
 $_lang['goodnews.newsletter_id']                                    = 'ID';
 $_lang['goodnews.newsletter_title']                                 = 'Mailing Title';
