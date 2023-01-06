@@ -54,7 +54,7 @@ $_lang['goodnews.mail_subject']                                     = 'Mail Betr
 $_lang['goodnews.mail_body']                                        = 'Mail Inhalt';
 
 $_lang['goodnews.newsletters']                                      = 'Mailings';
-$_lang['goodnews.newsletters_management_desc']                      = 'Diese Übersicht liefert Statusinformationen zu Ihren Mailing Dokumenten. Um zusätzliche Informationen anzuzeigen, klicken Sie bitte auf das [+] Zeichen. Um während des Versandes den Status live zu verfolgen, aktivieren Sie bitte <strong>Auto-Refresh</strong>.';
+$_lang['goodnews.newsletters_management_desc']                      = 'Diese Übersicht liefert Statusinformationen zu Ihren Mailing Dokumenten. Um zusätzliche Informationen anzuzeigen, benützen Sie das [+] Zeichen. Um während des Versandes den Status live zu verfolgen, aktivieren Sie <strong>Auto-Refresh</strong>. Um alle Sendeprozesse zu pausieren, aktivieren sie <strong>Übertragung STOP</strong>.';
 $_lang['goodnews.newsletter_create']                                = 'Mailing erstellen';
 $_lang['goodnews.newsletter_id']                                    = 'ID';
 $_lang['goodnews.newsletter_title']                                 = 'Mailing Titel';
@@ -139,14 +139,14 @@ $_lang['goodnews.sendlog_status_unknown']                           = 'Unbekannt
 $_lang['goodnews.sendlog_none']                                     = 'Keine Sendeprotokoll Einträge';
 
 $_lang['goodnews.groups']                                           = 'Gruppen';
-$_lang['goodnews.groups_management_desc']                           = 'Verwalten Sie Ihre Abonnenten-Gruppen hier. Wird eine GoodNews Gruppe mit einer MODX Benutzergruppe verkn&uuml;pft (<span class="gon-modx-group-assigned">blau markiert</span>), erm&ouml;glicht dies den Versand eines Mailings an s&auml;mtliche Mitglieder dieser MODX Benutzergruppe. Bei Verkn&uuml;pfung mit einer MODX Benutzergruppe, kann diese GoodNews Gruppe <strong>nicht</strong> f&uuml;r die Verwaltung von Abonnenten verwendet werden.';
+$_lang['goodnews.groups_management_desc']                           = 'Verwalten Sie Ihre Abonnenten-Gruppen hier. Wird eine GoodNews Gruppe mit einer MODX Benutzergruppe verknüpft (<span class="gon-modx-group-assigned">blau markiert</span>), ermöglicht dies den Versand eines Mailings an sämtliche Mitglieder dieser MODX Benutzergruppe. Bei Verknüpfung mit einer MODX Benutzergruppe, kann diese GoodNews Gruppe <strong>nicht</strong> für die Verwaltung von Abonnenten verwendet werden.';
 $_lang['goodnews.group_create']                                     = 'Gruppe erstellen';
 $_lang['goodnews.modx_groups_edit']                                 = 'MODX Benutzer Gruppen bearbeiten';
 $_lang['goodnews.group_name']                                       = 'Gruppenname';
 $_lang['goodnews.group_description']                                = 'Beschreibung';
 $_lang['goodnews.group_membercount']                                = 'Abonnenten';
 $_lang['goodnews.modx_usergroup']                                   = 'MODX Benutzer-Gruppe';
-$_lang['goodnews.group_belongs_to_modx_usergroup']                  = 'Zugeordnet zu MODX Benutzer Gruppe';
+$_lang['goodnews.group_belongs_to_modx_usergroup']                  = 'Verknüpft mit MODX Benutzer Gruppe';
 $_lang['goodnews.choose_modx_user_group']                           = '(MODX Benutzer Gruppe wählen)';
 $_lang['goodnews.group_public']                                     = '&Ouml;ffentlich';
 $_lang['goodnews.groups_none']                                      = 'Keine Gruppen';
