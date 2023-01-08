@@ -91,8 +91,8 @@ class GoodNewsSubscriptionConfirmController extends GoodNewsSubscriptionControll
             $this->redirectAfterFailure();
         } else {
             // get username and password from query params
-            $this->username = $this->goodnewssubscription->base64url_decode($_REQUEST['lu']);
-            $this->password = $this->goodnewssubscription->base64url_decode($_REQUEST['lp']);
+            $this->username = $this->goodnewssubscription->base64UrlDecode($_REQUEST['lu']);
+            $this->password = $this->goodnewssubscription->base64UrlDecode($_REQUEST['lp']);
             $verified = true;
         }
         return $verified;

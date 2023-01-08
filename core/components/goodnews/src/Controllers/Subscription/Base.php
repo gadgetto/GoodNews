@@ -1,98 +1,92 @@
 <?php
-/**
- * GoodNews
- *
- * Copyright 2012 by bitego <office@bitego.com>
- * Based on code from Login add-on
- * Copyright 2012 by Jason Coward <jason@modx.com> and Shaun McCormick <shaun@modx.com>
- * Modified by bitego - 10/2013
- *
- * GoodNews is free software; you can redistribute it and/or modify it under the
- * terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
- *
- * GoodNews is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this software; if not, write to the Free Software Foundation, Inc., 59 Temple
- * Place, Suite 330, Boston, MA 02111-1307 USA
- */
 
 /**
- * Main controller class for subscription handling.
+ * This file is part of the GoodNews package.
+ *
+ * @copyright bitego (Martin Gartner)
+ * @license GNU General Public License v2.0 (and later)
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+namespace Bitego\GoodNews\Controllers\Subscription;
+
+use MODX\Revolution\modX;
+use MODX\Revolution\modUser;
+use Bitego\GoodNews\Subscription\Subscription;
+use Bitego\GoodNews\Model\GoodNewsSubscriberMeta;
+use Bitego\GoodNews\Model\GoodNewsGroup;
+use Bitego\GoodNews\Model\GoodNewsCategory;
+use Bitego\GoodNews\Model\GoodNewsMember;
+use Bitego\GoodNews\Model\GoodNewsCategoryMember;
+
+/**
+ * Base controller class for subscription handling.
  *
  * @package goodnews
+ * @subpackage controllers
  */
 
-abstract class GoodNewsSubscriptionController {
+abstract class Base
+{
     /** @var modX $modx */
-    public $modx;
-    
-    /** @var GoodNewsSubscription $goodnewssubscription */
-    public $goodnewssubscription;
-    
-    /** @var array $config */
-    public $config = array();
-    
-    /** @var array $scriptProperties */
-    protected $scriptProperties = array();
-    
-    /** @var GoodNewsSubscriptionValidator $validator */
-    public $validator;
-    
-    /** @var GoodNewsSubscriptionDictionary $dictionary */
-    public $dictionary;
-    
-    /** @var GoodNewsSubscriptionHooks $preHooks */
-    public $preHooks;
-    
-    /** @var GoodNewsSubscriptionHooks $postHooks */
-    public $postHooks;
-    
+    public $modx = null;
+
+    /** @var Subscription $subscription */
+    public $subscription = null;
+
+    /** @var array $config An array of configuration properties */
+    public $config = [];
+
+    /** @var array $scriptProperties An array of properties */
+    protected $scriptProperties = [];
+
     /** @var array $placeholders */
-    protected $placeholders = array();
+    protected $placeholders = [];
 
     /** @var object $goodnewsGroups Collection of GoodNewsGroup entries */
-    public $goodnewsGroups;
-    
+    public $goodnewsGroups = null;
+
     /** @var object $goodnewsCategories Collection of GoodNewsCategory entries */
-    public $goodnewsCategories;
+    public $goodnewsCategories = null;
 
     /** @var modUser $user */
-    public $user;
-    
+    public $user = null;
+
     /** @var modUserProfile $profile */
-    public $profile;
-    
+    public $profile = null;
+
     /** @var GoodNewsSubscriberMeta $subscribermeta */
-    public $subscribermeta;
-    
+    public $subscribermeta = null;
+
     /** @var GoodNewsSubscriberMeta.sid $sid */
-    public $sid;
+    public $sid = '';
 
     /** @var string $email */
-    public $email;
+    public $email = '';
 
     /**
-     * The constructor for the GoodNewsSubscriptionController class.
+     * The constructor for the Base controller class.
      *
-     * @param GoodNewsSubscription $goodnewssubscription A reference to the GoodNewsSubscription instance
+     * @param Subscription $subscription A reference to the Subscription instance
      * @param array $config
      */
-    function __construct(GoodNewsSubscription &$goodnewssubscription, array $config = array()) {
-        $this->goodnewssubscription =& $goodnewssubscription;
-        $this->modx =& $goodnewssubscription->modx;
+    public function __construct(Subscription &$subscription, array $config = [])
+    {
+        $this->modx = &$subscription->modx;
+        $this->subscription = &$subscription;
         $this->config = array_merge($this->config, $config);
     }
 
     /**
-     * 
+     * Run a process.
+     *
+     * @param array $scriptProperties An array of properties
      * @access public
      */
-    public function run($scriptProperties) {
+    public function run(array $scriptProperties)
+    {
         $this->setProperties($scriptProperties);
         $this->initialize();
         return $this->process();
@@ -115,32 +109,33 @@ abstract class GoodNewsSubscriptionController {
      * @access public
      * @return boolean
      */
-    public function authenticateSubscriber() {
+    public function authenticateSubscriber()
+    {
         $placeholderPrefix = $this->getProperty('placeholderPrefix', '');
         $authenticated = false;
-        
-        // Authenticate user by SID (submitted via URL param)
+
         if ($this->getSid()) {
+            // Authenticate user by SID (submitted via URL param)
             if ($this->getUserBySid()) {
                 if ($this->getProfile()) {
                     if ($this->getSubscriberMeta($this->user->get('id'))) {
-                        $authenticated = true;   
+                        $authenticated = true;
                     }
-                }        
+                }
             }
-        // Authenticate user by its session context
         } else {
+            // Authenticate user by its session context
             $currentContext = $this->modx->context->key;
             if (!empty($currentContext) && $currentContext != 'mgr') {
                 if ($this->modx->user->hasSessionContext($currentContext)) {
                     $this->user = $this->modx->user;
                     if ($this->getProfile()) {
-                        $authenticated = true; 
+                        $authenticated = true; // @todo needs to be with next if clause?
                         if ($this->getSubscriberMeta($this->user->get('id'))) {
                             // Set $sid to indicate that SubscriberMeta exists for this user
                             $this->sid = $this->subscribermeta->get('sid');
                             // Set placeholder for filtering content in templates
-                            $this->modx->setPlaceholder($placeholderPrefix.'is_subscriber', '1');
+                            $this->modx->setPlaceholder($placeholderPrefix . 'is_subscriber', '1');
                         }
                     }
                 }
@@ -153,14 +148,15 @@ abstract class GoodNewsSubscriptionController {
         }
         return $authenticated;
     }
-    
+
     /**
      * Gets the sid param from GET request.
      *
      * @access public
      * @return mixed string $sid or false
      */
-    public function getSid() {
+    public function getSid()
+    {
         if (isset($_GET['sid'])) {
             $this->sid = $_GET['sid'];
             return $this->sid;
@@ -174,16 +170,21 @@ abstract class GoodNewsSubscriptionController {
      * @access public
      * @return modUser object or null
      */
-    public function getUserBySid() {
-        $subscribermeta = $this->modx->getObject('GoodNewsSubscriberMeta', array('sid' => $this->sid));
-        if ($subscribermeta) {
-            $this->user = $this->modx->getObject('modUser', array(
+    public function getUserBySid()
+    {
+        $subscribermeta = $this->modx->getObject(GoodNewsSubscriberMeta::class, ['sid' => $this->sid]);
+        if (is_object($subscribermeta)) {
+            $this->user = $this->modx->getObject(modUser::class, [
                 'id' => $subscribermeta->get('subscriber_id'),
                 'active' => true,
-            ));
+            ]);
+            if (!is_object($this->user)) {
+                $this->user = null;
+            }
         }
         if (!is_object($this->user)) {
-            $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] Could not load user with sid: '.$this->sid);
+            $this->user = null;
+            $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] Could not load user with sid: ' . $this->sid);
         }
         return $this->user;
     }
@@ -195,12 +196,14 @@ abstract class GoodNewsSubscriptionController {
      * @params integer $userID
      * @return modUser object or null
      */
-    public function getUserById($userID) {
-        $this->user = $this->modx->getObject('modUser', array(
+    public function getUserById($userID)
+    {
+        $this->user = $this->modx->getObject(modUser::class, [
             'id' => $userID,
-        ));
+        ]);
         if (!is_object($this->user)) {
-            $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] Could not load user with id: '.$userID);
+            $this->user = null;
+            $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] Could not load user with id: ' . $userID);
         }
         return $this->user;
     }
@@ -211,14 +214,19 @@ abstract class GoodNewsSubscriptionController {
      * @access public
      * @return modUserProfile object or null
      */
-    public function getProfile() {
+    public function getProfile()
+    {
         if (!is_object($this->user)) {
             $this->modx->log(modX::LOG_LEVEL_ERROR, '[GoodNews] User object to load profile doesn\'t exist.');
             return false;
         }
         $this->profile = $this->user->getOne('Profile');
         if (!is_object($this->profile)) {
-            $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] Could not load profile for user: '.$this->user->get('username'));
+            $this->profile = null;
+            $this->modx->log(
+                modX::LOG_LEVEL_INFO,
+                '[GoodNews] Could not load profile for user: ' . $this->user->get('username')
+            );
         }
         return $this->profile;
     }
@@ -230,25 +238,31 @@ abstract class GoodNewsSubscriptionController {
      * @params integer $userID
      * @return GoodNewsSubscriberMeta object or null
      */
-    public function getSubscriberMeta($userID) {
-        $this->subscribermeta = $this->modx->getObject('GoodNewsSubscriberMeta', array(
+    public function getSubscriberMeta(integer $userID)
+    {
+        $this->subscribermeta = $this->modx->getObject(GoodNewsSubscriberMeta::class, [
             'subscriber_id' => $userID,
-        ));
+        ]);
         if (!is_object($this->subscribermeta)) {
-            $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] Could not load GoodNewsSubscriberMeta for user with id: '.$userID);
+            $this->subscribermeta = null;
+            $this->modx->log(
+                modX::LOG_LEVEL_INFO,
+                '[GoodNews] Could not load GoodNewsSubscriberMeta for user with id: ' . $userID
+            );
         }
         return $this->subscribermeta;
     }
 
     /**
      * Generates the GoodNews groups/categories tree/fields and writes output to defined placeholder.
-     * 
+     *
      * @access public
-     * @param array $checkedGroups (default array())
-     * @param array $checkedCategories (default array())
+     * @param array $checkedGroups (default [])
+     * @param array $checkedCategories (default [])
      * @return void
      */
-    public function generateGrpCatFields($checkedGroups = array(), $checkedCategories = array()) {
+    public function generateGrpCatFields(array $checkedGroups = [], array $checkedCategories = [])
+    {
         // Get default properties.
         $grpFieldsetTpl    = $this->getProperty('grpFieldsetTpl', 'sample.GoodNewsGrpFieldsetChunk');
         $grpFieldTpl       = $this->getProperty('grpFieldTpl', 'sample.GoodNewsGrpFieldChunk');
@@ -264,11 +278,11 @@ abstract class GoodNewsSubscriptionController {
 
         $output = '';
         $fieldsOutput = '';
-        
+
         // Read available groups and categories from database
         $groups = $this->collectGoodNewsGroups();
         if (!$groups) {
-            $this->modx->setPlaceholder($placeholderPrefix.'config_error', '1');
+            $this->modx->setPlaceholder($placeholderPrefix . 'config_error', '1');
             return false;
         }
         if (!(bool)$groupsOnly) {
@@ -278,20 +292,16 @@ abstract class GoodNewsSubscriptionController {
         // Groups/categories fields are hidden - subscriber can't select and will be automatically assigned
         // (most other properties are ignored in this case)
         if (!empty($defaultGroups) || !empty($defaultCategories)) {
-
             // Set a helper placeholder for filtering output
-            $this->modx->setPlaceholder($placeholderPrefix.'fields_hidden', '1');
-            
+            $this->modx->setPlaceholder($placeholderPrefix . 'fields_hidden', '1');
+
             foreach ($groups as $group) {
-            
                 $grpPlaceholders = $group->toArray();
                 // Add hidden group field to output
                 $output .= $this->modx->getChunk($grpFieldHiddenTpl, $grpPlaceholders);
-                
+
                 if (!(bool)$groupsOnly) {
-                
                     foreach ($categories as $category) {
-                    
                         $catPlaceholders = $category->toArray();
                         // Only categories of current group
                         if ($catPlaceholders['goodnewsgroup_id'] == $grpPlaceholders['id']) {
@@ -304,45 +314,44 @@ abstract class GoodNewsSubscriptionController {
 
         // Groups/categories fields are built as visible list - subscriber can select
         } else {
-            
             foreach ($groups as $group) {
-            
                 $grpPlaceholders = $group->toArray();
-                
-                if (in_array($grpPlaceholders['id'], $checkedGroups)) { $grpPlaceholders['checked'] = ' checked="checked"'; }
-                
+
+                if (in_array($grpPlaceholders['id'], $checkedGroups)) {
+                    $grpPlaceholders['checked'] = ' checked="checked"';
+                }
+
                 if ((bool)$groupsOnly) {
                     // Add selectable group field to output
                     $fieldsOutput .= $this->modx->getChunk($grpFieldTpl, $grpPlaceholders);
                 } else {
-                    // Add group name to output (in this case the group will be selected automatically by its child category)
+                    // Add group name to output (in this case the group will be
+                    // selected automatically by its child category)
                     $fieldsOutput .= $this->modx->getChunk($grpNameTpl, $grpPlaceholders);
-            
+
                     foreach ($categories as $category) {
-                    
                         $catPlaceholders = $category->toArray();
-                        
+
                         // Only categories which are assigned to current group
                         if ($catPlaceholders['goodnewsgroup_id'] == $grpPlaceholders['id']) {
-
-                            if (in_array($catPlaceholders['id'], $checkedCategories)) { $catPlaceholders['checked'] = ' checked="checked"'; }
-
+                            if (in_array($catPlaceholders['id'], $checkedCategories)) {
+                                $catPlaceholders['checked'] = ' checked="checked"';
+                            }
                             // Add category field to output
                             $fieldsOutput .= $this->modx->getChunk($catFieldTpl, $catPlaceholders);
                         }
                     }
-                    
+
                     // Each single group + related categories is wrapped within a fieldset
-                    $fieldsPlaceholder = array('grpcatfields' => $fieldsOutput);
+                    $fieldsPlaceholder = ['grpcatfields' => $fieldsOutput];
                     unset($fieldsOutput);
                     $output .= $this->modx->getChunk($grpFieldsetTpl, $fieldsPlaceholder);
                 }
-
             }
-            
+
             // If only groups are used, the groups list as a whole is wrapped with a fieldset
             if ((bool)$groupsOnly) {
-                $fieldsPlaceholder = array('grpcatfields' => $fieldsOutput);
+                $fieldsPlaceholder = ['grpcatfields' => $fieldsOutput];
                 $output = $this->modx->getChunk($grpFieldsetTpl, $fieldsPlaceholder);
             }
         }
@@ -354,28 +363,29 @@ abstract class GoodNewsSubscriptionController {
 
     /**
      * Read GoodNewsGroups from database.
-     * 
+     *
      * @access public
-     * @return collection of goodnewsGroup objects || null
+     * @return collection of goodnewsGroup objects|null
      */
-    public function collectGoodNewsGroups() {
+    public function collectGoodNewsGroups()
+    {
         $includeGroups = $this->getProperty('includeGroups', '');
         $defaultGroups = $this->getProperty('defaultGroups', '');
         $sort          = $this->getProperty('sort', 'name');
         $dir           = $this->getProperty('dir', 'ASC');
-        
-        $query = $this->modx->newQuery('GoodNewsGroup');
-        
+
+        $query = $this->modx->newQuery(GoodNewsGroup::class);
+
         if (!empty($defaultGroups)) {
-            $query->where(array('id:IN' => explode(',', $defaultGroups)));
+            $query->where(['id:IN' => explode(',', $defaultGroups)]);
         } elseif (!empty($includeGroups)) {
-            $query->where(array('id:IN' => explode(',', $includeGroups)));
+            $query->where(['id:IN' => explode(',', $includeGroups)]);
         }
-        
-        $query->where(array('modxusergroup' => 0));
-        $query->where(array('public' => 1));
+
+        $query->where(['modxusergroup' => 0]);
+        $query->where(['public' => 1]);
         $query->sortby($sort, $dir);
-        $this->goodnewsGroups = $this->modx->getCollection('GoodNewsGroup', $query);
+        $this->goodnewsGroups = $this->modx->getCollection(GoodNewsGroup::class, $query);
         if (empty($this->goodnewsGroups)) {
             $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] No GoodNewsGroup data selected.');
         }
@@ -384,55 +394,58 @@ abstract class GoodNewsSubscriptionController {
 
     /**
      * Read GoodNewsCategories from database.
-     * 
+     *
      * @access public
-     * @return collection of goodnewsCategory objects || null
+     * @return collection of goodnewsCategory objects|null
      */
-    public function collectGoodNewsCategories() {
+    public function collectGoodNewsCategories()
+    {
         $defaultCategories = $this->getProperty('defaultCategories', '');
         $sort              = $this->getProperty('sort', 'name');
         $dir               = $this->getProperty('dir', 'ASC');
 
-        $query = $this->modx->newQuery('GoodNewsCategory');
+        $query = $this->modx->newQuery(GoodNewsCategory::class);
         if (!empty($defaultCategories)) {
-            $query->where(array('id:IN' => explode(',', $defaultCategories)));
+            $query->where(['id:IN' => explode(',', $defaultCategories)]);
         }
-        
-        $query->where(array('public' => 1));
+
+        $query->where(['public' => 1]);
         $query->sortby($sort, $dir);
-        $this->goodnewsCategories = $this->modx->getCollection('GoodNewsCategory', $query);
+        $this->goodnewsCategories = $this->modx->getCollection(GoodNewsCategory::class, $query);
         if (empty($this->goodnewsCategories)) {
             $this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] No GoodNewsCategory data selected.');
-        }        
+        }
         return $this->goodnewsCategories;
     }
 
     /**
      * Get group member entries of user.
-     * 
+     *
      * @access public
      * @param int $userid
      * @return array $membergroupids
      */
-    public function collectGoodNewsGroupMembers($userid) {
-        $membergroups = $this->modx->getCollection('GoodNewsGroupMember', array('member_id' => $userid));
-        $membergroupids = array();
+    public function collectGoodNewsGroupMembers($userid)
+    {
+        $membergroups = $this->modx->getCollection(GoodNewsGroupMember::class, ['member_id' => $userid]);
+        $membergroupids = [];
         foreach ($membergroups as $membergroup) {
             array_push($membergroupids, $membergroup->get('goodnewsgroup_id'));
         }
         return $membergroupids;
     }
-    
+
     /**
      * Get category member entries of user.
-     * 
+     *
      * @access public
      * @param int $userid
      * @return array $membercategoryids
      */
-    public function collectGoodNewsCategoryMembers($userid) {
-        $membercategories = $this->modx->getCollection('GoodNewsCategoryMember', array('member_id' => $userid));
-        $membercategoryids = array();
+    public function collectGoodNewsCategoryMembers($userid)
+    {
+        $membercategories = $this->modx->getCollection(GoodNewsCategoryMember::class, ['member_id' => $userid]);
+        $membercategoryids = [];
         foreach ($membercategories as $membercategory) {
             array_push($membercategoryids, $membercategory->get('goodnewscategory_id'));
         }
@@ -442,33 +455,34 @@ abstract class GoodNewsSubscriptionController {
     /**
      * Ensure that all parent groups of selected categories are also selected.
      * (This is only used if not groupsOnly mode!)
-     * 
+     *
      * @access public
      * @return void
      */
-    public function selectParentGroupsByCategories() {
-        $parentGroups = array();
-        
+    public function selectParentGroupsByCategories()
+    {
+        $parentGroups = [];
+
         /* array $selectedCategories */
         $selectedCategories = $this->dictionary->get('goncategories');
 
         if (!empty($selectedCategories)) {
-            $query = $this->modx->newQuery('GoodNewsCategory');
-            $query->where(array('id:IN' => $selectedCategories));
-            $query->sortby("goodnewsgroup_id", 'ASC');
+            $query = $this->modx->newQuery(GoodNewsCategory::class);
+            $query->where(['id:IN' => $selectedCategories]);
+            $query->sortby('goodnewsgroup_id', 'ASC');
 
-            $categories = $this->modx->getCollection('GoodNewsCategory', $query);
+            $categories = $this->modx->getCollection(GoodNewsCategory::class, $query);
             foreach ($categories as $category) {
                 array_push($parentGroups, (string)$category->get('goodnewsgroup_id'));
             }
             // (the array_unique method messes up the array)
             //$this->dictionary->set('gongroups', array_unique($parentGroups));
-            
-            // Instead use this method to get unique values from a simple array 
+
+            // Instead use this method to get unique values from a simple array
             $this->dictionary->set('gongroups', array_keys(array_flip($parentGroups)));
         }
     }
-    
+
     /**
      * Set the default options for this module.
      *
@@ -476,7 +490,8 @@ abstract class GoodNewsSubscriptionController {
      * @param array $defaults
      * @return void
      */
-    protected function setDefaultProperties(array $defaults = array()) {
+    protected function setDefaultProperties(array $defaults = [])
+    {
         $this->scriptProperties = array_merge($defaults, $this->scriptProperties);
     }
 
@@ -488,10 +503,11 @@ abstract class GoodNewsSubscriptionController {
      * @param mixed $value
      * @return void
      */
-    public function setProperty($key, $value) {
+    public function setProperty(string $key, $value)
+    {
         $this->scriptProperties[$key] = $value;
     }
-    
+
     /**
      * Set an array of options.
      *
@@ -499,7 +515,8 @@ abstract class GoodNewsSubscriptionController {
      * @param array $array
      * @return void
      */
-    public function setProperties($array) {
+    public function setProperties(array $array)
+    {
         foreach ($array as $k => $v) {
             $this->setProperty($k, $v);
         }
@@ -514,9 +531,10 @@ abstract class GoodNewsSubscriptionController {
      * @param string $method
      * @return mixed
      */
-    public function getProperty($key, $default = null, $method = '!empty') {
+    public function getProperty($key, $default = null, $method = '!empty')
+    {
         $v = $default;
-        
+
         switch ($method) {
             case 'empty':
             case '!empty':
@@ -524,7 +542,7 @@ abstract class GoodNewsSubscriptionController {
                     $v = $this->scriptProperties[$key];
                 }
                 break;
-                
+
             case 'isset':
             default:
                 if (isset($this->scriptProperties[$key])) {
@@ -541,121 +559,76 @@ abstract class GoodNewsSubscriptionController {
      * @access public
      * @return array
      */
-    public function getProperties() {
+    public function getProperties()
+    {
         return $this->scriptProperties;
     }
 
     /**
      * setPlaceholder function.
-     * 
+     *
      * @access public
      * @param mixed $k
      * @param mixed $v
      * @return void
      */
-    public function setPlaceholder($k, $v) {
+    public function setPlaceholder($k, $v)
+    {
         $this->placeholders[$k] = $v;
     }
-    
+
     /**
      * getPlaceholder function.
-     * 
+     *
      * @access public
      * @param mixed $k
      * @param mixed $default (default: null)
      * @return void
      */
-    public function getPlaceholder($k, $default = null) {
+    public function getPlaceholder($k, $default = null)
+    {
         return isset($this->placeholders[$k]) ? $this->placeholders[$k] : $default;
     }
-    
+
     /**
      * setPlaceholders function.
-     * 
+     *
      * @access public
      * @param mixed $array
      * @return void
      */
-    public function setPlaceholders($array) {
+    public function setPlaceholders(array $array)
+    {
         foreach ($array as $k => $v) {
             $this->setPlaceholder($k, $v);
         }
     }
-    
+
     /**
      * getPlaceholders function.
-     * 
+     *
      * @access public
      * @return void
      */
-    public function getPlaceholders() {
+    public function getPlaceholders()
+    {
         return $this->placeholders;
-    }
-
-    /**
-     * Load the Dictionary class and gather $_POST params.
-     *
-     * @access public
-     * @return GoodNewsSubscriptionDictionary
-     */
-    public function loadDictionary() {
-        $classPath = $this->getProperty('dictionaryClassPath', $this->goodnewssubscription->config['modelPath'].'goodnews/');
-        $className = $this->getProperty('dictionaryClassName', 'GoodNewsSubscriptionDictionary');
-        if ($this->modx->loadClass($className, $classPath, true, true)) {
-            $this->dictionary = new GoodNewsSubscriptionDictionary($this->goodnewssubscription);
-            // load POST parameters
-            $this->dictionary->gather();
-        } else {
-            $this->modx->log(modX::LOG_LEVEL_ERROR, '[GoodNews] Could not load GoodNewsSubscriptionDictionary class from: '.$classPath);
-        }
-        return $this->dictionary;
-    }
-
-    /**
-     * Loads the GoodNewsSubscriptionValidator class.
-     *
-     * @access public
-     * @param array $config An array of configuration parameters for the GoodNewsSubscriptionValidator class
-     * @return GoodNewsSubscriptionValidator An instance of the GoodNewsSubscriptionValidator class.
-     */
-    public function loadValidator($config = array()) {
-        if (!$this->modx->loadClass('GoodNewsSubscriptionValidator', $this->config['modelPath'].'goodnews/', true, true)) {
-            $this->modx->log(modX::LOG_LEVEL_ERROR, '[GoodNews] Could not load Validator class.');
-            return false;
-        }
-        $this->validator = new GoodNewsSubscriptionValidator($this->goodnewssubscription, $config);
-        return $this->validator;
-    }
-
-    /**
-     * Loads the Hooks class.
-     *
-     * @access public
-     * @param string $type The name of the Hooks service to load
-     * @param array $config array An array of configuration parameters for the hooks class
-     * @return GoodNewsSubscriptionHooks An instance of the GoodNewsSubscriptionHooks class.
-     */
-    public function loadHooks($type, $config = array()) {
-        if (!$this->modx->loadClass('GoodNewsSubscriptionHooks', $this->config['modelPath'].'goodnews/', true, true)) {
-            $this->modx->log(modX::LOG_LEVEL_ERROR, '[GoodNews] Could not load Hooks class.');
-            return false;
-        }
-        $this->$type = new GoodNewsSubscriptionHooks($this->goodnewssubscription, $this, $config);
-        return $this->$type;
     }
 
     /**
      * Run a desired processor.
      *
      * @access public
-     * @param string $processor
+     * @param string $processor Name of the processor to run
      * @return mixed|string
      */
-    public function runProcessor($processor) {
+    public function runProcessor(string $processor)
+    {
         $output = '';
         $processor = $this->loadProcessor($processor);
-        if (empty($processor)) return $output;
-
+        if (empty($processor)) {
+            return $output;
+        }
         // Return the output of the processor
         return $processor->process();
     }
@@ -664,24 +637,25 @@ abstract class GoodNewsSubscriptionController {
      * Loads a processor.
      *
      * @access public
-     * @param string $processor
-     * @return bool || GoodNewsSubscriptionProcessor
+     * @param string $processor Name of the processor to load
+     * @return bool|Subscription processor
      */
-    public function loadProcessor($processor) {
-        $processorFile = $this->config['processorsPath'].strtolower($processor).'.class.php';
+    public function loadProcessor(string $processor)
+    {
+        $processorFile = $this->config['processorsPath'] . $processor . '.php';
         if (!file_exists($processorFile)) {
-            $this->modx->log(modX::LOG_LEVEL_ERROR, '[GoodNews] Could not load processor file: '.$processorFile);
+            $this->modx->log(modX::LOG_LEVEL_ERROR, '[GoodNews] Could not load processor file: ' . $processorFile);
             return false;
         }
         try {
-            $className = 'GoodNewsSubscription'.$processor.'Processor';
+            $className = $processor;
             if (!class_exists($className)) {
                 $className = include_once $processorFile;
             }
-            $processor = new $className($this->goodnewssubscription, $this);
-        } catch (Exception $e) {
+            $processor = new $className($this->subscription, $this);
+        } catch (\Exception $e) {
             $processor = false;
-            $this->modx->log(modX::LOG_LEVEL_ERROR, '[GoodNews] '.$e->getMessage());
+            $this->modx->log(modX::LOG_LEVEL_ERROR, '[GoodNews] ' . $e->getMessage());
         }
         return $processor;
     }
@@ -692,7 +666,8 @@ abstract class GoodNewsSubscriptionController {
      * @access public
      * @return boolean
      */
-    public function hasPost() {
+    public function hasPost()
+    {
         $submitVar = $this->getProperty('submitVar');
         return (!empty($_POST) && (empty($submitVar) || !empty($_POST[$submitVar])));
     }
@@ -701,78 +676,92 @@ abstract class GoodNewsSubscriptionController {
      * Send a subscription success email to the user.
      *
      * @access public
-     * @param array $emailProperties
+     * @param array $properties Required mail properties
      * @return boolean
      */
-    public function sendSubscriptionEmail($emailProperties) {
-        
+    public function sendSubscriptionEmail(array $properties)
+    {
         // Additional required properties
-        $emailProperties['tpl']     = $this->getProperty('subscriptionEmailTpl', 'sample.GoodNewsSubscriptionEmailChunk');
-        $emailProperties['tplAlt']  = $this->getProperty('subscriptionEmailTplAlt', '');
-        $emailProperties['tplType'] = $this->getProperty('subscriptionEmailTplType', 'modChunk');
+        $properties['tpl'] = $this->getProperty('subscriptionEmailTpl', 'sample.GoodNewsSubscriptionEmailChunk');
+        $properties['tplAlt'] = $this->getProperty('subscriptionEmailTplAlt', '');
+        $properties['tplType'] = $this->getProperty('subscriptionEmailTplType', 'modChunk');
 
         // Generate secure links urls
-        $params = array(
-            'sid' => $emailProperties['sid'],
-        );
+        $params = ['sid' => $properties['sid']];
 
         $profileResourceId = $this->getProperty('profileResourceId', '');
         if (empty($profileResourceId)) {
-            $this->modx->log(modX::LOG_LEVEL_WARN, '[GoodNews] GoodNewsSubscription - snippet parameter profileResourceId not set.');
+            $this->modx->log(
+                modX::LOG_LEVEL_WARN,
+                '[GoodNews] Subscription - snippet parameter profileResourceId not set.'
+            );
         } else {
-            $emailProperties['updateProfileUrl'] = $this->modx->makeUrl($profileResourceId, '', $params, 'full');
+            $properties['updateProfileUrl'] = $this->modx->makeUrl($profileResourceId, '', $params, 'full');
         }
 
         $unsubscribeResourceId = $this->getProperty('unsubscribeResourceId', '');
         if (empty($unsubscribeResourceId)) {
-            $this->modx->log(modX::LOG_LEVEL_WARN, '[GoodNews] GoodNewsSubscription - snippet parameter unsubscribeResourceId not set.');
+            $this->modx->log(
+                modX::LOG_LEVEL_WARN,
+                '[GoodNews] Subscription - snippet parameter unsubscribeResourceId not set.'
+            );
         } else {
-            $emailProperties['unsubscribeUrl'] = $this->modx->makeUrl($unsubscribeResourceId, '', $params, 'full');
+            $properties['unsubscribeUrl'] = $this->modx->makeUrl($unsubscribeResourceId, '', $params, 'full');
         }
 
-        $email = $emailProperties['email'];
-        $subject = $this->getProperty('subscriptionEmailSubject', $this->modx->lexicon('goodnews.subscription_email_subject'));
+        $email = $properties['email'];
+        $defaultSubject = $this->modx->lexicon('goodnews.subscription_email_subject');
+        $subject = $this->getProperty('subscriptionEmailSubject', $defaultSubject);
 
-        return $this->goodnewssubscription->sendEmail($email, $subject, $emailProperties);
+        return $this->subscription->sendEmail($email, $subject, $properties);
     }
 
     /**
      * Send an email to the user containing secure links to update or cancel subscriptions.
      *
      * @access public
-     * @param array $emailProperties
+     * @param array $properties
      * @return boolean
      */
-    public function sendReSubscriptionEmail($emailProperties) {
+    public function sendReSubscriptionEmail(array $properties)
+    {
         // Additional required properties
-        $emailProperties['tpl']     = $this->getProperty('reSubscriptionEmailTpl', 'sample.GoodNewsReSubscriptionEmailChunk');
-        $emailProperties['tplAlt']  = $this->getProperty('reSubscriptionEmailTplAlt', '');
-        $emailProperties['tplType'] = $this->getProperty('reSubscriptionEmailTplType', 'modChunk');
+        $properties['tpl'] = $this->getProperty('reSubscriptionEmailTpl', 'sample.GoodNewsReSubscriptionEmailChunk');
+        $properties['tplAlt'] = $this->getProperty('reSubscriptionEmailTplAlt', '');
+        $properties['tplType'] = $this->getProperty('reSubscriptionEmailTplType', 'modChunk');
 
         // Generate secure links urls
-        $params = array(
-            'sid' => $emailProperties['sid'],
-            'gg'  => $this->goodnewssubscription->encodeParams($this->dictionary->get('gongroups')),
-            'gc'  => $this->goodnewssubscription->encodeParams($this->dictionary->get('goncategories')),
-        );
-        
+        $params = [
+            'sid' => $properties['sid'],
+            'gg'  => $this->subscription->encodeParams($this->dictionary->get('gongroups')),
+            'gc'  => $this->subscription->encodeParams($this->dictionary->get('goncategories')),
+        ];
+
         $profileResourceId = $this->getProperty('profileResourceId', '');
         if (empty($profileResourceId)) {
-            $this->modx->log(modX::LOG_LEVEL_WARN, '[GoodNews] GoodNewsSubscription - snippet parameter profileResourceId not set.');
+            $this->modx->log(
+                modX::LOG_LEVEL_WARN,
+                '[GoodNews] Subscription - snippet parameter profileResourceId not set.'
+            );
         } else {
-            $emailProperties['updateProfileUrl'] = $this->modx->makeUrl($profileResourceId, '', $params, 'full');
+            $properties['updateProfileUrl'] = $this->modx->makeUrl($profileResourceId, '', $params, 'full');
         }
 
         $unsubscribeResourceId = $this->getProperty('unsubscribeResourceId', '');
         if (empty($unsubscribeResourceId)) {
-            $this->modx->log(modX::LOG_LEVEL_WARN, '[GoodNews] GoodNewsSubscription - snippet parameter unsubscribeResourceId not set.');
+            $this->modx->log(
+                modX::LOG_LEVEL_WARN,
+                '[GoodNews] Subscription - snippet parameter unsubscribeResourceId not set.'
+            );
         } else {
-            $emailProperties['unsubscribeUrl'] = $this->modx->makeUrl($unsubscribeResourceId, '', $params, 'full');
+            $properties['unsubscribeUrl'] = $this->modx->makeUrl($unsubscribeResourceId, '', $params, 'full');
         }
 
-        $email = $emailProperties['email'];
-        $subject = $this->getProperty('reSubscriptionEmailSubject', $this->modx->lexicon('goodnews.resubscription_email_subject'));
-        return $this->goodnewssubscription->sendEmail($email, $subject, $emailProperties);
+        $email = $properties['email'];
+        $defaultSubject = $this->modx->lexicon('goodnews.resubscription_email_subject');
+        $subject = $this->getProperty('reSubscriptionEmailSubject', $defaultSubject);
+
+        return $this->subscription->sendEmail($email, $subject, $properties);
     }
 
     /**
@@ -781,13 +770,14 @@ abstract class GoodNewsSubscriptionController {
      * @access public
      * @return void
      */
-    public function redirectAfterFailure() {
+    public function redirectAfterFailure()
+    {
         $errorPage = $this->getProperty('errorPage', false, 'isset');
         if (!empty($errorPage)) {
             $url = $this->modx->makeUrl($errorPage, '', '', 'full');
             $this->modx->sendRedirect($url);
         } else {
-            // send to the default MODX error page
+            // Send to the default MODX error page
             $this->modx->sendErrorPage();
         }
     }
@@ -798,8 +788,9 @@ abstract class GoodNewsSubscriptionController {
      * @access public
      * @return string $ip The IP address (or string 'unknown')
      */
-    public function getSubscriberIP() {
-        $ip_keys = array(
+    public function getSubscriberIP()
+    {
+        $ip_keys = [
             'HTTP_CLIENT_IP',
             'HTTP_X_FORWARDED_FOR',
             'HTTP_X_FORWARDED',
@@ -807,14 +798,20 @@ abstract class GoodNewsSubscriptionController {
             'HTTP_FORWARDED_FOR',
             'HTTP_FORWARDED',
             'REMOTE_ADDR'
-        );
+        ];
         foreach ($ip_keys as $key) {
             if (array_key_exists($key, $_SERVER) === true) {
                 foreach (explode(',', $_SERVER[$key]) as $ip) {
-                    // trim for safety measures
+                    // Trim for safety measures
                     $ip = trim($ip);
-                    // validate IP
-                    if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 | FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) !== false) {
+                    // Validate IP
+                    if (
+                        filter_var(
+                            $ip,
+                            FILTER_VALIDATE_IP,
+                            FILTER_FLAG_IPV4 | FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE
+                        ) !== false
+                    ) {
                         return $ip;
                     }
                 }
@@ -824,39 +821,4 @@ abstract class GoodNewsSubscriptionController {
         $ip = 'unknown';
         return $ip;
     }
-}
-
-
-/**
- * Abstracts processors into a class
- *
- * @package goodnews
- */
-abstract class GoodNewsSubscriptionProcessor {
-    /** @var GoodNewsSubscription $goodnewssubscription */
-    public $goodnewssubscription;
-    
-    /** @var GoodNewsSubscriptionController $controller */
-    public $controller;
-    
-    /** @var GoodNewsSubscriptionDictionary $dictionary */
-    public $dictionary;
-    
-    /** @var array $config */
-    public $config = array();
-    
-    /**
-     * @param GoodNewsSubscription &$goodnewssubscription A reference to the GoodNewsSubscription instance
-     * @param GoodNewsSubscriptionController &$controller
-     * @param array $config
-     */
-    function __construct(GoodNewsSubscription &$goodnewssubscription, GoodNewsSubscriptionController &$controller, array $config = array()) {
-        $this->goodnewssubscription = &$goodnewssubscription;
-        $this->modx = &$goodnewssubscription->modx;
-        $this->controller = &$controller;
-        $this->dictionary = &$controller->dictionary;
-        $this->config = array_merge($this->config, $config);
-    }
-
-    abstract function process();
 }
