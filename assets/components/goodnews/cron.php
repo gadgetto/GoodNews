@@ -76,7 +76,7 @@ $registry = $modx->services->get('registry');
 $registry->addRegister('goodnewscron', modFileRegister::class);
 $registry->goodnewscron->connect();
 $registry->goodnewscron->subscribe('/ping/');
-$registry->goodnewscron->send('/ping/', array('time' => time()));
+$registry->goodnewscron->send('/ping/', ['time' => time()]);
 
 // Is the worker process active or blocked (via GoodNews CMP interface)?
 $workerProcessActive = $modx->getOption('goodnews.worker_process_active', null, 1);
