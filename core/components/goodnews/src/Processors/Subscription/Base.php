@@ -20,10 +20,13 @@ namespace Bitego\GoodNews\Processors\Subscription;
  */
 abstract class Base
 {
+    /** @var modX $modx A reference to the modX instance */
+    public $modx = null;
+
     /** @var Subscription $subscription */
     public $subscription = null;
 
-    /** @var Base $controller */
+    /** @var object $controller */
     public $controller = null;
 
     /** @var Dictionary $dictionary */
@@ -36,11 +39,12 @@ abstract class Base
      * Constructor for the Base subscription processor.
      *
      * @param Subscription &$subscription A reference to the Subscription instance
-     * @param GoodNewsSubscriptionController &$controller
+     * @param object &$controller
      * @param array $config
      */
-    public function __construct(Subscription &$subscription, Base &$controller, array $config = [])
+    public function __construct(Subscription &$subscription, &$controller, array $config = [])
     {
+        $this->modx = &$subscription->modx;
         $this->subscription = &$subscription;
         $this->controller = &$controller;
         $this->dictionary = &$controller->dictionary;
