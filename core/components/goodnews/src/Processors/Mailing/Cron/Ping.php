@@ -36,12 +36,17 @@ class Ping extends Processor
     public function process()
     {
         // Read cron ping time from modRegistry
-        // @todo: replace getservice call with new MODX3 service->get() method
-        $this->modx->getService('registry', modRegistry::class);
-        $this->modx->registry->addRegister('goodnewscron', modFileRegister::class);
-        $this->modx->registry->goodnewscron->connect();
-        $this->modx->registry->goodnewscron->subscribe('/ping/time');
-        $msg = $this->modx->registry->goodnewscron->read([
+        if (!$this->modx->services->has('registry')) {
+            $modx = &$this->modx;
+            $this->modx->services->add('registry', function ($c) use ($modx) {
+                return new modRegistry($modx);
+            });
+        }
+        $registry = $this->modx->services->get('registry');
+        $registry->addRegister('goodnewscron', modFileRegister::class);
+        $registry->goodnewscron->connect();
+        $registry->goodnewscron->subscribe('/ping/time');
+        $msg = $registry->goodnewscron->read([
             'poll_limit' => 1,
             'msg_limit' => 1,
             'remove_read' => false
