@@ -495,12 +495,13 @@ class Subscription extends Base
 
         // Set new password to modRegistry to prevent middleman attacks.
         // (Will be read from the registry on the confirmation page)
-        if (!$modx->services->has('registry')) {
-            $modx->services->add('registry', function ($c) use ($modx) {
+        if (!$this->modx->services->has('registry')) {
+            $modx = &$this->modx;
+            $this->modx->services->add('registry', function ($c) use ($modx) {
                 return new modRegistry($modx);
             });
         }
-        $registry = $modx->services->get('registry');
+        $registry = $this->modx->services->get('registry');
         $registry->addRegister('goodnewssubscription', modFileRegister::class);
         $registry->goodnewssubscription->connect();
         $registry->goodnewssubscription->subscribe('/useractivation/');
