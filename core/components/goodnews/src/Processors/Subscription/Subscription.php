@@ -1,25 +1,28 @@
 <?php
+
 /**
- * GoodNews
+ * This file is part of the GoodNews package.
  *
- * Copyright 2012 by bitego <office@bitego.com>
- * Based on code from Login add-on
- * Copyright 2012 by Jason Coward <jason@modx.com> and Shaun McCormick <shaun@modx.com>
- * Modified by bitego - 10/2013
+ * @copyright bitego (Martin Gartner)
+ * @license GNU General Public License v2.0 (and later)
  *
- * GoodNews is free software; you can redistribute it and/or modify it under the
- * terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
- *
- * GoodNews is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this software; if not, write to the Free Software Foundation, Inc., 59 Temple
- * Place, Suite 330, Boston, MA 02111-1307 USA
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
+
+namespace Bitego\GoodNews\Processors\Subscription;
+
+use MODX\Revolution\modUser;
+use MODX\Revolution\modUserProfile;
+use MODX\Revolution\modUserGroup;
+use MODX\Revolution\modUserGroupMember;
+use MODX\Revolution\modUserGroupRole;
+use MODX\Revolution\Registry\modRegistry;
+use MODX\Revolution\Registry\modFileRegister;
+use Bitego\GoodNews\Model\GoodNewsSubscriberMeta;
+use Bitego\GoodNews\Model\GoodNewsGroupMember;
+use Bitego\GoodNews\Model\GoodNewsCategoryMember;
+use Bitego\GoodNews\Processors\Subscription\Base;
 
 /**
  * Processor class which creates a subscriber:
@@ -33,59 +36,87 @@
  * @subpackage processors
  */
 
-class GoodNewsSubscriptionSubscriptionProcessor extends GoodNewsSubscriptionProcessor {
+class Subscription extends Base
+{
     /** @var modUser $user */
-    public $user;
-    
+    public $user = null;
+
     /** @var modUserProfile $profile */
-    public $profile;
-    
+    public $profile = null;
+
     /** @var GoodNewsSubscriberMeta $subscribermeta */
-    public $subscribermeta;
-    
+    public $subscribermeta = null;
+
     /** @var array $userGroups */
-    public $userGroups = array();
+    public $userGroups = [];
 
     /** @var array $persistParams */
-    public $persistParams = array();
-    
+    public $persistParams = [];
+
     /**
+     * Process
+     *
      * @access public
      * @return mixed
      */
-    public function process() {
-        $this->user           = $this->modx->newObject('modUser');
-        $this->profile        = $this->modx->newObject('modUserProfile');
-        $this->subscribermeta = $this->modx->newObject('GoodNewsSubscriberMeta');
-            
+    public function process()
+    {
+        $this->user = $this->modx->newObject(modUser::class);
+        $this->profile = $this->modx->newObject(modUserProfile::class);
+        $this->subscribermeta = $this->modx->newObject(GoodNewsSubscriberMeta::class);
+
         $this->cleanseFields();
-        
+
         //$dic = $this->dictionary->toArray();
         //$this->modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] dictionary: '.$this->modx->toJson($dic));
 
         // Save user
         $this->setUserFields();
         if (!$this->user->save()) {
-            $this->modx->log(modX::LOG_LEVEL_ERROR, '[GoodNews] Could not save new subscriber user data - '.$this->user->get('id').' with username: '.$this->user->get('username'));
+            $this->modx->log(
+                modX::LOG_LEVEL_ERROR,
+                '[GoodNews] Could not save new subscriber user data - ' .
+                $this->user->get('id') .
+                ' with username: ' .
+                $this->user->get('username')
+            );
             return $this->modx->lexicon('goodnews.user_err_save');
         }
 
         // Save subscriber meta
         $this->setSubscriberMeta();
         if (!$this->subscribermeta->save()) {
-            $this->modx->log(modX::LOG_LEVEL_ERROR, '[GoodNews] Could not save new subscriber meta data - '.$this->user->get('id').' with username: '.$this->user->get('username'));
+            $this->modx->log(
+                modX::LOG_LEVEL_ERROR,
+                '[GoodNews] Could not save new subscriber meta data - ' .
+                $this->user->get('id') .
+                ' with username: ' .
+                $this->user->get('username')
+            );
             return $this->modx->lexicon('goodnews.user_err_save');
         }
 
         // Save goodnews group member
         if (!$this->saveGroupMember()) {
-            $this->modx->log(modX::LOG_LEVEL_ERROR, '[GoodNews] Could not save new subscriber group member data - '.$this->user->get('id').' with username: '.$this->user->get('username'));
+            $this->modx->log(
+                modX::LOG_LEVEL_ERROR,
+                '[GoodNews] Could not save new subscriber group member data - ' .
+                $this->user->get('id') .
+                ' with username: ' .
+                $this->user->get('username')
+            );
             return $this->modx->lexicon('goodnews.user_err_save');
         }
 
         // Save goodnews category member
         if (!$this->saveCategoryMember()) {
-            $this->modx->log(modX::LOG_LEVEL_ERROR, '[GoodNews] Could not save new subscriber category member data - '.$this->user->get('id').' with username: '.$this->user->get('username'));
+            $this->modx->log(
+                modX::LOG_LEVEL_ERROR,
+                '[GoodNews] Could not save new subscriber category member data - ' .
+                $this->user->get('id') .
+                ' with username: ' .
+                $this->user->get('username')
+            );
             return $this->modx->lexicon('goodnews.user_err_save');
         }
 
@@ -95,20 +126,23 @@ class GoodNewsSubscriptionSubscriptionProcessor extends GoodNewsSubscriptionProc
         $email = $this->profile->get('email');
         $activation = $this->controller->getProperty('activation', true, 'isset');
         $activationResourceId = $this->controller->getProperty('activationResourceId', '', 'isset');
-        
+
         if ($activation && !empty($email) && !empty($activationResourceId)) {
             $this->sendActivationEmail();
-        
+
         // Activate Subscriber without double opt-in
         } else {
             $this->onBeforeUserActivate();
-            
+
             $this->user->set('active', 1);
             $this->user->_fields['cachepwd'] = '';
             $this->user->setDirty('cachepwd');
-            
+
             if (!$this->user->save()) {
-                $this->modx->log(modX::LOG_LEVEL_ERROR,'[GoodNews] Could not save activated user: '.$this->user->get('username'));
+                $this->modx->log(
+                    modX::LOG_LEVEL_ERROR,
+                    '[GoodNews] Could not save activated user: ' . $this->user->get('username')
+                );
                 $this->controller->redirectAfterFailure();
             }
 
@@ -120,18 +154,18 @@ class GoodNewsSubscriptionSubscriptionProcessor extends GoodNewsSubscriptionProc
             // Send a subscription success email including the secure links to edit subscription profile
             $sendSubscriptionEmail = $this->controller->getProperty('sendSubscriptionEmail', true, 'isset');
             if ($sendSubscriptionEmail) {
-                $subscriberProperties = $this->_getSubscriberProperties();
+                $subscriberProperties = $this->getSubscriberProperties();
                 $this->controller->sendSubscriptionEmail($subscriberProperties);
             }
         }
-        
+
         $this->runPostHooks();
         $this->checkForRedirect();
 
         $successMsg = $this->controller->getProperty('successMsg', '');
         $placeholderPrefix = $this->controller->getProperty('placeholderPrefix', '');
-        $this->modx->toPlaceholder($placeholderPrefix.'success.message', $successMsg);
-        
+        $this->modx->toPlaceholder($placeholderPrefix . 'success.message', $successMsg);
+
         return true;
     }
 
@@ -141,11 +175,14 @@ class GoodNewsSubscriptionSubscriptionProcessor extends GoodNewsSubscriptionProc
      * @access public
      * @return void
      */
-    public function cleanseFields() {
+    public function cleanseFields()
+    {
         $submitVar = $this->controller->getProperty('submitVar', 'goodnews-subscription-btn');
         $this->dictionary->remove('nospam');
         $this->dictionary->remove('blank');
-        if (!empty($submitVar)) { $this->dictionary->remove($submitVar); }
+        if (!empty($submitVar)) {
+            $this->dictionary->remove($submitVar);
+        }
     }
 
     /**
@@ -154,21 +191,24 @@ class GoodNewsSubscriptionSubscriptionProcessor extends GoodNewsSubscriptionProc
      * @access public
      * @return void
      */
-    public function setUserFields() {
-        $emailField      = $this->controller->getProperty('emailField', 'email');
-        $useExtended     = $this->controller->getProperty('useExtended', false, 'isset');
+    public function setUserFields()
+    {
+        $emailField = $this->controller->getProperty('emailField', 'email');
+        $useExtended = $this->controller->getProperty('useExtended', false, 'isset');
         $usergroupsField = $this->controller->getProperty('usergroupsField', 'usergroups');
-        
+
         $fields = $this->dictionary->toArray();
-        
+
         // Allow overriding of class key
-        if (empty($fields['class_key'])) $fields['class_key'] = 'modUser';
+        if (empty($fields['class_key'])) {
+            $fields['class_key'] = 'MODX\\Revolution\\modUser';
+        }
 
         // Set user data
         $this->user->fromArray($fields);
         $this->user->set('username', $fields['username']);
         $this->user->set('active', 0);
-        
+
         $version = $this->modx->getVersionData();
         // MODX 2.1.x +
         if (version_compare($version['full_version'], '2.1.0-rc1') >= 0) {
@@ -181,11 +221,16 @@ class GoodNewsSubscriptionSubscriptionProcessor extends GoodNewsSubscriptionProc
         // Set profile data
         $this->profile->fromArray($fields);
         $this->profile->set('email', $this->dictionary->get($emailField));
-        if ($useExtended) { $this->setExtended(); }
+        if ($useExtended) {
+            $this->setExtended();
+        }
         $this->user->addOne($this->profile, 'Profile');
 
         // Add MODX user groups, if set
-        $userGroups = !empty($usergroupsField) && array_key_exists($usergroupsField, $fields) ? $fields[$usergroupsField] : array();
+        $userGroups = !empty($usergroupsField) && array_key_exists($usergroupsField, $fields)
+            ? $fields[$usergroupsField]
+            : [];
+
         $this->setUserGroups($userGroups);
     }
 
@@ -195,12 +240,13 @@ class GoodNewsSubscriptionSubscriptionProcessor extends GoodNewsSubscriptionProc
      * @access public
      * @return void
      */
-    public function setSubscriberMeta() {
+    public function setSubscriberMeta()
+    {
         $userid = $this->user->get('id');
         $this->subscribermeta->set('subscriber_id', $userid);
         $this->subscribermeta->set('subscribedon', time());
         // create and set new sid
-        $this->subscribermeta->set('sid', md5(time().$userid));
+        $this->subscribermeta->set('sid', md5(time() . $userid));
         $this->subscribermeta->set('testdummy', 0);
         $this->subscribermeta->set('ip', $this->dictionary->get('ip'));
     }
@@ -211,14 +257,15 @@ class GoodNewsSubscriptionSubscriptionProcessor extends GoodNewsSubscriptionProc
      * @access public
      * @return void
      */
-    public function saveGroupMember() {
+    public function saveGroupMember()
+    {
         $userid = $this->user->get('id');
         $gongroups = $this->dictionary->get('gongroups');
-        $selectedGroups = !empty($gongroups) ? $gongroups : array();
-        
+        $selectedGroups = !empty($gongroups) ? $gongroups : [];
+
         $success = true;
         foreach ($selectedGroups as $grpid) {
-            $groupmember = $this->modx->newObject('GoodNewsGroupMember');
+            $groupmember = $this->modx->newObject(GoodNewsGroupMember::class);
             $groupmember->set('goodnewsgroup_id', $grpid);
             $groupmember->set('member_id', $userid);
             if (!$groupmember->save()) {
@@ -227,21 +274,22 @@ class GoodNewsSubscriptionSubscriptionProcessor extends GoodNewsSubscriptionProc
         }
         return $success;
     }
-    
+
     /**
      * Set and save the category member data.
      *
      * @access public
      * @return void
      */
-    public function saveCategoryMember() {
+    public function saveCategoryMember()
+    {
         $userid = $this->user->get('id');
         $goncategories = $this->dictionary->get('goncategories');
-        $selectedCategories = !empty($goncategories) ? $goncategories : array();
+        $selectedCategories = !empty($goncategories) ? $goncategories : [];
 
         $success = true;
         foreach ($selectedCategories as $catid) {
-            $categorymember = $this->modx->newObject('GoodNewsCategoryMember');
+            $categorymember = $this->modx->newObject(GoodNewsCategoryMember::class);
             $categorymember->set('goodnewscategory_id', $catid);
             $categorymember->set('member_id', $userid);
             if (!$categorymember->save()) {
@@ -250,34 +298,40 @@ class GoodNewsSubscriptionSubscriptionProcessor extends GoodNewsSubscriptionProc
         }
         return $success;
     }
-    
+
     /**
      * If activated, use extra field in form to write extra values to profile extended field.
      *
      * @access public
      * @return void
      */
-    public function setExtended() {
+    public function setExtended()
+    {
         $excludeExtended = $this->controller->getProperty('excludeExtended', '');
         $usergroupsField = $this->controller->getProperty('usergroupsField', 'usergroups');
-        
+
         $excludeExtended = explode(',', $excludeExtended);
-        
-        $alwaysExclude = array('gongroups','goncategories','password_confirm','passwordconfirm');
-        
-        // gets a list of fields for modUser and modUserProfile by class name
-        $userFields    = $this->modx->getFields('modUser');
-        $profileFields = $this->modx->getFields('modUserProfile');
-        
-        $extended = array();
+
+        $alwaysExclude = [
+            'gongroups',
+            'goncategories',
+            'password_confirm',
+            'passwordconfirm'
+        ];
+
+        // Gets a list of fields for modUser and modUserProfile by class name
+        $userFields    = $this->modx->getFields(modUser::class);
+        $profileFields = $this->modx->getFields(modUserProfile::class);
+
+        $extended = [];
         $fields = $this->dictionary->toArray();
-        
+
         foreach ($fields as $field => $value) {
             if (
-                !isset($profileFields[$field]) 
-                && !isset($userFields[$field]) 
-                && $field != $usergroupsField 
-                && !in_array($field, $alwaysExclude) 
+                !isset($profileFields[$field])
+                && !isset($userFields[$field])
+                && $field != $usergroupsField
+                && !in_array($field, $alwaysExclude)
                 && !in_array($field, $excludeExtended)
             ) {
                 $extended[$field] = $value;
@@ -288,14 +342,15 @@ class GoodNewsSubscriptionSubscriptionProcessor extends GoodNewsSubscriptionProc
     }
 
     /**
-     * If user groups were passed, set them here.
+     * If MODX user groups were passed, set them here.
      *
      * @access public
-     * @param string $userGroups Comma separated string of MODX user groups.
+     * @param string $userGroups Comma separated string of MODX user groups
      * @return array
      */
-    public function setUserGroups($userGroups) {
-        $added = array();
+    public function setUserGroups(string $userGroups)
+    {
+        $added = [];
         // If $userGroups set in form, override here; otherwise use snippet property
         $this->userGroups = !empty($userGroups) ? $userGroups : $this->controller->getProperty('usergroups', '');
         if (!empty($this->userGroups)) {
@@ -303,22 +358,26 @@ class GoodNewsSubscriptionSubscriptionProcessor extends GoodNewsSubscriptionProc
 
             foreach ($this->userGroups as $userGroupMeta) {
                 $userGroupMeta = explode(':', $userGroupMeta);
-                if (empty($userGroupMeta[0])) continue;
+                if (empty($userGroupMeta[0])) {
+                    continue;
+                }
 
                 // Get usergroup
-                $pk = array();
+                $pk = [];
                 $pk[intval($userGroupMeta[0]) > 0 ? 'id' : 'name'] = trim($userGroupMeta[0]);
-                $userGroup = $this->modx->getObject('modUserGroup', $pk);
-                if (!$userGroup) continue;
+                $userGroup = $this->modx->getObject(modUserGroup::class, $pk);
+                if (!$userGroup) {
+                    continue;
+                }
 
                 // Get role
                 $rolePk = !empty($userGroupMeta[1]) ? $userGroupMeta[1] : 'Member';
-                $role = $this->modx->getObject('modUserGroupRole', array('name' => $rolePk));
+                $role = $this->modx->getObject(modUserGroupRole::class, ['name' => $rolePk]);
 
                 // Create membership
-                $member = $this->modx->newObject('modUserGroupMember');
+                $member = $this->modx->newObject(modUserGroupMember::class);
                 $member->set('member', 0);
-                $member->set('user_group',$userGroup->get('id'));
+                $member->set('user_group', $userGroup->get('id'));
                 if (!empty($role)) {
                     $member->set('role', $role->get('id'));
                 } else {
@@ -337,10 +396,15 @@ class GoodNewsSubscriptionSubscriptionProcessor extends GoodNewsSubscriptionProc
      * @access public
      * @return array
      */
-    public function preparePersistentParameters() {
+    public function preparePersistentParameters()
+    {
         $this->persistParams = $this->controller->getProperty('persistParams', '');
-        if (!empty($this->persistParams)) $this->persistParams = $this->modx->fromJSON($this->persistParams);
-        if (empty($this->persistParams) || !is_array($this->persistParams)) $this->persistParams = array();
+        if (!empty($this->persistParams)) {
+            $this->persistParams = $this->modx->fromJSON($this->persistParams);
+        }
+        if (empty($this->persistParams) || !is_array($this->persistParams)) {
+            $this->persistParams = [];
+        }
         return $this->persistParams;
     }
 
@@ -351,14 +415,16 @@ class GoodNewsSubscriptionSubscriptionProcessor extends GoodNewsSubscriptionProc
      * @access public
      * @return boolean
      */
-    public function sendActivationEmail() {
+    public function sendActivationEmail()
+    {
         $emailProperties = $this->gatherActivationEmailProperties();
 
         // Send either to user's email or a specified activation email address
         $activationEmail = $this->controller->getProperty('activationEmail', $this->profile->get('email'));
-        $subject = $this->controller->getProperty('activationEmailSubject', $this->modx->lexicon('goodnews.activation_email_subject'));
-        
-        return $this->goodnewssubscription->sendEmail($activationEmail, $subject, $emailProperties);
+        $defaultSubject = $this->modx->lexicon('goodnews.activation_email_subject');
+        $subject = $this->controller->getProperty('activationEmailSubject', $defaultSubject);
+
+        return $this->subscription->sendEmail($activationEmail, $subject, $emailProperties);
     }
 
     /**
@@ -367,32 +433,46 @@ class GoodNewsSubscriptionSubscriptionProcessor extends GoodNewsSubscriptionProc
      * @access public
      * @return array
      */
-    public function gatherActivationEmailProperties() {
+    public function gatherActivationEmailProperties()
+    {
         // Generate a cache password and encode it and the username into the url
         $pword = $this->setCachePassword();
-        $confirmParams['lp'] = $this->goodnewssubscription->base64url_encode($pword);
-        $confirmParams['lu'] = $this->goodnewssubscription->base64url_encode($this->user->get('username'));
+        $confirmParams['lp'] = $this->subscription->base64UrlEncode($pword);
+        $confirmParams['lu'] = $this->subscription->base64UrlEncode($this->user->get('username'));
         $confirmParams = array_merge($this->persistParams, $confirmParams);
 
         // If using redirectBack param, set here to allow dynamic redirection handling from other forms
-        $redirectBack = $this->modx->getOption('redirectBack', $_REQUEST, $this->controller->getProperty('redirectBack', ''));
+        $redirectBack = $this->modx->getOption(
+            'redirectBack',
+            $_REQUEST,
+            $this->controller->getProperty('redirectBack', '')
+        );
         if (!empty($redirectBack)) {
             $confirmParams['redirectBack'] = $redirectBack;
         }
-        $redirectBackParams = $this->modx->getOption('redirectBackParams', $_REQUEST, $this->controller->getProperty('redirectBackParams', ''));
+        $redirectBackParams = $this->modx->getOption(
+            'redirectBackParams',
+            $_REQUEST,
+            $this->controller->getProperty('redirectBackParams', '')
+        );
         if (!empty($redirectBackParams)) {
             $confirmParams['redirectBackParams'] = $redirectBackParams;
         }
 
         // Generate confirmation url
-        $confirmUrl = $this->modx->makeUrl($this->controller->getProperty('activationResourceId', 1), '', $confirmParams, 'full');
+        $confirmUrl = $this->modx->makeUrl(
+            $this->controller->getProperty('activationResourceId', 1),
+            '',
+            $confirmParams,
+            'full'
+        );
 
         // Set confirmation email properties
         $emailTpl = $this->controller->getProperty('activationEmailTpl', 'sample.GoodNewsActivationEmailChunk');
         $emailTplAlt = $this->controller->getProperty('activationEmailTplAlt', '');
         $emailTplType = $this->controller->getProperty('activationEmailTplType', 'modChunk');
-        
-        $emailProperties = $this->_getSubscriberProperties();
+
+        $emailProperties = $this->getSubscriberProperties();
         $emailProperties['confirmUrl'] = $confirmUrl;
         $emailProperties['tpl'] = $emailTpl;
         $emailProperties['tplAlt'] = $emailTplAlt;
@@ -403,29 +483,39 @@ class GoodNewsSubscriptionSubscriptionProcessor extends GoodNewsSubscriptionProc
 
     /**
      * Generates a cache password for subscriber activation and writes it to modRegistry.
-     * 
+     *
      * @access public
      * @param mixed $password
      * @return mixed $cachepwd || false
      */
-    public function setCachePassword() {
+    public function setCachePassword()
+    {
         // Generate a new password
         $cachepwd = $this->user->generatePassword();
 
         // Set new password to modRegistry to prevent middleman attacks.
         // (Will be read from the registry on the confirmation page)
-        $this->modx->getService('registry', 'registry.modRegistry');
-        $this->modx->registry->addRegister('goodnewssubscription', 'registry.modFileRegister');
-        $this->modx->registry->goodnewssubscription->connect();
-        $this->modx->registry->goodnewssubscription->subscribe('/useractivation/');
-        $this->modx->registry->goodnewssubscription->send('/useractivation/', array($this->user->get('username') => $cachepwd), array(
+        if (!$modx->services->has('registry')) {
+            $modx->services->add('registry', function ($c) use ($modx) {
+                return new modRegistry($modx);
+            });
+        }
+        $registry = $modx->services->get('registry');
+        $registry->addRegister('goodnewssubscription', modFileRegister::class);
+        $registry->goodnewssubscription->connect();
+        $registry->goodnewssubscription->subscribe('/useractivation/');
+        $registry->goodnewssubscription->send('/useractivation/', [$this->user->get('username') => $cachepwd], [
             'ttl' => ($this->controller->getProperty('activationttl', 180) * 60),
-        ));
+        ]);
         // Set cachepwd here to prevent re-registration of inactive users
+        // @todo is this the correct way to set a cache password in MODX 2.1+?
         $this->user->set('cachepwd', md5($cachepwd));
         $success = $this->user->save();
         if (!$success) {
-            $this->modx->log(modX::LOG_LEVEL_ERROR, '[GoodNews] Could not set cachepwd for activation for user: '.$this->user->get('username'));
+            $this->modx->log(
+                modX::LOG_LEVEL_ERROR,
+                '[GoodNews] Could not set cachepwd for activation for user: ' . $this->user->get('username')
+            );
             $cachepwd = false;
         }
         return $cachepwd;
@@ -433,32 +523,32 @@ class GoodNewsSubscriptionSubscriptionProcessor extends GoodNewsSubscriptionProc
 
     /**
      * Get the subscriber properties and collect in array.
-     * 
+     *
      * @access private
      * @return mixed $properties The collection of properties || false
      */
-    private function _getSubscriberProperties() {
-
+    private function getSubscriberProperties()
+    {
         $properties = array_merge(
             $this->user->toArray(),
             $this->profile->toArray(),
             $this->subscribermeta->toArray()
         );
-                
+
         // Flatten extended fields:
         // extended.field1
         // extended.container1.field2
         // ...
-        $extended = $this->profile->get('extended') ? $this->profile->get('extended') : array();
+        $extended = $this->profile->get('extended') ? $this->profile->get('extended') : [];
         if (!empty($extended)) {
-            $extended = $this->_flattenExtended($extended, 'extended.');
+            $extended = $this->flattenExtended($extended, 'extended.');
         }
         $properties = array_merge(
             $properties,
             $extended
         );
-        
-        $properties = $this->_cleanupKeys($properties);
+
+        $properties = $this->cleanupKeys($properties);
         return $properties;
     }
 
@@ -469,7 +559,8 @@ class GoodNewsSubscriptionSubscriptionProcessor extends GoodNewsSubscriptionProc
      * @param array $properties
      * @return array $properties
      */
-    private function _cleanupKeys(array $properties = array()) {
+    private function cleanupKeys(array $properties = [])
+    {
         unset(
             // users table
             $properties['id'],          // multiple occurrence; not needed
@@ -479,26 +570,27 @@ class GoodNewsSubscriptionSubscriptionProcessor extends GoodNewsSubscriptionProc
             // user_attributes table
             $properties['internalKey'], // not needed
             $properties['sessionid'],   // security!
-            $properties['extended']     // not needed as its already flattened
-        );    
+            $properties['extended']     // not needed as it's already flattened
+        );
         return $properties;
     }
 
     /**
      * Helper function to recursively flatten an array.
-     * 
+     *
      * @access private
      * @param array $array The array to be flattened.
      * @param string $prefix The prefix for each new array key.
      * @return array $result The flattened and prefixed array.
      */
-    private function _flattenExtended($array, $prefix = '') {
-        $result = array();
-        foreach($array as $key => $value) {
+    private function flattenExtended(array $array, string $prefix = '')
+    {
+        $result = [];
+        foreach ($array as $key => $value) {
             if (is_array($value)) {
-                $result = $result + $this->_flattenExtended($value, $prefix.$key.'.');
+                $result = $result + $this->flattenExtended($value, $prefix . $key . '.');
             } else {
-                $result[$prefix.$key] = $value;
+                $result[$prefix . $key] = $value;
             }
         }
         return $result;
@@ -510,27 +602,28 @@ class GoodNewsSubscriptionSubscriptionProcessor extends GoodNewsSubscriptionProc
      * @access public
      * @return void
      */
-    public function runPostHooks() {
+    public function runPostHooks()
+    {
         $postHooks = $this->controller->getProperty('postHooks', '');
         $this->controller->loadHooks('postHooks');
-        
+
         $fields = $this->dictionary->toArray();
-        $fields['goodnewssubscription.user'] =& $this->user;
-        $fields['goodnewssubscription.profile'] =& $this->profile;
+        $fields['goodnewssubscription.user'] = &$this->user;
+        $fields['goodnewssubscription.profile'] = &$this->profile;
         $fields['goodnewssubscription.usergroups'] = $this->userGroups;
-        
+
         $this->controller->postHooks->loadMultiple($postHooks, $fields);
         if ($this->controller->postHooks->hasErrors()) {
-            $errors = array();
+            $errors = [];
             $hookErrors = $this->controller->postHooks->getErrors();
             foreach ($hookErrors as $key => $error) {
                 $errors[$key] = str_replace('[[+error]]', $error, $this->controller->getProperty('errTpl'));
             }
             $placeholderPrefix = $this->controller->getProperty('placeholderPrefix', '');
-            $this->modx->toPlaceholders($errors, $placeholderPrefix.'error');
+            $this->modx->toPlaceholders($errors, $placeholderPrefix . 'error');
 
             $errorMsg = $this->controller->postHooks->getErrorMessage();
-            $this->modx->toPlaceholder('message', $errorMsg, $placeholderPrefix.'error');
+            $this->modx->toPlaceholder('message', $errorMsg, $placeholderPrefix . 'error');
         }
     }
 
@@ -540,13 +633,14 @@ class GoodNewsSubscriptionSubscriptionProcessor extends GoodNewsSubscriptionProc
      * @access public
      * @return boolean
      */
-    public function checkForRedirect() {
+    public function checkForRedirect()
+    {
         // If provided a submittedResourceId, will redirect to that resource, with the GET param `email`
         $submittedResourceId = $this->controller->getProperty('submittedResourceId', '');
         if (!empty($submittedResourceId)) {
-            $persistParams = array_merge($this->persistParams, array(
+            $persistParams = array_merge($this->persistParams, [
                 'email' => $this->profile->get('email'),
-            ));
+            ]);
             $url = $this->modx->makeUrl($submittedResourceId, '', $persistParams, 'full');
             $this->modx->sendRedirect($url);
             return true;
@@ -560,18 +654,24 @@ class GoodNewsSubscriptionSubscriptionProcessor extends GoodNewsSubscriptionProc
      * @access public
      * @return boolean
      */
-    public function onBeforeUserActivate() {
+    public function onBeforeUserActivate()
+    {
         $success = true;
-        $result = $this->modx->invokeEvent('OnBeforeUserActivate',array(
+        $result = $this->modx->invokeEvent('OnBeforeUserActivate', [
             'user' => &$this->user,
-        ));
-        $preventActivation = $this->goodnewssubscription->getEventResult($result);
+        ]);
+        $preventActivation = $this->subscription->getEventResult($result);
         if (!empty($preventActivation)) {
             $success = false;
-            $this->modx->log(modX::LOG_LEVEL_ERROR,'[GoodNews] OnBeforeUserActivate event prevented activation for "'.$this->user->get('username').'" by returning false: '.$preventActivation);
+            $this->modx->log(
+                modX::LOG_LEVEL_ERROR,
+                '[GoodNews] OnBeforeUserActivate event prevented activation for "' .
+                $this->user->get('username') .
+                '" by returning false: ' .
+                $preventActivation
+            );
             $this->controller->redirectAfterFailure();
         }
         return $success;
     }
 }
-return 'GoodNewsSubscriptionSubscriptionProcessor';
