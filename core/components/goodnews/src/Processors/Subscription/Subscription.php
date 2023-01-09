@@ -565,9 +565,9 @@ class Subscription extends Base
         $this->controller->loadHooks('postHooks');
 
         $fields = $this->dictionary->toArray();
-        $fields['goodnewssubscription.user'] = &$this->user;
-        $fields['goodnewssubscription.profile'] = &$this->profile;
-        $fields['goodnewssubscription.usergroups'] = $this->userGroups;
+        $fields['subscription.user'] = &$this->user;
+        $fields['subscription.profile'] = &$this->profile;
+        $fields['subscription.usergroups'] = $this->userGroups;
 
         $this->controller->postHooks->loadMultiple($postHooks, $fields);
         if ($this->controller->postHooks->hasErrors()) {

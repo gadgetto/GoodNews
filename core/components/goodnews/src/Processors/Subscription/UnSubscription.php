@@ -152,8 +152,8 @@ class UnSubscription extends Base
         $this->controller->loadHooks('postHooks');
 
         $fields = [];
-        $fields['goodnewssubscription.user'] = &$this->user;
-        $fields['goodnewssubscription.profile'] = &$this->profile;
+        $fields['subscription.user'] = &$this->user;
+        $fields['subscription.profile'] = &$this->profile;
 
         $this->controller->postHooks->loadMultiple($postHooks, $fields);
 
