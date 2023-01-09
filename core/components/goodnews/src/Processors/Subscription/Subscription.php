@@ -526,7 +526,7 @@ class Subscription extends Base
      * Get the subscriber properties and collect in array.
      *
      * @access private
-     * @return mixed $properties The collection of properties || false
+     * @return mixed $properties The collection of properties|false
      */
     private function getSubscriberProperties()
     {
@@ -542,7 +542,7 @@ class Subscription extends Base
         // ...
         $extended = $this->profile->get('extended') ? $this->profile->get('extended') : [];
         if (!empty($extended)) {
-            $extended = $this->flattenExtended($extended, 'extended.');
+            $extended = $this->flattenExtended($extended);
         }
         $properties = array_merge(
             $properties,
@@ -551,50 +551,6 @@ class Subscription extends Base
 
         $properties = $this->cleanupKeys($properties);
         return $properties;
-    }
-
-    /**
-     * Manipulate/add/remove fields from array.
-     *
-     * @access private
-     * @param array $properties
-     * @return array $properties
-     */
-    private function cleanupKeys(array $properties = [])
-    {
-        unset(
-            // users table
-            $properties['id'],          // multiple occurrence; not needed
-            $properties['cachepwd'],    // security!
-            $properties['hash_class'],  // security!
-            $properties['salt'],        // security!
-            // user_attributes table
-            $properties['internalKey'], // not needed
-            $properties['sessionid'],   // security!
-            $properties['extended']     // not needed as it's already flattened
-        );
-        return $properties;
-    }
-
-    /**
-     * Helper function to recursively flatten an array.
-     *
-     * @access private
-     * @param array $array The array to be flattened.
-     * @param string $prefix The prefix for each new array key.
-     * @return array $result The flattened and prefixed array.
-     */
-    private function flattenExtended(array $array, string $prefix = '')
-    {
-        $result = [];
-        foreach ($array as $key => $value) {
-            if (is_array($value)) {
-                $result = $result + $this->flattenExtended($value, $prefix . $key . '.');
-            } else {
-                $result[$prefix . $key] = $value;
-            }
-        }
-        return $result;
     }
 
     /**

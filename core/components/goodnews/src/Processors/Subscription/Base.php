@@ -52,4 +52,49 @@ abstract class Base
     }
 
     abstract public function process();
+
+    /**
+     * Helper function to recursively flatten an array of extended fields.
+     *
+     * @access protected
+     * @param array $array The array to be flattened.
+     * @param string $prefix The prefix for each new array key.
+     * @return array $result The flattened and prefixed array.
+     */
+    protected function flattenExtended(array $array, string $prefix = 'extended.')
+    {
+        $result = [];
+        foreach ($array as $key => $value) {
+            if (is_array($value)) {
+                $result = $result + $this->flattenExtended($value, $prefix . $key . '.');
+            } else {
+                $result[$prefix . $key] = $value;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * Manipulate/add/remove fields from array.
+     *
+     * @access protected
+     * @param array $properties
+     * @return array $properties The cleaned array
+     */
+    protected function cleanupKeys(array $properties = array())
+    {
+        unset(
+            // users table
+            $properties['id'],          // multiple occurrence; not needed
+            $properties['password'],    // security!
+            $properties['cachepwd'],    // security!
+            $properties['hash_class'],  // security!
+            $properties['salt'],        // security!
+            // user_attributes table
+            $properties['internalKey'], // not needed
+            $properties['sessionid'],   // security!
+            $properties['extended']     // not needed as its already flattened
+        );
+        return $properties;
+    }
 }
