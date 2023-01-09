@@ -13,7 +13,7 @@
 namespace Bitego\GoodNews\Subscription;
 
 /**
- * Class which abstracts storage of values of POST fields + fields set by hooks
+ * Base class which abstracts storage of values of POST fields + fields set by hooks.
  *
  * @package goodnews
  * @subpackage subscription

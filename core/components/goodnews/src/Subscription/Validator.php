@@ -15,7 +15,7 @@ namespace Bitego\GoodNews\Subscription;
 use MODX\Revolution\modSnippet;
 
 /**
- * Class which handles custom validation.
+ * Base class which handles custom validation.
  *
  * @package goodnews
  * @subpackage subscription
