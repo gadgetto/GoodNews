@@ -32,9 +32,6 @@ class Subscription
     /** @var modX $modx A reference to the modX instance */
     public $modx = null;
 
-    /** @var array $config An array of configuration properties */
-    public $config = [];
-
     /** @var Confirm | RequestLinks | Subscription | Unsubscription | UpdateProfile $controller */
     public $controller = null;
 
@@ -43,6 +40,9 @@ class Subscription
 
     /** @var Dictionary $dictionary */
     public $dictionary = null;
+
+    /** @var array $config An array of configuration properties */
+    public $config = [];
 
     /** @var Hooks $preHooks */
     public $preHooks = null;

@@ -29,6 +29,9 @@ class Validator
     /** @var Subscription $subscription A reference to the Subscription instance */
     public $subscription = null;
 
+    /** @var array $config An array of configuration properties */
+    public $config = [];
+
     /** @var array $errors A collection of all the processed errors so far */
     public $errors = [];
 

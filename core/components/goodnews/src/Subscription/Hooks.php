@@ -34,6 +34,9 @@ class Hooks
     /** @var object $controller A reference to the current controller instance */
     public $controller = null;
 
+    /** @var array $config An array of configuration properties */
+    public $config = [];
+
     /** @var array $errors A collection of all the processed errors so far */
     public $errors = [];
 
@@ -55,7 +58,7 @@ class Hooks
         $this->modx = &$subscription->modx;
         $this->subscription = &$subscription;
         $this->controller = &$controller;
-        $this->config = array_merge([], $config);
+        $this->config = array_merge($this->config, $config);
     }
 
     /**
