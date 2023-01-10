@@ -33,6 +33,15 @@ abstract class Base
     /** @var modX $modx */
     public $modx = null;
 
+    /** @var modUser $user */
+    public $user = null;
+
+    /** @var modUserProfile $profile */
+    public $profile = null;
+
+    /** @var GoodNewsSubscriberMeta $subscribermeta */
+    public $subscribermeta = null;
+
     /** @var Subscription $subscription */
     public $subscription = null;
 
@@ -50,15 +59,6 @@ abstract class Base
 
     /** @var object $goodnewsCategories Collection of GoodNewsCategory entries */
     public $goodnewsCategories = null;
-
-    /** @var modUser $user */
-    public $user = null;
-
-    /** @var modUserProfile $profile */
-    public $profile = null;
-
-    /** @var GoodNewsSubscriberMeta $subscribermeta */
-    public $subscribermeta = null;
 
     /** @var GoodNewsSubscriberMeta.sid $sid */
     public $sid = '';
