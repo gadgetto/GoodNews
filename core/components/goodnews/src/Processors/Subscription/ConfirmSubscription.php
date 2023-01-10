@@ -12,6 +12,8 @@
 
 namespace Bitego\GoodNews\Processors\Subscription;
 
+use Bitego\GoodNews\Processors\Subscription\Base;
+
 /**
  * Processor class handles confirmation of subscription.
  *
