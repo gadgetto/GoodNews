@@ -20,7 +20,6 @@ use Bitego\GoodNews\Processors\Subscription\Base;
  * @package goodnews
  * @subpackage processors
  */
-
 class ConfirmSubscription extends Base
 {
     /** @var modUser $user */

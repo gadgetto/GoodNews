@@ -22,7 +22,6 @@ use Bitego\GoodNews\Processors\Subscription\Base;
  * @package goodnews
  * @subpackage processors
  */
-
 class UpdateProfile extends Base
 {
     /** @var modUser $user */

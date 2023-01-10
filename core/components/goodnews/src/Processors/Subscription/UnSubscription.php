@@ -24,7 +24,6 @@ use Bitego\GoodNews\Processors\Subscription\Base;
  * @package goodnews
  * @subpackage processors
  */
-
 class UnSubscription extends Base
 {
     /** @var modUser $user */
