@@ -1,25 +1,23 @@
 <?php
-/**
- * GoodNews
- *
- * Copyright 2012 by bitego <office@bitego.com>
- *
- * GoodNews is free software; you can redistribute it and/or modify it under the
- * terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
- *
- * GoodNews is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this software; if not, write to the Free Software Foundation, Inc., 59 Temple
- * Place, Suite 330, Boston, MA 02111-1307 USA
- */
 
 /**
- * Processor class which handles subscription forms when subscriber already has a MODX user account but no GoodNews meta data:
+ * This file is part of the GoodNews package.
+ *
+ * @copyright bitego (Martin Gartner)
+ * @license GNU General Public License v2.0 (and later)
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+namespace Bitego\GoodNews\Processors\Subscription;
+
+use Bitego\GoodNews\Model\GoodNewsSubscriberMeta;
+use Bitego\GoodNews\Processors\Subscription\Base;
+
+/**
+ * Processor class which handles subscription forms when subscriber already
+ * has a MODX user account but no GoodNews meta data:
  *  - no new MODX user is created
  *  - a Subscription profile is created (SubscriberMeta)
  *  - no Group and/or Category selections are created!
@@ -28,35 +26,42 @@
  * @package goodnews
  * @subpackage processors
  */
-
-class GoodNewsSubscriptionModxUserSubscriptionProcessor extends GoodNewsSubscriptionProcessor {
+class ModxUserSubscription extends Base
+{
     /** @var modUser $user */
-    public $user;
-    
+    public $user = null;
+
     /** @var modUserProfile $profile */
-    public $profile;
-    
+    public $profile = null;
+
     /** @var GoodNewsSubscriberMeta $subscribermeta */
-    public $subscribermeta;
-    
+    public $subscribermeta = null;
+
     /** @var array $persistParams */
-    public $persistParams = array();
-    
+    public $persistParams = [];
+
     /**
      * @access public
      * @return mixed
      */
-    public function process() {
-        $this->user           = $this->controller->user;
-        $this->profile        = $this->controller->profile;
-        $this->subscribermeta = $this->modx->newObject('GoodNewsSubscriberMeta');
-        
+    public function process()
+    {
+        $this->user  = $this->controller->user;
+        $this->profile = $this->controller->profile;
+        $this->subscribermeta = $this->modx->newObject(GoodNewsSubscriberMeta::class);
+
         $this->cleanseFields();
-        
+
         // Save subscriber meta
         $this->setSubscriberMeta();
         if (!$this->subscribermeta->save()) {
-            $this->modx->log(modX::LOG_LEVEL_ERROR, '[GoodNews] Could not save new subscriber meta data - '.$this->user->get('id').' with username: '.$this->user->get('username'));
+            $this->modx->log(
+                modX::LOG_LEVEL_ERROR,
+                '[GoodNews] Could not save new subscriber meta data - ' .
+                $this->user->get('id') .
+                ' with username: ' .
+                $this->user->get('username')
+            );
             return $this->modx->lexicon('goodnews.user_err_save');
         }
 
@@ -65,16 +70,16 @@ class GoodNewsSubscriptionModxUserSubscriptionProcessor extends GoodNewsSubscrip
         // Send a subscription success email including the secure links to edit subscription profile
         $sendSubscriptionEmail = $this->controller->getProperty('sendSubscriptionEmail', true, 'isset');
         if ($sendSubscriptionEmail) {
-            $subscriberProperties = $this->_getSubscriberProperties();
+            $subscriberProperties = $this->getSubscriberProperties();
             $this->controller->sendReSubscriptionEmail($subscriberProperties);
         }
 
         $this->runPostHooks();
         $this->checkForRedirect();
-        
+
         $successMsg = $this->controller->getProperty('successMsg', '');
         $placeholderPrefix = $this->controller->getProperty('placeholderPrefix', '');
-        $this->modx->toPlaceholder($placeholderPrefix.'success.message', $successMsg);
+        $this->modx->toPlaceholder($placeholderPrefix . 'success.message', $successMsg);
 
         return true;
     }
@@ -85,11 +90,14 @@ class GoodNewsSubscriptionModxUserSubscriptionProcessor extends GoodNewsSubscrip
      * @access public
      * @return void
      */
-    public function cleanseFields() {
+    public function cleanseFields()
+    {
         $submitVar = $this->controller->getProperty('submitVar', 'goodnews-subscription-btn');
         $this->dictionary->remove('nospam');
         $this->dictionary->remove('blank');
-        if (!empty($submitVar)) { $this->dictionary->remove($submitVar); }
+        if (!empty($submitVar)) {
+            $this->dictionary->remove($submitVar);
+        }
     }
 
     /**
@@ -98,12 +106,13 @@ class GoodNewsSubscriptionModxUserSubscriptionProcessor extends GoodNewsSubscrip
      * @access public
      * @return void
      */
-    public function setSubscriberMeta() {
+    public function setSubscriberMeta()
+    {
         $userid = $this->user->get('id');
         $this->subscribermeta->set('subscriber_id', $userid);
         $this->subscribermeta->set('subscribedon', time());
         // create and set new sid
-        $this->subscribermeta->set('sid', md5(time().$userid));
+        $this->subscribermeta->set('sid', md5(time() . $userid));
         $this->subscribermeta->set('testdummy', 0);
         $this->subscribermeta->set('ip', $this->dictionary->get('ip'));
     }
@@ -114,85 +123,47 @@ class GoodNewsSubscriptionModxUserSubscriptionProcessor extends GoodNewsSubscrip
      * @access public
      * @return array
      */
-    public function preparePersistentParameters() {
+    public function preparePersistentParameters()
+    {
         $this->persistParams = $this->controller->getProperty('persistParams', '');
-        if (!empty($this->persistParams)) $this->persistParams = $this->modx->fromJSON($this->persistParams);
-        if (empty($this->persistParams) || !is_array($this->persistParams)) $this->persistParams = array();
+        if (!empty($this->persistParams)) {
+            $this->persistParams = $this->modx->fromJSON($this->persistParams);
+        }
+        if (empty($this->persistParams) || !is_array($this->persistParams)) {
+            $this->persistParams = [];
+        }
         return $this->persistParams;
     }
 
     /**
      * Get the subscriber properties and collect in array.
-     * 
+     *
      * @access private
      * @return mixed $properties The collection of properties || false
      */
-    private function _getSubscriberProperties() {
-
+    private function getSubscriberProperties()
+    {
         $properties = array_merge(
             $this->user->toArray(),
             $this->profile->toArray(),
             $this->subscribermeta->toArray()
         );
-                
+
         // Flatten extended fields:
         // extended.field1
         // extended.container1.field2
         // ...
-        $extended = $this->profile->get('extended') ? $this->profile->get('extended') : array();
+        $extended = $this->profile->get('extended') ? $this->profile->get('extended') : [];
         if (!empty($extended)) {
-            $extended = $this->_flattenExtended($extended, 'extended.');
+            $extended = $this->flattenExtended($extended);
         }
         $properties = array_merge(
             $properties,
             $extended
         );
-        
-        $properties = $this->_cleanupKeys($properties);
-        return $properties;
-    }
 
-    /**
-     * Manipulate/add/remove fields from array.
-     *
-     * @access private
-     * @param array $properties
-     * @return array $properties
-     */
-    private function _cleanupKeys(array $properties = array()) {
-        unset(
-            // users table
-            $properties['id'],          // multiple occurrence; not needed
-            $properties['password'],    // security!
-            $properties['cachepwd'],    // security!
-            $properties['hash_class'],  // security!
-            $properties['salt'],        // security!
-            // user_attributes table
-            $properties['internalKey'], // not needed
-            $properties['sessionid'],   // security!
-            $properties['extended']     // not needed as its already flattened
-        );    
+        $properties = $this->cleanupKeys($properties);
         return $properties;
-    }
-
-    /**
-     * Helper function to recursively flatten an array.
-     * 
-     * @access private
-     * @param array $array The array to be flattened.
-     * @param string $prefix The prefix for each new array key.
-     * @return array $result The flattened and prefixed array.
-     */
-    private function _flattenExtended($array, $prefix = '') {
-        $result = array();
-        foreach($array as $key => $value) {
-            if (is_array($value)) {
-                $result = $result + $this->_flattenExtended($value, $prefix.$key.'.');
-            } else {
-                $result[$prefix.$key] = $value;
-            }
-        }
-        return $result;
     }
 
     /**
@@ -201,26 +172,27 @@ class GoodNewsSubscriptionModxUserSubscriptionProcessor extends GoodNewsSubscrip
      * @access public
      * @return void
      */
-    public function runPostHooks() {
+    public function runPostHooks()
+    {
         $postHooks = $this->controller->getProperty('postHooks', '');
         $this->controller->loadHooks('postHooks');
-        
+
         $fields = $this->dictionary->toArray();
-        $fields['goodnewssubscription.user'] = &$this->user;
-        $fields['goodnewssubscription.profile'] = &$this->profile;
-        
+        $fields['subscription.user'] = &$this->user;
+        $fields['subscription.profile'] = &$this->profile;
+
         $this->controller->postHooks->loadMultiple($postHooks, $fields);
         if ($this->controller->postHooks->hasErrors()) {
-            $errors = array();
+            $errors = [];
             $hookErrors = $this->controller->postHooks->getErrors();
             foreach ($hookErrors as $key => $error) {
                 $errors[$key] = str_replace('[[+error]]', $error, $this->controller->getProperty('errTpl'));
             }
             $placeholderPrefix = $this->controller->getProperty('placeholderPrefix', '');
-            $this->modx->toPlaceholders($errors, $placeholderPrefix.'error');
+            $this->modx->toPlaceholders($errors, $placeholderPrefix . 'error');
 
             $errorMsg = $this->controller->postHooks->getErrorMessage();
-            $this->modx->toPlaceholder('message', $errorMsg, $placeholderPrefix.'error');
+            $this->modx->toPlaceholder('message', $errorMsg, $placeholderPrefix . 'error');
         }
     }
 
@@ -230,13 +202,14 @@ class GoodNewsSubscriptionModxUserSubscriptionProcessor extends GoodNewsSubscrip
      * @access public
      * @return boolean
      */
-    public function checkForRedirect() {
+    public function checkForRedirect()
+    {
         // If provided a submittedResourceId, will redirect to that resource, with the GET param `email`
         $submittedResourceId = $this->controller->getProperty('submittedResourceId', '');
         if (!empty($submittedResourceId)) {
-            $persistParams = array_merge($this->persistParams, array(
+            $persistParams = array_merge($this->persistParams, [
                 'email' => $this->profile->get('email'),
-            ));
+            ]);
             $url = $this->modx->makeUrl($submittedResourceId, '', $persistParams, 'full');
             $this->modx->sendRedirect($url);
             return true;
@@ -244,4 +217,3 @@ class GoodNewsSubscriptionModxUserSubscriptionProcessor extends GoodNewsSubscrip
         return false;
     }
 }
-return 'GoodNewsSubscriptionModxUserSubscriptionProcessor';
