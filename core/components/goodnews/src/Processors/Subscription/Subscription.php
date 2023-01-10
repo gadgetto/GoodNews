@@ -35,7 +35,6 @@ use Bitego\GoodNews\Processors\Subscription\Base;
  * @package goodnews
  * @subpackage processors
  */
-
 class Subscription extends Base
 {
     /** @var modUser $user */
