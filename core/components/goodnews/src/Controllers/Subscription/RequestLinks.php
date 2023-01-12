@@ -1,48 +1,38 @@
 <?php
-/**
- * GoodNews
- *
- * Copyright 2012 by bitego <office@bitego.com>
- *
- * GoodNews is free software; you can redistribute it and/or modify it under the
- * terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
- *
- * GoodNews is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this software; if not, write to the Free Software Foundation, Inc., 59 Temple
- * Place, Suite 330, Boston, MA 02111-1307 USA
- */
 
 /**
- * Class which handles the request of secure links of users.
+ * This file is part of the GoodNews package.
+ *
+ * @copyright bitego (Martin Gartner)
+ * @license GNU General Public License v2.0 (and later)
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+namespace Bitego\GoodNews\Controllers\Subscription;
+
+use Bitego\GoodNews\Controllers\Subscription\Base;
+
+/**
+ * Controller class which handles the request of secure links of users.
  *
  * @package goodnews
  * @subpackage controllers
  */
-
-class GoodNewsSubscriptionRequestLinksController extends GoodNewsSubscriptionController {
+class RequestLinks extends Base
+{
     /** @var boolean $success */
     public $success = false;
-    
+
     /**
      * Load default properties for this controller.
      *
      * @return void
      */
-    public function initialize() {
-        $this->modx->lexicon->load('goodnews:frontend');
-        
-        // todo: in all controllers fix the default properties array handling!
-        //       If the input arrays have the same string keys, then the later value for that 
-        //       key will overwrite the previous one.
-        //       Therefore: the setDefaultProperties method always will take the values from snippet settings and ignore these settings here!
-        //       This method should be named addDefaultProperties
-        $this->setDefaultProperties(array(
+    public function initialize()
+    {
+        $this->setDefaultProperties([
             'unsubscribeResourceId'    => '',
             'profileResourceId'        => '',
             'submittedResourceId'      => '',
@@ -54,10 +44,10 @@ class GoodNewsSubscriptionRequestLinksController extends GoodNewsSubscriptionCon
             'emailField'               => 'email',
             'sendUnauthorizedPage'     => false,
             'submitVar'                => 'goodnews-requestlinks-btn',
-            'successMsg'               => '',
+            'successMsg'               => $this->modx->lexicon('goodnews.requestlinks_success'),
             'validate'                 => '',
             'placeholderPrefix'        => '',
-        ));
+        ]);
     }
 
     /**
@@ -65,29 +55,33 @@ class GoodNewsSubscriptionRequestLinksController extends GoodNewsSubscriptionCon
      *
      * @return string
      */
-    public function process() {
+    public function process()
+    {
         $placeholderPrefix = $this->getProperty('placeholderPrefix', '');
 
-        if (!$this->hasPost()) { return ''; }
-        if (!$this->loadDictionary()) { return ''; }
-        
-        $fields = $this->validateFields();
-        
+        // Set Dictionary instance and load POST array
+        /** @var Dictionary $dictionary */
+        if (!$this->hasPost()) {
+            return '';
+        }
+        // Set Validator instance and validate fields
+        $fields = $this->validate();
+
         $this->dictionary->reset();
         $this->dictionary->fromArray($fields);
-        
+
         $this->validateEmail();
 
         if ($this->validator->hasErrors()) {
-            $this->modx->toPlaceholders($this->validator->getErrors(), $placeholderPrefix.'error');
-            $this->modx->setPlaceholder($placeholderPrefix.'validation_error', true);
+            $this->modx->toPlaceholders($this->validator->getErrors(), $placeholderPrefix . 'error');
+            $this->modx->setPlaceholder($placeholderPrefix . 'validation_error', true);
         } else {
             $result = $this->runProcessor('RequestLinks');
             if ($result !== true) {
-                $this->modx->setPlaceholder($placeholderPrefix.'error.message', $result);
+                $this->modx->setPlaceholder($placeholderPrefix . 'error.message', $result);
             } else {
-                $successMsg = $this->getProperty('successMsg', $this->modx->lexicon('goodnews.requestlinks_success')); // workaround -> see todo above!
-                $this->modx->setPlaceholder($placeholderPrefix.'success.message', $successMsg);
+                $successMsg = $this->getProperty('successMsg');
+                $this->modx->setPlaceholder($placeholderPrefix . 'success.message', $successMsg);
                 $this->success = true;
             }
         }
@@ -102,8 +96,9 @@ class GoodNewsSubscriptionRequestLinksController extends GoodNewsSubscriptionCon
      *
      * @return array
      */
-    public function validateFields() {
-        $this->loadValidator();
+    protected function validate()
+    {
+        $this->validator = $this->subscription->loadValidator();
         $fields = $this->validator->validateFields($this->dictionary, $this->getProperty('validate', ''));
         foreach ($fields as $k => $v) {
             $fields[$k] = str_replace(array('[',']'), array('&#91;','&#93;'), $v);
@@ -116,9 +111,10 @@ class GoodNewsSubscriptionRequestLinksController extends GoodNewsSubscriptionCon
      *
      * @return boolean
      */
-    public function validateEmail() {
+    protected function validateEmail()
+    {
         $emailField = $this->getProperty('emailField', 'email');
-        
+
         $email = $this->dictionary->get($emailField);
         $success = true;
 
@@ -130,4 +126,3 @@ class GoodNewsSubscriptionRequestLinksController extends GoodNewsSubscriptionCon
         return $success;
     }
 }
-return 'GoodNewsSubscriptionRequestLinksController';

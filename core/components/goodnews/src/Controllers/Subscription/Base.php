@@ -27,7 +27,6 @@ use Bitego\GoodNews\Model\GoodNewsCategoryMember;
  * @package goodnews
  * @subpackage controllers
  */
-
 abstract class Base
 {
     /** @var modX $modx */
@@ -45,10 +44,16 @@ abstract class Base
     /** @var Subscription $subscription */
     public $subscription = null;
 
+    /** @var Dictionary $dictionary */
+    public $dictionary = null;
+
+    /** @var Validator $validator */
+    public $validator = null;
+
     /** @var array $config An array of configuration properties */
     public $config = [];
 
-    /** @var array $scriptProperties An array of properties */
+    /** @var array $scriptProperties An array of script properties */
     protected $scriptProperties = [];
 
     /** @var array $placeholders */
@@ -66,6 +71,12 @@ abstract class Base
     /** @var string $email */
     public $email = '';
 
+    /** @var string $username */
+    public $username = '';
+
+    /** @var string $password */
+    public $password = '';
+
     /**
      * The constructor for the Base controller class.
      *
@@ -77,6 +88,7 @@ abstract class Base
         $this->modx = &$subscription->modx;
         $this->subscription = &$subscription;
         $this->config = array_merge($this->config, $config);
+        $this->modx->lexicon->load('goodnews:frontend');
     }
 
     /**
@@ -196,7 +208,7 @@ abstract class Base
      * @params integer $userID
      * @return modUser object or null
      */
-    public function getUserById($userID)
+    public function getUserById(integer $userID)
     {
         $this->user = $this->modx->getObject(modUser::class, [
             'id' => $userID,
@@ -425,7 +437,7 @@ abstract class Base
      * @param int $userid
      * @return array $membergroupids
      */
-    public function collectGoodNewsGroupMembers($userid)
+    public function collectGoodNewsGroupMembers(integer $userid)
     {
         $membergroups = $this->modx->getCollection(GoodNewsGroupMember::class, ['member_id' => $userid]);
         $membergroupids = [];
@@ -442,7 +454,7 @@ abstract class Base
      * @param int $userid
      * @return array $membercategoryids
      */
-    public function collectGoodNewsCategoryMembers($userid)
+    public function collectGoodNewsCategoryMembers(integer $userid)
     {
         $membercategories = $this->modx->getCollection(GoodNewsCategoryMember::class, ['member_id' => $userid]);
         $membercategoryids = [];
@@ -484,7 +496,7 @@ abstract class Base
     }
 
     /**
-     * Set the default options for this module.
+     * Set the default script properties.
      *
      * @access protected
      * @param array $defaults
@@ -496,7 +508,7 @@ abstract class Base
     }
 
     /**
-     * Set an option for this module.
+     * Set a script property.
      *
      * @access public
      * @param string $key
@@ -509,7 +521,7 @@ abstract class Base
     }
 
     /**
-     * Set an array of options.
+     * Set an array of script properties.
      *
      * @access public
      * @param array $array
@@ -523,15 +535,15 @@ abstract class Base
     }
 
     /**
-     * Get an option.
+     * Get a script property.
      *
      * @access public
-     * @param $key
-     * @param null $default
+     * @param string $key
+     * @param mixed $default
      * @param string $method
      * @return mixed
      */
-    public function getProperty($key, $default = null, $method = '!empty')
+    public function getProperty(string $key, $default = null, string $method = '!empty')
     {
         $v = $default;
 
@@ -554,7 +566,7 @@ abstract class Base
     }
 
     /**
-     * Return an array of REQUEST options.
+     * Return an array of REQUEST script properties.
      *
      * @access public
      * @return array
@@ -565,7 +577,7 @@ abstract class Base
     }
 
     /**
-     * setPlaceholder function.
+     * Set a placeholder.
      *
      * @access public
      * @param mixed $k
@@ -578,7 +590,7 @@ abstract class Base
     }
 
     /**
-     * getPlaceholder function.
+     * Get a placeholder.
      *
      * @access public
      * @param mixed $k
@@ -591,10 +603,10 @@ abstract class Base
     }
 
     /**
-     * setPlaceholders function.
+     * Set an array of placeholders.
      *
      * @access public
-     * @param mixed $array
+     * @param array $array
      * @return void
      */
     public function setPlaceholders(array $array)
@@ -605,7 +617,7 @@ abstract class Base
     }
 
     /**
-     * getPlaceholders function.
+     * Get an array of placeholders.
      *
      * @access public
      * @return void
@@ -644,7 +656,7 @@ abstract class Base
     {
         $processorFile = $this->config['processorsPath'] . $processor . '.php';
         if (!file_exists($processorFile)) {
-            $this->modx->log(modX::LOG_LEVEL_ERROR, '[GoodNews] Could not load processor file: ' . $processorFile);
+            $this->modx->log(modX::LOG_LEVEL_ERROR, '[GoodNews] Could not find processor file: ' . $processorFile);
             return false;
         }
         try {
@@ -661,15 +673,22 @@ abstract class Base
     }
 
     /**
-     * Check if the form has been submitted.
+     * Check if the form has been submitted + load and set dictionary.
      *
      * @access public
      * @return boolean
      */
     public function hasPost()
     {
+        $hasPost = false;
         $submitVar = $this->getProperty('submitVar');
-        return (!empty($_POST) && (empty($submitVar) || !empty($_POST[$submitVar])));
+        if (!empty($_POST) && (empty($submitVar) || !empty($_POST[$submitVar]))) {
+            $this->dictionary = $this->subscription->loadDictionary();
+            if ($this->dictionary) {
+                $hasPost = true;
+            }
+        }
+        return $hasPost;
     }
 
     /**

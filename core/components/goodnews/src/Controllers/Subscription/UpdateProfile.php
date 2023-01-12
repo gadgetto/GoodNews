@@ -1,44 +1,37 @@
 <?php
-/**
- * GoodNews
- *
- * Copyright 2012 by bitego <office@bitego.com>
- * Based on code from Login add-on
- * Copyright 2010 by Shaun McCormick <shaun@modx.com>
- * Modified by bitego - 10/2013
- *
- * GoodNews is free software; you can redistribute it and/or modify it under the
- * terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
- *
- * GoodNews is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this software; if not, write to the Free Software Foundation, Inc., 59 Temple
- * Place, Suite 330, Boston, MA 02111-1307 USA
- */
 
 /**
- * Class which handles updating the subscription profile of a user.
+ * This file is part of the GoodNews package.
+ *
+ * @copyright bitego (Martin Gartner)
+ * @license GNU General Public License v2.0 (and later)
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+namespace Bitego\GoodNews\Controllers\Subscription;
+
+use MODX\Revolution\modUserProfile;
+use Bitego\GoodNews\Controllers\Subscription\Base;
+
+/**
+ * Controller class which handles updating the subscription profile of a user.
  *
  * @package goodnews
  * @subpackage controllers
  */
-
-class GoodNewsSubscriptionUpdateProfileController extends GoodNewsSubscriptionController {
-
+class UpdateProfile extends Base
+{
     /**
      * Load default properties for this controller.
      *
      * @access public
      * @return void
      */
-    public function initialize() {
-        $this->modx->lexicon->load('goodnews:frontend');
-        $this->setDefaultProperties(array(
+    public function initialize()
+    {
+        $this->setDefaultProperties([
             'errTpl'                => '<span class="error">[[+error]]</span>',
             'useExtended'           => false,
             'excludeExtended'       => '',
@@ -65,7 +58,7 @@ class GoodNewsSubscriptionUpdateProfileController extends GoodNewsSubscriptionCo
             'dir'                   => 'ASC',
             'grpCatPlaceholder'     => 'grpcatfieldsets',
             'placeholderPrefix'     => '',
-        ));
+        ]);
     }
 
     /**
@@ -74,78 +67,81 @@ class GoodNewsSubscriptionUpdateProfileController extends GoodNewsSubscriptionCo
      * @access public
      * @return string
      */
-    public function process() {
+    public function process()
+    {
         $placeholderPrefix = $this->getProperty('placeholderPrefix', '');
         $reloadOnSuccess   = $this->getProperty('reloadOnSuccess', true);
         $successKey        = $this->getProperty('successKey', 'updsuccess');
         $groupsOnly        = $this->getProperty('groupsOnly', false);
-        
-        // Verifies a subscriber and loads user + profile object
+
+        // Verifies a subscriber and loads modUser + modUserProfile objects
         if (!$this->authenticateSubscriber()) {
             // this is only executed if sendUnauthorizedPage property is set to false
-            $this->modx->setPlaceholder($placeholderPrefix.'authorization_failed', true);
+            $this->modx->setPlaceholder($placeholderPrefix . 'authorization_failed', true);
             return '';
         } else {
             if (!empty($this->sid)) {
-                $this->modx->setPlaceholder($placeholderPrefix.'sid', $this->sid);
+                $this->modx->setPlaceholder($placeholderPrefix . 'sid', $this->sid);
             }
-            $this->modx->setPlaceholder($placeholderPrefix.'authorization_success', true);
+            $this->modx->setPlaceholder($placeholderPrefix . 'authorization_success', true);
         }
 
         // Groups and/or categories are submitted via URL string (used for re-subscription part!)
         if (isset($_GET['gg']) && isset($_GET['gc'])) {
-            $memberGroups = $this->goodnewssubscription->decodeParams($_GET['gg']);
-            $memberCategories = $this->goodnewssubscription->decodeParams($_GET['gc']);
-            
+            $memberGroups = $this->subscription->decodeParams($_GET['gg']);
+            $memberCategories = $this->subscription->decodeParams($_GET['gc']);
+
         // or use saved groups and/or categories from subscribers profile
         } else {
             $memberGroups = $this->collectGoodNewsGroupMembers($this->user->get('id'));
             $memberCategories = $this->collectGoodNewsCategoryMembers($this->user->get('id'));
         }
         $this->generateGrpCatFields($memberGroups, $memberCategories);
-        
-        $this->checkForSuccessMessage();
-                
-        if ($this->hasPost()) {
-            
-            $this->loadDictionary();
-            
-            // Synchronize categories with groups (a category can't be selected without its parent group!)
-            if (!$groupsOnly) { $this->selectParentGroupsByCategories(); }
-            
-            if ($this->validate()) {
 
-                if ($this->runPreHooks()) {
-                
-                    // If user has no GoodNews profile (= GoodNewsSubscriberMeta) create one
-                    if (empty($this->sid)) {
-                        
-                        $result = $this->runProcessor('CreateSubscriberMeta');
-                        if ($result !== true) {
-                            $this->modx->setPlaceholder($placeholderPrefix.'error.message', $result);
-                            $this->setFieldPlaceholders();
-                            return '';
-                        }
-                    }
-                    
-                    // Update the profile
-                    $result = $this->runProcessor('UpdateProfile');
+        $this->checkForSuccessMessage();
+
+        // Set Dictionary instance and load POST array
+        /** @var Dictionary $dictionary */
+        if (!$this->hasPost()) {
+            $this->setFieldPlaceholders();
+            return '';
+        }
+
+        // Synchronize categories with groups (a category can't be selected without its parent group!)
+        if (!$groupsOnly) {
+            $this->selectParentGroupsByCategories();
+        }
+
+        if ($this->validate()) {
+            if ($this->runPreHooks()) {
+                // If user has no GoodNews profile (= GoodNewsSubscriberMeta) create one
+                if (empty($this->sid)) {
+                    $result = $this->runProcessor('CreateSubscriberMeta');
                     if ($result !== true) {
-                        $this->modx->setPlaceholder($placeholderPrefix.'error.message', $result);
-                    } elseif ($reloadOnSuccess) {
-                        $urlParams = array();
-                        $urlParams[$successKey] = 1;
-                        if (!empty($this->sid)) {
-                            $urlParams['sid'] = $this->sid;
-                        }
-                        $url = $this->modx->makeUrl($this->modx->resource->get('id'), '', $urlParams, 'full');
-                        $this->modx->sendRedirect($url);
-                    } else {
-                        $this->modx->setPlaceholder($placeholderPrefix.'update_success', true);
+                        $this->modx->setPlaceholder($placeholderPrefix . 'error.message', $result);
+                        $this->setFieldPlaceholders();
+                        return '';
                     }
+                }
+
+                // Update the profile
+                $result = $this->runProcessor('UpdateProfile');
+                if ($result !== true) {
+                    $this->modx->setPlaceholder($placeholderPrefix . 'error.message', $result);
+                } elseif ($reloadOnSuccess) {
+                    $urlParams = [];
+                    $urlParams[$successKey] = 1;
+                    if (!empty($this->sid)) {
+                        $urlParams['sid'] = $this->sid;
+                    }
+                    $url = $this->modx->makeUrl($this->modx->resource->get('id'), '', $urlParams, 'full');
+                    $this->modx->sendRedirect($url);
+                } else {
+                    $this->modx->setPlaceholder($placeholderPrefix . 'update_success', true);
                 }
             }
         }
+
         $this->setFieldPlaceholders();
         return '';
     }
@@ -156,10 +152,11 @@ class GoodNewsSubscriptionUpdateProfileController extends GoodNewsSubscriptionCo
      * @access public
      * @return void
      */
-    public function setFieldPlaceholders() {
+    public function setFieldPlaceholders()
+    {
         $placeholderPrefix = $this->getProperty('placeholderPrefix', '');
         $useExtended       = $this->getProperty('useExtended', false);
-        
+
         $placeholders = $this->profile->toArray();
         // Add extended fields to placeholders
         if ($useExtended) {
@@ -182,32 +179,32 @@ class GoodNewsSubscriptionUpdateProfileController extends GoodNewsSubscriptionCo
      * @access public
      * @return void
      */
-    public function checkForSuccessMessage() {
+    public function checkForSuccessMessage()
+    {
         $placeholderPrefix = $this->getProperty('placeholderPrefix', '');
         $successKey        = $this->getProperty('successKey', 'updsuccess');
-        
+
         if (!empty($_REQUEST[$successKey])) {
-            $this->modx->setPlaceholder($placeholderPrefix.'update_success', true);
+            $this->modx->setPlaceholder($placeholderPrefix . 'update_success', true);
         }
     }
 
     /**
      * Validate the form submission.
-     * 
+     *
      * @return boolean
      */
-    public function validate() {
+    public function validate()
+    {
         $placeholderPrefix = $this->getProperty('placeholderPrefix', '');
         $validate          = $this->getProperty('validate', '');
-        
         $validated = false;
-        
-        $this->loadValidator();
-        
+
+        $this->validator = $this->subscription->loadValidator();
         $fields = $this->validator->validateFields($this->dictionary, $validate);
-        
+
         foreach ($fields as $k => $v) {
-            $fields[$k] = str_replace(array('[',']'), array('&#91;','&#93;'), $v);
+            $fields[$k] = str_replace(['[',']'], ['&#91;','&#93;'], $v);
         }
         $this->dictionary->reset();
         $this->dictionary->fromArray($fields);
@@ -216,7 +213,7 @@ class GoodNewsSubscriptionUpdateProfileController extends GoodNewsSubscriptionCo
         $this->preventDuplicateEmails();
 
         if ($this->validator->hasErrors()) {
-            $this->modx->toPlaceholders($this->validator->getErrors(), $placeholderPrefix.'error');
+            $this->modx->toPlaceholders($this->validator->getErrors(), $placeholderPrefix . 'error');
             $this->modx->toPlaceholders($this->dictionary->toArray(), $placeholderPrefix);
         } else {
             $validated = true;
@@ -230,7 +227,8 @@ class GoodNewsSubscriptionUpdateProfileController extends GoodNewsSubscriptionCo
      * @access public
      * @return void
      */
-    public function removeSubmitVar() {
+    public function removeSubmitVar()
+    {
         $submitVar = $this->getProperty('submitVar');
         if (!empty($submitVar)) {
             $this->dictionary->remove($submitVar);
@@ -239,22 +237,26 @@ class GoodNewsSubscriptionUpdateProfileController extends GoodNewsSubscriptionCo
 
     /**
      * Prevent duplicate emails.
-     * MODx allow_multiple_emails setting is ignored -> we never let subscribe an email address more then once!
+     * MODX allow_multiple_emails setting is ignored -> we never let subscribe an email address more then once!
      *
      * @access public
      * @return void
      */
-    public function preventDuplicateEmails() {
+    public function preventDuplicateEmails()
+    {
         $emailField = $this->getProperty('emailField', 'email');
-        
+
         $email = $this->dictionary->get($emailField);
         if (!empty($email)) {
-            $emailTaken = $this->modx->getObject('modUserProfile', array(
+            $emailTaken = $this->modx->getObject(modUserProfile::class, [
                 'email' => $email,
                 'internalKey:!=' => $this->user->get('id'),
-            ));
+            ]);
             if ($emailTaken) {
-                $this->validator->addError($emailField, $this->modx->lexicon('goodnews.validator_email_taken', array('email' => $email)));
+                $this->validator->addError(
+                    $emailField,
+                    $this->modx->lexicon('goodnews.validator_email_taken', ['email' => $email])
+                );
             }
         }
     }
@@ -265,41 +267,41 @@ class GoodNewsSubscriptionUpdateProfileController extends GoodNewsSubscriptionCo
      * @access public
      * @return boolean
      */
-    public function runPreHooks() {
+    public function runPreHooks()
+    {
         $placeholderPrefix    = $this->getProperty('placeholderPrefix', '');
         $submitVar            = $this->getProperty('submitVar', 'goodnews-updateprofile-btn');
         $preHooks             = $this->getProperty('preHooks', '');
         $sendUnauthorizedPage = $this->getProperty('sendUnauthorizedPage', true);
         $reloadOnSuccess      = $this->getProperty('reloadOnSuccess', true);
-        
+
         $validated = true;
         if (!empty($preHooks)) {
             $this->loadHooks('preHooks');
-            $this->preHooks->loadMultiple($preHooks, $this->dictionary->toArray(), array(
+            $this->preHooks->loadMultiple($preHooks, $this->dictionary->toArray(), [
                 'submitVar' => $submitVar,
                 'sendUnauthorizedPage' => $sendUnauthorizedPage,
                 'reloadOnSuccess' => $reloadOnSuccess,
-            ));
+            ]);
             $values = $this->preHooks->getValues();
             if (!empty($values)) {
                 $this->dictionary->fromArray($values);
             }
 
             if ($this->preHooks->hasErrors()) {
-                $errors = array();
+                $errors = [];
                 $es = $this->preHooks->getErrors();
                 $errTpl = $this->getProperty('errTpl');
                 foreach ($es as $key => $error) {
                     $errors[$key] = str_replace('[[+error]]', $error, $errTpl);
                 }
-                $this->modx->toPlaceholders($errors, $placeholderPrefix.'error');
+                $this->modx->toPlaceholders($errors, $placeholderPrefix . 'error');
 
                 $errorMsg = $this->preHooks->getErrorMessage();
-                $this->modx->toPlaceholder('message', $errorMsg, $placeholderPrefix.'error');
+                $this->modx->toPlaceholder('message', $errorMsg, $placeholderPrefix . 'error');
                 $validated = false;
             }
         }
         return $validated;
     }
 }
-return 'GoodNewsSubscriptionUpdateProfileController';

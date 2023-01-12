@@ -17,6 +17,7 @@ use MODX\Revolution\modUserProfile;
 use MODX\Revolution\Registry\modRegistry;
 use MODX\Revolution\Registry\modFileRegister;
 use Bitego\GoodNews\Model\GoodNewsSubscriberMeta;
+use Bitego\GoodNews\Controllers\Subscription\Base;
 
 /**
  * Controller class which confirms a user's subscription after activation.
@@ -24,24 +25,8 @@ use Bitego\GoodNews\Model\GoodNewsSubscriberMeta;
  * @package goodnews
  * @subpackage controllers
  */
-
 class Confirm extends Base
 {
-    /** @var modUser $user */
-    public $user = null;
-
-    /** @var modUserProfile $profile */
-    public $profile = null;
-
-    /** @var GoodNewsSubscriberMeta $subscribermeta */
-    public $subscribermeta = null;
-
-    /** @var string $username */
-    public $username = '';
-
-    /** @var string $password */
-    public $password = '';
-
     /**
      * initialize function.
      *
@@ -73,9 +58,7 @@ class Confirm extends Base
         $this->verifyManifest();
         $this->getSubscriber();
         $this->validatePassword();
-
         $result = $this->runProcessor('ConfirmSubscription');
-
         return '';
     }
 
@@ -86,7 +69,7 @@ class Confirm extends Base
      * @access public
      * @return boolean
      */
-    public function verifyManifest()
+    protected function verifyManifest()
     {
         $verified = false;
         if (empty($_REQUEST['lp']) || empty($_REQUEST['lu'])) {
@@ -106,7 +89,7 @@ class Confirm extends Base
      * @access public
      * @return void
      */
-    public function getSubscriber()
+    protected function getSubscriber()
     {
         $this->user = $this->modx->getObject(modUser::class, ['username' => $this->username]);
         if (!is_object($this->user) || $this->user->get('active')) {
@@ -131,7 +114,7 @@ class Confirm extends Base
      * @access public
      * @return boolean
      */
-    public function validatePassword()
+    protected function validatePassword()
     {
         // Read new password from modRegistry to prevent middleman attacks.
         if (!$this->modx->services->has('registry')) {
