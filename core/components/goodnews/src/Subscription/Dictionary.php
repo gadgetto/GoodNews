@@ -18,7 +18,6 @@ namespace Bitego\GoodNews\Subscription;
  * @package goodnews
  * @subpackage subscription
  */
-
 class Dictionary
 {
     /** @var modX $modx A reference to the modX instance */
@@ -54,9 +53,6 @@ class Dictionary
      */
     public function gather(array $fields = [])
     {
-        if (empty($fields)) {
-            $fields = [];
-        }
         $this->fields = array_merge($fields, $_POST);
     }
 
