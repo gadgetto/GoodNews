@@ -15,7 +15,6 @@ namespace Bitego\GoodNews\Subscription;
 use MODX\Revolution\modX;
 use MODX\Revolution\modChunk;
 use MODX\Revolution\Mail\modMail;
-use Bitego\GoodNews\Controllers\Subscription\Base;
 use Bitego\GoodNews\Subscription\Validator;
 use Bitego\GoodNews\Subscription\Hooks;
 use Bitego\GoodNews\Subscription\Dictionary;
@@ -103,7 +102,7 @@ class Subscription
                 );
             }
         } else {
-            $this->modx->log(modX::LOG_LEVEL_ERROR, '[GoodNews] Could not load controller file: ' . $classPath);
+            $this->modx->log(modX::LOG_LEVEL_ERROR, '[GoodNews] Could not find controller file: ' . $classPath);
         }
         return $this->controller;
     }
@@ -139,7 +138,7 @@ class Subscription
      * Load the Dictionary class and gather $_POST params.
      *
      * @access public
-     * @return Dictionary  An instance of the Dictionary class
+     * @return Dictionary An instance of the Dictionary class
      */
     public function loadDictionary()
     {
