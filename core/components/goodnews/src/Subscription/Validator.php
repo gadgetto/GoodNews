@@ -78,7 +78,7 @@ class Validator
      * @param string $validationFields
      * @return array An array of field name => value pairs.
      */
-    public function validateFields(Dictionary $dictionary, array $validationFields = '')
+    public function validateFields(Dictionary $dictionary, string $validationFields = '')
     {
         $keys = $dictionary->toArray();
         $this->fields = $keys;
