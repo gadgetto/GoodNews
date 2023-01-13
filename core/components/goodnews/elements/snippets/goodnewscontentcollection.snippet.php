@@ -1,46 +1,59 @@
 <?php
-/**
- * GoodNews
- *
- * Copyright 2012 by bitego <office@bitego.com>
- *
- * GoodNews is free software; you can redistribute it and/or modify it under the
- * terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
- *
- * GoodNews is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this software; if not, write to the Free Software Foundation, Inc., 59 Temple
- * Place, Suite 330, Boston, MA 02111-1307 USA
- */
 
 /**
+ * This file is part of the GoodNews package.
+ *
+ * @copyright bitego (Martin Gartner)
+ * @license GNU General Public License v2.0 (and later)
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+use MODX\Revolution\modX;
+use MODX\Revolution\modResource;
+use MODX\Revolution\modChunk;
+use Bitego\GoodNews\Model\GoodNewsMailingMeta;
+
+/**
+ * GoodNewsContentCollection
+ *
  * Snippet to get a list of collected resource documents for inserting in newsletter content.
  *
  * @var modX $modx
+ * @var array $scriptProperties
+ * @var GoodNews $goodnews
+ * @var GoodNewsMailingMeta $meta
+ * @var modChunk $chunk
  *
- * @property string $collectionId Internal name of the content collection (collection1, collection2 or collection3). (default: 'collection1')
- * @property string $tpl Name of a Chunk serving as template for a Resource row. NOTE: if not provided, properties are dumped to output for each resource. (default: 'sample.GoodNewsContentCollectionRowChunk')
- * @property string $tplWrapper Name of a Chunk serving as wrapper template for the Snippet output. (default: '')
- * @property string $sortby A field name to sort by or JSON object of field names and sortdir for each field, e.g. {"publishedon":"ASC","createdon":"DESC"}. (default: 'publishedon')
- * @property string $sortdir Order which to sort by. (default: 'DESC')
- * @property string $includeContent Indicates if the content of each resource should be returned in the results. (default: 'false')
- * @property string $outputSeparator Separator for the output of row chunks. (default: '')
- * @property string $toPlaceholder If set, will assign the result to this placeholder instead of outputting it directly. (default: '')
- * @property string $debug If true, will send the SQL query to the MODX log. (default: 'false')
+ * PROPERTIES
+ *
+ * @property string  &collectionId Internal name of the content collection (collection1, collection2 or collection3).
+ *                   (default: 'collection1')
+ * @property string  &tpl Name of a Chunk serving as template for a Resource row. NOTE: if not provided, properties are
+ *                   dumped to output for each resource. (default: 'sample.GoodNewsContentCollectionRowChunk')
+ * @property string  &tplWrapper Name of a Chunk serving as wrapper template for the Snippet output.
+ *                   (default: '')
+ * @property string  &sortby A field name to sort by or JSON object of field names and sortdir for each field,
+ *                   e.g. {"publishedon":"ASC","createdon":"DESC"}. (default: 'publishedon')
+ * @property string  &sortdir Order which to sort by.
+ *                   (default: 'DESC')
+ * @property string  &includeContent Indicates if the content of each resource should be returned in the results.
+ *                   (default: 'false')
+ * @property string  &outputSeparator Separator for the output of row chunks.
+ *                   (default: '')
+ * @property string  &toPlaceholder If set, will assign the result to this placeholder instead of outputting it.
+ *                   (default: '')
+ * @property boolean &debug If true, will send the SQL query to the MODX log.
+ *                   (default: 0)
  *
  * @package goodnews
+ * @subpackage snippets
  */
 
-$corePath = $modx->getOption('goodnews.core_path', null, $modx->getOption('core_path').'components/goodnews/');
-$goodnews = $modx->getService('goodnews','GoodNews', $corePath.'model/goodnews/', $scriptProperties);
-if (!($goodnews instanceof GoodNews)) return '';
+$goodnews = $modx->services->get('goodnews');
 
-$output = array();
+$output = [];
 
 // Default properties
 $collectionId    = !empty($collectionId) ? $collectionId : 'collection1';
@@ -54,34 +67,42 @@ $toPlaceholder   = !empty($toPlaceholder) ? $toPlaceholder : '';
 $debug           = !empty($debug) ? true : false;
 
 
-$meta = $modx->getObject('GoodNewsMailingMeta', array('mailing_id' => $modx->resource->get('id')));
+$meta = $modx->getObject(GoodNewsMailingMeta::class, ['mailing_id' => $modx->resource->get('id')]);
 if (!is_object($meta)) {
-    $modx->log(modX::LOG_LEVEL_ERROR, '[GoodNews] ContentCollection snippet - could not read meta data for mailing resource.');
+    $modx->log(
+        modX::LOG_LEVEL_ERROR,
+        '[GoodNews] ContentCollection snippet - could not read meta data for mailing resource.'
+    );
     return 'Could not read meta data for this mailing resource.';
 }
-
 $collections = unserialize($meta->get('collections'));
 if (!is_array($collections)) {
-    $modx->log(modX::LOG_LEVEL_ERROR, '[GoodNews] ContentCollection snippet - could no read collections array for mailing resource.');
+    $modx->log(
+        modX::LOG_LEVEL_ERROR,
+        '[GoodNews] ContentCollection snippet - could no read collections array for mailing resource.'
+    );
     return 'Could not read collections array for this mailing resource.';
 }
-
 $collection = $collections[$collectionId];
 if (empty($collection)) {
-    $modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] ContentCollection snippet - '.$collectionId.' is empty.');
+    $modx->log(
+        modX::LOG_LEVEL_INFO,
+        '[GoodNews] ContentCollection snippet - ' . $collectionId . ' is empty.'
+    );
     return '';
 }
 
 // Query db
-$query = $modx->newQuery('modResource');
-$fields = array_keys($modx->getFields('modResource'));
-if (!$includeContent) { $fields = array_diff($fields, array('content')); } 
-$query->select($modx->getSelectColumns('modResource', 'modResource', '', $fields));
-
-$query->where(array('id:IN' => $collection));
+$query = $modx->newQuery(modResource::class);
+$fields = array_keys($modx->getFields(modResource::class));
+if (!$includeContent) {
+    $fields = array_diff($fields, ['content']);
+}
+$query->select($modx->getSelectColumns(modResource::class, 'modResource', '', $fields));
+$query->where(['id:IN' => $collection]);
 
 if (!empty($sortby)) {
-    $sorts = array($sortby => $sortdir);
+    $sorts = [$sortby => $sortdir];
     if (is_array($sorts)) {
         while (list($sort, $dir) = each($sorts)) {
             $query->sortby($sort, $dir);
@@ -93,34 +114,30 @@ if ($debug) {
     $modx->log(modX::LOG_LEVEL_ERROR, $query->toSQL());
 }
 
-$resources = $modx->getCollection('modResource', $query);
+$resources = $modx->getCollection(modResource::class, $query);
 foreach ($resources as $resource) {
-
     $properties = array_merge(
         $scriptProperties,
         $resource->get($fields),
         array('url' => $modx->makeUrl($resource->get('id'), '', '', 'full'))
     );
-    
     $resourceTpl = '';
     if (!empty($tpl)) {
         $resourceTpl = $goodnews->parseTpl($tpl, $properties);
     }
-    
     if (empty($resourceTpl)) {
-        $chunk = $modx->newObject('modChunk');
+        $chunk = $modx->newObject(modChunk::class);
         $chunk->setCacheable(false);
-        $output[] = $chunk->process(array(), '<pre>'.print_r($properties, true).'</pre>');
+        $output[] = $chunk->process([], '<pre>' . print_r($properties, true) . '</pre>');
     } else {
         $output[] = $resourceTpl;
     }
-
 }
-// convert to HTML string
+// Convert to HTML string
 $output = implode($outputSeparator, $output);
 
 if (!empty($tplWrapper) && !empty($output)) {
-    $output = $goodnews->parseTpl($tplWrapper, array('output' => $output));
+    $output = $goodnews->parseTpl($tplWrapper, ['output' => $output]);
 }
 
 $toPlaceholder = $modx->getOption('toPlaceholder', $scriptProperties, false);
