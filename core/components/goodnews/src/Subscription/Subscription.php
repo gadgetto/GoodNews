@@ -87,7 +87,7 @@ class Subscription
     public function loadController(string $controller)
     {
         $classPath = $this->config['controllersPath'] . $controller . '.php';
-        $className = $controller;
+        $className = 'Bitego\\GoodNews\\Controllers\\Subscription\\' . $controller;
 
         if (file_exists($classPath)) {
             if (!class_exists($className)) {
