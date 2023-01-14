@@ -453,7 +453,7 @@ class Subscription extends Base
     public function loadPreHooks()
     {
         $preHooks = $this->getProperty('preHooks', '');
-        $this->subscription->loadHooks('preHooks');
+        $this->preHooks = $this->subscription->loadHooks('preHooks');
 
         if (!empty($preHooks)) {
             $fields = $this->dictionary->toArray();
