@@ -18,7 +18,7 @@ use Bitego\GoodNews\Subscription\Subscription;
 use Bitego\GoodNews\Model\GoodNewsSubscriberMeta;
 use Bitego\GoodNews\Model\GoodNewsGroup;
 use Bitego\GoodNews\Model\GoodNewsCategory;
-use Bitego\GoodNews\Model\GoodNewsMember;
+use Bitego\GoodNews\Model\GoodNewsGroupMember;
 use Bitego\GoodNews\Model\GoodNewsCategoryMember;
 
 /**
@@ -76,6 +76,12 @@ abstract class Base
 
     /** @var string $password */
     public $password = '';
+
+    /** @var Hooks $preHooks */
+    public $preHooks = null;
+
+    /** @var Hooks $postHooks */
+    public $postHooks = null;
 
     /**
      * The constructor for the Base controller class.
@@ -208,7 +214,7 @@ abstract class Base
      * @params integer $userID
      * @return modUser object or null
      */
-    public function getUserById(integer $userID)
+    public function getUserById(int $userID)
     {
         $this->user = $this->modx->getObject(modUser::class, [
             'id' => $userID,
@@ -250,7 +256,7 @@ abstract class Base
      * @params integer $userID
      * @return GoodNewsSubscriberMeta object or null
      */
-    public function getSubscriberMeta(integer $userID)
+    public function getSubscriberMeta(int $userID)
     {
         $this->subscribermeta = $this->modx->getObject(GoodNewsSubscriberMeta::class, [
             'subscriber_id' => $userID,
@@ -269,11 +275,11 @@ abstract class Base
      * Generates the GoodNews groups/categories tree/fields and writes output to defined placeholder.
      *
      * @access public
-     * @param array $checkedGroups (default [])
-     * @param array $checkedCategories (default [])
+     * @param mixed $checkedGroups (default [])
+     * @param mixed $checkedCategories (default [])
      * @return void
      */
-    public function generateGrpCatFields(array $checkedGroups = [], array $checkedCategories = [])
+    public function generateGrpCatFields($checkedGroups = [], $checkedCategories = [])
     {
         // Get default properties.
         $grpFieldsetTpl    = $this->getProperty('grpFieldsetTpl', 'sample.GoodNewsGrpFieldsetChunk');
@@ -290,6 +296,12 @@ abstract class Base
 
         $output = '';
         $fieldsOutput = '';
+
+        $checkedGroups = empty($checkedGroups) ? [] : $checkedGroups;
+        $checkedCategories = empty($checkedCategories) ? [] : $checkedCategories;
+
+        $groups = null;
+        $categories = null;
 
         // Read available groups and categories from database
         $groups = $this->collectGoodNewsGroups();
@@ -377,7 +389,7 @@ abstract class Base
      * Read GoodNewsGroups from database.
      *
      * @access public
-     * @return collection of goodnewsGroup objects|null
+     * @return collection of GoodNewsGroup objects|null
      */
     public function collectGoodNewsGroups()
     {
@@ -408,7 +420,7 @@ abstract class Base
      * Read GoodNewsCategories from database.
      *
      * @access public
-     * @return collection of goodnewsCategory objects|null
+     * @return collection of GoodNewsCategory objects|null
      */
     public function collectGoodNewsCategories()
     {
@@ -437,7 +449,7 @@ abstract class Base
      * @param int $userid
      * @return array $membergroupids
      */
-    public function collectGoodNewsGroupMembers(integer $userid)
+    public function collectGoodNewsGroupMembers(int $userid)
     {
         $membergroups = $this->modx->getCollection(GoodNewsGroupMember::class, ['member_id' => $userid]);
         $membergroupids = [];
@@ -454,7 +466,7 @@ abstract class Base
      * @param int $userid
      * @return array $membercategoryids
      */
-    public function collectGoodNewsCategoryMembers(integer $userid)
+    public function collectGoodNewsCategoryMembers(int $userid)
     {
         $membercategories = $this->modx->getCollection(GoodNewsCategoryMember::class, ['member_id' => $userid]);
         $membercategoryids = [];
@@ -660,7 +672,7 @@ abstract class Base
             return false;
         }
         try {
-            $className = $processor;
+            $className = 'Bitego\\GoodNews\\Processors\\Subscription\\' . $processor;
             if (!class_exists($className)) {
                 $className = include_once $processorFile;
             }
