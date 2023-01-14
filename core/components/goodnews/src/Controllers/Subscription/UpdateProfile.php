@@ -277,7 +277,7 @@ class UpdateProfile extends Base
 
         $validated = true;
         if (!empty($preHooks)) {
-            $this->loadHooks('preHooks');
+            $this->subscription->loadHooks('preHooks');
             $this->preHooks->loadMultiple($preHooks, $this->dictionary->toArray(), [
                 'submitVar' => $submitVar,
                 'sendUnauthorizedPage' => $sendUnauthorizedPage,
