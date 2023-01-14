@@ -148,25 +148,25 @@ class UnSubscription extends Base
     public function runPostHooks()
     {
         $postHooks = $this->controller->getProperty('postHooks', '');
-        $this->controller->loadHooks('postHooks');
+        $this->postHooks = $this->subscription->loadHooks('postHooks');
 
         $fields = [];
         $fields['subscription.user'] = &$this->user;
         $fields['subscription.profile'] = &$this->profile;
 
-        $this->controller->postHooks->loadMultiple($postHooks, $fields);
+        $this->postHooks->loadMultiple($postHooks, $fields);
 
         // Process hooks
-        if ($this->controller->postHooks->hasErrors()) {
+        if ($this->postHooks->hasErrors()) {
             $errors = [];
             $errTpl = $this->controller->getProperty('errTpl');
-            $errs = $this->controller->postHooks->getErrors();
+            $errs = $this->postHooks->getErrors();
             foreach ($errs as $key => $error) {
                 $errors[$key] = str_replace('[[+error]]', $error, $errTpl);
             }
             $placeholderPrefix = $this->getProperty('placeholderPrefix', '');
             $this->modx->toPlaceholders($errors, $placeholderPrefix . 'error');
-            $errorMsg = $this->controller->postHooks->getErrorMessage();
+            $errorMsg = $this->postHooks->getErrorMessage();
             $this->modx->toPlaceholder('message', $errorMsg, $placeholderPrefix . 'error');
         }
     }

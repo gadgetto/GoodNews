@@ -175,23 +175,23 @@ class ModxUserSubscription extends Base
     public function runPostHooks()
     {
         $postHooks = $this->controller->getProperty('postHooks', '');
-        $this->controller->loadHooks('postHooks');
+        $this->postHooks = $this->subscription->loadHooks('postHooks');
 
         $fields = $this->dictionary->toArray();
         $fields['subscription.user'] = &$this->user;
         $fields['subscription.profile'] = &$this->profile;
 
-        $this->controller->postHooks->loadMultiple($postHooks, $fields);
-        if ($this->controller->postHooks->hasErrors()) {
+        $this->postHooks->loadMultiple($postHooks, $fields);
+        if ($this->postHooks->hasErrors()) {
             $errors = [];
-            $hookErrors = $this->controller->postHooks->getErrors();
+            $hookErrors = $this->postHooks->getErrors();
             foreach ($hookErrors as $key => $error) {
                 $errors[$key] = str_replace('[[+error]]', $error, $this->controller->getProperty('errTpl'));
             }
             $placeholderPrefix = $this->controller->getProperty('placeholderPrefix', '');
             $this->modx->toPlaceholders($errors, $placeholderPrefix . 'error');
 
-            $errorMsg = $this->controller->postHooks->getErrorMessage();
+            $errorMsg = $this->postHooks->getErrorMessage();
             $this->modx->toPlaceholder('message', $errorMsg, $placeholderPrefix . 'error');
         }
     }
