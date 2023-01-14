@@ -344,16 +344,21 @@ class Subscription extends Base
      * If MODX user groups were passed, set them here.
      *
      * @access public
-     * @param string $userGroups Comma separated string of MODX user groups
+     * @param mixed $userGroups Array or comma separated string of MODX user groups
      * @return array
      */
-    public function setUserGroups(string $userGroups)
+    public function setUserGroups($userGroups)
     {
         $added = [];
         // If $userGroups set in form, override here; otherwise use snippet property
-        $this->userGroups = !empty($userGroups) ? $userGroups : $this->controller->getProperty('usergroups', '');
+        $this->userGroups = !empty($userGroups)
+            ? $userGroups
+            : $this->controller->getProperty('usergroups', '');
+
         if (!empty($this->userGroups)) {
-            $this->userGroups = is_array($this->userGroups) ? $this->userGroups : explode(',', $this->userGroups);
+            $this->userGroups = is_array($this->userGroups)
+                ? $this->userGroups
+                : explode(',', $this->userGroups);
 
             foreach ($this->userGroups as $userGroupMeta) {
                 $userGroupMeta = explode(':', $userGroupMeta);
