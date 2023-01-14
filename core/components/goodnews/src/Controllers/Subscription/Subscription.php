@@ -268,28 +268,30 @@ class Subscription extends Base
     private function setUsername()
     {
         $usernameField = $this->getProperty('usernameField', 'username');
-        $username = $this->dictionary->get($usernameField);
-
-        $success = true;
+        $success = false;
 
         // Generate username
+        $username = $this->dictionary->get($usernameField);
         if (empty($username) && !$this->validator->hasErrorsInField($usernameField)) {
-            $this->generateUsername();
+            $username = $this->generateUsername();
+            $success = true;
         // Take username from form field
         } else {
             if ($this->usernameExists($username)) {
                 $this->validator->addError($usernameField, $this->modx->lexicon('goodnews.validator_username_taken'));
                 $success = false;
             } else {
-                $this->dictionary->set('username', $username);
+                $success = true;
             }
         }
+        $this->dictionary->set($usernameField, $username);
         return $success;
     }
 
     /**
      * Generate a new unique username based on email address.
      *
+     * @todo: add property to use full email address as username
      * @access public
      * @return string $newusername
      */
@@ -308,7 +310,6 @@ class Subscription extends Base
             $newusername = $usernamepart . '_' . $counter;
             $counter++;
         }
-        $this->dictionary->set('username', $newusername);
         return $newusername;
     }
 
