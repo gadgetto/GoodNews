@@ -12,6 +12,8 @@
 
 namespace Bitego\GoodNews\Processors\Subscription;
 
+use Bitego\GoodNews\Subscription\Subscription;
+
 /**
  * Abstracts processors into a class.
  *
