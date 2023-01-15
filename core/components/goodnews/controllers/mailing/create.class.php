@@ -85,6 +85,7 @@ class GoodNewsResourceMailingCreateManagerController extends ResourceCreateManag
     {
         $placeholders = parent::process($scriptProperties);
         $this->resourceArray['published'] = 0;
+        $this->resourceArray['uri_override'] = 0;
         $this->getContainerSettings();
         return $placeholders;
     }

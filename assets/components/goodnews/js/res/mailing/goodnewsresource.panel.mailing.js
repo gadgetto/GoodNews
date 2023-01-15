@@ -160,27 +160,27 @@ Ext.extend(GoodNewsResource.panel.Mailing,MODx.panel.Resource,{
             xtype: 'hidden'
             ,id: 'modx-resource-unpub-date'
             ,name: 'unpub_date'
-            ,value: config.record.unpub_date
+            ,value: 0
         },{
             xtype: 'hidden'
             ,id: 'modx-resource-hidemenu'
             ,name: 'hidemenu'
-            ,value: config.record.hidemenu
+            ,value: false
         },{
             xtype: 'hidden'
             ,id: 'modx-resource-menutitle'
             ,name: 'menutitle'
-            ,value: config.record.menutitle || ''
+            ,value: ''
         },{
             xtype: 'hidden'
             ,id: 'modx-resource-link-attributes'
             ,name: 'link_attributes'
-            ,value: config.record.link_attributes || ''
+            ,value: ''
         },{
             xtype: 'hidden'
             ,id: 'modx-resource-menuindex'
             ,name: 'menuindex'
-            ,value: parseInt(config.record.menuindex) || 0
+            ,value: 0
         },{
             xtype: 'hidden'
             ,id: 'modx-resource-class-key'
@@ -225,7 +225,7 @@ Ext.extend(GoodNewsResource.panel.Mailing,MODx.panel.Resource,{
             xtype: 'hidden'
             ,id: 'modx-resource-uri-override'
             ,name: 'uri_override'
-            ,value: parseInt(config.record.uri_override) || 0
+            ,value: 0
         },{
             xtype: 'hidden'
             ,id: 'modx-resource-uri'
