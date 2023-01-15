@@ -1080,8 +1080,14 @@ class Mailer
         $html = str_replace('[[', '%5B%5B', $html);
         $html = str_replace(']]', '%5D%5D', $html);
 
+        // Set error level (suppress parser warnings)
+        $internalErrors = libxml_use_internal_errors(true);
+
         // Ensure UTF-8 is respected by using 'mb_convert_encoding'
         $document->loadHTML(mb_convert_encoding($html, 'HTML-ENTITIES', 'UTF-8'));
+
+        // Restore error level
+        libxml_use_internal_errors($internalErrors);
 
         // Process all link tags
         $elements = $document->getElementsByTagName('a');
