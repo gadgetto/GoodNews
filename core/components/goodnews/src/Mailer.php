@@ -1055,12 +1055,12 @@ class Mailer
      * Replace URLs in HTML with full URLs
      * (works for "<a href" and "<img src" tags)
      *
-     * @access private
+     * @access public
      * @param string $base The base URL (needs trailing /)
      * @param string $html The unparsed HTML
      * @return mixed $output The parsed HTML as string or false
      */
-    private function fullURLs($base, $html)
+    public function fullURLs($base, $html)
     {
         if (empty($html) || empty($base)) {
             return false;
