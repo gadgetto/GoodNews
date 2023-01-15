@@ -12,6 +12,7 @@
 
 namespace Bitego\GoodNews\Controllers\Subscription;
 
+use MODX\Revolution\modX;
 use MODX\Revolution\modUserProfile;
 use Bitego\GoodNews\Controllers\Subscription\Base;
 
@@ -70,9 +71,9 @@ class UpdateProfile extends Base
     public function process()
     {
         $placeholderPrefix = $this->getProperty('placeholderPrefix', '');
-        $reloadOnSuccess   = $this->getProperty('reloadOnSuccess', true);
+        $reloadOnSuccess   = (bool)$this->getProperty('reloadOnSuccess', true);
         $successKey        = $this->getProperty('successKey', 'updsuccess');
-        $groupsOnly        = $this->getProperty('groupsOnly', false);
+        $groupsOnly        = (bool)$this->getProperty('groupsOnly', false);
 
         // Verifies a subscriber and loads modUser + modUserProfile objects
         if (!$this->authenticateSubscriber()) {
