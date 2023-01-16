@@ -120,7 +120,7 @@
                                                     [[+username]]
                                                 </p>
                                                 <p style="font-family: sans-serif; font-size: 16px; font-weight: normal; margin: 0; margin-bottom: 15px;">
-                                                    If you have forgotten your password, you can create  new one by visiting our login area at:
+                                                    If you have forgotten your password, you can create a new one by visiting our login area at:
                                                 </p>
                                                 <p style="font-family: sans-serif; font-size: 16px; font-weight: normal; margin: 0; color: #9ec41a; margin-bottom: 15px;">
                                                     <span class="apple-link" style="color: #9ec41a; font-size: 16px; text-align: center;">
