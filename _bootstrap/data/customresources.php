@@ -10,6 +10,7 @@
  * file that was distributed with this source code.
  */
 
+use MODX\Revolution\modX;
 use MODX\Revolution\modCategory;
 use MODX\Revolution\modTemplate;
 use MODX\Revolution\modResource;
