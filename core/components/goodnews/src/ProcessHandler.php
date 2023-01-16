@@ -27,7 +27,7 @@ class ProcessHandler
     public const PROCESS_TIMEOUT = 90;
 
     /** @var modX $modx A reference to the modX object */
-    public $modx;
+    public $modx = null;
 
     /** @var string $pid GoodNews worker process id */
     private $pid = '';
@@ -39,7 +39,7 @@ class ProcessHandler
     private $currentTime = '';
 
     /** @var string $lockDir The path to the goodnews/locks/ directory in MODX cache folder */
-    public $lockDir;
+    public $lockDir = '';
 
     /** @var boolean $debug Debug mode on/off */
     public $debug = false;
@@ -100,6 +100,17 @@ class ProcessHandler
     public function getCommand()
     {
         return $this->command;
+    }
+
+    /**
+     * Getter for lockDir
+     *
+     * @access public
+     * @return string The lockfile directory path
+     */
+    public function getLockDir()
+    {
+        return $this->lockDir;
     }
 
     /**
