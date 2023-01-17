@@ -77,7 +77,10 @@ if (is_object($templatesCategory)) {
     $properties['goodnews']['templatesCategory'] = $templatesCategory->get('id');
 } else {
     $properties['goodnews']['templatesCategory'] = 0;
-    $modx->log(modX::LOG_LEVEL_ERROR, '-> could not set templatesCategory property for GoodNews container.');
+    $modx->log(
+        modX::LOG_LEVEL_ERROR,
+        '-> could not set templatesCategory property for GoodNews container.'
+    );
 }
 
 // Set default mailing template
@@ -86,7 +89,10 @@ if (is_object($mailingTemplate)) {
     $properties['goodnews']['mailingTemplate'] = $mailingTemplate->get('id');
 } else {
     $properties['goodnews']['mailingTemplate'] = 0;
-    $modx->log(modX::LOG_LEVEL_ERROR, '-> could not set mailingTemplate property for GoodNews container.');
+    $modx->log(
+        modX::LOG_LEVEL_ERROR,
+        '-> could not set mailingTemplate property for GoodNews container.'
+    );
 }
 
 // Set default resource for 1-click unsubscription
@@ -95,7 +101,11 @@ if (is_object($unsubscribeResource)) {
     $properties['goodnews']['unsubscribeResource'] = $unsubscribeResource->get('id');
 } else {
     $properties['goodnews']['unsubscribeResource'] = 0;
-    $modx->log(modX::LOG_LEVEL_WARN, '-> unsubscribeResource property for GoodNews container not set as resource does not exist. Please set manually.');
+    $modx->log(
+        modX::LOG_LEVEL_WARN,
+        '-> unsubscribeResource property for GoodNews container not set as resource does not exist. ' .
+        'Please set manually.'
+    );
 }
 
 // Set default resource for updating subscription profile
@@ -104,7 +114,11 @@ if (is_object($profileResource)) {
     $properties['goodnews']['profileResource'] = $profileResource->get('id');
 } else {
     $properties['goodnews']['profileResource'] = 0;
-    $modx->log(modX::LOG_LEVEL_WARN, '-> profileResource property for GoodNews container not set as resource does not exist. Please set manually.');
+    $modx->log(
+        modX::LOG_LEVEL_WARN,
+        '-> profileResource property for GoodNews container not set as resource does not exist. ' .
+        'Please set manually.'
+    );
 }
 
 $properties['goodnews']['editorGroups'] = 'Administrator';

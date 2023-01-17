@@ -50,14 +50,17 @@ function createModxResources(&$modx, $resources, $sources, $custom = false)
         $uCaseCustom = 'Custom ';
         $lCaseCustom = 'custom ';
     }
-    
+
     $modx->log(modX::LOG_LEVEL_INFO, 'Add ' . $lCaseCustom . 'MODX resource documents...');
 
     if (empty($resources) || !is_array($resources)) {
-        $modx->log(modX::LOG_LEVEL_ERROR, $uCaseCustom . 'MODX resources could not be added. Data missing.');
+        $modx->log(
+            modX::LOG_LEVEL_ERROR,
+            $uCaseCustom . 'MODX resources could not be added. Data missing.'
+        );
         return false;
     }
-        
+
     $count = 0;
     // $namespace will be namespace for properties array (if any)
     foreach ($resources as $namespace => $fieldvalues) {
@@ -69,17 +72,21 @@ function createModxResources(&$modx, $resources, $sources, $custom = false)
             /* @var modResource $resource */
             $resource = $modx->newObject(modResource::class, ['pagetitle' => $fieldvalues['pagetitle']]);
         }
-        
+
         // Replace content-template file-name with content-template content
         if (!empty($fieldvalues['content'])) {
             $filename = $sources['resources'] . $fieldvalues['content'];
             if (file_exists($filename)) {
                 $fieldvalues['content'] = file_get_contents($filename);
             } else {
-                $modx->log(modX::LOG_LEVEL_WARN, '-> content template file ' . $fieldvalues['content'] . ' for ' . $lCaseCustom . 'MODX resource ' . $fieldvalues['pagetitle'] . ' not found. No content assigned.');
+                $modx->log(
+                    modX::LOG_LEVEL_WARN,
+                    '-> content template file ' . $fieldvalues['content'] . ' for ' . $lCaseCustom .
+                    'MODX resource ' . $fieldvalues['pagetitle'] . ' not found. No content assigned.'
+                );
             }
         }
-        
+
         // Replace template name by template ID
         if (!empty($fieldvalues['template'])) {
             if ($fieldvalues['template'] == 'default') {
@@ -91,11 +98,15 @@ function createModxResources(&$modx, $resources, $sources, $custom = false)
                     $fieldvalues['template'] = $templateObj->get('id');
                 } else {
                     $fieldvalues['template'] = $modx->getOption('default_template');
-                    $modx->log(modX::LOG_LEVEL_WARN, '-> template ' . $fieldvalues['template'] . ' for ' . $lCaseCustom . 'MODX resource ' . $fieldvalues['pagetitle'] . ' not found. Default template assigned.');
+                    $modx->log(
+                        modX::LOG_LEVEL_WARN,
+                        '-> template ' . $fieldvalues['template'] . ' for ' . $lCaseCustom .
+                        'MODX resource ' . $fieldvalues['pagetitle'] . ' not found. Default template assigned.'
+                    );
                 }
             }
         }
-        
+
         // Replace parent resource pagetitle with resource ID
         if (!empty($fieldvalues['parent'])) {
             /* @var modResource $parentObj */
@@ -103,31 +114,42 @@ function createModxResources(&$modx, $resources, $sources, $custom = false)
             if ($parentObj) {
                 $fieldvalues['parent'] = $parentObj->get('id');
             } else {
-                $modx->log(modX::LOG_LEVEL_WARN, '-> parent resource ' . $fieldvalues['parent'] . ' for ' . $lCaseCustom . 'MODX resource ' . $fieldvalues['pagetitle'] . ' not found. No parent assigned.');
+                $modx->log(
+                    modX::LOG_LEVEL_WARN,
+                    '-> parent resource ' . $fieldvalues['parent'] . ' for ' . $lCaseCustom .
+                    'MODX resource ' . $fieldvalues['pagetitle'] . ' not found. No parent assigned.'
+                );
             }
         }
-        
+
         // Get properties array from $fieldvalues and empty 'properties' key
         $properties = $fieldvalues['properties'];
         $fieldvalues['properties'] = null;
-        
+
         // Set resource fieldvalues
         $resource->fromArray($fieldvalues);
-        
+
         // Set resource properties
         if (!empty($properties) && is_array($properties)) {
             $resource->setProperties($properties, $namespace);
         }
-        
+
         $upd_or_added = ($upd) ? 'updated' : 'added';
         if ($resource->save()) {
             ++$count;
-            $modx->log(modX::LOG_LEVEL_INFO, '-> ' . $upd_or_added . ' ' . $lCaseCustom . 'MODX resource: ' . $fieldvalues['pagetitle']);
+            $modx->log(
+                modX::LOG_LEVEL_INFO,
+                '-> ' . $upd_or_added . ' ' . $lCaseCustom . 'MODX resource: ' . $fieldvalues['pagetitle']
+            );
         } else {
-            $modx->log(modX::LOG_LEVEL_ERROR, '-> ' . $lCaseCustom . 'MODX resource ' . $fieldvalues['pagetitle'] . ' could not be ' . $upd_or_added . '. Saving failed!');
+            $modx->log(
+                modX::LOG_LEVEL_ERROR,
+                '-> ' . $lCaseCustom . 'MODX resource ' . $fieldvalues['pagetitle'] .
+                ' could not be ' . $upd_or_added . '. Saving failed!'
+            );
         }
     }
-    
+
     return $count;
 }
 
@@ -141,21 +163,27 @@ function createModxResources(&$modx, $resources, $sources, $custom = false)
 function assignSettings(&$modx, $settingAttributes)
 {
     $modx->log(modX::LOG_LEVEL_INFO, 'Assign setting values...');
-    
+
     if (empty($settingAttributes) || !is_array($settingAttributes)) {
-        $modx->log(modX::LOG_LEVEL_ERROR, 'Setting values could not be assigned. Data missing.');
+        $modx->log(
+            modX::LOG_LEVEL_ERROR,
+            'Setting values could not be assigned. Data missing.'
+        );
         return false;
     }
-    
+
     $count = 0;
     foreach ($settingAttributes as $attributes) {
         // Check if setting exists
         $setting = $modx->getObject(modSystemSetting::class, ['key' => $attributes['key']]);
         if (!$setting) {
-            $modx->log(modX::LOG_LEVEL_ERROR, '-> could not find setting: ' . $attributes['key']);
+            $modx->log(
+                modX::LOG_LEVEL_ERROR,
+                '-> could not find setting: ' . $attributes['key']
+            );
             continue;
         }
-        
+
         if ($attributes['xtype'] == 'modx-combo-template') {
             // Assign template id based on template name
             if (!empty($attributes['value'])) {
@@ -178,7 +206,7 @@ function assignSettings(&$modx, $settingAttributes)
         } elseif ($attributes['xtype'] == 'textfield') {
         }
     }
-    
+
     return $count;
 }
 
@@ -194,10 +222,13 @@ function createElementCategories(&$modx, $categories, $defaultCategoryId = 0)
 {
     $modx->log(modX::LOG_LEVEL_INFO, 'Adding additional elements categories...');
     if (empty($categories) || !is_array($categories)) {
-        $modx->log(modX::LOG_LEVEL_ERROR, 'Additional elements categories could not be added. Data missing.');
+        $modx->log(
+            modX::LOG_LEVEL_ERROR,
+            'Additional elements categories could not be added. Data missing.'
+        );
         return false;
     }
-    
+
     $count = 0;
     foreach ($categories as $category) {
         $categoryName = $category->get('category');
@@ -208,7 +239,11 @@ function createElementCategories(&$modx, $categories, $defaultCategoryId = 0)
         } else {
             $parentId = getCategoryID($modx, $parentName);
             if (!$parentId) {
-                $modx->log(xPDO::LOG_LEVEL_INFO, '-> could not find parent category ' . $parentName . '. Parent for ' . $categoryName . ' will be root.');
+                $modx->log(
+                    modX::LOG_LEVEL_INFO,
+                    '-> could not find parent category ' . $parentName .
+                    '. Parent for ' . $categoryName . ' will be root.'
+                );
             }
         }
         // Create category (if not already exists)
@@ -216,15 +251,21 @@ function createElementCategories(&$modx, $categories, $defaultCategoryId = 0)
             $category->set('parent', $parentId);
             if ($category->save()) {
                 ++$count;
-                $modx->log(xPDO::LOG_LEVEL_INFO, '-> added additional category: ' . $categoryName);
+                $modx->log(modX::LOG_LEVEL_INFO, '-> added additional category: ' . $categoryName);
             } else {
-                $modx->log(xPDO::LOG_LEVEL_ERROR, '-> additional category ' . $categoryName . ' could not be added. Saving failed!');
+                $modx->log(
+                    modX::LOG_LEVEL_ERROR,
+                    '-> additional category ' . $categoryName . ' could not be added. Saving failed!'
+                );
             }
         } else {
-            $modx->log(xPDO::LOG_LEVEL_INFO, '-> additional category ' . $categoryName . ' already exists - skipped!');
+            $modx->log(
+                modX::LOG_LEVEL_INFO,
+                '-> additional category ' . $categoryName . ' already exists - skipped!'
+            );
         }
     }
-    
+
     return $count;
 }
 
@@ -239,7 +280,10 @@ function createDatabaseTables(&$modx, $tables)
 {
     $modx->log(modX::LOG_LEVEL_INFO, 'Creating database tables...');
     if (empty($tables) || !is_array($tables)) {
-        $modx->log(modX::LOG_LEVEL_ERROR, 'Database tables could not be added. Data missing.');
+        $modx->log(
+            modX::LOG_LEVEL_ERROR,
+            'Database tables could not be added. Data missing.'
+        );
         return false;
     }
 
@@ -257,7 +301,7 @@ function createDatabaseTables(&$modx, $tables)
             $modx->log(modX::LOG_LEVEL_INFO, '-> database table ' . $tableName . ' already exists - skipped!');
         }
     }
-    
+
     return $count;
 }
 
@@ -270,12 +314,18 @@ function createDatabaseTables(&$modx, $tables)
  */
 function createDatabaseEntries(&$modx, $entries)
 {
-    $modx->log(modX::LOG_LEVEL_INFO, 'Creating entries in custom database tables...');
+    $modx->log(
+        modX::LOG_LEVEL_INFO,
+        'Creating entries in custom database tables...'
+    );
     if (empty($entries) || !is_array($entries)) {
-        $modx->log(modX::LOG_LEVEL_ERROR, 'Database entries could not be added. Data missing.');
+        $modx->log(
+            modX::LOG_LEVEL_ERROR,
+            'Database entries could not be added. Data missing.'
+        );
         return false;
     }
-    
+
     $count = 0;
     foreach ($entries as $class => $attributes) {
         // Check if entry already exists
@@ -305,30 +355,42 @@ function createDatabaseEntries(&$modx, $entries)
 function assignTemplateCategories(&$modx, $templateCategories)
 {
     $modx->log(modX::LOG_LEVEL_INFO, 'Assign templates to categories...');
-    
+
     if (empty($templateCategories) || !is_array($templateCategories)) {
-        $modx->log(modX::LOG_LEVEL_ERROR, 'Templates could not be assigned to categories. Data missing.');
+        $modx->log(
+            modX::LOG_LEVEL_ERROR,
+            'Templates could not be assigned to categories. Data missing.'
+        );
         return false;
     }
-    
+
     $count = 0;
     foreach ($templateCategories as $templateName => $categoryName) {
         // Check if template exists
         $template = $modx->getObject(modTemplate::class, ['templatename' => $templateName]);
         if (!$template) {
-            $modx->log(modX::LOG_LEVEL_WARN, '-> template ' . $templateName . ' does not exist. No category assigned.');
+            $modx->log(
+                modX::LOG_LEVEL_WARN,
+                '-> template ' . $templateName . ' does not exist. No category assigned.'
+            );
             continue;
         }
-        
+
         $template->set('category', getCategoryID($modx, $categoryName));
         if ($template->save()) {
             ++$count;
-            $modx->log(modX::LOG_LEVEL_INFO, '-> assigned template ' . $templateName . ' to category ' . $categoryName);
+            $modx->log(
+                modX::LOG_LEVEL_INFO,
+                '-> assigned template ' . $templateName . ' to category ' . $categoryName
+            );
         } else {
-            $modx->log(modX::LOG_LEVEL_ERROR, '-> could not assign template ' . $templateName . ' to category ' . $categoryName);
+            $modx->log(
+                modX::LOG_LEVEL_ERROR,
+                '-> could not assign template ' . $templateName . ' to category ' . $categoryName
+            );
         }
     }
-    
+
     return $count;
 }
 
@@ -365,7 +427,10 @@ function createObject(&$modx, $className = '', array $data = [], $primaryField =
                 return $object->save();
             } else {
                 $condition = $modx->toJSON($condition);
-                $modx->log(modX::LOG_LEVEL_INFO, "-> skipping object {$className} {$condition}. Already exists!");
+                $modx->log(
+                    modX::LOG_LEVEL_INFO,
+                    "-> skipping object {$className} {$condition}. Already exists!"
+                );
                 return true;
             }
         }

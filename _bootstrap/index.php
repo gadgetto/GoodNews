@@ -90,7 +90,10 @@ $modx->setLogTarget('ECHO');
 echo '<pre>';
 flush();
 
-$modx->log(modX::LOG_LEVEL_INFO, 'Building development environment for <b>' . PKG_NAME . '</b>...');
+$modx->log(
+    modX::LOG_LEVEL_INFO,
+    'Building development environment for <b>' . PKG_NAME . '</b>...'
+);
 
 /* Get MODX version, eg. '3.0.2-pl' */
 $modXversion = $modx->getVersionData();
@@ -107,14 +110,24 @@ if (isTransportPackageInstalled($modx, PKG_NAME)) {
 
 /* Check if development environment for package is already available */
 if (existsNamespace($modx, PKG_NAMESPACE)) {
-    $modx->log(modX::LOG_LEVEL_WARN, 'It seems, that a development environment for ' . PKG_NAME . ' is already available on this system!');
-    $modx->log(modX::LOG_LEVEL_INFO, 'Building development environment stopped!');
+    $modx->log(
+        modX::LOG_LEVEL_WARN,
+        'It seems, that a development environment for ' . PKG_NAME .
+        ' is already available on this system!'
+    );
+    $modx->log(
+        modX::LOG_LEVEL_INFO,
+        'Building development environment stopped!'
+    );
     flush();
     exit();
 }
 
 /* Check system requirements */
-$modx->log(modX::LOG_LEVEL_WARN, 'Checking if system meets minimum requirements...');
+$modx->log(
+    modX::LOG_LEVEL_WARN,
+    'Checking if system meets minimum requirements...'
+);
 $success = true;
 
 /* Check min/max MODX version */
@@ -124,9 +137,16 @@ if (!empty(MIN_MODX_VERSION)) {
         $level = modX::LOG_LEVEL_ERROR;
         $success = false;
     }
-    $modx->log($level, '-> min. required MODX Revo version: ' . MIN_MODX_VERSION . ' -- found: <b>' . $modXversion . '</b>');
+    $modx->log(
+        $level,
+        '-> min. required MODX Revo version: ' . MIN_MODX_VERSION .
+        ' -- found: <b>' . $modXversion . '</b>'
+    );
     if (!$success) {
-        $modx->log(modX::LOG_LEVEL_INFO, 'Building development environment stopped!');
+        $modx->log(
+            modX::LOG_LEVEL_INFO,
+            'Building development environment stopped!'
+        );
         flush();
         exit();
     }
@@ -137,7 +157,11 @@ if (!empty(MAX_MODX_VERSION)) {
         $level = modX::LOG_LEVEL_ERROR;
         $success = false;
     }
-    $modx->log($level, '-> max. required MODX Revo version: ' . MAX_MODX_VERSION . ' -- found: <b>' . $modXversion . '</b>');
+    $modx->log(
+        $level,
+        '-> max. required MODX Revo version: ' . MAX_MODX_VERSION .
+        ' -- found: <b>' . $modXversion . '</b>'
+    );
     if (!$success) {
         $modx->log(modX::LOG_LEVEL_INFO, 'Building development environment stopped!');
         flush();
@@ -152,7 +176,11 @@ if (!empty(MIN_PHP_VERSION)) {
         $level = modX::LOG_LEVEL_ERROR;
         $success = false;
     }
-    $modx->log($level, '-> min. required PHP version: ' . MIN_PHP_VERSION . ' -- found: <b>' . PHP_VERSION . '</b>');
+    $modx->log(
+        $level,
+        '-> min. required PHP version: ' . MIN_PHP_VERSION .
+        ' -- found: <b>' . PHP_VERSION . '</b>'
+    );
     if (!$success) {
         $modx->log(modX::LOG_LEVEL_INFO, 'Building development environment stopped!');
         flush();
@@ -163,7 +191,14 @@ flush();
 unset($success, $level);
 
 /* Add package */
-if ($modx->addPackage(VENDOR_NAME . '\\' . PKG_NAME . '\\Model', $sources['source_src'], null, VENDOR_NAME . '\\' . PKG_NAME . '\\')) {
+if (
+    $modx->addPackage(
+        VENDOR_NAME . '\\' . PKG_NAME . '\\Model',
+        $sources['source_src'],
+        null,
+        VENDOR_NAME . '\\' . PKG_NAME . '\\'
+    )
+) {
     $modx->log(modX::LOG_LEVEL_ERROR, PKG_NAME . ' package added.');
 } else {
     $modx->log(modX::LOG_LEVEL_ERROR, PKG_NAME . ' package could not be added.');
@@ -192,15 +227,32 @@ flush();
 
 /* Create namespace */
 $modx->log(modX::LOG_LEVEL_INFO, 'Adding namespace...');
-if (createObject($modx, modNamespace::class, [
-    'name' => PKG_NAMESPACE,
-    'path' => $sources['source_core'],
-    'assets_path' => $sources['source_assets'],
-], 'name', false)) {
-    $modx->log(modX::LOG_LEVEL_INFO, '-> added namespace: ' . PKG_NAMESPACE);
+if (
+    createObject(
+        $modx,
+        modNamespace::class,
+        [
+            'name' => PKG_NAMESPACE,
+            'path' => $sources['source_core'],
+            'assets_path' => $sources['source_assets'],
+        ],
+        'name',
+        false
+    )
+) {
+    $modx->log(
+        modX::LOG_LEVEL_INFO,
+        '-> added namespace: ' . PKG_NAMESPACE
+    );
 } else {
-    $modx->log(modX::LOG_LEVEL_ERROR, '-> namespace ' . PKG_NAMESPACE . ' could not be added.');
-    $modx->log(modX::LOG_LEVEL_INFO, 'Building development environment failed!');
+    $modx->log(
+        modX::LOG_LEVEL_ERROR,
+        '-> namespace ' . PKG_NAMESPACE . ' could not be added.'
+    );
+    $modx->log(
+        modX::LOG_LEVEL_INFO,
+        'Building development environment failed!'
+    );
     flush();
     exit();
 }
@@ -218,7 +270,10 @@ if (!empty($menus) && is_array($menus)) {
         }
     }
 } else {
-    $modx->log(modX::LOG_LEVEL_ERROR, 'Menu entries could not be added. Data missing.');
+    $modx->log(
+        modX::LOG_LEVEL_ERROR,
+        'Menu entries could not be added. Data missing.'
+    );
 }
 flush();
 unset($menus, $menu);
@@ -235,17 +290,28 @@ if (!empty($settings) && is_array($settings)) {
         }
     }
 } else {
-    $modx->log(modX::LOG_LEVEL_ERROR, 'System settings could not be added. Data missing.');
+    $modx->log(
+        modX::LOG_LEVEL_ERROR,
+        'System settings could not be added. Data missing.'
+    );
 }
 flush();
 unset($settings, $setting, $obj);
 
 /* Create default elements category */
 $modx->log(modX::LOG_LEVEL_INFO, 'Adding default elements category...');
-if (createObject($modx, modCategory::class, [
-    'category' => PKG_NAME,
-    'parent' => 0,
-], 'category', false)) {
+if (
+    createObject(
+        $modx,
+        modCategory::class,
+        [
+            'category' => PKG_NAME,
+            'parent' => 0,
+        ],
+        'category',
+        false
+    )
+) {
     $modx->log(modX::LOG_LEVEL_INFO, '-> added default elements category: ' . PKG_NAME);
 } else {
     $modx->log(modX::LOG_LEVEL_ERROR, '-> default elements category ' . PKG_NAME . ' could not be added.');
@@ -280,7 +346,10 @@ if (!empty($plugins) && is_array($plugins)) {
         }
     }
 } else {
-    $modx->log(modX::LOG_LEVEL_ERROR, 'Plugins could not be added. Data missing.');
+    $modx->log(
+        modX::LOG_LEVEL_ERROR,
+        'Plugins could not be added. Data missing.'
+    );
 }
 flush();
 unset($plugins, $plugin, $pluginPath, $pluginName);
@@ -304,7 +373,10 @@ if (!empty($snippets) && is_array($snippets)) {
         }
     }
 } else {
-    $modx->log(modX::LOG_LEVEL_ERROR, 'Snippets could not be added. Data missing.');
+    $modx->log(
+        modX::LOG_LEVEL_ERROR,
+        'Snippets could not be added. Data missing.'
+    );
 }
 flush();
 unset($snippets, $snippet, $snippetPath, $snippetName);
@@ -328,7 +400,10 @@ if (!empty($chunks) && is_array($chunks)) {
         }
     }
 } else {
-    $modx->log(modX::LOG_LEVEL_ERROR, 'Chunks could not be added. Data missing.');
+    $modx->log(
+        modX::LOG_LEVEL_ERROR,
+        'Chunks could not be added. Data missing.'
+    );
 }
 flush();
 unset($chunks, $chunk, $chunkPath, $chunkName);
@@ -358,7 +433,10 @@ if (!empty($templates) && is_array($templates)) {
         }
     }
 } else {
-    $modx->log(modX::LOG_LEVEL_ERROR, 'Templates could not be added. Data missing.');
+    $modx->log(
+        modX::LOG_LEVEL_ERROR,
+        'Templates could not be added. Data missing.'
+    );
 }
 flush();
 unset($templates, $template, $templatePath, $templateName);
@@ -371,7 +449,10 @@ unset($templates, $template, $templatePath, $templateName);
  */
 
 /* Add development path settings */
-$modx->log(modX::LOG_LEVEL_INFO, 'Adding development path settings...');
+$modx->log(
+    modX::LOG_LEVEL_INFO,
+    'Adding development path settings...'
+);
 if (createSystemSetting($modx, 'core_path', $sources['source_core'], PKG_NAMESPACE)) {
     $modx->log(modX::LOG_LEVEL_INFO, '-> added path setting: ' . PKG_NAMESPACE . '.core_path');
 } else {
