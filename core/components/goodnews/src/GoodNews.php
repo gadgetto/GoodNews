@@ -38,6 +38,7 @@ class GoodNews
 
     public const MIN_PHP_VERSION = '7.2.5';
     public const MIN_MODX_VERSION = '3.0.0';
+    public const MAX_MODX_VERSION = '';
 
     /** @var \MODX\Revolution\modX A reference to the modX object */
     public $modx = null;
