@@ -1,25 +1,21 @@
 <?php
-/**
- * GoodNews
- *
- * Copyright 2022 by bitego <office@bitego.com>
- *
- * GoodNews is free software; you can redistribute it and/or modify it under the
- * terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
- *
- * GoodNews is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this software; if not, write to the Free Software Foundation, Inc., 59 Temple
- * Place, Suite 330, Boston, MA 02111-1307 USA
- */
 
 /**
- * Create default database entries in custom GoodNewsGroup table
+ * This file is part of the GoodNews package.
+ *
+ * @copyright bitego (Martin Gartner)
+ * @license GNU General Public License v2.0 (and later)
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+use MODX\Revolution\modX;
+use xPDO\Transport\xPDOTransport;
+use Bitego\GoodNews\Model\GoodNewsGroup;
+
+/**
+ * Resolve/create default database entries in custom tables
  *
  * @package goodnews
  * @subpackage build
@@ -39,28 +35,27 @@ $grpAttributes[++$i] = [
     'editedby'      => 0,
 ];
 
-
 if ($object->xpdo) {
     $modx = &$object->xpdo;
-    
+
     switch ($options[xPDOTransport::PACKAGE_ACTION]) {
         case xPDOTransport::ACTION_INSTALL:
-        
-            $modx->log(modX::LOG_LEVEL_INFO, 'Tables content resolver - creating database entries in GoodNewsGroup table...');
-            
-            // Add GoodNews package
-            $modelPath = $modx->getOption('goodnews.core_path', null, $modx->getOption('core_path').'components/goodnews/') . 'model/';
-            $modx->addPackage('goodnews', $modelPath);
+            $modx->log(
+                modX::LOG_LEVEL_INFO,
+                'Tables content resolver - creating database entries in GoodNewsGroup table...'
+            );
+
             $manager = $modx->getManager();
-            
+
             if (is_array($grpAttributes)) {
                 foreach ($grpAttributes as $attributes) {
-                    
                     // Check if group already exists
-                    $group = $modx->getObject('GoodNewsGroup', ['name' => $attributes['name']]);
+                    $group = $modx->getObject(GoodNewsGroup::class, [
+                        'name' => $attributes['name']
+                    ]);
                     if (!$group) {
                         // Create a GoodNews group
-                        $group = $modx->newObject('GoodNewsGroup', $attributes);
+                        $group = $modx->newObject(GoodNewsGroup::class, $attributes);
                         if ($group->save()) {
                             $modx->log(modX::LOG_LEVEL_INFO, '-> created group: ' . $attributes['name']);
                         } else {
@@ -69,12 +64,11 @@ if ($object->xpdo) {
                     }
                 }
             }
-            
             break;
-            
+
         case xPDOTransport::ACTION_UPGRADE:
             break;
-            
+
         case xPDOTransport::ACTION_UNINSTALL:
             break;
     }

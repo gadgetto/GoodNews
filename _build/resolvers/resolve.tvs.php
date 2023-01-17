@@ -1,22 +1,20 @@
 <?php
+
 /**
- * GoodNews
+ * This file is part of the GoodNews package.
  *
- * Copyright 2022 by bitego <office@bitego.com>
+ * @copyright bitego (Martin Gartner)
+ * @license GNU General Public License v2.0 (and later)
  *
- * GoodNews is free software; you can redistribute it and/or modify it under the
- * terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
- *
- * GoodNews is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this software; if not, write to the Free Software Foundation, Inc., 59 Temple
- * Place, Suite 330, Boston, MA 02111-1307 USA
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
+
+use MODX\Revolution\modX;
+use MODX\Revolution\modTemplate;
+use MODX\Revolution\modTemplateVar;
+use MODX\Revolution\modTemplateVarTemplate;
+use xPDO\Transport\xPDOTransport;
 
 /**
  * Resolve Template Variables (sample currently not in use)
@@ -29,40 +27,35 @@ $templates = [
     'templateName',
 ];
 
-
 if ($object->xpdo) {
     $modx = &$object->xpdo;
-    
+
     switch ($options[xPDOTransport::PACKAGE_ACTION]) {
         case xPDOTransport::ACTION_INSTALL:
         case xPDOTransport::ACTION_UPGRADE:
-        
-            $tv = $modx->getObject('modTemplateVar', [
+            $tv = $modx->getObject(modTemplateVar::class, [
                 'name' => 'tvName',
             ]);
-            
+
             if ($tv) {
-            
                 foreach ($templates as $templateName) {
-                
-                    $template = $modx->getObject('modTemplate', ['templatename' => $templateName]);
+                    $template = $modx->getObject(modTemplate::class, ['templatename' => $templateName]);
                     if ($template) {
-                        $templateVarTemplate = $modx->getObject('modTemplateVarTemplate', [
+                        $templateVarTemplate = $modx->getObject(modTemplateVarTemplate::class, [
                             'templateid' => $template->get('id'),
                             'tmplvarid' => $tv->get('id'),
                         ]);
                         if (!$templateVarTemplate) {
-                            $templateVarTemplate = $modx->newObject('modTemplateVarTemplate');
+                            $templateVarTemplate = $modx->newObject(modTemplateVarTemplate::class);
                             $templateVarTemplate->set('templateid', $template->get('id'));
                             $templateVarTemplate->set('tmplvarid', $tv->get('id'));
                             $templateVarTemplate->save();
                         }
                     }
-
                 }
             }
             break;
- 
+
         case xPDOTransport::ACTION_UNINSTALL:
             break;
     }

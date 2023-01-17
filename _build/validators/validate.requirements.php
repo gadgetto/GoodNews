@@ -1,22 +1,19 @@
 <?php
+
 /**
- * GoodNews
+ * This file is part of the GoodNews package.
  *
- * Copyright 2022 by bitego <office@bitego.com>
+ * @copyright bitego (Martin Gartner)
+ * @license GNU General Public License v2.0 (and later)
  *
- * GoodNews is free software; you can redistribute it and/or modify it under the
- * terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
- *
- * GoodNews is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this software; if not, write to the Free Software Foundation, Inc., 59 Temple
- * Place, Suite 330, Boston, MA 02111-1307 USA
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
+
+use MODX\Revolution\modX;
+use MODX\Revolution\modSystemSetting;
+use xPDO\Transport\xPDOTransport;
+use Bitego\GoodNews\GoodNews;
 
 /**
  * Pre-installation package requirements (validator)
@@ -35,31 +32,62 @@ switch ($options[xPDOTransport::PACKAGE_ACTION]) {
         $success = true;
 
         // Only check requirements if not already done
-        $setting = $modx->getObject('modSystemSetting', ['key' => 'goodnews.system_requirements_ok']);
+        $setting = $modx->getObject(modSystemSetting::class, ['key' => 'goodnews.system_requirements_ok']);
         if (is_object($setting) && !empty($setting->get('value'))) {
             break;
         }
 
-        $modx->log(modX::LOG_LEVEL_WARN, 'Checking if system meets minimum requirements...');
-        
+        $modx->log(
+            modX::LOG_LEVEL_WARN,
+            'Checking if system meets minimum requirements...'
+        );
+
         $level = modX::LOG_LEVEL_INFO;
         $modxVersion = $modx->getVersionData();
-        if (version_compare($modxVersion['full_version'], '2.3.0') < 0) {
-            $level = modX::LOG_LEVEL_ERROR;
-            $success = false;
+
+        /* Check min/max MODX version */
+        if (!empty(GoodNews::MIN_MODX_VERSION)) {
+            $level = modX::LOG_LEVEL_INFO;
+            if (version_compare($modXversion, GoodNews::MIN_MODX_VERSION, '<=')) {
+                $level = modX::LOG_LEVEL_ERROR;
+                $success = false;
+            }
+            $modx->log(
+                $level,
+                '-> min. required MODX Revo version: ' . GoodNews::MIN_MODX_VERSION .
+                ' -- found: <b>' . $modXversion . '</b>'
+            );
         }
-        $modx->log($level, '-> required MODX Revo version: min. 2.3.0 -- found: <b>' . $modxVersion['full_version'] . '</b>');
-        
-        $level = modX::LOG_LEVEL_INFO;
-        if (version_compare(PHP_VERSION, '7.0.0') < 0) {
-            $level = modX::LOG_LEVEL_ERROR;
-            $success = false;
+        if (!empty(GoodNews::MAX_MODX_VERSION)) {
+            $level = modX::LOG_LEVEL_INFO;
+            if (version_compare($modXversion, GoodNews::MAX_MODX_VERSION, '>=')) {
+                $level = modX::LOG_LEVEL_ERROR;
+                $success = false;
+            }
+            $modx->log(
+                $level,
+                '-> max. required MODX Revo version: ' . GoodNews::MAX_MODX_VERSION .
+                ' -- found: <b>' . $modXversion . '</b>'
+            );
         }
-        $modx->log($level, '-> required PHP version: min. 7.0 -- found: <b>' . PHP_VERSION . '</b>');
-        
+
+        /* Check PHP version */
+        if (!empty(GoodNews::MIN_PHP_VERSION)) {
+            $level = modX::LOG_LEVEL_INFO;
+            if (version_compare(PHP_VERSION, GoodNews::MIN_PHP_VERSION, '<=')) {
+                $level = modX::LOG_LEVEL_ERROR;
+                $success = false;
+            }
+            $modx->log(
+                $level,
+                '-> min. required PHP version: ' . GoodNews::MIN_PHP_VERSION .
+                ' -- found: <b>' . PHP_VERSION . '</b>'
+            );
+        }
+
         if ($success) {
             // If OK create system setting to store requirements state
-            $setting = $modx->newObject('modSystemSetting');
+            $setting = $modx->newObject(modSystemSetting::class);
             $setting->fromArray([
                 'key'       => 'goodnews.system_requirements_ok',
                 'value'     => 'MODX Revolution ' . $modxVersion['full_version'] . ', PHP ' . PHP_VERSION,
@@ -68,29 +96,33 @@ switch ($options[xPDOTransport::PACKAGE_ACTION]) {
                 'area'      => '',
             ], '', true, true);
             $setting->save();
-            $modx->log(modX::LOG_LEVEL_INFO, '<b style="color: green;">Minimum requirements for PHP and MODX versions reached!</b>');
+            $modx->log(
+                modX::LOG_LEVEL_INFO,
+                '<b style="color: green;">Minimum requirements for PHP and MODX versions reached!</b>'
+            );
         } else {
             // Remove system setting with requirements state (rollback)
-            $setting = $modx->getObject('modSystemSetting', ['key' => 'goodnews.system_requirements_ok']);
+            $setting = $modx->getObject(modSystemSetting::class, ['key' => 'goodnews.system_requirements_ok']);
             if (is_object($setting)) {
                 $setting->remove();
             }
-            $modx->log(modX::LOG_LEVEL_ERROR, '<b style="color: red;">Your system does not meet the minimum requirements. Installation aborted.</b>');
+            $modx->log(
+                modX::LOG_LEVEL_ERROR,
+                '<b style="color: red;">Your system does not meet the minimum requirements. Installation aborted.</b>'
+            );
         }
-        
         break;
-        
+
     case xPDOTransport::ACTION_UNINSTALL:
         $success = true;
-        
+
         // Remove system setting which stores requirements state
-        $setting = $modx->getObject('modSystemSetting', ['key' => 'goodnews.system_requirements_ok']);
+        $setting = $modx->getObject(modSystemSetting::class, ['key' => 'goodnews.system_requirements_ok']);
         if (is_object($setting)) {
             $setting->remove();
         }
-
         break;
 }
 
-unset($level);
+unset($level, $modxVersion);
 return $success;

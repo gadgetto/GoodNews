@@ -1,22 +1,19 @@
 <?php
+
 /**
- * GoodNews
+ * This file is part of the GoodNews package.
  *
- * Copyright 2022 by bitego <office@bitego.com>
+ * @copyright bitego (Martin Gartner)
+ * @license GNU General Public License v2.0 (and later)
  *
- * GoodNews is free software; you can redistribute it and/or modify it under the
- * terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
- *
- * GoodNews is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this software; if not, write to the Free Software Foundation, Inc., 59 Temple
- * Place, Suite 330, Boston, MA 02111-1307 USA
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
+
+use MODX\Revolution\modX;
+use MODX\Revolution\modCategory;
+use MODX\Revolution\modTemplate;
+use xPDO\Transport\xPDOTransport;
 
 /**
  * Resolver for creating a special newsletter-templates category
@@ -34,8 +31,9 @@
  * @return int category ID
  */
 if (!function_exists('getCategoryID')) {
-    function getCategoryID(&$modx, $name) {
-        $categoryObj = $modx->getObject('modCategory', ['category' => $name]);
+    function getCategoryID(&$modx, $name)
+    {
+        $categoryObj = $modx->getObject(modCategory::class, ['category' => $name]);
         if (!empty($categoryObj)) {
             return $categoryObj->get('id');
         } else {
@@ -51,25 +49,25 @@ if ($object->xpdo) {
     switch ($options[xPDOTransport::PACKAGE_ACTION]) {
         case xPDOTransport::ACTION_INSTALL:
         case xPDOTransport::ACTION_UPGRADE:
-            
-            $modx->log(modX::LOG_LEVEL_INFO, 'Newsletter templates resolver - create categories and assign templates to categories...');
-            
+            $modx->log(
+                modX::LOG_LEVEL_INFO,
+                'Newsletter templates resolver - create categories and assign templates to categories...'
+            );
+
             $packageName  = 'GoodNews';
             $categoryName = 'Newsletter Templates';
-            
             $newsletterTemplates = [
                 'sample.GoodNewsNewsletterTemplate1',
                 'sample.GoodNewsNewsletterTemplate2',
             ];
-            
-            
+
             // Check if category already exists
-            $category = $modx->getObject('modCategory', ['category' => $categoryName]);
+            $category = $modx->getObject(modCategory::class, ['category' => $categoryName]);
             if ($category) {
                 $modx->log(modX::LOG_LEVEL_INFO, '-> category ' . $categoryName . ' already exists.');
             } else {
                 // Create newsletter templates category
-                $category = $modx->newObject('modCategory');
+                $category = $modx->newObject(modCategory::class);
                 $category->set('category', $categoryName);
                 $category->set('parent', getCategoryID($modx, $packageName));
                 if ($category->save()) {
@@ -79,26 +77,31 @@ if ($object->xpdo) {
                     break;
                 }
             }
-                
+
             // Add newsletter templates to this category
             if (!empty($newsletterTemplates)) {
                 foreach ($newsletterTemplates as $templateName) {
-                    
                     // Check if template exists
-                    $template = $modx->getObject('modTemplate', ['templatename' => $templateName]);
+                    $template = $modx->getObject(modTemplate::class, ['templatename' => $templateName]);
                     if ($template) {
                         // Assign category
                         $template->set('category', getCategoryID($modx, $categoryName));
                         if ($template->save()) {
-                            $modx->log(modX::LOG_LEVEL_INFO, '-> assigned template ' . $templateName . ' to category ' . $categoryName);
+                            $modx->log(
+                                modX::LOG_LEVEL_INFO,
+                                '-> assigned template ' . $templateName . ' to category ' . $categoryName
+                            );
                         } else {
-                            $modx->log(modX::LOG_LEVEL_ERROR, '-> could not assign template ' . $templateName . ' to category ' . $categoryName);
+                            $modx->log(
+                                modX::LOG_LEVEL_ERROR,
+                                '-> could not assign template ' . $templateName . ' to category ' . $categoryName
+                            );
                         }
                     }
                 }
             }
             break;
-            
+
         case xPDOTransport::ACTION_UNINSTALL:
             break;
     }

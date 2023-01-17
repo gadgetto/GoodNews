@@ -1,25 +1,22 @@
 <?php
-/**
- * GoodNews
- *
- * Copyright 2022 by bitego <office@bitego.com>
- *
- * GoodNews is free software; you can redistribute it and/or modify it under the
- * terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
- *
- * GoodNews is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this software; if not, write to the Free Software Foundation, Inc., 59 Temple
- * Place, Suite 330, Boston, MA 02111-1307 USA
- */
 
 /**
- * Install/resolve MODX resources
+ * This file is part of the GoodNews package.
+ *
+ * @copyright bitego (Martin Gartner)
+ * @license GNU General Public License v2.0 (and later)
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+use MODX\Revolution\modX;
+use MODX\Revolution\modResource;
+use MODX\Revolution\modTemplate;
+use xPDO\Transport\xPDOTransport;
+
+/**
+ * Resolve/install MODX resources
  *
  * @package goodnews
  * @subpackage build
@@ -62,13 +59,13 @@ $resources[++$i] = [
     'privatemgr'            => 0,
     'content_dispo'         => 0,
     'hidemenu'              => 1,
-    'class_key'             => 'modDocument',
+    'class_key'             => 'MODX\\Revolution\\modDocument',
     'context_key'           => 'web',
     'content_type'          => 1,
     'uri_override'          => 0,
     'hide_children_in_tree' => 0,
     'show_in_tree'          => 1,
-    'properties'            => NULL,
+    'properties'            => null,
 ];
 
 $resources[++$i] = [
@@ -104,13 +101,13 @@ $resources[++$i] = [
     'privatemgr'            => 0,
     'content_dispo'         => 0,
     'hidemenu'              => 1,
-    'class_key'             => 'modDocument',
+    'class_key'             => 'MODX\\Revolution\\modDocument',
     'context_key'           => 'web',
     'content_type'          => 1,
     'uri_override'          => 0,
     'hide_children_in_tree' => 0,
     'show_in_tree'          => 1,
-    'properties'            => NULL,
+    'properties'            => null,
 ];
 
 $resources[++$i] = [
@@ -146,13 +143,13 @@ $resources[++$i] = [
     'privatemgr'            => 0,
     'content_dispo'         => 0,
     'hidemenu'              => 1,
-    'class_key'             => 'modDocument',
+    'class_key'             => 'MODX\\Revolution\\modDocument',
     'context_key'           => 'web',
     'content_type'          => 1,
     'uri_override'          => 0,
     'hide_children_in_tree' => 0,
     'show_in_tree'          => 1,
-    'properties'            => NULL,
+    'properties'            => null,
 ];
 
 $resources[++$i] = [
@@ -188,13 +185,13 @@ $resources[++$i] = [
     'privatemgr'            => 0,
     'content_dispo'         => 0,
     'hidemenu'              => 1,
-    'class_key'             => 'modDocument',
+    'class_key'             => 'MODX\\Revolution\\modDocument',
     'context_key'           => 'web',
     'content_type'          => 1,
     'uri_override'          => 0,
     'hide_children_in_tree' => 0,
     'show_in_tree'          => 1,
-    'properties'            => NULL,
+    'properties'            => null,
 ];
 
 $resources[++$i] = [
@@ -230,13 +227,13 @@ $resources[++$i] = [
     'privatemgr'            => 0,
     'content_dispo'         => 0,
     'hidemenu'              => 1,
-    'class_key'             => 'modDocument',
+    'class_key'             => 'MODX\\Revolution\\modDocument',
     'context_key'           => 'web',
     'content_type'          => 1,
     'uri_override'          => 0,
     'hide_children_in_tree' => 0,
     'show_in_tree'          => 1,
-    'properties'            => NULL,
+    'properties'            => null,
 ];
 
 $resources[++$i] = [
@@ -272,13 +269,13 @@ $resources[++$i] = [
     'privatemgr'            => 0,
     'content_dispo'         => 0,
     'hidemenu'              => 1,
-    'class_key'             => 'modDocument',
+    'class_key'             => 'MODX\\Revolution\\modDocument',
     'context_key'           => 'web',
     'content_type'          => 1,
     'uri_override'          => 0,
     'hide_children_in_tree' => 0,
     'show_in_tree'          => 1,
-    'properties'            => NULL,
+    'properties'            => null,
 ];
 
 $resources[++$i] = [
@@ -314,13 +311,13 @@ $resources[++$i] = [
     'privatemgr'            => 0,
     'content_dispo'         => 0,
     'hidemenu'              => 1,
-    'class_key'             => 'modDocument',
+    'class_key'             => 'MODX\\Revolution\\modDocument',
     'context_key'           => 'web',
     'content_type'          => 1,
     'uri_override'          => 0,
     'hide_children_in_tree' => 0,
     'show_in_tree'          => 1,
-    'properties'            => NULL,
+    'properties'            => null,
 ];
 
 $resources[++$i] = [
@@ -356,13 +353,13 @@ $resources[++$i] = [
     'privatemgr'            => 0,
     'content_dispo'         => 0,
     'hidemenu'              => 1,
-    'class_key'             => 'modDocument',
+    'class_key'             => 'MODX\\Revolution\\modDocument',
     'context_key'           => 'web',
     'content_type'          => 1,
     'uri_override'          => 0,
     'hide_children_in_tree' => 0,
     'show_in_tree'          => 1,
-    'properties'            => NULL,
+    'properties'            => null,
 ];
 
 $resources[++$i] = [
@@ -398,13 +395,13 @@ $resources[++$i] = [
     'privatemgr'            => 0,
     'content_dispo'         => 0,
     'hidemenu'              => 1,
-    'class_key'             => 'modDocument',
+    'class_key'             => 'MODX\\Revolution\\modDocument',
     'context_key'           => 'web',
     'content_type'          => 1,
     'uri_override'          => 0,
     'hide_children_in_tree' => 0,
     'show_in_tree'          => 1,
-    'properties'            => NULL,
+    'properties'            => null,
 ];
 
 $resources[++$i] = [
@@ -440,13 +437,13 @@ $resources[++$i] = [
     'privatemgr'            => 0,
     'content_dispo'         => 0,
     'hidemenu'              => 1,
-    'class_key'             => 'modDocument',
+    'class_key'             => 'MODX\\Revolution\\modDocument',
     'context_key'           => 'web',
     'content_type'          => 1,
     'uri_override'          => 0,
     'hide_children_in_tree' => 0,
     'show_in_tree'          => 1,
-    'properties'            => NULL,
+    'properties'            => null,
 ];
 
 $resources[++$i] = [
@@ -482,13 +479,13 @@ $resources[++$i] = [
     'privatemgr'            => 0,
     'content_dispo'         => 0,
     'hidemenu'              => 1,
-    'class_key'             => 'modDocument',
+    'class_key'             => 'MODX\\Revolution\\modDocument',
     'context_key'           => 'web',
     'content_type'          => 1,
     'uri_override'          => 0,
     'hide_children_in_tree' => 0,
     'show_in_tree'          => 1,
-    'properties'            => NULL,
+    'properties'            => null,
 ];
 
 $resources[++$i] = [
@@ -524,13 +521,13 @@ $resources[++$i] = [
     'privatemgr'            => 0,
     'content_dispo'         => 0,
     'hidemenu'              => 1,
-    'class_key'             => 'modDocument',
+    'class_key'             => 'MODX\\Revolution\\modDocument',
     'context_key'           => 'web',
     'content_type'          => 1,
     'uri_override'          => 0,
     'hide_children_in_tree' => 0,
     'show_in_tree'          => 1,
-    'properties'            => NULL,
+    'properties'            => null,
 ];
 
 $resources[++$i] = [
@@ -566,13 +563,13 @@ $resources[++$i] = [
     'privatemgr'            => 0,
     'content_dispo'         => 0,
     'hidemenu'              => 1,
-    'class_key'             => 'modDocument',
+    'class_key'             => 'MODX\\Revolution\\modDocument',
     'context_key'           => 'web',
     'content_type'          => 1,
     'uri_override'          => 0,
     'hide_children_in_tree' => 0,
     'show_in_tree'          => 1,
-    'properties'            => NULL,
+    'properties'            => null,
 ];
 
 
@@ -584,36 +581,44 @@ $resources[++$i] = [
  * @return int $count Counter of installed MODx Resources
  */
 if (!function_exists('createResources')) {
-    function createResources(&$modx, $resources) {
-
+    function createResources(&$modx, $resources)
+    {
         if (empty($resources) || !is_array($resources)) {
             return 0;
         }
 
-        $modx->log(modX::LOG_LEVEL_INFO, 'Resource resolver - installing sample resource documents...');
+        $modx->log(
+            modX::LOG_LEVEL_INFO,
+            'Resource resolver - installing sample resource documents...'
+        );
 
-        $corePath = $modx->getOption('core_path').'components/goodnews/';
+        $corePath = $modx->getOption('core_path') . 'components/goodnews/';
         $resourceElementsPath = $modx->getOption('goodnews.core_path', null, $corePath) . 'elements/resources/';
 
         $count = 0;
         foreach ($resources as $key => $fieldvalues) {
-
             $upd = true;
             /** @var modResource $resource */
-            $resource = $modx->getObject('modResource', ['pagetitle' => $fieldvalues['pagetitle']]);
+            $resource = $modx->getObject(modResource::class, ['pagetitle' => $fieldvalues['pagetitle']]);
             if (!is_object($resource)) {
                 $upd = false;
-                $resource = $modx->newObject('modResource', ['pagetitle' => $fieldvalues['pagetitle']]);
+                $resource = $modx->newObject(modResource::class, ['pagetitle' => $fieldvalues['pagetitle']]);
             }
-            
+
             // Replace Resource template name with Resource template content
             if (!empty($fieldvalues['content'])) {
-                $filename = $resourceElementsPath.$fieldvalues['content'];
+                $filename = $resourceElementsPath . $fieldvalues['content'];
                 if (file_exists($filename)) {
                     $fieldvalues['content'] = file_get_contents($filename);
                 } else {
-                    $modx->log(modX::LOG_LEVEL_ERROR, '-> could not find content template: ' . $fieldvalues['content']);
-                    $modx->log(modX::LOG_LEVEL_ERROR, '-> could not install sample resource document: ' . $fieldvalues['pagetitle']);
+                    $modx->log(
+                        modX::LOG_LEVEL_ERROR,
+                        '-> could not find content template: ' . $fieldvalues['content']
+                    );
+                    $modx->log(
+                        modX::LOG_LEVEL_ERROR,
+                        '-> could not install sample resource document: ' . $fieldvalues['pagetitle']
+                    );
                     continue;
                 }
             }
@@ -623,33 +628,43 @@ if (!function_exists('createResources')) {
                 if ($fieldvalues['template'] == 'default') {
                     $fieldvalues['template'] = $modx->getOption('default_template');
                 } else {
-                    $templateObj = $modx->getObject('modTemplate', ['templatename' => $fieldvalues['template']]);
+                    $templateObj = $modx->getObject(modTemplate::class, ['templatename' => $fieldvalues['template']]);
                     if ($templateObj) {
                         $fieldvalues['template'] = $templateObj->get('id');
                     } else {
-                        $modx->log(modX::LOG_LEVEL_ERROR, '-> could not find template: ' . $fieldvalues['template']);
+                        $modx->log(
+                            modX::LOG_LEVEL_ERROR,
+                            '-> could not find template: ' . $fieldvalues['template']
+                        );
                     }
                 }
             }
-            
+
             // Replace parent Resource name with Resource ID in $fieldvalues
             if (!empty($fieldvalues['parent'])) {
-                $parentObj = $modx->getObject('modResource', ['pagetitle' => $fieldvalues['parent']]);
+                $parentObj = $modx->getObject(modResource::class, ['pagetitle' => $fieldvalues['parent']]);
                 if ($parentObj) {
                     $fieldvalues['parent'] = $parentObj->get('id');
                 } else {
-                    $modx->log(modX::LOG_LEVEL_ERROR, '-> could not find parent resource: ' . $fieldvalues['parent']);
+                    $modx->log(
+                        modX::LOG_LEVEL_ERROR,
+                        '-> could not find parent resource: ' . $fieldvalues['parent']
+                    );
                 }
             }
-            
+
             $resource->fromArray($fieldvalues);
-            
             if ($resource->save()) {
-                $modx->log(modX::LOG_LEVEL_INFO, '-> installed sample resource document: ' . $fieldvalues['pagetitle']);
+                $modx->log(
+                    modX::LOG_LEVEL_INFO,
+                    '-> installed sample resource document: ' . $fieldvalues['pagetitle']
+                );
             } else {
-                $modx->log(modX::LOG_LEVEL_ERROR, '-> could not install sample resource document: ' . $fieldvalues['pagetitle']);
+                $modx->log(
+                    modX::LOG_LEVEL_ERROR,
+                    '-> could not install sample resource document: ' . $fieldvalues['pagetitle']
+                );
             }
-            
             ++$count;
         }
         return $count;
@@ -664,31 +679,39 @@ if (!function_exists('createResources')) {
  * @return int $count Counter of deleted MODx Resources
  */
 if (!function_exists('deleteResources')) {
-    function deleteResources(&$modx, $resources) {
-
+    function deleteResources(&$modx, $resources)
+    {
         if (empty($resources) || !is_array($resources)) {
             return 0;
         }
 
-        $modx->log(modX::LOG_LEVEL_INFO, 'Resource resolver - removing sample resource documents...');
+        $modx->log(
+            modX::LOG_LEVEL_INFO,
+            'Resource resolver - removing sample resource documents...'
+        );
 
         $count = 0;
         foreach ($resources as $key => $fieldvalues) {
-
             /** @var modResource $resource */
-            $resource = $modx->getObject('modResource', ['pagetitle' => $fieldvalues['pagetitle']]);
+            $resource = $modx->getObject(modResource::class, ['pagetitle' => $fieldvalues['pagetitle']]);
             if (is_object($resource)) {
                 $resource->remove();
-                $modx->log(modX::LOG_LEVEL_INFO, '-> removed sample resource document: ' . $fieldvalues['pagetitle']);
+                $modx->log(
+                    modX::LOG_LEVEL_INFO,
+                    '-> removed sample resource document: ' . $fieldvalues['pagetitle']
+                );
                 ++$count;
             } else {
-                $modx->log(modX::LOG_LEVEL_WARN, '-> could not find sample resource document: ' . $fieldvalues['pagetitle'] . '. Please remove manually.');
+                $modx->log(
+                    modX::LOG_LEVEL_WARN,
+                    '-> could not find sample resource document: ' . $fieldvalues['pagetitle'] .
+                    '. Please remove manually.'
+                );
             }
         }
         return $count;
     }
 }
-
 
 if ($object->xpdo) {
     $modx = &$object->xpdo;
@@ -696,20 +719,21 @@ if ($object->xpdo) {
     switch ($options[xPDOTransport::PACKAGE_ACTION]) {
         case xPDOTransport::ACTION_INSTALL:
         case xPDOTransport::ACTION_UPGRADE:
- 
             // Handle checkbox value "install_resources" from setup.options.php form
             $installResources = (isset($options['install_resources'])) ? true : false;
-            
+
             // Should sample Resource documents be installed?
             if (!$installResources) {
-                $modx->log(modX::LOG_LEVEL_INFO, 'Resource resolver - you decided to not install sample Resource documents.');
+                $modx->log(
+                    modX::LOG_LEVEL_INFO,
+                    'Resource resolver - you decided to not install sample Resource documents.'
+                );
                 break;
             }
             $rescount = createResources($modx, $resources);
             break;
- 
+
         case xPDOTransport::ACTION_UNINSTALL:
-            
             // Delete sample Resouce documents
             $rescount = deleteResources($modx, $resources);
             break;

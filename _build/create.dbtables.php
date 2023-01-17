@@ -61,11 +61,18 @@ flush();
 $modx->log(modX::LOG_LEVEL_INFO, 'Creating database tables...');
 
 /* Add package */
-if ($modx->addPackage(VENDOR_NAME . '\\' . PKG_NAME . '\\Model', $sources['source_src'], null, VENDOR_NAME . '\\' . PKG_NAME . '\\')) {
+if (
+    $modx->addPackage(
+        VENDOR_NAME . '\\' . PKG_NAME . '\\Model',
+        $sources['source_src'],
+        null,
+        VENDOR_NAME . '\\' . PKG_NAME . '\\'
+    )
+) {
     $modx->log(modX::LOG_LEVEL_ERROR, PKG_NAME . ' package added.');
 } else {
     $modx->log(modX::LOG_LEVEL_ERROR, PKG_NAME . ' package could not be added.');
-    $modx->log(modX::LOG_LEVEL_INFO, 'Building development environment failed!');
+    $modx->log(modX::LOG_LEVEL_INFO, 'Creating database tables failed!');
     flush();
     exit();
 }
@@ -82,7 +89,7 @@ if ($service instanceof $className) {
     $modx->log(modX::LOG_LEVEL_ERROR, PKG_NAME . ' service loaded.');
 } else {
     $modx->log(modX::LOG_LEVEL_ERROR, PKG_NAME . ' service could not be loaded.');
-    $modx->log(modX::LOG_LEVEL_INFO, 'Building development environment failed!');
+    $modx->log(modX::LOG_LEVEL_INFO, 'Creating database tables failed!');
     flush();
     exit();
 }

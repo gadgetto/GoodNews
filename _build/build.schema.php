@@ -34,12 +34,12 @@ define('PKG_NAMESPACE', strtolower(PKG_NAME));
 
 /* define sources */
 $root = dirname(__DIR__, 1) . '/';
-$sources = array(
+$sources = [
     'root'   => $root,
     'core'   => $root . 'core/components/' . PKG_NAMESPACE . '/',
     'src'    => $root . 'core/components/' . PKG_NAMESPACE . '/src/',
     'schema' => $root . 'core/components/' . PKG_NAMESPACE . '/schema/',
-);
+];
 
 require_once $sources['root'] . 'config.core.php';
 require_once MODX_CORE_PATH . 'vendor/autoload.php';
