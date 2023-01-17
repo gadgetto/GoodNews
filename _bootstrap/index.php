@@ -52,7 +52,7 @@ $className = VENDOR_NAME . '\\' . PKG_NAME . '\\' . PKG_NAME;
 
 /* Define paths */
 $root = dirname(__DIR__, 1) . '/';
-$sources = array(
+$sources = [
     'root'             => $root,
     'bootstrap'        => $root . '_bootstrap/',
     'includes'         => $root . '_bootstrap/includes/',
@@ -69,7 +69,7 @@ $sources = array(
     'source_src'       => $root . 'core/components/' . PKG_NAMESPACE . '/src/',
     'source_model'     => $root . 'core/components/' . PKG_NAMESPACE . '/src/Model/',
     'source_assets'    => $root . 'assets/components/' . PKG_NAMESPACE . '/',
-);
+];
 unset($root);
 
 require_once $sources['root'] . 'config.core.php';
