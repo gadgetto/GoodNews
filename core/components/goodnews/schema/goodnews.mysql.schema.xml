@@ -76,6 +76,7 @@
         <field key="mailing_id" dbtype="int" precision="10" attributes="unsigned" phptype="integer" null="false" default="0" index="index" />
         <field key="statustime" dbtype="int" precision="20" phptype="timestamp" null="false" default="0" />
         <field key="status" dbtype="int" precision="1" attributes="unsigned" phptype="integer" null="false" default="0" />
+        <field key="log" dbtype="text" phptype="string" null="true" default="" />
 
         <index alias="subscriber_id" name="subscriber_id" primary="false" unique="false" type="BTREE">
             <column key="subscriber_id" length="" collation="A" null="false" />

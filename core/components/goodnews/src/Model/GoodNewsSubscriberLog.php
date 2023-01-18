@@ -10,6 +10,7 @@ use xPDO\xPDO;
  * @property integer $mailing_id
  * @property string $statustime
  * @property integer $status
+ * @property string $log
  *
  * @package Bitego\GoodNews\Model
  */

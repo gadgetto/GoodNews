@@ -21,6 +21,7 @@ class GoodNewsSubscriberLog extends \Bitego\GoodNews\Model\GoodNewsSubscriberLog
             'mailing_id' => 0,
             'statustime' => 0,
             'status' => 0,
+            'log' => '',
         ),
         'fieldMeta' => 
         array (
@@ -60,6 +61,13 @@ class GoodNewsSubscriberLog extends \Bitego\GoodNews\Model\GoodNewsSubscriberLog
                 'phptype' => 'integer',
                 'null' => false,
                 'default' => 0,
+            ),
+            'log' => 
+            array (
+                'dbtype' => 'text',
+                'phptype' => 'string',
+                'null' => true,
+                'default' => '',
             ),
         ),
         'indexes' => 
