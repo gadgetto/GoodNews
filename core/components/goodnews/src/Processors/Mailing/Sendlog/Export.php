@@ -47,6 +47,7 @@ class Export extends Processor
             'GoodNewsSubscriberLog.subscriber_id',
             'GoodNewsSubscriberLog.statustime',
             'GoodNewsSubscriberLog.status',
+            'GoodNewsSubscriberLog.log',
             'Profile.email AS subscriber_email',
             'Profile.fullname AS subscriber_fullname',
         ]);
@@ -76,6 +77,7 @@ class Export extends Processor
             'fullname',
             'statustime',
             'status',
+            'log',
         ];
 
         // Generate the rows array
@@ -98,6 +100,7 @@ class Export extends Processor
                 default:
                     $status = $this->modx->lexicon('goodnews.sendlog_status_unknown');
             }
+            $log = $line->get('log');
             $rows[] = [
                 $idx,
                 $subscriber_id,
@@ -105,6 +108,7 @@ class Export extends Processor
                 $subscriber_fullname,
                 $statustime,
                 $status,
+                $log,
             ];
         }
 

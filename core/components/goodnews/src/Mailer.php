@@ -447,9 +447,10 @@ class Mailer
      * @access public
      * @param integer $recipientId The id of the recipient
      * @param integer $status The status of the recipient
+     * @param string $log The status/error text
      * @return boolean
      */
-    public function updateRecipientStatus($recipientId, $status)
+    public function updateRecipientStatus($recipientId, $status, string $log = '')
     {
         if ($this->debug) {
             $mtime = microtime();
@@ -460,7 +461,7 @@ class Mailer
 
         $this->processhandler->lock($this->mailingid);
 
-        if (!$this->recipientshandler->cleanupRecipient($recipientId, $this->mailingid, $status)) {
+        if (!$this->recipientshandler->cleanupRecipient($recipientId, $this->mailingid, $status, $log)) {
             if ($this->debug) {
                 $this->modx->log(
                     modX::LOG_LEVEL_INFO,
@@ -661,7 +662,11 @@ class Mailer
                 if ($this->recipientshandler->getRecipientReserved($this->mailingid)) {
                     // Before we stop, cleanup all timed out recipients!
                     while ($timeoutRecipientId = $this->recipientshandler->getRecipientTimeout($this->mailingid)) {
-                        $this->updateRecipientStatus($timeoutRecipientId, RecipientsHandler::GON_USER_SEND_ERROR);
+                        $this->updateRecipientStatus(
+                            $timeoutRecipientId,
+                            RecipientsHandler::GON_USER_SEND_ERROR,
+                            'Sending timed out'
+                        );
                         if ($this->debug) {
                             $this->modx->log(
                                 modX::LOG_LEVEL_INFO,
@@ -706,18 +711,22 @@ class Mailer
                         'ignore_errors' => true,
                     ]);
                 }
-                if ($this->sendEmail($temp_mail, $subscriber)) {
+                $result = $this->sendEmail($temp_mail, $subscriber);
+                if ($result === true && !is_string($result)) {
                     $status = RecipientsHandler::GON_USER_SENT;
+                    $log = '';
                 } else {
                     $status = RecipientsHandler::GON_USER_SEND_ERROR;
+                    $log = $result;
                 }
-                // This could happen, if a subscriber is deleted while mailing is processed
+            // This could happen, if a subscriber is deleted while mailing is processed
             } else {
                 // @todo: other status required eg. GON_USER_NOT_FOUND
                 $status = RecipientsHandler::GON_USER_SEND_ERROR;
+                $log = 'Subscriber not found';
             }
 
-            $this->updateRecipientStatus($recipientId, $status);
+            $this->updateRecipientStatus($recipientId, $status, $log);
         }
         return true;
     }
@@ -766,7 +775,7 @@ class Mailer
      * @access public
      * @param array $email
      * @param array $subscriber
-     * @return array
+     * @return mixed true If mail was sent successfully | Error text
      */
     public function sendEmail(array $email, array $subscriber)
     {
@@ -870,23 +879,17 @@ class Mailer
             $this->modx->log(
                 modX::LOG_LEVEL_WARN,
                 '[GoodNews] Mailer::sendEmail - Email could not be sent to ' .
-                $subscriber['email'] .
-                ' (' .
-                $subscriber['subscriber_id'] .
-                ') -- Error: ' .
+                $subscriber['email'] . ' (' . $subscriber['subscriber_id'] . ') -- Error: ' .
                 $mail->mailer->ErrorInfo
             );
+            $sent = $mail->mailer->ErrorInfo;
         } else {
             if ($this->debug) {
                 $this->modx->log(
                     modX::LOG_LEVEL_INFO,
-                    '[GoodNews] [pid: ' .
-                    getmypid() .
-                    '] Mailer::sendEmail - Email sent to ' .
-                    $subscriber['email'] .
-                    ' (' .
-                    $subscriber['subscriber_id'] .
-                    ')'
+                    '[GoodNews] [pid: ' . getmypid() .
+                    '] Mailer::sendEmail - Email sent to ' . $subscriber['email'] .
+                    ' (' . $subscriber['subscriber_id'] . ')'
                 );
             }
         }

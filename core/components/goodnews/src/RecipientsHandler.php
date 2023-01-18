@@ -317,9 +317,10 @@ class RecipientsHandler
      * @param integer $recipientId The id of the recipient
      * @param integer $mailingId The id of the mailing
      * @param integer $status The status of the recipient
+     * @param string $log The status/error text
      * @return boolean
      */
-    public function cleanupRecipient($recipientId, $mailingId, $status)
+    public function cleanupRecipient($recipientId, $mailingId, $status, string $log = '')
     {
         $recipient = $this->modx->getObject(GoodNewsRecipient::class, [
             'mailing_id'   => $mailingId,
@@ -332,7 +333,7 @@ class RecipientsHandler
 
         if ($recipient->remove()) {
             unset($recipient);
-            if ($this->updateSubscriberLog($recipientId, $mailingId, $currentTime, $status)) {
+            if ($this->writeLog($recipientId, $mailingId, $currentTime, $status, $log)) {
                 return true;
             }
         }
@@ -340,22 +341,24 @@ class RecipientsHandler
     }
 
     /**
-     * Update the subscriber log.
+     * Create subscriber log entry.
      *
      * @access private
      * @param integer $recipientId The id of the recipient
      * @param integer $mailingId The id of the mailing
      * @param integer $statusTime The statustime -> a unix timestamp
      * @param integer $status The status of the recipient
+     * @param string $log The status/error text
      * @return boolean
      */
-    private function updateSubscriberLog($recipientId, $mailingId, $statusTime, $status)
+    private function writeLog($recipientId, $mailingId, $statusTime, $status, string $log = '')
     {
         $log = $this->modx->newObject(GoodNewsSubscriberLog::class);
         $log->set('subscriber_id', $recipientId);
         $log->set('mailing_id', $mailingId);
         $log->set('statustime', $statusTime);
         $log->set('status', $status);
+        $log->set('log', $log);
         if (!$log->save()) {
             return false;
         }

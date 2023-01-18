@@ -46,6 +46,7 @@ class GetList extends GetListProcessor
             'GoodNewsSubscriberLog.subscriber_id',
             'GoodNewsSubscriberLog.statustime',
             'GoodNewsSubscriberLog.status',
+            'GoodNewsSubscriberLog.log',
             'Profile.email AS subscriber_email',
             'Profile.fullname AS subscriber_fullname',
         ]);
@@ -66,6 +67,7 @@ class GetList extends GetListProcessor
             $c->where([
                 'Profile.email:LIKE' => '%' . $query . '%',
                 'OR:Profile.fullname:LIKE' => '%' . $query . '%',
+                'OR:GoodNewsSubscriberLog.log:LIKE' => '%' . $query . '%',
             ]);
         }
 

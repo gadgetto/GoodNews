@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 ### Changed
 - completely refactored for MODX 3 (as standalone version)
+- [#50] implemented detailed error text in send-log
 
 ## [1.6.1-pl] - 2022-11-20
 ### Added

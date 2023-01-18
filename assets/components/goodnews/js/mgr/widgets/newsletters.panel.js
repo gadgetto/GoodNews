@@ -31,7 +31,7 @@ Ext.extend(GoodNews.panel.Newsletters,Ext.Panel);
 Ext.reg('goodnews-panel-newsletters', GoodNews.panel.Newsletters);
 
 
-// constants (equivalent to php constants in NewsletterGetListProcessor)
+// constants (equivalent to php constants in newsletter GetList processor)
 var GON_NEWSLETTER_STATUS_NOT_PUBLISHED     = 0;
 var GON_NEWSLETTER_STATUS_NOT_READY_TO_SEND = 1;    
 var GON_NEWSLETTER_STATUS_NOT_YET_SENT      = 2;
@@ -40,7 +40,7 @@ var GON_NEWSLETTER_STATUS_IN_PROGRESS       = 4;
 var GON_NEWSLETTER_STATUS_SENT              = 5;
 var GON_NEWSLETTER_STATUS_SCHEDULED         = 6;
 
-// constants (equivalent to php constants in GoodNewsRecipientHandler)
+// constants (equivalent to php constants in RecipientsHandler)
 var GON_USER_NOT_YET_SENT = 0;
 var GON_USER_SENT         = 1;
 var GON_USER_SEND_ERROR   = 2;
@@ -855,6 +855,13 @@ Ext.reg('goodnews-window-newsletter-log',GoodNews.window.NewsletterLogWindow);
 GoodNews.grid.SendLog = function(config) {
     config = config || {};
     
+    // A row expander for grid rows (additional informations)
+    this.exp = new Ext.grid.RowExpander({
+        tpl: new Ext.Template('<p>{log}</p>')
+        ,enableCaching: false
+        ,lazyRender: false
+    });
+
     Ext.applyIf(config,{
         id: 'goodnews-grid-sendlog'
         ,url: GoodNews.config.connectorUrl
@@ -870,11 +877,16 @@ GoodNews.grid.SendLog = function(config) {
             ,'subscriber_fullname'
             ,'statustime'
             ,'status'
+            ,'log'
         ]
+        ,showActionsColumn: false
         ,emptyText: _('goodnews.sendlog_none')
         ,paging: true
         ,remoteSort: true
-        ,columns: [{
+        ,plugins: [this.exp]
+        ,columns: [
+        this.exp
+        ,{
             header: _('goodnews.id')
             ,dataIndex: 'id'
             ,sortable: true
