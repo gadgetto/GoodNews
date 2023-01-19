@@ -5,9 +5,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- [#50] implemented detailed error text in send-log
+
 ### Changed
 - completely refactored for MODX 3 (as standalone version)
-- [#50] implemented detailed error text in send-log
+
+### Fixed
+- fixed deprecated PHP each() usage for PHP8+ in snippets (GoodNewsGetNewsletters and GoodNewsContentCollection)
 
 ## [1.6.1-pl] - 2022-11-20
 ### Added

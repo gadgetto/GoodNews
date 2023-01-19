@@ -33,7 +33,7 @@ use Bitego\GoodNews\Model\GoodNewsMailingMeta;
  * @property string  &tpl Name of a Chunk serving as template for a Resource row. NOTE: if not provided, properties are
  *                   dumped to output for each resource. (default: sample.GoodNewsNewsletterRowChunk)
  * @property string  &sortby A field name to sort by or JSON object of field names and sortdir for each field,
- *                   e.g. {"publishedon":"ASC","createdon":"DESC"}. (default: publishedon)
+ *                   e.g. {"publishedon":"DESC","pagetitle":"ASC"}. (default: publishedon)
  * @property string  &sortdir Order which to sort by.
  *                   (default: DESC)
  * @property string  &includeContent Indicates if the content of each resource should be returned in the results.
@@ -120,14 +120,18 @@ $query->where([
 ]);
 $total = $modx->getCount(modResource::class, $query);
 $modx->setPlaceholder($totalVar, $total);
-if (!empty($sortby)) {
-    $sorts = [$sortby => $sortdir];
-    if (is_array($sorts)) {
-        while (list($sort, $dir) = each($sorts)) {
-            $query->sortby($sort, $dir);
-        }
+
+if (!empty($sortby) && is_string($sortby)) {
+    if (is_array(json_decode($sortby, true)) && (json_last_error() == JSON_ERROR_NONE)) {
+        $sorts = json_decode($sortby, true);
+    } else {
+        $sorts = [$sortby => $sortdir];
+    }
+    foreach ($sorts as $sort => $dir) {
+        $query->sortby($sort, $dir);
     }
 }
+
 if (!empty($limit)) {
     $query->limit($limit, $offset);
 }
