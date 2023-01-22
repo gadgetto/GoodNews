@@ -187,7 +187,7 @@ class Subscription extends Base
                         $result = $this->runProcessor('ModxUserSubscription');
                     }
 
-                    // A new Subscriber
+                // A new Subscriber
                 } else {
                     $this->setPassword();
 
@@ -263,7 +263,7 @@ class Subscription extends Base
      *  - if submitted via form - check if already exists
      *
      * @access private
-     * @return boolean $success
+     * @return boolean
      */
     private function setUsername()
     {
@@ -272,7 +272,10 @@ class Subscription extends Base
 
         // Generate username
         $username = $this->dictionary->get($usernameField);
-        if (empty($username) && !$this->validator->hasErrorsInField($usernameField)) {
+        if (
+            empty($username) &&
+            !$this->validator->hasErrorsInField($usernameField)
+        ) {
             $username = $this->generateUsername();
             $success = true;
         // Take username from form field
@@ -293,12 +296,19 @@ class Subscription extends Base
      *
      * @todo: add property to use full email address as username
      * @access public
-     * @return string $newusername
+     * @return string The username
      */
     public function generateUsername()
     {
-        // Username is generated from userid part of email address
+        $usernameField = $this->getProperty('usernameField', 'username');
         $emailField = $this->getProperty('emailField', 'email');
+
+        // Don't auto-generate username if usernameField is emailField!
+        if ($usernameField == $emailField) {
+            return $this->dictionary->get($emailField);
+        }
+
+        // Username is generated from local-part of email address
         $email = $this->dictionary->get($emailField);
         $parts = explode('@', $email);
         $usernamepart = $parts[0];
@@ -307,8 +317,8 @@ class Subscription extends Base
         $counter = 0;
         $newusername = $usernamepart;
         while ($this->usernameExists($newusername)) {
-            $newusername = $usernamepart . '_' . $counter;
             $counter++;
+            $newusername = $usernamepart . '_' . $counter;
         }
         return $newusername;
     }
@@ -318,7 +328,7 @@ class Subscription extends Base
      *
      * @access public
      * @param string $username
-     * @return boolean $exists
+     * @return boolean
      */
     public function usernameExists(string $username)
     {
@@ -335,7 +345,7 @@ class Subscription extends Base
      * Check if password is submitted via form or needs to be auto-generated.
      *
      * @access private
-     * @return boolean $success
+     * @return boolean
      */
     private function setPassword()
     {

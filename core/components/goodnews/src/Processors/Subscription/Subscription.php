@@ -193,8 +193,10 @@ class Subscription extends Base
     public function setUserFields()
     {
         $emailField = $this->controller->getProperty('emailField', 'email');
-        $useExtended = $this->controller->getProperty('useExtended', false, 'isset');
+        $usernameField = $this->controller->getProperty('usernameField', 'username');
+        $passwordField = $this->controller->getProperty('passwordField', 'password');
         $usergroupsField = $this->controller->getProperty('usergroupsField', 'usergroups');
+        $useExtended = $this->controller->getProperty('useExtended', false, 'isset');
 
         $fields = $this->dictionary->toArray();
 
@@ -205,17 +207,9 @@ class Subscription extends Base
 
         // Set user data
         $this->user->fromArray($fields);
-        $this->user->set('username', $fields['username']);
+        $this->user->set('username', $fields[$usernameField]);
+        $this->user->set('password', $fields[$passwordField]);
         $this->user->set('active', 0);
-
-        $version = $this->modx->getVersionData();
-        // MODX 2.1.x +
-        if (version_compare($version['full_version'], '2.1.0-rc1') >= 0) {
-            $this->user->set('password', $fields['password']);
-        // MODX 2.0.x
-        } else {
-            $this->user->set('password', md5($fields['password']));
-        }
 
         // Set profile data
         $this->profile->fromArray($fields);
@@ -244,8 +238,7 @@ class Subscription extends Base
         $userid = $this->user->get('id');
         $this->subscribermeta->set('subscriber_id', $userid);
         $this->subscribermeta->set('subscribedon', time());
-        // create and set new sid
-        $this->subscribermeta->set('sid', md5(time() . $userid));
+        $this->subscribermeta->set('sid', md5(uniqid(rand() . $userid, true)));
         $this->subscribermeta->set('testdummy', 0);
         $this->subscribermeta->set('ip', $this->dictionary->get('ip'));
     }
@@ -513,8 +506,7 @@ class Subscription extends Base
             'ttl' => ($this->controller->getProperty('activationttl', 180) * 60),
         ]);
         // Set cachepwd here to prevent re-registration of inactive users
-        // @todo is this the correct way to set a cache password in MODX 2.1+?
-        $this->user->set('cachepwd', md5($cachepwd));
+        $this->user->set('cachepwd', $cachepwd);
         $success = $this->user->save();
         if (!$success) {
             $this->modx->log(
