@@ -502,7 +502,7 @@ class Subscription extends Base
         $registry->addRegister('goodnewssubscription', modFileRegister::class);
         $registry->goodnewssubscription->connect();
         $registry->goodnewssubscription->subscribe('/useractivation/');
-        $registry->goodnewssubscription->send('/useractivation/', [$this->user->get('username') => $cachepwd], [
+        $registry->goodnewssubscription->send('/useractivation/', [md5($this->user->get('username')) => $cachepwd], [
             'ttl' => ($this->controller->getProperty('activationttl', 180) * 60),
         ]);
         // Set cachepwd here to prevent re-registration of inactive users

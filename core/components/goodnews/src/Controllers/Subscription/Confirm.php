@@ -126,7 +126,7 @@ class Confirm extends Base
         $registry = $this->modx->services->get('registry');
         $registry->addRegister('goodnewssubscription', modFileRegister::class);
         $registry->goodnewssubscription->connect();
-        $registry->goodnewssubscription->subscribe('/useractivation/' . $this->user->get('username'));
+        $registry->goodnewssubscription->subscribe('/useractivation/' . md5($this->user->get('username')));
         $msgs = $registry->goodnewssubscription->read();
         if (empty($msgs)) {
             $this->modx->sendErrorPage();
