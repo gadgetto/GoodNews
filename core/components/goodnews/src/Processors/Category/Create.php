@@ -25,7 +25,7 @@ use MODX\Revolution\Processors\Model\CreateProcessor;
 class Create extends CreateProcessor
 {
     public $classKey = GoodNewsCategory::class;
-    public $languageTopics = array('goodnews:default');
+    public $languageTopics = ['goodnews:default'];
     public $objectType = 'goodnews.category';
 
     public function beforeSave()

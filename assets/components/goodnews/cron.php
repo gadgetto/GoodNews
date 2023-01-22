@@ -241,13 +241,13 @@ function cleanUpSubscriptions(&$modx, $debug_cs = false)
     // - not be in a MODX group
     // - must not be sudo
     // - have SubscriberMeta.subscribedon date < expiration date (GoodNews setting)
-    $c->where(array(
+    $c->where([
         'active' => false,
         'cachepwd:!=' => '',
         'primary_group' => 0,
         'sudo' => 0,
         'SubscriberMeta.subscribedon:<' => $expDate,
-    ));
+    ]);
 
     $users = $modx->getIterator(modUser::class, $c);
     foreach ($users as $idx => $user) {

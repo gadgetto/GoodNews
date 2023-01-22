@@ -146,9 +146,9 @@ class Subscription extends Base
             }
 
             // Invoke OnUserActivate event
-            $this->modx->invokeEvent('OnUserActivate', array(
+            $this->modx->invokeEvent('OnUserActivate', [
                 'user' => &$this->user,
-            ));
+            ]);
 
             // Send a subscription success email including the secure links to edit subscription profile
             $sendSubscriptionEmail = $this->controller->getProperty('sendSubscriptionEmail', true, 'isset');

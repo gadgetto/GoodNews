@@ -87,17 +87,17 @@ class RecipientsHandler
      * @param array $categories Array of category ids
      * @return void
      */
-    public function collect($groups = array(), $categories = array())
+    public function collect($groups = [], $categories = [])
     {
         if (empty($groups)) {
-            $groups = array('0');
+            $groups = ['0'];
         }
         if (empty($categories)) {
-            $categories = array('0');
+            $categories = ['0'];
         }
 
-        $recipients = array();
-        $modxgrouprecipients = array();
+        $recipients = [];
+        $modxgrouprecipients = [];
 
         // Select subscribers based on groups/categories + assigned MODx user groups
         $tblUsers                  = $this->modx->getTableName(modUser::class);
@@ -122,12 +122,12 @@ class RecipientsHandler
         if ($query) {
             $users = $query->fetchAll(\PDO::FETCH_COLUMN);
         } else {
-            $users = array();
+            $users = [];
         }
 
         // Initialize each userid with status GON_USER_NOT_YET_SENT + timestamp placeholder 0
         foreach ($users as $id) {
-            $recipients[$id] = array(self::GON_USER_NOT_YET_SENT,0);
+            $recipients[$id] = [self::GON_USER_NOT_YET_SENT, 0];
         }
 
         $modxgrouprecipients = $this->collectModxGroupRecipients($groups);
@@ -146,13 +146,13 @@ class RecipientsHandler
      * @param array $groups Array of group ids
      * @return array $modxgrouprecipients
      */
-    private function collectModxGroupRecipients($groups = array())
+    private function collectModxGroupRecipients($groups = [])
     {
         if (empty($groups)) {
-            $groups = array('0');
+            $groups = ['0'];
         }
 
-        $modxgrouprecipients = array();
+        $modxgrouprecipients = [];
 
         // Select subscribers based on groups/categories + assigned MODx user groups
         $tblUsers                  = $this->modx->getTableName(modUser::class);
@@ -172,12 +172,12 @@ class RecipientsHandler
         if ($query) {
             $users = $query->fetchAll(\PDO::FETCH_COLUMN);
         } else {
-            $users = array();
+            $users = [];
         }
 
         // Initialize each userid with status GON_USER_NOT_YET_SENT + timestamp placeholder 0
         foreach ($users as $id) {
-            $modxgrouprecipients[$id] = array(self::GON_USER_NOT_YET_SENT,0);
+            $modxgrouprecipients[$id] = [self::GON_USER_NOT_YET_SENT, 0];
         }
 
         return $modxgrouprecipients;

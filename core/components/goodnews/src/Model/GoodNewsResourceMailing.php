@@ -87,6 +87,6 @@ class GoodNewsResourceMailing extends modResource
         if ($container) {
             $settings = $container->getContainerSettings();
         }
-        return is_array($settings) ? $settings : array();
+        return is_array($settings) ? $settings : [];
     }
 }

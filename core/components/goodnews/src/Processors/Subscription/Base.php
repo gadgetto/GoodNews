@@ -83,7 +83,7 @@ abstract class Base
      * @param array $properties
      * @return array $properties The cleaned array
      */
-    protected function cleanupKeys(array $properties = array())
+    protected function cleanupKeys(array $properties = [])
     {
         unset(
             // users table

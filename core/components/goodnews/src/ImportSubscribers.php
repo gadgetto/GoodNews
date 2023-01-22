@@ -262,7 +262,7 @@ class ImportSubscribers
      * @param array $categories The GoodNews category IDs for the new MODX user
      * @return boolean $subscriberUpdated
      */
-    private function updateSubscriber($fields, $groups = array(), $categories = array())
+    private function updateSubscriber($fields, $groups = [], $categories = [])
     {
         $subscriberUpdated = false;
 
@@ -280,7 +280,7 @@ class ImportSubscribers
             return false;
         }
 
-        $subscriberProfile = $this->modx->getObject(modUserProfile::class, array('email' => $fields[self::EMAIL]));
+        $subscriberProfile = $this->modx->getObject(modUserProfile::class, ['email' => $fields[self::EMAIL]]);
 
         // Update the subscribers Full name if provided
         if (!empty($fields[self::FULLNAME])) {

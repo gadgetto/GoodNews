@@ -38,7 +38,7 @@ class Subscription extends Base
      */
     public function initialize()
     {
-        $this->setDefaultProperties(array(
+        $this->setDefaultProperties([
             'activation'                 => true,
             'activationttl'              => 180,
             'activationEmail'            => '',
@@ -90,7 +90,7 @@ class Subscription extends Base
             'grpCatPlaceholder'          => 'grpcatfieldsets',
             'placeholderPrefix'          => '',
             'errorPage'                  => false,
-        ));
+        ]);
     }
 
     /**
@@ -235,7 +235,7 @@ class Subscription extends Base
         $this->validator = $this->subscription->loadValidator();
         $fields = $this->validator->validateFields($this->dictionary, $this->getProperty('validate', ''));
         foreach ($fields as $k => $v) {
-            $fields[$k] = str_replace(array('[',']'), array('&#91;','&#93;'), $v);
+            $fields[$k] = str_replace(['[', ']'], ['&#91;', '&#93;'], $v);
         }
         return $fields;
     }
@@ -468,10 +468,10 @@ class Subscription extends Base
         if (!empty($preHooks)) {
             $fields = $this->dictionary->toArray();
             // pre-register hooks
-            $this->preHooks->loadMultiple($preHooks, $fields, array(
+            $this->preHooks->loadMultiple($preHooks, $fields, [
                 'submitVar' => $this->getProperty('submitVar'),
                 'usernameField' => $this->getProperty('usernameField', 'username'),
-            ));
+            ]);
             $values = $this->preHooks->getValues();
             if (!empty($values)) {
                 $this->dictionary->fromArray($values);

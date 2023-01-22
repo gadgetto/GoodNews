@@ -174,7 +174,7 @@ $customresources['namespace'] = [
     'pagetitle'             => 'Pagetitle',
     ...
 ];
-$properties['namespace'] = array();
+$properties['namespace'] = [];
 $properties['namespace']['myKey'] = 'myValue';
 ...
 $customresources['namespace']['properties'] = $properties['namespace'];

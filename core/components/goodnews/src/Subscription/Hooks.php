@@ -111,7 +111,7 @@ class Hooks
         }
         $this->hooks[] = $hookName;
 
-        $reserved = array(
+        $reserved = [
             '__construct',
             'load',
             'processPlaceholders',
@@ -121,7 +121,7 @@ class Hooks
             'getValues',
             'setValue',
             'setValues'
-        );
+        ];
 
         if (method_exists($this, $hookName) && !in_array($hookName, $reserved)) {
             // Built-in hooks

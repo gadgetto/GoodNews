@@ -35,10 +35,10 @@ define('PKG_NAMESPACE', strtolower(PKG_NAME));
 $className = VENDOR_NAME . '\\' . PKG_NAME . '\\' . PKG_NAME;
 
 $root = dirname(__DIR__, 1) . '/';
-$sources = array(
+$sources = [
     'root'       => $root,
     'source_src' => $root . 'core/components/' . PKG_NAMESPACE . '/src/',
-);
+];
 unset($root);
 
 require_once $sources['root'] . 'config.core.php';

@@ -27,7 +27,7 @@ use xPDO\Om\xPDOQuery;
 class FilterGetList extends GetListProcessor
 {
     public $classKey = GoodNewsGroup::class;
-    public $languageTopics = array('goodnews:default');
+    public $languageTopics = ['goodnews:default'];
     public $defaultSortField = 'name';
     public $defaultSortDirection = 'ASC';
     public $objectType = 'goodnews.group';

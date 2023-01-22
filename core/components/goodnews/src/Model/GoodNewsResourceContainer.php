@@ -153,7 +153,7 @@ class GoodNewsResourceContainer extends modResource
      * @param array $node
      * @return array
      */
-    public function prepareTreeNode(array $node = array())
+    public function prepareTreeNode(array $node = [])
     {
         $this->xpdo->lexicon->load('resource', 'goodnews:resource');
 
@@ -289,6 +289,6 @@ class GoodNewsResourceContainer extends modResource
                 ? $settings
                 : $this->xpdo->fromJSON($settings);
         }
-        return !empty($settings) ? $settings : array();
+        return !empty($settings) ? $settings : [];
     }
 }

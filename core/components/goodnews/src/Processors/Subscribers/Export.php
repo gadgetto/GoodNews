@@ -32,7 +32,7 @@ use Bitego\GoodNews\Model\GoodNewsCategoryMember;
 class Export extends GetListProcessor
 {
     public $classKey = modUser::class;
-    public $languageTopics = array('user', 'goodnews:default');
+    public $languageTopics = ['user', 'goodnews:default'];
     public $defaultSortField = 'Profile.email';
 
     /** @var string $currentTime Current epoch time string */
@@ -375,7 +375,10 @@ class Export extends GetListProcessor
             if ($dir) {
                 @chmod($this->exportDir, 0777);
             } else {
-                $this->modx->log(modX::LOG_LEVEL_ERROR, '[GoodNews] Export::createExportDir - could not create export directory.');
+                $this->modx->log(
+                    modX::LOG_LEVEL_ERROR,
+                    '[GoodNews] Export::createExportDir - could not create export directory.'
+                );
             }
         }
         return $dir;

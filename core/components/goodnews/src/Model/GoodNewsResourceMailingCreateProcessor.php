@@ -131,12 +131,12 @@ class GoodNewsResourceMailingCreateProcessor extends Create
      */
     public function clearContainerCache()
     {
-        $this->modx->cacheManager->refresh(array(
+        $this->modx->cacheManager->refresh([
             'db' => [],
             'auto_publish' => ['contexts' => [$this->object->get('context_key')]],
             'context_settings' => ['contexts' => [$this->object->get('context_key')]],
             'resource' => ['contexts' => [$this->object->get('context_key')]],
-        ));
+        ]);
     }
 
     /**

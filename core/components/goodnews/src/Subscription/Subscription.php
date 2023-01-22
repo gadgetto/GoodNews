@@ -254,7 +254,7 @@ class Subscription
         if (is_array($params)) {
             $params = serialize($params);
         } else {
-            $params = serialize(array($params));
+            $params = serialize([$params]);
         }
         return $this->base64UrlEncode($params);
     }

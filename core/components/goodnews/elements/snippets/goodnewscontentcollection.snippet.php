@@ -122,7 +122,7 @@ foreach ($resources as $resource) {
     $properties = array_merge(
         $scriptProperties,
         $resource->get($fields),
-        array('url' => $modx->makeUrl($resource->get('id'), '', '', 'full'))
+        ['url' => $modx->makeUrl($resource->get('id'), '', '', 'full')]
     );
     $resourceTpl = '';
     if (!empty($tpl)) {

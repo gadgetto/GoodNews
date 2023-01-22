@@ -73,8 +73,8 @@ class AssignMulti extends Processor
         // $nodeparts[2] = grpID || catID
         // $nodeparts[3] = parent grpID (or empty)
 
-        $groups = array();
-        $categories = array();
+        $groups = [];
+        $categories = [];
 
         foreach ($nodes as $node) {
             $nodeparts = explode('_', $node);

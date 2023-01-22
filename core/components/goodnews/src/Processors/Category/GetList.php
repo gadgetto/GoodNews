@@ -83,9 +83,9 @@ class GetList extends GetListProcessor
 
         // get category subscribers count
         $c = $this->modx->newQuery(GoodNewsCategoryMember::class);
-        $c->where(array(
+        $c->where([
             'goodnewscategory_id' => $resourceArray['id'],
-        ));
+        ]);
         $membercount = $this->modx->getCount(GoodNewsCategoryMember::class, $c);
         $resourceArray['membercount'] = (int)$membercount;
 

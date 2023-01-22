@@ -48,7 +48,9 @@ class GetList extends GetListProcessor
 
         // optionally filter out groups with assigned MODx user-group
         if ($this->getProperty('noModxGroups', false)) {
-            $c->where(array('GoodNewsGroup.modxusergroup' => '0'));
+            $c->where([
+                'GoodNewsGroup.modxusergroup' => '0'
+            ]);
         }
 
         $query = $this->getProperty('query');

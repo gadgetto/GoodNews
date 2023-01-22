@@ -269,7 +269,7 @@ class Validator
         } elseif (in_array($type, $customValidators)) {
             // Attempt to grab custom validator (Snippet)
             /** @var modSnippet|null $snippet */
-            $snippet = $this->modx->getObject(modSnippet::class, array('name' => $type));
+            $snippet = $this->modx->getObject(modSnippet::class, ['name' => $type]);
             if ($snippet) {
                 /* custom snippet validator */
                 $props = array_merge($this->subscription->config, [

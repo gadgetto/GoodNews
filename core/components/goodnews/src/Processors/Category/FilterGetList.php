@@ -27,17 +27,17 @@ use xPDO\Om\xPDOQuery;
 class FilterGetList extends GetListProcessor
 {
     public $classKey = GoodNewsCategory::class;
-    public $languageTopics = array('goodnews:default');
+    public $languageTopics = ['goodnews:default'];
     public $defaultSortField = 'name';
     public $defaultSortDirection = 'ASC';
     public $objectType = 'goodnews.category';
 
     public function prepareQueryBeforeCount(xPDOQuery $c)
     {
-        $c->select(array(
+        $c->select([
             'GoodNewsCategory.id',
             'GoodNewsCategory.name',
-        ));
+        ]);
         return $c;
     }
 
@@ -51,10 +51,10 @@ class FilterGetList extends GetListProcessor
     {
         // additional option value "no category assigned"
         if ($this->getProperty('addNoCategoryOption', false)) {
-            $list[] = array(
+            $list[] = [
                 'id' => 'nocategory',
                 'name' => $this->modx->lexicon('goodnews.subscribers_no_category'),
-            );
+            ];
         }
         return $list;
     }

@@ -40,7 +40,7 @@ class ResetBounceCountersMulti extends Processor
                 continue;
             }
 
-            $meta = $this->modx->getObject(GoodNewsSubscriberMeta::class, array('subscriber_id' => $id));
+            $meta = $this->modx->getObject(GoodNewsSubscriberMeta::class, ['subscriber_id' => $id]);
             if (!is_object($meta)) {
                 // @todo: return specific error message
                 return $this->failure($this->modx->lexicon('user_err_save'));

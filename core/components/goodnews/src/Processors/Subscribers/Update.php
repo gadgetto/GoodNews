@@ -76,14 +76,14 @@ class Update extends Processor
         }
 
         // Remove all prior categories of this user
-        $result = $this->modx->removeCollection(GoodNewsCategoryMember::class, array('member_id' => $this->userid));
+        $result = $this->modx->removeCollection(GoodNewsCategoryMember::class, ['member_id' => $this->userid]);
         if ($result == false && $result != 0) {
             // @todo: return specific error message
             return $this->failure($this->modx->lexicon('user_err_save'));
         }
 
         // Remove all prior groups of this user
-        $result = $this->modx->removeCollection(GoodNewsGroupMember::class, array('member_id' => $this->userid));
+        $result = $this->modx->removeCollection(GoodNewsGroupMember::class, ['member_id' => $this->userid]);
         if ($result == false && $result != 0) {
             // @todo: return specific error message
             return $this->failure($this->modx->lexicon('user_err_save'));

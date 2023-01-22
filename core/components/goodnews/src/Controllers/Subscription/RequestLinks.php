@@ -101,7 +101,7 @@ class RequestLinks extends Base
         $this->validator = $this->subscription->loadValidator();
         $fields = $this->validator->validateFields($this->dictionary, $this->getProperty('validate', ''));
         foreach ($fields as $k => $v) {
-            $fields[$k] = str_replace(array('[',']'), array('&#91;','&#93;'), $v);
+            $fields[$k] = str_replace(['[', ']'], ['&#91;', '&#93;'], $v);
         }
         return $fields;
     }

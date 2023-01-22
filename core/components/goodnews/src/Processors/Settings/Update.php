@@ -61,7 +61,7 @@ class Update extends Processor
         }
 
         // refresh part of cache (MODx 2.1.x)
-        $cacheRefreshOptions = array('system_settings' => array());
+        $cacheRefreshOptions = ['system_settings' => []];
         $this->modx->cacheManager->refresh($cacheRefreshOptions);
 
         $response['data'] = $this->getProperties();

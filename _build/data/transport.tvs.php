@@ -40,7 +40,7 @@ $tvs[$i]->fromArray([
     'default_text'      => '',
     'input_properties'  => '',
     'output_properties' => '',
-    'properties'        => array(),
+    'properties'        => [],
 ], '', true, true);
 */
 

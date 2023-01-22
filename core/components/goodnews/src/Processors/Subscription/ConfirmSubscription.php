@@ -124,9 +124,9 @@ class ConfirmSubscription extends Base
     public function onBeforeUserActivate()
     {
         $success = true;
-        $result = $this->modx->invokeEvent('OnBeforeUserActivate', array(
+        $result = $this->modx->invokeEvent('OnBeforeUserActivate', [
             'user' => &$this->user,
-        ));
+        ]);
         $preventActivation = $this->subscription->getEventResult($result);
         if (!empty($preventActivation)) {
             $success = false;
