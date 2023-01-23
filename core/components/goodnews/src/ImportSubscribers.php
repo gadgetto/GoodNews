@@ -75,7 +75,6 @@ class ImportSubscribers
     {
         $this->modx = &$modx;
         $this->modx->lexicon->load('goodnews:default');
-        ini_set('auto_detect_line_endings', true);
         $this->config = array_merge([
             'use_multibyte' => (bool)$this->modx->getOption('use_multibyte', null, false),
             'encoding' => $this->modx->getOption('modx_charset', null, 'UTF-8'),
@@ -91,7 +90,6 @@ class ImportSubscribers
     public function __destruct()
     {
         $this->closeFile();
-        ini_set('auto_detect_line_endings', false);
     }
 
     /**
