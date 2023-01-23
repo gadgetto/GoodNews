@@ -563,46 +563,6 @@ class ImportSubscribers
      */
     public function validEmail($email)
     {
-        // Validate length and @
-        $pattern = "^[^@]{1,64}\@[^\@]{1,255}$";
-        $condition = $this->config['use_multibyte']
-            ? @mb_ereg($pattern, $email)
-            : @ereg($pattern, $email);
-        if (!$condition) {
-            return false;
-        }
-
-        $email_array = explode("@", $email);
-        $local_array = explode(".", $email_array[0]);
-        for ($i = 0; $i < sizeof($local_array); $i++) {
-            $pattern = "^(([A-Za-z0-9!#$%&'*+/=?^_`{|}~-][A-Za-z0-9!#$%&'*+/=?^_`{|}~\.-]{0,63})|(\"[^(\\|\")]{0,62}\"))$";
-            $condition = $this->config['use_multibyte']
-                ? @mb_ereg($pattern, $local_array[$i])
-                : @ereg($pattern, $local_array[$i]);
-            if (!$condition) {
-                return false;
-            }
-        }
-        // Validate domain name
-        $pattern = "^\[?[0-9\.]+\]?$";
-        $condition = $this->config['use_multibyte']
-            ? @mb_ereg($pattern, $email_array[1])
-            : @ereg($pattern, $email_array[1]);
-        if (!$condition) {
-            $domain_array = explode(".", $email_array[1]);
-            if (sizeof($domain_array) < 2) {
-                return false;
-            }
-            for ($i = 0; $i < sizeof($domain_array); $i++) {
-                $pattern = "^(([A-Za-z0-9][A-Za-z0-9-]{0,61}[A-Za-z0-9])|([A-Za-z0-9]+))$";
-                $condition = $this->config['use_multibyte']
-                    ? @mb_ereg($pattern, $domain_array[$i])
-                    : @ereg($pattern, $domain_array[$i]);
-                if (!$condition) {
-                    return false;
-                }
-            }
-        }
-        return true;
+        return filter_var($email, FILTER_VALIDATE_EMAIL, FILTER_FLAG_EMAIL_UNICODE);
     }
 }
