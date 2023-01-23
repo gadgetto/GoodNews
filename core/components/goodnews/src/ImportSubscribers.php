@@ -193,13 +193,13 @@ class ImportSubscribers
         }
         while (
             $lineCount < $this->batchSize &&
-            $row = fgetcsv(
+            ($row = fgetcsv(
                 $this->fileHandle,
                 $this->lineLength,
                 $this->delimiter,
                 $this->enclosure,
                 $this->escape
-            ) !== false
+            )) !== false
         ) {
             $importUsers[] = $row;
             if ($this->batchSize > 0) {
