@@ -42,7 +42,7 @@ class Create extends CreateProcessor
             $this->addFieldError('goodnewsgroup_id', $this->modx->lexicon('goodnews.category_err_ns_group'));
         }
 
-        $this->object->set('createdon', strftime('%Y-%m-%d %H:%M:%S'));
+        $this->object->set('createdon', date('Y-m-d H:i:s'));
         $this->object->set('createdby', $this->modx->user->get('id'));
 
         return parent::beforeSave();

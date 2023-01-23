@@ -823,16 +823,17 @@ class Validator
      * @access public
      * @param string $key The name of the field
      * @param string $value The value of the field
-     * @param string $format The format of the date (default: ISO date)
-     * @return boolean
+     * @param string $format The format of the date based on PHP date() (default: ISO date)
+     * @return mixed boolean | error string (lexicon)
      */
-    public function isDate(string $key, $value, $format = '%Y-%m-%d')
+    public function isDate(string $key, $value, string $format = 'Y-m-d')
     {
-        $ts = false;
-        if (!empty($value)) {
-            $ts = strtotime($value);
+        // Allow empty value, :required should be used to prevent blank field
+        if (empty($value)) {
+            return true;
         }
-        if ($ts === false || empty($value)) {
+        $ts = strtotime($value);
+        if ($ts === false) {
             return $this->getErrorMessage($key, 'vTextIsDate', 'goodnews.validator_not_date', [
                 'format' => $format,
                 'field'  => $key,
@@ -840,7 +841,7 @@ class Validator
             ]);
         }
         if (!empty($format)) {
-            $this->fields[$key] = strftime($format, $ts);
+            $this->fields[$key] = date($format, $ts);
         }
         return true;
     }
