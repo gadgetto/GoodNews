@@ -136,7 +136,7 @@ class UnSubscription extends Base
         $result = $this->modx->removeCollection(GoodNewsGroupMember::class, ['member_id' => $this->userid]);
 
         // Change sid to invalidate all secure links
-        $this->subscribermeta->set('sid', md5(time() . $this->userid));
+        $this->subscribermeta->set('sid', md5(uniqid(rand() . $this->userid, true)));
         $this->subscribermeta->save();
     }
 

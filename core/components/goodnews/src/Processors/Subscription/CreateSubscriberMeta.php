@@ -66,7 +66,7 @@ class CreateSubscriberMeta extends Base
         $this->subscribermeta->set('subscriber_id', $userid);
         $this->subscribermeta->set('subscribedon', time());
         // Create and set new sid
-        $this->subscribermeta->set('sid', md5(time() . $userid));
+        $this->subscribermeta->set('sid', md5(uniqid(rand() . $userid, true)));
         $this->subscribermeta->set('testdummy', 0);
         $this->subscribermeta->set('ip', $this->controller->getSubscriberIP());
     }

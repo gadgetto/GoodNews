@@ -293,8 +293,7 @@ class ImportSubscribers
             if (!$this->modx->getObject(GoodNewsSubscriberMeta::class, ['subscriber_id' => $id])) {
                 $subscriberMeta = $this->modx->newObject(GoodNewsSubscriberMeta::class);
                 $subscriberMeta->set('subscriber_id', $id);
-                $sid = md5(time() . $id);
-                $subscriberMeta->set('sid', $sid);
+                $subscriberMeta->set('sid', md5(uniqid(rand() . $id, true)));
                 $subscriberMeta->set('subscribedon', time());
                 $subscriberMeta->set('ip', 'imported'); // Set IP field to string 'imported' for later reference
 
@@ -408,8 +407,7 @@ class ImportSubscribers
             // New GoodNewsSubscriberMeta
             $subscriberMeta = $this->modx->newObject(GoodNewsSubscriberMeta::class);
             $subscriberMeta->set('subscriber_id', $id);
-            $sid = md5(time() . $id);
-            $subscriberMeta->set('sid', $sid);
+            $subscriberMeta->set('sid', md5(uniqid(rand() . $id, true)));
             $subscriberMeta->set('subscribedon', time());
             $subscriberMeta->set('ip', 'imported'); // Set IP field to string 'imported' for later reference
 

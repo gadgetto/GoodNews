@@ -126,7 +126,7 @@ class Update extends Processor
             $meta->set('subscriber_id', $this->userid);
             // Set member subscription date (this is not the creation date of the MODx user!)
             $meta->set('subscribedon', time());
-            $meta->set('sid', md5(time() . $this->userid));
+            $meta->set('sid', md5(uniqid(rand() . $this->userid, true)));
             // Set IP field to string 'manually' for later reference
             $meta->set('ip', 'manually');
         }
