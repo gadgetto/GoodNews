@@ -110,17 +110,20 @@ Ext.extend(GoodNewsResource.panel.Mailing,MODx.panel.Resource,{
             it.push(this.getAccessPermissionsTab(config));
         }
         var its = [];
-        its.push(this.getPageHeader(config),{
-            id:'modx-resource-tabs'
-            ,xtype: 'modx-tabs'
-            ,itemId: 'tabs'
-            ,cls: 'structure-tabs'
-            ,forceLayout: true
-            ,deferredRender: false
-            ,collapsible: false
-            ,animCollapse: false
-            ,items: it
-        });
+        its.push(
+            this.getPageHeader(config)
+            ,{
+                id:'modx-resource-tabs'
+                ,xtype: 'modx-tabs'
+                ,itemId: 'tabs'
+                ,cls: 'structure-tabs'
+                ,forceLayout: true
+                ,deferredRender: false
+                ,collapsible: false
+                ,animCollapse: false
+                ,items: it
+            }
+        );
         if (MODx.config.tvs_below_content == 1) {
             var tvs = this.getTemplateVariablesPanel(config);
             its.push(tvs);
