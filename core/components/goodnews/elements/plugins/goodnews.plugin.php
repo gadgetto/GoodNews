@@ -22,6 +22,7 @@ use Bitego\GoodNews\Model\GoodNewsGroupMember;
  * OnUserRemove        Fires after a User is removed.
  *
  * @package goodnews
+ * @subpackage plugins
  */
 
 switch ($modx->event->name) {
