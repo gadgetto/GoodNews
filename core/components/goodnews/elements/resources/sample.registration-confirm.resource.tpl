@@ -15,7 +15,7 @@
     </header>
     <main>
         <div class="formsuccess">
-            You successfully finished your registration to our website!
+            You successfully finished your registration on our website!
         </div>
         <p>
             Please login with the credentials you submitted via registration form.

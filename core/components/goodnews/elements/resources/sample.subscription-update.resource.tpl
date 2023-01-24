@@ -56,7 +56,7 @@
     <main>
         <h2>Edit your mailing profile</h2>
         <p>
-            You can edit your mailing profile here. Please check/uncheck the newsletter topics you are interested in.
+            You can edit your mailing profile here. Please select the newsletter topics you are interested in.
         </p>
         <form action="[[~[[*id]]]]?sid=[[!+sid]]" method="post">
             [[!+update_success:is=`1`:then=`

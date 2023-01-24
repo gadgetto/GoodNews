@@ -34,7 +34,7 @@
     
     &validate=`
         email:email:required,
-        gonctegories:required,
+        goncategories:required,
         gdprcheck:required`
 
     and set:
