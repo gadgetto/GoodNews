@@ -330,66 +330,73 @@ button:hover:disabled[class*="gon-ab-"] {
 .gon-about-box {
     color: #777;
 }
+    .gon-about-box h3 {
+    margin-bottom: 10px;
+}
     .gon-about-box p {
-        margin-bottom: 20px;
+    margin-bottom: 20px;
+}
+    .gon-about-box a {
+        text-decoration: none;
+        color: #777;
+        border-bottom: 1px dotted;
     }
-.gon-about-box a {
-    text-decoration: none;
-    color: #777;
-    border-bottom: 1px dotted;
-}
-.gon-about-box ul li {
-    list-style-type: disc;
-    margin-left: 20px;
-}
-.gon-about-box-error {
-    color: #f22;
-}
-.gon-about-box-error h3 {
-    color: #f22;
-}
+    .gon-about-box ul li {
+        list-style-type: disc;
+        margin-left: 20px;
+    }
+    .gon-about-box-error,
+    .gon-about-box-error h3 {
+        color: #f22;
+    }
 
 /* status colors */
 .gon-ok {
+    font-weight: bold;
     color: #6cb24a;
 }
 .gon-nok {
+    font-weight: bold;
     color: #be0000;
 }
 .gon-disabled {
     color: #be0000;
 }
 
-/* System check table in About tab */
-.gon-syscheck-tbl {
+/* about page tables (styles from MODX dashboard tables) */
+.gon-about-box .gon-table-wrapper {
     width: 100%;
-    border-collapse: collapse;
-    border: 1px solid #e3e3e3;
+    overflow: auto;
 }
-    .gon-syscheck-tbl thead
-    {
-        background-color: #dedede;
-    }
-    .gon-syscheck-tbl th,
-    .gon-syscheck-tbl td
-    {
-        padding: 6px 10px;
-    }
-    .gon-syscheck-tbl th {
-        color: #000;
-    }
-    .gon-syscheck-tbl-lcol {
-    
-    }
-    .gon-syscheck-tbl-rcol {
-        width: 120px;
-    }
-    .gon-even {
-        background-color: #fff;
-    }
-    .gon-odd {
-        background-color: #fafafa;
-    }
+.gon-about-box .gon-table-wrapper table {
+    width: 100%;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+.gon-about-box .gon-table-wrapper table th {
+    font-weight: bold;
+    text-align: initial;
+    padding: 10px;
+    border-bottom: 2px solid #F0F0F0;
+}
+.gon-about-box .gon-table-wrapper table td {
+    padding: 10px;
+    border-bottom: 1px solid #F0F0F0;
+    white-space: nowrap;
+    vertical-align: center;
+}
+.gon-about-box .gon-table-wrapper table tr:last-child td {
+    border: none;
+}
+.gon-about-box .gon-table-wrapper table tr:last-child td tr:last-child td {
+    border: none;
+}
+.gon-about-box .gon-table-wrapper table tr:last-child td tr:last-child td:first-child {
+    border-bottom-left-radius: 10px;
+}
+.gon-about-box .gon-table-wrapper table tr:last-child td tr:last-child td:last-child {
+    border-bottom-right-radius: 10px;
+}
 
 /* Error panel */
 .gon-panel-desc-error {
