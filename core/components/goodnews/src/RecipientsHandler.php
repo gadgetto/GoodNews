@@ -41,7 +41,7 @@ class RecipientsHandler
     public const PROCESS_TIMEOUT = 90;
 
     /** @var modX $modx A reference to the modX object */
-    public $modx;
+    public $modx = null;
 
     private $recipientsCollection;
     private $recipientsTotal;
@@ -353,13 +353,13 @@ class RecipientsHandler
      */
     private function writeLog($recipientId, $mailingId, $statusTime, $status, string $log = '')
     {
-        $log = $this->modx->newObject(GoodNewsSubscriberLog::class);
-        $log->set('subscriber_id', $recipientId);
-        $log->set('mailing_id', $mailingId);
-        $log->set('statustime', $statusTime);
-        $log->set('status', $status);
-        $log->set('log', $log);
-        if (!$log->save()) {
+        $subscriberlog = $this->modx->newObject(GoodNewsSubscriberLog::class);
+        $subscriberlog->set('subscriber_id', $recipientId);
+        $subscriberlog->set('mailing_id', $mailingId);
+        $subscriberlog->set('statustime', $statusTime);
+        $subscriberlog->set('status', $status);
+        $subscriberlog->set('log', $log);
+        if (!$subscriberlog->save()) {
             return false;
         }
         return true;
