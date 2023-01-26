@@ -805,8 +805,8 @@ GoodNews.window.NewsletterLogWindow = function(config) {
         ,id: 'goodnews-window-newsletter-log'
         ,maximizable: true
         ,modal: false
-        ,minWidth: 680
-        ,minHeight:600
+        ,minWidth: 740
+        ,minHeight: 600
         ,layout: 'fit'
         ,style: {
             width: '680px'
@@ -834,7 +834,7 @@ GoodNews.window.NewsletterLogWindow = function(config) {
         }]
         ,listeners: {
             'render': {fn: function(win) {
-                this.setSize(680,600);
+                this.setSize(740,600);
             },scope:this}
         }
     });
