@@ -13,7 +13,6 @@
 use MODX\Revolution\modX;
 use MODX\Revolution\modSystemSetting;
 use xPDO\Transport\xPDOTransport;
-use Bitego\GoodNews\GoodNews;
 
 /**
  * Pre-installation package requirements (validator)
@@ -21,6 +20,10 @@ use Bitego\GoodNews\GoodNews;
  * @package goodnews
  * @subpackage build
  */
+
+const MIN_PHP_VERSION = '7.2.5';
+const MIN_MODX_VERSION = '3.0.0';
+const MAX_MODX_VERSION = '';
 
 /** @var modX $modx */
 $modx = &$object->xpdo;
@@ -46,41 +49,41 @@ switch ($options[xPDOTransport::PACKAGE_ACTION]) {
         $modxVersion = $modx->getVersionData();
 
         /* Check min/max MODX version */
-        if (!empty(GoodNews::MIN_MODX_VERSION)) {
+        if (!empty(MIN_MODX_VERSION)) {
             $level = modX::LOG_LEVEL_INFO;
-            if (version_compare($modXversion, GoodNews::MIN_MODX_VERSION, '<=')) {
+            if (version_compare($modXversion, MIN_MODX_VERSION, '<=')) {
                 $level = modX::LOG_LEVEL_ERROR;
                 $success = false;
             }
             $modx->log(
                 $level,
-                '-> min. required MODX Revo version: ' . GoodNews::MIN_MODX_VERSION .
+                '-> min. required MODX Revo version: ' . MIN_MODX_VERSION .
                 ' -- found: <b>' . $modXversion . '</b>'
             );
         }
-        if (!empty(GoodNews::MAX_MODX_VERSION)) {
+        if (!empty(MAX_MODX_VERSION)) {
             $level = modX::LOG_LEVEL_INFO;
-            if (version_compare($modXversion, GoodNews::MAX_MODX_VERSION, '>=')) {
+            if (version_compare($modXversion, MAX_MODX_VERSION, '>=')) {
                 $level = modX::LOG_LEVEL_ERROR;
                 $success = false;
             }
             $modx->log(
                 $level,
-                '-> max. required MODX Revo version: ' . GoodNews::MAX_MODX_VERSION .
+                '-> max. required MODX Revo version: ' . MAX_MODX_VERSION .
                 ' -- found: <b>' . $modXversion . '</b>'
             );
         }
 
         /* Check PHP version */
-        if (!empty(GoodNews::MIN_PHP_VERSION)) {
+        if (!empty(MIN_PHP_VERSION)) {
             $level = modX::LOG_LEVEL_INFO;
-            if (version_compare(PHP_VERSION, GoodNews::MIN_PHP_VERSION, '<=')) {
+            if (version_compare(PHP_VERSION, MIN_PHP_VERSION, '<=')) {
                 $level = modX::LOG_LEVEL_ERROR;
                 $success = false;
             }
             $modx->log(
                 $level,
-                '-> min. required PHP version: ' . GoodNews::MIN_PHP_VERSION .
+                '-> min. required PHP version: ' . MIN_PHP_VERSION .
                 ' -- found: <b>' . PHP_VERSION . '</b>'
             );
         }
