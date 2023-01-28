@@ -94,7 +94,7 @@ if (!($goodnews instanceof GoodNews)) {
     $modx->log(modX::LOG_LEVEL_ERROR, '[GoodNews] cron.php - Could not load GoodNews class.');
     exit();
 }
-$assetsUrl = $goodnews->config['assetsUrl'];
+$assetsPath = $goodnews->config['assetsPath'];
 
 // Load BounceMailHandler
 /** @var BounceMailHandler $goodnews */
@@ -138,9 +138,7 @@ if (!$goodnews->isMultiProcessing || $workerProcessLimit <= 1) {
 
     while ($actualProcessCount < $workerProcessLimit) {
         $actualProcessCount++;
-        $processhandler->setCommand(
-            'php ' . rtrim(MODX_BASE_PATH, '/') . $assetsUrl . 'cron.worker.php sid=' . $sid
-        );
+        $processhandler->setCommand('php ' . $assetsPath . 'cron.worker.php sid=' . $sid);
         if (!$processhandler->start()) {
             if ($debug) {
                 $modx->log(modX::LOG_LEVEL_INFO, '[GoodNews] cron.php - No worker started.');
