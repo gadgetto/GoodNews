@@ -21,9 +21,10 @@ use xPDO\Transport\xPDOTransport;
  * @subpackage build
  */
 
-const MIN_PHP_VERSION = '7.2.5';
-const MIN_MODX_VERSION = '3.0.0';
-const MAX_MODX_VERSION = '';
+// Don't use constants as this leads to an error in installer (already defined)
+$minPHPVersion  = '7.2.5';
+$minMODXVersion = '3.0.0';
+$maxMODXVersion = '';
 
 /** @var modX $modx */
 $modx = &$object->xpdo;
@@ -49,41 +50,41 @@ switch ($options[xPDOTransport::PACKAGE_ACTION]) {
         $modxVersion = $modx->getVersionData();
 
         /* Check min/max MODX version */
-        if (!empty(MIN_MODX_VERSION)) {
+        if (!empty($minMODXVersion)) {
             $level = modX::LOG_LEVEL_INFO;
-            if (version_compare($modXversion, MIN_MODX_VERSION, '<=')) {
+            if (version_compare($modxVersion, $minMODXVersion, '<=')) {
                 $level = modX::LOG_LEVEL_ERROR;
                 $success = false;
             }
             $modx->log(
                 $level,
-                '-> min. required MODX Revo version: ' . MIN_MODX_VERSION .
-                ' -- found: <b>' . $modXversion . '</b>'
+                '-> min. required MODX Revo version: ' . $minMODXVersion .
+                ' -- found: <b>' . $modxVersion . '</b>'
             );
         }
-        if (!empty(MAX_MODX_VERSION)) {
+        if (!empty($maxMODXVersion)) {
             $level = modX::LOG_LEVEL_INFO;
-            if (version_compare($modXversion, MAX_MODX_VERSION, '>=')) {
+            if (version_compare($modxVersion, $maxMODXVersion, '>=')) {
                 $level = modX::LOG_LEVEL_ERROR;
                 $success = false;
             }
             $modx->log(
                 $level,
-                '-> max. required MODX Revo version: ' . MAX_MODX_VERSION .
-                ' -- found: <b>' . $modXversion . '</b>'
+                '-> max. required MODX Revo version: ' . $maxMODXVersion .
+                ' -- found: <b>' . $modxVersion . '</b>'
             );
         }
 
         /* Check PHP version */
-        if (!empty(MIN_PHP_VERSION)) {
+        if (!empty($minPHPVersion)) {
             $level = modX::LOG_LEVEL_INFO;
-            if (version_compare(PHP_VERSION, MIN_PHP_VERSION, '<=')) {
+            if (version_compare(PHP_VERSION, $minPHPVersion, '<=')) {
                 $level = modX::LOG_LEVEL_ERROR;
                 $success = false;
             }
             $modx->log(
                 $level,
-                '-> min. required PHP version: ' . MIN_PHP_VERSION .
+                '-> min. required PHP version: ' . $minPHPVersion .
                 ' -- found: <b>' . PHP_VERSION . '</b>'
             );
         }
