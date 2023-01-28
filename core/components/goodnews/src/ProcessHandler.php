@@ -464,7 +464,7 @@ class ProcessHandler
                         modX::LOG_LEVEL_INFO,
                         '[GoodNews] [pid: ' .
                         getmypid() .
-                        '] ProcessHandler::lock - Mailing meta [id: ' .
+                        '] ProcessHandler::lock - Mailing [id: ' .
                         $mailingId .
                         '] - locked.'
                     );

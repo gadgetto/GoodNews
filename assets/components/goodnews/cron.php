@@ -60,7 +60,7 @@ if (!$modx->services->has('error')) {
 $sid = (string)isset($_GET['sid']) ? $_GET['sid'] : '';
 $securityKey = (string)$modx->getOption('goodnews.cron_security_key', null, '');
 if ($sid !== $securityKey) {
-    $modx->log(modX::LOG_LEVEL_WARN, '[GoodNews] cron.php - missing or wrong security key!');
+    $modx->log(modX::LOG_LEVEL_WARN, '[GoodNews] cron.php - Missing or wrong security key!');
     header('HTTP/1.1 401 Unauthorized');
     exit();
 }
@@ -252,7 +252,7 @@ function cleanUpSubscriptions(&$modx, $debug_cs = false)
         if ($debug_cs) {
             $modx->log(
                 modX::LOG_LEVEL_INFO,
-                '[GoodNews] cron.php::cleanUpSubscriptions - user with ID: ' . $user->get('id') . ' would be deleted.'
+                '[GoodNews] cron.php::cleanUpSubscriptions - User with ID: ' . $user->get('id') . ' would be deleted.'
             );
         } else {
             $user->remove();
