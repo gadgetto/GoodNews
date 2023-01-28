@@ -190,7 +190,7 @@ class ProcessHandler
         $cm = 'nohup ' . $this->command . ' > /dev/null 2>&1 & echo $!';
         exec($cm, $output);
         $this->pid = (int)$output[0];
-        if (isset($this->pid)) {
+        if (!empty($this->pid)) {
             $this->newProcessStatus();
             return true;
         } else {
