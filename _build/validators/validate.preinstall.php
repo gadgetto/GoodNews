@@ -35,7 +35,9 @@ switch ($options[xPDOTransport::PACKAGE_ACTION]) {
 
     case xPDOTransport::ACTION_UNINSTALL:
         // Set back all custom resources to modDocument resources
-        $resources = $modx->getIterator(modResource::class, ['class_key' => 'GoodNewsResourceContainer']);
+        $resources = $modx->getIterator(modResource::class, [
+            'class_key' => 'Bitego\\GoodNews\\Model\\GoodNewsResourceContainer'
+        ]);
         foreach ($resources as $resource) {
             $resource->set('class_key', 'MODX\\Revolution\\modDocument');
             $resource->set('hide_children_in_tree', false);
@@ -43,7 +45,9 @@ switch ($options[xPDOTransport::PACKAGE_ACTION]) {
         }
         unset($resources, $resource);
 
-        $resources = $modx->getIterator('modResource', ['class_key' => 'GoodNewsResourceMailing']);
+        $resources = $modx->getIterator('modResource', [
+            'class_key' => 'Bitego\\GoodNews\\Model\\GoodNewsResourceMailing'
+        ]);
         foreach ($resources as $resource) {
             $resource->set('class_key', 'MODX\\Revolution\\modDocument');
             $resource->set('show_in_tree', true);
