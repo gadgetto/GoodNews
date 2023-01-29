@@ -48,6 +48,7 @@ switch ($options[xPDOTransport::PACKAGE_ACTION]) {
 
         $level = modX::LOG_LEVEL_INFO;
         $modxVersion = $modx->getVersionData();
+        $modxVersion = $modxVersion['full_version'];
 
         /* Check min/max MODX version */
         if (!empty($minMODXVersion)) {
