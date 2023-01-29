@@ -95,7 +95,7 @@ switch ($options[xPDOTransport::PACKAGE_ACTION]) {
             $setting = $modx->newObject(modSystemSetting::class);
             $setting->fromArray([
                 'key'       => 'goodnews.system_requirements_ok',
-                'value'     => 'MODX Revolution ' . $modxVersion['full_version'] . ', PHP ' . PHP_VERSION,
+                'value'     => 'MODX Revolution ' . $modxVersion . ', PHP ' . PHP_VERSION,
                 'xtype'     => 'textfield',
                 'namespace' => 'goodnews',
                 'area'      => '',
