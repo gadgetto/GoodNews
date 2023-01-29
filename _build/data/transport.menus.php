@@ -40,7 +40,7 @@ $menus[$i]->fromArray([
     'parent'      => 'components',
     'description' => 'goodnews.desc',
     'icon'        => '',
-    'menuindex'   => 0,
+    'menuindex'   => 99,
     'params'      => '',
     'handler'     => '',
     'action'      => 'index',
