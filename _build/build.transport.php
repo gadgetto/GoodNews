@@ -272,6 +272,7 @@ $vehicle->resolve('file', [
 $modx->log(modX::LOG_LEVEL_INFO, 'Adding PHP validators and resolvers...');
 $vehicle->validate('php', ['source' => $sources['validators'] . 'validate.requirements.php']);
 $vehicle->validate('php', ['source' => $sources['validators'] . 'validate.preinstall.php']);
+$vehicle->resolve('php', ['source' => $sources['resolvers'] . 'resolve.bootstrap.php']);
 $vehicle->resolve('php', ['source' => $sources['resolvers'] . 'resolve.system-settings.php']);
 $vehicle->resolve('php', ['source' => $sources['resolvers'] . 'resolve.setupoptions.php']);
 $vehicle->resolve('php', ['source' => $sources['resolvers'] . 'resolve.dbtables.php']);

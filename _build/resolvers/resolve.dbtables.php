@@ -21,15 +21,15 @@ use xPDO\Transport\xPDOTransport;
  */
 
 $tables = [
-     Bitego\GoodNews\Model\GoodNewsMailingMeta::class,
-     Bitego\GoodNews\Model\GoodNewsRecipient::class,
-     Bitego\GoodNews\Model\GoodNewsSubscriberMeta::class,
-     Bitego\GoodNews\Model\GoodNewsSubscriberLog::class,
-     Bitego\GoodNews\Model\GoodNewsGroup::class,
-     Bitego\GoodNews\Model\GoodNewsGroupMember::class,
-     Bitego\GoodNews\Model\GoodNewsCategory::class,
-     Bitego\GoodNews\Model\GoodNewsCategoryMember::class,
-     Bitego\GoodNews\Model\GoodNewsProcess::class,
+    Bitego\GoodNews\Model\GoodNewsMailingMeta::class,
+    Bitego\GoodNews\Model\GoodNewsRecipient::class,
+    Bitego\GoodNews\Model\GoodNewsSubscriberMeta::class,
+    Bitego\GoodNews\Model\GoodNewsSubscriberLog::class,
+    Bitego\GoodNews\Model\GoodNewsGroup::class,
+    Bitego\GoodNews\Model\GoodNewsGroupMember::class,
+    Bitego\GoodNews\Model\GoodNewsCategory::class,
+    Bitego\GoodNews\Model\GoodNewsCategoryMember::class,
+    Bitego\GoodNews\Model\GoodNewsProcess::class,
 ];
 
 if ($object->xpdo) {
@@ -40,7 +40,6 @@ if ($object->xpdo) {
         case xPDOTransport::ACTION_UPGRADE:
             $modx->log(modX::LOG_LEVEL_INFO, 'Database tables resolver - creating database tables...');
             $modx->log(modX::LOG_LEVEL_WARN, 'Existing tables will be skipped!');
-
             $manager = $modx->getManager();
             $count = 0;
             foreach ($tables as $table) {
@@ -53,7 +52,7 @@ if ($object->xpdo) {
                     ++$count;
                     $modx->log(modX::LOG_LEVEL_INFO, '-> added database table: ' . $tableName);
                 } else {
-                    $modx->log(modX::LOG_LEVEL_INFO, '-> database table ' . $tableName . ' already exists - skipped!');
+                    $modx->log(modX::LOG_LEVEL_INFO, '-> database table ' . $tableName . ' - skipped!');
                 }
             }
             break;
@@ -67,5 +66,5 @@ if ($object->xpdo) {
             break;
     }
 }
-unset($tables, $table, $count);
+unset($modelPath, $tables, $table, $tableName, $prevLogLevel, $created, $count);
 return true;
