@@ -6,19 +6,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [2.0.0-alpha1] - 2023-01-31
 ### Added
-- [#50] implemented detailed error text in send-log
+- [#50] Implemented detailed error text in send-log
 
 ### Changed
-- completely refactored for MODX 3 (as standalone version; currently no upgrade path!)
+- Completely refactored for MODX 3 (as standalone version; currently no upgrade path!)
+- Moved translations to Crowdin
 
 ### Fixed
-- fixed deprecated PHP each() usage for PHP8+ in snippets (GoodNewsGetNewsletters and GoodNewsContentCollection)
-- removed deprecated use of strftime (PHP8+)
-- security: changed registry key to md5 hash in subscription process
+- Fixed deprecated PHP each() usage for PHP8+ in snippets (GoodNewsGetNewsletters and GoodNewsContentCollection)
+- Removed deprecated use of strftime (PHP8+)
+- Security: changed registry key to md5 hash in subscription process
 
 ## [1.6.1-pl] - 2022-11-20
 ### Added
-- added bootstrap script for setting up GoodNews development environment
+- Added bootstrap script for setting up GoodNews development environment
 
 ## [1.6.0-pl2] - 2022-11-19
 ### Changed
