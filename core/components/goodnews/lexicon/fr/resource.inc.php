@@ -58,7 +58,7 @@ $_lang['goodnews.mail_format_html']                        = 'HTML';
 $_lang['goodnews.mail_format_plaintxt']                    = 'Texte brut';
 
 $_lang['goodnews.mailing_resource_collection']             = 'Collection: ';
-$_lang['goodnews.mailing_resource_collection_desc']        = 'Sélectionner des documents Resources à insérer automatiquement dans le corps du mail (p.ex. une liste de nouvelles entrées).';
+$_lang['goodnews.mailing_resource_collection_desc']        = 'Sélectionnez les documents de ressource à afficher automatiquement dans le corps de l\'e-mail (par exemple, une liste de nouvelles entrées). Pour afficher le contenu généré par cette collection dans une ressource de mailing GoodNews (ou un modèle ou un chunk) utilisez le tag MODX suivant : [[+tag]]';
 $_lang['goodnews.mailing_rc_container']                    = 'Conteneur';
 $_lang['goodnews.mailing_rc_resource']                     = 'Ressource';
 $_lang['goodnews.mailing_rc_resources']                    = 'Ressources';
@@ -69,7 +69,7 @@ $_lang['goodnews.mailing_rc_search_filter']                = 'Filtre de recherch
 $_lang['goodnews.mailing_rc_filter_clear']                 = 'Réinitialiser';
 
 $_lang['setting_goodnews.default_container_template']      = 'Modèle Conteneur GoodNews par défaut';
-$_lang['setting_goodnews.default_container_template_desc'] = 'Le modèle par défaut à utiliser lors de la création d\'un nouveau conteneur GoodNews.';
+$_lang['setting_goodnews.default_container_template_desc'] = 'Le modèle par défaut à utiliser lors de la création d\'un nouveau conteneur GoodNews';
 
 $_lang['setting_goodnews.default_mailing_template']        = 'Modèle de mailing/newsletter GoodNews par défaut';
 $_lang['setting_goodnews.default_mailing_template_desc']   = 'Le modèle par défaut à utiliser lors de la création d\'un nouveau mailing/newsletter, quand il n\'y en a pas de spécifié dans le Conteneur GoodNews lui-même.';
