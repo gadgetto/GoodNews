@@ -16,6 +16,7 @@ GoodNews has built in bounce handling for scanning bounced email messages and to
 - PHP Imap Extension (for automatic bounce handling)
 - PHP Exec enabled (if not available, mailings can only be sent in single processes)
 - optional pThumb add-on (for automatic image resizing)
+- optionally User Import add-on (for importing subscribers)
 
 ## Latest Changes
 
