@@ -45,9 +45,9 @@ class Export extends Base
      * {@inheritDoc}
      *
      * @access public
-     * @return mixed
+     * @return string
      */
-    public function render()
+    public function render(): string
     {
         $this->failure('');
 

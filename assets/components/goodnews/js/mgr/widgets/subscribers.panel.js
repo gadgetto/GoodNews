@@ -199,6 +199,7 @@ GoodNews.grid.Subscribers = function(config){
                     text: '<i class="icon icon-download"></i>&nbsp;' + _('goodnews.import_button')
                     ,handler: this.importSubscribers
                     ,scope: this
+                    ,hidden: GoodNews.config.userImportAddOn ? false : true
                 },{
                     text: '<i class="icon icon-upload"></i>&nbsp;' + _('goodnews.export_button')
                     ,handler: this.exportSubscribers
@@ -398,9 +399,7 @@ Ext.extend(GoodNews.grid.Subscribers,MODx.grid.Grid,{
         MODx.loadPage('security/user/create');
     }
     ,importSubscribers: function(btn,e) {
-        if (GoodNews.config.isGoodNewsAdmin) {
-            MODx.loadPage('import', 'namespace=goodnews');
-        }
+        MODx.loadPage('index', 'namespace=userimport');
     }
     ,exportSubscribers: function(btn,e) {
         var s = this.getStore();

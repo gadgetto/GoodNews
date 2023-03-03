@@ -17,6 +17,7 @@ use MODX\Revolution\modResource;
 use MODX\Revolution\modUserSetting;
 use MODX\Revolution\modChunk;
 use MODX\Revolution\Transport\modTransportPackage;
+use MODX\Revolution\modNamespace;
 use Bitego\GoodNews\Model;
 use Bitego\GoodNews\Model\GoodNewsResourceContainer;
 
@@ -54,6 +55,15 @@ class GoodNews
 
     /** @var boolean $pThumbAddOn Is the pThumb MODX Revo Add-On installed? (required for auto-fixing image sizes) */
     public $pThumbAddOn = false;
+
+    /** @var boolean $userImportAddOn Is the User Import add-on available? (required for providing subscriber import) */
+    public $userImportAddOn = false;
+
+    /** @var string $userImportCorePath The core path of User Import add-on */
+    public $userImportCorePath = '';
+
+    /** @var string $userImportAssetsPath The assets path of User Import add-on */
+    public $userImportAssetsPath = '';
 
     /** @var string $actualPhpVersion The current PHP version */
     public $actualPhpVersion = null;
@@ -173,6 +183,10 @@ class GoodNews
                 ? true
                 : false;
 
+            $this->userImportAddOn = $this->isTransportPackageInstalled('userimport');
+            $this->userImportCorePath = $this->getComponentCorePath('userimport');
+            $this->userImportAssetsPath = $this->getComponentAssetsPath('userimport');
+
             $this->config = array_merge([
                 'setupErrors'             => $this->setupErrors,
                 'userCurrentContainer'    => $this->userCurrentContainer,
@@ -182,6 +196,9 @@ class GoodNews
                 'isMultiProcessing'       => $this->isMultiProcessing,
                 'imapExtension'           => $this->imapExtension,
                 'pThumbAddOn'             => $this->pThumbAddOn,
+                'userImportAddOn'         => $this->userImportAddOn,
+                'userImportCorePath'      => $this->userImportCorePath,
+                'userImportAssetsPath'    => $this->userImportAssetsPath,
                 'actualPhpVersion'        => $this->actualPhpVersion,
                 'requiredPhpVersion'      => $this->requiredPhpVersion,
                 'phpVersionOK'            => $this->phpVersionOK,
@@ -397,13 +414,13 @@ class GoodNews
     }
 
     /**
-     * Cecks if a MODX transport package is installed.
+     * Checks if a MODX transport package is installed.
      *
-     * @access private
-     * @param string $name Name of transport package
+     * @access public
+     * @param string $tpname Name of transport package
      * @return boolean
      */
-    private function isTransportPackageInstalled($tpname)
+    public function isTransportPackageInstalled(string $tpname)
     {
         $installed = false;
         $package = $this->modx->getObject(modTransportPackage::class, [
@@ -411,8 +428,73 @@ class GoodNews
         ]);
         if (is_object($package)) {
             $installed = true;
+        } else {
+            // Optionally check if development environment for package is available
+            $installed = $this->existsNamespace(strtolower($tpname));
         }
         return $installed;
+    }
+
+    /**
+     * Checks if a MODX namespace exists.
+     *
+     * @access public
+     * @param string $nspace Name of namespace
+     * @return boolean
+     */
+    public function existsNamespace(string $nspace)
+    {
+        $exists = false;
+        /** @var modNamespace $namespace */
+        $namespace = $this->modx->getObject(modNamespace::class, [
+            'name' => $nspace,
+        ]);
+        if (is_object($namespace)) {
+            $exists = true;
+        }
+        return $exists;
+    }
+
+    /**
+     * Get a component core path from it's namespace entry.
+     *
+     * @access public
+     * @param string $nspace Name of namespace
+     * @return string The translated core path
+     */
+    public function getComponentCorePath(string $nspace)
+    {
+        $corePath = '';
+        /** @var modNamespace $namespace */
+        $namespace = $this->modx->getObject(modNamespace::class, [
+            'name' => $nspace,
+        ]);
+        if (is_object($namespace)) {
+            // Get translated core path
+            $corePath = $namespace->getCorePath();
+        }
+        return $corePath;
+    }
+
+    /**
+     * Get a component assets path from it's namespace entry.
+     *
+     * @access public
+     * @param string $nspace Name of namespace
+     * @return string The translated assets path
+     */
+    public function getComponentAssetsPath(string $nspace)
+    {
+        $assetsPath = '';
+        /** @var modNamespace $namespace */
+        $namespace = $this->modx->getObject(modNamespace::class, [
+            'name' => $nspace,
+        ]);
+        if (is_object($namespace)) {
+            // Get translated assets path
+            $assetsPath = $namespace->getAssetsPath();
+        }
+        return $assetsPath;
     }
 
     /**
